@@ -1,0 +1,65 @@
+# ignore Eclipse workspace files:
+.metadata
+.settings
+.project
+
+.classpath
+
+# ignore java compile time files:
+*.class
+out/
+bin/
+gen/
+target/
+target-android/
+build/
+*.apk
+*.jar
+R.java
+*.dex
+*.dat
+*.lck
+*.ctrl
+
+# ignore temporary Linux files
+*.swp
+
+# Python related files
+.idea/
+*.pyc
+.coverage
+.pydevproject
+
+# ignore OSX temp files
+.DS_store
+# ignore thumbnails created by windows
+Thumbs.db
+
+# ignore intellij build files
+*.iml
+.idea
+# ignore files build by Visual Studio
+*.obj
+*.exe
+*.pdb
+*.user
+*.aps
+*.pch
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+[Bb]in
+[Dd]ebug*/
+*.lib
+*.sbr
+obj/
+[Rr]elease*/
+_ReSharper*/
