@@ -13,7 +13,7 @@ class ConfigurationGenerator implements IGenerator{
 	
 	override def doGenerate(Resource input, IFileSystemAccess fsa) {
 		var ne = input.allContents.filter(typeof(NetworkEnvironment)).next
-		fsa.generateFile(ne.name+".py", ne.compile)
+		fsa.generateFile("mininet/"+ne.envName+".py", ne.compile)
 	}
 	
 	def compile (NetworkEnvironment ne) {
@@ -24,7 +24,7 @@ class ConfigurationGenerator implements IGenerator{
 		return '''
 		from mininet.topo import Topo
 		
-		class «ne.name» (Topo):
+		class «ne.envName» (Topo):
 		    
 		    def __init__( self ):
 		    
@@ -45,7 +45,7 @@ class ConfigurationGenerator implements IGenerator{
 		        self.addLink(«c.connectedports.get(0).networkelement.fullname», «c.connectedports.get(1).networkelement.fullname»)
 		        «ENDFOR»
 		        
-		topos = { '«ne.name»': ( lambda: «ne.name»() ) }
+		topos = { '«ne.envName»': ( lambda: «ne.envName»() ) }
 	'''
 	}
 	
@@ -55,6 +55,13 @@ class ConfigurationGenerator implements IGenerator{
 			n.topology.name + "_" + n.name
 		else
 			n.name
+	}
+	
+	def envName(NetworkEnvironment n) {
+		if (!n.name.equals(""))
+			n.name
+		else
+			"NetworkEnvironment"
 	}
 	
 }

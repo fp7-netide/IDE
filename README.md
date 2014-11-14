@@ -1,3 +1,32 @@
-NetIDE aims to deliver a single development environment to support the whole development lifecycle of Software-Defined Network programs in a vendor- and controller-independent fashion. Nowadays, while most of the programmable network apparatus vendors support OpenFlow or other south-bound protocols, a number of fragmented control plane solutions exist for Software-Defined Networks. Thus, network applications developers need to re-code their solutions every time they encounter a network infrastructure based on a different controller. NetIDE is approaching the problem through an architectural solution that will allow different high-level representations to be used to program the network and different controllers to execute the network programs. Our core work is the definition of a common language able to cover different network programming styles: the NetIDE IRF (Intermediate Representation Format). The IRF allows us to explore new techniques to perform cross-controller debugging and profiling of network programs; heterogeneous network programming; network programming with simulators in the loop.
+# NetIDE Eclipse Plug-Ins
 
-NetIDE is an opensource project licensed under the Eclipse Public License.
+This Repository contains the plug-ins needed for a graphical network editing and the generation of platform-specific code.
+
+## Installation
+
+1. Download Eclipse Luna Modeling Tools at www.eclipse.org.
+2. Start Eclipse and Open the Git Perspective.
+3. Clone or add this repository and import all projects in the "plugins"-folder into your workspace.
+4. Go back to the Java perspective and open eu.netide.configuration/model/Topology.genmodel
+5. Right-click the root element in the tree view and select "Generate All"
+6. Right-click the project eu.netide.configuration and select "Run As -> Eclipse Application"
+7. In the new eclipse instance, clone or add this repository like in step 3 and import the project "Network.design"
+8. You're good to go!
+
+## Usage
+
+In order to model network environments, we first need a new modeling project and a new network model.
+
+1. Open the modeling perspective.
+2. Right-click the Model Explorer view and select "New -> Modeling Project"
+3. Right-click the newly created project and select "New -> Other". From the thereby opened view, select "Example EMF Model Creation Wizards -> Topology Model". Give it a name and select Network Environment as the Model Object.
+4. Right-click your modeling project again and choose "Viewpoints Selection". From there, choose "Topology".
+5. Expand your model in the Model Explorer, right-click the Network Environment and select "New Representation -> new NetworkEnvironment".
+6. There is your graphical editor.
+
+Once you have modeled a network environment, you might want to generate a mininet configuration for simulation purposes. Here is how it works:
+
+1. Expand your topology model in the Model Explorer
+2. Right-click the Network Environment model
+3. Select "Generate Mininet Configuration"
+4. A folder named "gen/mininet" containing a configuration class should appear in your modeling project.
