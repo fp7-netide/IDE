@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:tool="http://www.eclipse.org/sirius/diagram/description/tool/1.1.0" xmlns:tool_1="http://www.eclipse.org/sirius/description/tool/1.1.0" name="Configuration" version="8.1.0">
+  <ownedViewpoints name="Topology">
+    <ownedRepresentations xsi:type="description_1:DiagramDescription" name="NetworkEnvironment" domainClass="Topology.NetworkEnvironment">
+      <metamodel href="eu.netide.configuration.topology#/"/>
+      <defaultLayer name="Default">
+        <edgeMappings name="Connector" sourceMapping="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']/@borderedNodeMappings[name='HostPort']" targetMapping="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']/@borderedNodeMappings[name='HostPort']" targetFinderExpression="[connectedports->asSequence()->last() /]" sourceFinderExpression="[connectedports->asSequence()->first()/]" domainClass="Topology.Connector" useDomainElement="true">
+          <style targetArrow="NoDecoration" sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <containerMappings name="Network" domainClass="Topology.Network">
+          <subNodeMappings name="Host" semanticCandidatesExpression="feature:networkelements" domainClass="Topology.Host">
+            <borderedNodeMappings name="HostPort" semanticCandidatesExpression="feature:eAllContents" domainClass="Topology.Port">
+              <style xsi:type="style:SquareDescription" labelSize="6" labelFormat="bold" showIcon="false" labelExpression="feature:id" labelPosition="node" width="1" height="1">
+                <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+                <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+                <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+              </style>
+            </borderedNodeMappings>
+            <style xsi:type="style:WorkspaceImageDescription" showIcon="false" sizeComputationExpression="5" workspacePath="/Network.design/icons/host.png">
+              <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </style>
+          </subNodeMappings>
+          <subNodeMappings name="Switch" semanticCandidatesExpression="feature:networkelements" domainClass="Topology.Switch">
+            <borderedNodeMappings name="SwitchPort" semanticCandidatesExpression="feature:eAllContents" domainClass="Topology.Port">
+              <style xsi:type="style:SquareDescription" labelSize="6" labelFormat="bold" showIcon="false" labelExpression="feature:id" labelPosition="node" width="1" height="1">
+                <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+                <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+                <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+              </style>
+            </borderedNodeMappings>
+            <style xsi:type="style:SquareDescription" borderSizeComputationExpression="1" labelFormat="bold" showIcon="false" labelPosition="node" width="8" height="3">
+              <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
+            </style>
+          </subNodeMappings>
+          <style xsi:type="style:FlatContainerStyleDescription" showIcon="false">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+            <foregroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+          </style>
+        </containerMappings>
+        <toolSections name="Nodes">
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateSwitch" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:container">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Switch" referenceName="networkelements" variableName="switchinstance">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="['s'+container.eContents()->filter(Switch)->size() /]"/>
+                  <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Port" referenceName="ports" variableName="portinstance">
+                    <subModelOperations xsi:type="tool_1:SetValue" featureName="id" valueExpression="[1 /]"/>
+                  </subModelOperations>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateHost" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:container">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Host" referenceName="networkelements" variableName="hostinstance">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="['h'+container.eContents()->filter(Host)->size() /]"/>
+                  <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Port" referenceName="ports">
+                    <subModelOperations xsi:type="tool_1:SetValue" featureName="id" valueExpression="1"/>
+                  </subModelOperations>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreatePort" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']/@borderedNodeMappings[name='HostPort']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Port" referenceName="ports">
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="id" valueExpression="[container.eContents()->filter(Port)->size() /]"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="CreateConnector" edgeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@edgeMappings[name='Connector']">
+            <sourceVariable name="source"/>
+            <targetVariable name="target"/>
+            <sourceViewVariable name="sourceView"/>
+            <targetViewVariable name="targetView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[source.eContainer().eContainer()/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Connector" referenceName="connectors">
+                  <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:source">
+                    <subModelOperations xsi:type="tool_1:SetValue" featureName="connector" valueExpression="var:instance"/>
+                  </subModelOperations>
+                  <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:target">
+                    <subModelOperations xsi:type="tool_1:SetValue" featureName="connector" valueExpression="var:instance"/>
+                  </subModelOperations>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:ContainerCreationDescription" name="CreateNetwork" containerMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:container">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Network" referenceName="networks">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="['N'+container.eContents()->filter(Network)->size()/]"/>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+        </toolSections>
+      </defaultLayer>
+    </ownedRepresentations>
+  </ownedViewpoints>
+</description:Group>
