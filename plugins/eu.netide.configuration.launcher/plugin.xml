@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="eu.netide.configuration.launcher.ControllerDeploymentDelegate"
+            id="eu.netide.configuration.launcher.controllerdeployment"
+            modes="debug,run"
+            name="NetIDE Controller Deployment">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="eu.netide.configuration.launcher.ControllerDeploymentTabGroup"
+            id="eu.netide.configuration.launcher.controllerdeploymentTabGroup1"
+            type="eu.netide.configuration.launcher.controllerdeployment">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="eu.netide.configuration.launcher.controllerdeployment"
+            icon="icons/netide.png"
+            id="eu.netide.configuration.launcher.launchConfigurationTypeImage1">
+      </launchConfigurationTypeImage>
+   </extension>
+
+</plugin>
