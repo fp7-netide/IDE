@@ -51,14 +51,14 @@ class ConfigurationGenerator implements IGenerator{
 	
 	
 	def fullname(NetworkElement n) {
-		if (!n.topology.name.equals(""))
+		if (!(n.topology.name == null || n.topology.name.equals("")))
 			n.topology.name + "_" + n.name
 		else
 			n.name
 	}
 	
 	def envName(NetworkEnvironment n) {
-		if (!n.name.equals(""))
+		if (!(n.name == null || n.name.equals("")))
 			n.name
 		else
 			"NetworkEnvironment"
