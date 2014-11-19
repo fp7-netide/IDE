@@ -12,6 +12,7 @@ bin/
 gen/
 target/
 target-android/
+xtend-gen/
 build/
 *.apk
 *.jar
