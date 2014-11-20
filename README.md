@@ -7,7 +7,7 @@ This Repository contains the plug-ins needed for a graphical network editing and
 1. Download Eclipse Luna Modeling Tools at www.eclipse.org.
 2. Start Eclipse and open the Git Perspective.
 3. From the window menu, select "Help -> Install Modeling Components". Select and install XText.
-4. Clone or add this repository and import all projects in the "plugins"-folder into your workspace.
+4. Clone or add this repository and import all projects in the "plugins"-folder into your workspace. Import "eu.netide.configuration" as a general project.
 5. Go back to the Java perspective and open eu.netide.configuration/model/Topology.genmodel
 6. Right-click the root element in the tree view and select "Generate All"
 7. Right-click the project eu.netide.configuration and select "Run As -> Eclipse Application"
