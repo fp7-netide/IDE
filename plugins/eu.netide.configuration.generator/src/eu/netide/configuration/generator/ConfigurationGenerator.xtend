@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 import Topology.NetworkElement
+import Topology.Controller
 
 class ConfigurationGenerator implements IGenerator{
 	
@@ -20,9 +21,11 @@ class ConfigurationGenerator implements IGenerator{
 		
 		var scounter = 0
 		var hcounter = 0
+		var ccounter = 0
 		
 		return '''
 		from mininet.topo import Topo
+		from mininet.node import Controller, RemoteController
 		
 		class «ne.envName» (Topo):
 		    
@@ -44,6 +47,16 @@ class ConfigurationGenerator implements IGenerator{
 		        «FOR Connector c : ne.networks.map[connectors].flatten.filter(typeof(Connector))»
 		        self.addLink(«c.connectedports.get(0).networkelement.fullname», «c.connectedports.get(1).networkelement.fullname»)
 		        «ENDFOR»
+		        
+		        # Adding Controllers
+		        «FOR Controller c : ne.controllers»
+		        «c.name» = self.addController('c«ccounter++»', controller=RemoteController, ip='«c.ip»', port=«c.portNo»)
+		        «FOR Switch s : c.switches»
+		        «s.fullname».start([«s.controller.name»])
+		        «ENDFOR»
+		        «ENDFOR»
+		        
+		        
 		        
 		topos = { '«ne.envName»': ( lambda: «ne.envName»() ) }
 	'''
