@@ -13,14 +13,18 @@
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Topology.ecore#//NetworkElement/topology"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Topology.ecore#//NetworkElement/ports"/>
     </genClasses>
-    <genClasses ecoreClass="Topology.ecore#//Switch"/>
+    <genClasses ecoreClass="Topology.ecore#//Switch">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Topology.ecore#//Switch/controller"/>
+    </genClasses>
     <genClasses ecoreClass="Topology.ecore#//NetworkEnvironment">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Topology.ecore#//NetworkEnvironment/networks"/>
+      <genFeatures children="true" createChild="true" propertySortChoices="true" ecoreFeature="ecore:EReference Topology.ecore#//NetworkEnvironment/controllers"/>
     </genClasses>
     <genClasses ecoreClass="Topology.ecore#//Network">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Topology.ecore#//Network/networkelements"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Topology.ecore#//Network/networkenvironment"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Topology.ecore#//Network/connectors"/>
+      <genFeatures property="None" children="true" createChild="true" propertyCategory=""
+          ecoreFeature="ecore:EReference Topology.ecore#//Network/connectors"/>
     </genClasses>
     <genClasses ecoreClass="Topology.ecore#//Port">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Topology.ecore#//Port/networkelement"/>
@@ -34,6 +38,10 @@
     <genClasses ecoreClass="Topology.ecore#//Connector">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Topology.ecore#//Connector/connectedports"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Topology.ecore#//Connector/network"/>
+    </genClasses>
+    <genClasses ecoreClass="Topology.ecore#//Controller">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Topology.ecore#//Controller/switches"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Topology.ecore#//Controller/networkenvironment"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
