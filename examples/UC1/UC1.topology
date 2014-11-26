@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <eu.netide.configuration:NetworkEnvironment xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eu.netide.configuration="eu.netide.configuration.topology" name="UC1">
   <networks name="">
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW0" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.0"/>
       <ports id="2" connector="//@networks.0/@connectors.1"/>
       <ports id="3" connector="//@networks.0/@connectors.2"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="LB_Srv1">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="LB_Srv1" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.1"/>
       <ports id="2" connector="//@networks.0/@connectors.4"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="LB_Srv2">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="LB_Srv2" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.2"/>
       <ports id="2" connector="//@networks.0/@connectors.3"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="LB">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="LB" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.3"/>
       <ports id="2" connector="//@networks.0/@connectors.4"/>
       <ports id="3" connector="//@networks.0/@connectors.5"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="R1">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="R1" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.5"/>
       <ports id="2" connector="//@networks.0/@connectors.6"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW1">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW1" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.6"/>
       <ports id="2" connector="//@networks.0/@connectors.7"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW2">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW2" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.8"/>
       <ports id="2" connector="//@networks.0/@connectors.9"/>
       <ports id="3" connector="//@networks.0/@connectors.10"/>
       <ports id="4" connector="//@networks.0/@connectors.13"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW3">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW3" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.11"/>
       <ports id="2" connector="//@networks.0/@connectors.12"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="FW1">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="FW1" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.7"/>
       <ports id="2" connector="//@networks.0/@connectors.13"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="FW2">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="FW2" controller="//@controllers.0">
       <ports id="2" connector="//@networks.0/@connectors.10"/>
       <ports id="3" connector="//@networks.0/@connectors.11"/>
     </networkelements>
@@ -72,4 +72,5 @@
     <connectors connectedports="//@networks.0/@networkelements.7/@ports.1 //@networks.0/@networkelements.11/@ports.0"/>
     <connectors connectedports="//@networks.0/@networkelements.8/@ports.1 //@networks.0/@networkelements.6/@ports.3"/>
   </networks>
+  <controllers name="c1" switches="//@networks.0/@networkelements.0 //@networks.0/@networkelements.1 //@networks.0/@networkelements.2 //@networks.0/@networkelements.3 //@networks.0/@networkelements.4 //@networks.0/@networkelements.5 //@networks.0/@networkelements.8 //@networks.0/@networkelements.6 //@networks.0/@networkelements.9 //@networks.0/@networkelements.7" ip="127.0.0.1" portNo="6633"/>
 </eu.netide.configuration:NetworkEnvironment>
