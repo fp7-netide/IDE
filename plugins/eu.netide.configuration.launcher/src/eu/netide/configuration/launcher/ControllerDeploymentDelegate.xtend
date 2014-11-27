@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.CoreException
 class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 	
 	override launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+		System.out.println(configuration.attributes.get("topologymodel"))
 	}
 	
 }

@@ -4,7 +4,13 @@
   <extension point="org.eclipse.sirius.componentization">
     <component class="Network.design.Activator"
                id="Network.design"
-	       name="My">
+	       name="Configuration">
     </component>
+  </extension>
+  <extension
+        point="org.eclipse.sirius.viewpointSpecificationModel">
+     <definition
+           path="description/Configuration.odesign">
+     </definition>
   </extension>
 </plugin>

@@ -1,121 +1,58 @@
 package eu.netide.configuration.launcher
 
-import java.util.ArrayList
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab
+import org.eclipse.emf.common.ui.dialogs.ResourceDialog
 import org.eclipse.swt.SWT
-import org.eclipse.swt.events.SelectionAdapter
-import org.eclipse.swt.events.SelectionEvent
+import org.eclipse.swt.events.ModifyEvent
+import org.eclipse.swt.events.ModifyListener
+import org.eclipse.swt.events.MouseAdapter
+import org.eclipse.swt.events.MouseEvent
+import org.eclipse.swt.layout.GridData
 import org.eclipse.swt.layout.GridLayout
-import org.eclipse.swt.widgets.Combo
 import org.eclipse.swt.widgets.Composite
-import org.eclipse.swt.widgets.Label
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog
+import org.eclipse.swt.widgets.Display
+import org.eclipse.swt.widgets.Text
+import org.eclipse.debug.internal.ui.SWTFactory
 
 class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 
-	private Label guestlabel
-	private Combo guestcombo
+	private Composite comp
 
-	private Label hostlabel
-	private Combo hostcombo
-
-	private Composite platformcomposite
-
-	private Composite pyreticcomposite
-
-	private Composite ryucomposite
-
-	private ArrayList<Composite> guestchoosers
-	
-	private ArrayList<Composite> hostchoosers
+	private Text textfield
 
 	override createControl(Composite parent) {
+		comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL)
+		control = comp
+		val g = SWTFactory.createGroup(comp, "Configuration Selection", 3, 1, GridData.FILL_HORIZONTAL) //new Group(comp, SWT.NONE)
+		g.createConfigurationChooser
+	}
 
-		var c = new Composite(parent, SWT.NONE)
-		control = c
-		c.layout = new GridLayout(1, true)
+	def createConfigurationChooser(Composite c) {
 
-		platformcomposite = new Composite(c, SWT.NONE)
-		platformcomposite.layout = new GridLayout(2, true)
+		c.layout = new GridLayout(3, false)
+		SWTFactory.createLabel(c, "Topology Model:", 1)
 
-		guestlabel = new Label(platformcomposite, SWT.NONE)
-		guestlabel.text = "Guest Platform"
-
-		guestcombo = new Combo(platformcomposite, SWT.READ_ONLY)
-
-		//		guestcombo.size = new Point(100, guestcombo.size.y)
-		guestcombo.items = newArrayList("Pyretic", "POX", "Floodlight")
-		guestcombo.addSelectionListener(
-			new SelectionAdapter() {
-				override widgetSelected(SelectionEvent e) {
-					super.widgetSelected(e)
-					displayguestchooser()
+		textfield = SWTFactory.createSingleText(c, 1)
+		textfield.addModifyListener(
+			new ModifyListener() {
+				override modifyText(ModifyEvent event) {
+					updateLaunchConfigurationDialog
+					scheduleUpdateJob
 				}
 			})
 
-		hostlabel = new Label(platformcomposite, SWT.NONE)
-		hostlabel.text = "Host Platform"
-
-		hostcombo = new Combo(platformcomposite, SWT.READ_ONLY)
-
-		hostcombo.addSelectionListener(
-			new SelectionAdapter() {
-				override widgetSelected(SelectionEvent e) {
-					super.widgetSelected(e)
-					displayhostchooser()
+		val chooserbutton = createPushButton(c, "Choose Model", null)
+		chooserbutton.addMouseListener(
+			new MouseAdapter() {
+				override mouseUp(MouseEvent e) {
+					super.mouseUp(e)
+					var dialog = new ResourceDialog(Display.getDefault().getActiveShell(), "Title", SWT.SINGLE)
+					dialog.open();
+					textfield.text = dialog.URIText
 				}
 			})
-
-		//		hostcombo.size = new Point(100, hostcombo.size.y)
-		hostcombo.items = newArrayList("Ryu", "ODL")
-
-		c.createSeparator(2)
-
-		pyreticcomposite = new Composite(c, SWT.NONE)
-		pyreticcomposite.createPyreticChooser
-		pyreticcomposite.visible = false
-
-		ryucomposite = new Composite(c, SWT.NONE)
-		ryucomposite.createRyuChooser
-		ryucomposite.visible = false
-
-		guestchoosers = newArrayList(pyreticcomposite)
-		hostchoosers = newArrayList(ryucomposite)
-
-	}
-
-	def displayguestchooser() {
-		guestchoosers.forEach[visible = false]
-		if (guestcombo.text.equals("Pyretic")) {
-			pyreticcomposite.visible = true
-		} else if (guestcombo.text.equals("Ryu")) {
-			ryucomposite.visible = true
-		}
-	}
-
-	def displayhostchooser() {
-		hostchoosers.forEach[visible = false]
-		if (hostcombo.text.equals("Ryu")) {
-			ryucomposite.visible = true
-		}
-	}
-
-	def createPyreticChooser(Composite c) {
-		c.layout = new GridLayout(2, true)
-		
-		var pyreticpathlabel = new Label(c, SWT.NONE)
-		pyreticpathlabel.text = "Path to Pyretic App"
-//		
-//		var dialog = new ElementTreeSelectionDialog(shell, );
-//		dialog.open();
-	}
-
-	def createRyuChooser(Composite c) {
-		c.layout = new GridLayout(2, true)
-		var ryupathlabel = new Label(c, SWT.NONE)
-		ryupathlabel.text = "Path to Ryu App"
 
 	}
 
@@ -124,15 +61,18 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 	}
 
 	override initializeFrom(ILaunchConfiguration configuration) {
-		//hostcombo.text = configuration.attributes.get("host").toString
-		//guestcombo.text = configuration.attributes.get("guest").toString
+		if (configuration.attributes.containsKey("topologymodel"))
+			textfield.text = configuration.attributes.get("topologymodel") as String
+		else
+			textfield.text = ""
 	}
 
 	override performApply(ILaunchConfigurationWorkingCopy configuration) {
+		configuration.attributes.put("topologymodel", textfield.text)
+
 	}
 
 	override setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.attributes = newHashMap("host" -> "ryu", "guest" -> "pyretic")
 	}
 
 }

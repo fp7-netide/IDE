@@ -4,13 +4,11 @@ Bundle-Name: Launcher
 Bundle-SymbolicName: eu.netide.configuration.launcher;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: eu.netide.configuration.launcher.Activator
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.ui;bundle-version="3.10.1",
  org.eclipse.xtend.lib,
- org.eclipse.xtend.lib.macro,
- com.google.guava,
- org.eclipse.xtext.xbase.lib
+ org.eclipse.emf.common.ui;bundle-version="2.9.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
+Bundle-Vendor: NetIDE
 
