@@ -7,14 +7,15 @@
             delegate="eu.netide.configuration.launcher.ControllerDeploymentDelegate"
             id="eu.netide.configuration.launcher.controllerdeployment"
             modes="debug,run"
-            name="NetIDE Controller Deployment">
+            name="NetIDE Controller Deployment"
+            public="true">
       </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
             class="eu.netide.configuration.launcher.ControllerDeploymentTabGroup"
-            id="eu.netide.configuration.launcher.controllerdeploymentTabGroup1"
+            id="eu.netide.configuration.launcher.controllerdeploymentTabGroup"
             type="eu.netide.configuration.launcher.controllerdeployment">
       </launchConfigurationTabGroup>
    </extension>
