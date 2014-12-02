@@ -7,10 +7,7 @@ import java.util.HashMap
 import java.util.Map
 import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2
-import org.eclipse.xtext.generator.AbstractFileSystemAccess2
 import org.eclipse.xtext.generator.OutputConfiguration
-import org.eclipse.core.resources.IProject
-import org.eclipse.ui.PlatformUI
 
 /**
  * Google Guice provider for FileSystemAccess. It configures and

@@ -27,5 +27,13 @@
             id="eu.netide.configuration.launcher.launchConfigurationTypeImage1">
       </launchConfigurationTypeImage>
    </extension>
+   <extension
+         point="org.eclipse.ui.console.consoleFactories">
+      <consoleFactory
+            class="eu.netide.configuration.launcher.console.NetIDEConsoleFactory"
+            icon="icons/netide.png"
+            label="NetIDE Console">
+      </consoleFactory>
+   </extension>
 
 </plugin>

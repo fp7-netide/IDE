@@ -87,7 +87,7 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 
 		var env = resource.contents.get(0) as NetworkEnvironment
 
-		env.controllers.forEach [ c |
+		env.controllers.forEach[ c |
 			var group = SWTFactory.createGroup(comp, "Controller " + c.name, 3, 1, GridData.FILL_HORIZONTAL)
 			groups.add(group)
 			group.buildControllerConfigurator

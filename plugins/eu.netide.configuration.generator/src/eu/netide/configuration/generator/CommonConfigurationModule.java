@@ -108,7 +108,7 @@ public class CommonConfigurationModule extends AbstractModule {
                 .toProvider(ResourceLoaderProviders.getSerialLoader());
         bind(IResourceLoader.Sorter.class);
         bind(IBuilderState.class).to(ClusteringBuilderState.class).in(Scopes.SINGLETON);
-        //bind(EclipseResourceFileSystemAccess2.class).toProvider(FSAProvider.class).in(Singleton.class);
+//        bind(EclipseResourceFileSystemAccess2.class).toProvider(FSAProvider.class).in(Singleton.class);
 
     }
 }

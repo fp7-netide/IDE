@@ -24,7 +24,6 @@ class GenerateAction {
 		fsa.outputConfigurations = defaultConfig
 		fsa.project = file.project
 		cg.doGenerate(ne.eResource, fsa)
-
 	}
 
 	def getIFile(Resource res) {
