@@ -6,8 +6,9 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog
 class ControllerDeploymentTabGroup extends AbstractLaunchConfigurationTabGroup{
 	
 	override createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		var tab = new ControllerDeploymentTab1
-		tabs = newArrayList(tab)
+		var tab1 = new ControllerDeploymentTab1
+		var tab2 = new ControllerDeploymentTab2
+		tabs = newArrayList(tab1, tab2)
 		
 		
 	}

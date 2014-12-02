@@ -36,13 +36,16 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		var path = configuration.attributes.get("topologymodel") as String
 		generateConfiguration(path)
 		
+		var controllerPlatformKeys = configuration.attributes.keySet.filter[startsWith("controller_platform_")]
+		
+		var requiredPlatforms = controllerPlatformKeys.map[k | configuration.attributes.get(k) as String].toList		
 		var resset = new ResourceSetImpl
 		var res = resset.getResource(URI.createURI(path), true)
 		var ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
 
 		var file = path.IFile
 
-		var vgen = new VagrantfileGenerateAction(file)
+		var vgen = new VagrantfileGenerateAction(file, requiredPlatforms)
 		vgen.run
 
 		if (monitor.isCanceled()) {
@@ -74,11 +77,18 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		
 		cmdline = newArrayList(location.toOSString, "up")
 		
-		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
-		
-		cmdline = newArrayList(location.toOSString, "ssh", "-c", "sudo mn --custom ~/mn-configs/" + ne.name + ".py --topo " + ne.name)
+		if (configuration.attributes.get("reprovision") as Boolean) cmdline.add("--provision")
 		
 		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+		
+		cmdline = newArrayList(location.toOSString, "ssh", "-c", "sudo python ~/mn-configs/" + if (ne.name != null) ne.name else "NetworkEnvironment" + "_run.py")
+		
+		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+		
+		cmdline = newArrayList(location.toOSString, "halt")
+		
+		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+
 		
 		
 

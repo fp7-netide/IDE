@@ -77,12 +77,12 @@ class ConfigurationGenerator implements IGenerator {
         from mininet.node import Controller, OVSSwitch, RemoteController
         from mininet.cli import CLI
         from mininet.log import setLogLevel
-        from «ne.name» import «ne.name»
+        from «ne.envName» import «ne.envName»
         
                 
-        def setup_and_run_«ne.name» ():
+        def setup_and_run_«ne.envName» ():
         
-            topo = «ne.name»()
+            topo = «ne.envName»()
             net = Mininet(topo=topo, build=False)
             
             «FOR Controller c : ne.controllers»
@@ -95,7 +95,7 @@ class ConfigurationGenerator implements IGenerator {
             «c.name».start()
             
             «FOR Switch s : c.switches»
-            net.get('s«nodemap.get(s.name)»').start([«c.name»])
+            net.get('s«nodemap.get(s.fullname)»').start([«c.name»])
             «ENDFOR»
             «ENDFOR»
             
@@ -105,7 +105,7 @@ class ConfigurationGenerator implements IGenerator {
             
         if __name__ == '__main__':
             setLogLevel( 'info' ) # for CLI output
-            setup_and_run_«ne.name»()
+            setup_and_run_«ne.envName»()
 		'''
 	}
 
