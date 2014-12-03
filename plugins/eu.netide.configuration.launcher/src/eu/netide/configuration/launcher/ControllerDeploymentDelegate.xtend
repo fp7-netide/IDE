@@ -35,10 +35,10 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 		var path = configuration.attributes.get("topologymodel") as String
 		generateConfiguration(path)
-		
+
 		var controllerPlatformKeys = configuration.attributes.keySet.filter[startsWith("controller_platform_")]
-		
-		var requiredPlatforms = controllerPlatformKeys.map[k | configuration.attributes.get(k) as String].toList		
+
+		var requiredPlatforms = controllerPlatformKeys.map[k|configuration.attributes.get(k) as String].toList
 		var resset = new ResourceSetImpl
 		var res = resset.getResource(URI.createURI(path), true)
 		var ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
@@ -59,46 +59,42 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		var workingDirectory = file.project.location
 
 		workingDirectory = workingDirectory.append("/gen" + NetIDE.VAGRANTFILE_PATH)
-		
-		
-
 
 		var File workingDir = null;
 		if (workingDirectory != null) {
 			workingDir = workingDirectory.toFile()
 		}
 
-
 		if (monitor.isCanceled()) {
 			return;
 		}
 
 		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
-		
+
 		cmdline = newArrayList(location.toOSString, "up")
-		
-		if (configuration.attributes.get("reprovision") as Boolean) cmdline.add("--provision")
-		
-		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
-		
-		cmdline = newArrayList(location.toOSString, "ssh", "-c", "sudo python ~/mn-configs/" + if (ne.name != null) ne.name else "NetworkEnvironment" + "_run.py")
-		
-		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
-		
-		cmdline = newArrayList(location.toOSString, "halt")
-		
+
+		if(configuration.attributes.get("reprovision") as Boolean) cmdline.add("--provision")
+
 		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
 
-		
-		
+		cmdline = newArrayList(location.toOSString, "ssh", "-c",
+			"sudo python ~/mn-configs/" + if(ne.name != null) ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
+
+		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+
+		if (configuration.attributes.get("shutdown") as Boolean) {
+			cmdline = newArrayList(location.toOSString, "halt")
+			startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+		}
 
 	}
-	
-	def startProcess(ArrayList<String> cmdline, File workingDir, Path location, IProgressMonitor monitor, ILaunch launch, ILaunchConfiguration configuration) {
+
+	def startProcess(ArrayList<String> cmdline, File workingDir, Path location, IProgressMonitor monitor, ILaunch launch,
+		ILaunchConfiguration configuration) {
 		var p = DebugPlugin.exec(cmdline, workingDir, null as String[])
-		
+
 		var IProcess process = null;
-		
+
 		// add process type to process attributes
 		var Map<String, String> processAttributes = new HashMap<String, String>();
 		var programName = location.lastSegment();
@@ -108,7 +104,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		}
 		programName = programName.toLowerCase();
 		processAttributes.put(IProcess.ATTR_PROCESS_TYPE, programName)
-		
+
 		if (p != null) {
 			monitor.beginTask("Vagrant up", 0);
 			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
@@ -119,10 +115,9 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			}
 			throw new CoreException(new Status(IStatus.ERROR, "Bla", "Blub"))
 		}
-		
+
 		process.setAttribute(IProcess.ATTR_CMDLINE, generateCommandLine(cmdline))
-		
-		
+
 		while (!process.isTerminated()) {
 			try {
 				if (monitor.isCanceled()) {
@@ -131,6 +126,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 			}
+
 			// refresh resources
 			RefreshUtil.refreshResources(configuration, monitor)
 		}
