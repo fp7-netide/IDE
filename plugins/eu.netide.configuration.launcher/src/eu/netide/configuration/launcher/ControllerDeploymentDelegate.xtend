@@ -22,16 +22,17 @@ import org.eclipse.debug.core.model.IProcess
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.core.runtime.Platform
 
 class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
-
-	val VAGRANTPATH_LINUX = "/usr/bin/vagrant"
 
 	override launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 
 		if (monitor.isCanceled()) {
 			return
 		}
+		
+		val vagrantpath = Platform.getPreferencesService.getString("eu.netide.configuration.preferences", "vagrantPath", "", null)
 
 		var path = configuration.attributes.get("topologymodel") as String
 		generateConfiguration(path)
@@ -52,7 +53,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			return
 		}
 
-		var location = new Path(VAGRANTPATH_LINUX)
+		var location = new Path(vagrantpath)
 
 		var cmdline = newArrayList(location.toOSString, "init", "ubuntu/trusty64")
 
