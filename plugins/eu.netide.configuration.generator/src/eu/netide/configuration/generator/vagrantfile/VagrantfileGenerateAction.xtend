@@ -11,15 +11,16 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2
 import org.eclipse.xtext.generator.OutputConfiguration
 import java.util.List
+import org.eclipse.debug.core.ILaunchConfiguration
 
 class VagrantfileGenerateAction {
 
 	private IResource resource
-	private List<String> requiredPlatforms
+	private ILaunchConfiguration configuration
 	
-	new (IResource f, List<String> requiredPlatforms) {
+	new (IResource f, ILaunchConfiguration configuration) {
 		this.resource = f
-		this.requiredPlatforms = requiredPlatforms
+		this.configuration = configuration
 	}
 
 	def run() {
@@ -36,7 +37,7 @@ class VagrantfileGenerateAction {
 		var resset = new ResourceSetImpl
 		var res = resset.getResource(URI.createURI(resource.fullPath.toString), true)
 
-		generator.doGenerate(resource, res, requiredPlatforms, fsa)
+		generator.doGenerate(resource, res, configuration, fsa)
 	}
 
 

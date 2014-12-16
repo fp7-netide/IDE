@@ -24,13 +24,13 @@ class ConfigurationGenerator implements IGenerator {
 	}
 	
 	def populateNodeMap(NetworkEnvironment ne) {
-		var scounter = 0
+		var scounter = 1
 		for (s : ne.networks.map[networkelements].flatten.filter(typeof(Switch))) nodemap.put(s.fullname, scounter++)
 		
-		var hcounter = 0
+		var hcounter = 1
 		for (h : ne.networks.map[networkelements].flatten.filter(typeof(Host))) nodemap.put(h.fullname, hcounter++)
 		
-		var ccounter = 0
+		var ccounter = 1
 		for (c : ne.controllers) nodemap.put(c.name, ccounter++)
 		
 		

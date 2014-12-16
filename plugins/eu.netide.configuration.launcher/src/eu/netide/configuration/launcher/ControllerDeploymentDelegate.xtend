@@ -23,37 +23,40 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.core.runtime.Platform
+import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
+import Topology.Controller
+import org.eclipse.core.runtime.IPath
 
 class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
+
+	Path location = null
 
 	override launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 
 		if (monitor.isCanceled()) {
 			return
 		}
-		
-		val vagrantpath = Platform.getPreferencesService.getString("eu.netide.configuration.preferences", "vagrantPath", "", null)
+
+		val vagrantpath = Platform.getPreferencesService.getString("eu.netide.configuration.preferences", "vagrantPath",
+			"", null)
 
 		var path = configuration.attributes.get("topologymodel") as String
 		generateConfiguration(path)
 
-		var controllerPlatformKeys = configuration.attributes.keySet.filter[startsWith("controller_platform_")]
-
-		var requiredPlatforms = controllerPlatformKeys.map[k|configuration.attributes.get(k) as String].toList
 		var resset = new ResourceSetImpl
 		var res = resset.getResource(URI.createURI(path), true)
 		var ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
 
 		var file = path.IFile
 
-		var vgen = new VagrantfileGenerateAction(file, requiredPlatforms)
+		var vgen = new VagrantfileGenerateAction(file, configuration)
 		vgen.run
 
 		if (monitor.isCanceled()) {
 			return
 		}
 
-		var location = new Path(vagrantpath)
+		location = new Path(vagrantpath)
 
 		var cmdline = newArrayList(location.toOSString, "init", "ubuntu/trusty64")
 
@@ -78,6 +81,33 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
 
+		for (c : ne.controllers) {
+
+			var controllerplatform = (configuration.attributes.get("controller_platform_" + c.name) as String)
+			var controllerpath = (configuration.attributes.get("controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
+
+			cmdline = getCommandLine(controllerplatform, controllerpath, c)
+
+			var controllerthread = new Thread() {
+				var File workingDir
+				var ArrayList<String> cmdline
+
+				def setParameters(File wd, ArrayList<String> cl) {
+					this.workingDir = wd
+					this.cmdline = cl
+				}
+
+				override run() {
+					super.run()
+					startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+				}
+			}
+
+			controllerthread.setParameters(workingDir, cmdline)
+			controllerthread.start
+
+		}
+
 		cmdline = newArrayList(location.toOSString, "ssh", "-c",
 			"sudo python ~/mn-configs/" + if(ne.name != null) ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
 
@@ -88,6 +118,17 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			startProcess(cmdline, workingDir, location, monitor, launch, configuration)
 		}
 
+	}
+
+	def getCommandLine(String platform, IPath path, Controller c) {
+
+		var cline = switch (platform) {
+			case "Ryu": String.format("sudo ryu-manager --ofp-tcp-listen-port=%d controllers/%s/%s", c.portNo, path.removeFileExtension.lastSegment, path.lastSegment)
+			case "POX": String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pox/pox.py %s --port=%d", path.removeFileExtension.lastSegment, path.removeFileExtension.lastSegment, c.portNo)
+			default: "echo No valid platform specified" 
+		}
+
+		newArrayList(location.toOSString, "ssh", "-c", cline)
 	}
 
 	def startProcess(ArrayList<String> cmdline, File workingDir, Path location, IProgressMonitor monitor, ILaunch launch,
