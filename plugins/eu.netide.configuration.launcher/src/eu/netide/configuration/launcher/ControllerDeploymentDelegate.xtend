@@ -125,6 +125,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		var cline = switch (platform) {
 			case "Ryu": String.format("sudo ryu-manager --ofp-tcp-listen-port=%d controllers/%s/%s", c.portNo, path.removeFileExtension.lastSegment, path.lastSegment)
 			case "POX": String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pox/pox.py %s --port=%d", path.removeFileExtension.lastSegment, path.removeFileExtension.lastSegment, c.portNo)
+			case "Pyretic": String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pyretic.py %s", path.removeFileExtension.lastSegment, path.removeFileExtension.lastSegment)
 			default: "echo No valid platform specified" 
 		}
 

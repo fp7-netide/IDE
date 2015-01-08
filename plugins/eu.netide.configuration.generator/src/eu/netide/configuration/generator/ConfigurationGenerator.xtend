@@ -43,6 +43,17 @@ class ConfigurationGenerator implements IGenerator {
 			from mininet.topo import Topo
 			from mininet.node import Controller, RemoteController
 			
+			
+			def int2dpid( dpid ):
+			   try:
+			      dpid = hex( dpid )[ 2: ]
+			      dpid = '0' * ( 16 - len( dpid ) ) + dpid
+			      return dpid
+			   except IndexError:
+			      raise Exception( 'Unable to derive default datapath ID - '
+			                       'please either specify a dpid or use a '
+			               'canonical switch name such as s23.' )
+			
 			class «ne.envName» (Topo):
 			    
 			    def __init__( self ):
@@ -51,12 +62,12 @@ class ConfigurationGenerator implements IGenerator {
 			    
 			        # Adding Switches
 			        «FOR Switch s : ne.networks.map[networkelements].flatten.filter(typeof(Switch))»
-			        	self.«s.fullname» = self.addSwitch('s«nodemap.get(s.fullname)»')
+			        	self.«s.fullname» = self.addSwitch('«s.fullname»', dpid=int2dpid(«nodemap.get(s.fullname)»))
 			        «ENDFOR»
 			        
 			        # Adding Hosts
 			        «FOR Host h : ne.networks.map[networkelements].flatten.filter(typeof(Host))»
-			        	self.«h.fullname» = self.addHost('h«nodemap.get(h.fullname)»')
+			        	self.«h.fullname» = self.addHost('«h.fullname»', dpid=int2dpid(«nodemap.get(h.fullname)»))
 			        «ENDFOR»
 			        
 			        # Adding Links
@@ -70,7 +81,7 @@ class ConfigurationGenerator implements IGenerator {
 		'''
 	}
 
-	def CharSequence compileRunscript(NetworkEnvironment ne) {
+	def compileRunscript(NetworkEnvironment ne) {
 				
 		return '''
         from mininet.net import Mininet
@@ -95,7 +106,7 @@ class ConfigurationGenerator implements IGenerator {
             «c.name».start()
             
             «FOR Switch s : c.switches»
-            net.get('s«nodemap.get(s.fullname)»').start([«c.name»])
+            net.get('«s.fullname»').start([«c.name»])
             «ENDFOR»
             «ENDFOR»
             

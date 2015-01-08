@@ -30,6 +30,9 @@ class VagrantfileGenerator {
 
 		url = bundle.getEntry("scripts/install_ryu.sh")
 		var ryuscriptpath = FileLocator.resolve(url).path
+		
+		url = bundle.getEntry("scripts/install_pyretic.sh")
+		var pyreticscriptpath = FileLocator.resolve(url).path
 
 		var controllerPlatformKeys = configuration.attributes.keySet.filter[startsWith("controller_platform_")]
 		var requiredPlatforms = controllerPlatformKeys.map[k|configuration.attributes.get(k) as String].toList
@@ -50,13 +53,16 @@ class VagrantfileGenerator {
 			Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			
 				# We use a relatively new Ubuntu box
-				config.vm.box = "ubuntu/trusty64"
+				config.vm.box = "ubuntu/trusty32"
 				
 				# Configuring mininet
 				config.vm.provision "shell", path: "«mininetscriptpath»", privileged: false
 				
 				«IF requiredPlatforms.contains("Ryu")»
 					config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
+				«ENDIF»
+				«IF requiredPlatforms.contains("Pyretic")»
+					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
 				«ENDIF»
 				
 				# Syncing the mininet configuration folder with the vm

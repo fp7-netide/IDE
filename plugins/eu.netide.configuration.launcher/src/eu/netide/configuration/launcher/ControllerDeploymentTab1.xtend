@@ -25,6 +25,8 @@ import org.eclipse.swt.events.SelectionAdapter
 import org.eclipse.swt.events.SelectionEvent
 import org.eclipse.swt.widgets.Combo
 import java.util.Collection
+import org.eclipse.swt.events.DisposeListener
+import org.eclipse.swt.events.DisposeEvent
 
 class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 
@@ -34,13 +36,21 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 
 	private ArrayList<Group> groups = newArrayList()
 
-	private ArrayList<Text> ryuDataTexts = newArrayList()
-
 	private Map<String, String> controllermap = newHashMap()
 
 	//	private Group 
 	override createControl(Composite parent) {
 		comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL)
+		
+		comp.addDisposeListener(new DisposeListener {
+			
+			override widgetDisposed(DisposeEvent e) {
+				groups.clear
+				controllermap.clear
+			}
+			
+		})
+		
 		control = comp
 		val g = SWTFactory.createGroup(comp, "Configuration Selection", 3, 1, GridData.FILL_HORIZONTAL) //new Group(comp, SWT.NONE)
 		g.createConfigurationChooser
@@ -57,7 +67,7 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 				override modifyText(ModifyEvent event) {
 
 					groups.forEach[dispose]
-					groups.removeAll
+					groups.clear
 
 					if (textfield.text.isTopologyModelPath)
 						textfield.text.handleNewTopologyModel
@@ -129,8 +139,9 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 		if (text == "Ryu") {
 			c.buildAppConfigurator("Ryu App")
 		} else if (text == "POX") {
-			c.buildAppConfigurator(("POX App"))
+			c.buildAppConfigurator("POX App")
 		} else if (text == "Pyretic") {
+			c.buildAppConfigurator(("Pyretic App"))
 		} else if (text == "OpenDaylight") {
 		}
 	}
@@ -163,7 +174,7 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 					super.mouseUp(e)
 					var dialog = new ResourceDialog(Display.getDefault().getActiveShell(), "Title", SWT.SINGLE)
 					dialog.open();
-					text.text = dialog.URIText
+					text.text = dialog.URIText ?: text.text
 
 				}
 			})
@@ -175,10 +186,8 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 	}
 
 	override initializeFrom(ILaunchConfiguration configuration) {
-		if (configuration.attributes.containsKey("topologymodel"))
-			textfield.text = configuration.attributes.get("topologymodel") as String
-		else
-			textfield.text = ""
+		
+		textfield.text = configuration.attributes.get("topologymodel") as String ?: ""
 
 		configuration.attributes.keySet.forEach[k|
 			if(k.startsWith("controller")) controllermap.put(k, configuration.attributes.get(k) as String)]
