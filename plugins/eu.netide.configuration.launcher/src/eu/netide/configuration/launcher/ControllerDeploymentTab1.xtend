@@ -2,6 +2,7 @@ package eu.netide.configuration.launcher
 
 import Topology.NetworkEnvironment
 import java.util.ArrayList
+import java.util.Map
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy
 import org.eclipse.debug.internal.ui.SWTFactory
@@ -10,23 +11,21 @@ import org.eclipse.emf.common.ui.dialogs.ResourceDialog
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.swt.SWT
+import org.eclipse.swt.events.DisposeEvent
+import org.eclipse.swt.events.DisposeListener
 import org.eclipse.swt.events.ModifyEvent
 import org.eclipse.swt.events.ModifyListener
 import org.eclipse.swt.events.MouseAdapter
 import org.eclipse.swt.events.MouseEvent
+import org.eclipse.swt.events.SelectionAdapter
+import org.eclipse.swt.events.SelectionEvent
 import org.eclipse.swt.layout.GridData
 import org.eclipse.swt.layout.GridLayout
+import org.eclipse.swt.widgets.Combo
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.widgets.Display
 import org.eclipse.swt.widgets.Group
 import org.eclipse.swt.widgets.Text
-import java.util.Map
-import org.eclipse.swt.events.SelectionAdapter
-import org.eclipse.swt.events.SelectionEvent
-import org.eclipse.swt.widgets.Combo
-import java.util.Collection
-import org.eclipse.swt.events.DisposeListener
-import org.eclipse.swt.events.DisposeEvent
 
 class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 
@@ -41,16 +40,17 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 	//	private Group 
 	override createControl(Composite parent) {
 		comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL)
-		
-		comp.addDisposeListener(new DisposeListener {
-			
-			override widgetDisposed(DisposeEvent e) {
-				groups.clear
-				controllermap.clear
-			}
-			
-		})
-		
+
+		comp.addDisposeListener(
+			new DisposeListener {
+
+				override widgetDisposed(DisposeEvent e) {
+					groups.clear
+					controllermap.clear
+				}
+
+			})
+
 		control = comp
 		val g = SWTFactory.createGroup(comp, "Configuration Selection", 3, 1, GridData.FILL_HORIZONTAL) //new Group(comp, SWT.NONE)
 		g.createConfigurationChooser
@@ -116,7 +116,7 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 	def buildControllerConfigurator(Group c) {
 		val label = SWTFactory.createLabel(c, "Select Platform:", 1)
 		val platformselector = SWTFactory.createCombo(c, SWT.READ_ONLY, 1,
-			newArrayList("Ryu", "POX", "Pyretic", "OpenDaylight"))
+			newArrayList("Ryu", "POX", "Pyretic", "OpenDaylight", "Cross-Controller"))
 
 		platformselector.select(0)
 		c.buildConfigurator(platformselector.text)
@@ -135,15 +135,50 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 	}
 
 	def buildConfigurator(Group c, String text) {
-		c.children.filter[s|s instanceof Composite && s.getData("type") == "configurator"].forEach[dispose]
+		c.children.filter[s|
+			s instanceof Composite && (s.getData("type") == "configurator" || s.getData("type") == "crossselector")].forEach[
+			dispose]
 		if (text == "Ryu") {
 			c.buildAppConfigurator("Ryu App")
 		} else if (text == "POX") {
 			c.buildAppConfigurator("POX App")
 		} else if (text == "Pyretic") {
-			c.buildAppConfigurator(("Pyretic App"))
+			c.buildAppConfigurator("Pyretic App")
 		} else if (text == "OpenDaylight") {
+		} else if (text == "Cross-Controller") {
+			c.buildCrossControllerConfigurator()
 		}
+	}
+
+	def buildCrossControllerConfigurator(Group c) {
+		val comp = SWTFactory.createComposite(c, 3, 3, GridData.FILL_HORIZONTAL)
+		comp.setData("type", "configurator")
+
+		var targetlabel = SWTFactory.createLabel(comp, "Target Framework", 1)
+		val targetplatformselector = SWTFactory.createCombo(comp, SWT.READ_ONLY, 2,
+			newArrayList("Ryu", "POX", "Pyretic", "OpenDaylight"))
+		targetplatformselector.setData("type", "crossselector")
+
+		val sourcelabel = SWTFactory.createLabel(comp, "Source Framework", 1)
+
+		val sourceplatformselector = SWTFactory.createCombo(comp, SWT.READ_ONLY, 2,
+			newArrayList("Ryu", "POX", "Pyretic", "OpenDaylight"))
+		sourceplatformselector.setData("type", "crossselector")
+
+		val subcomp = SWTFactory.createGroup(comp, "", 2, 2, GridData.FILL_HORIZONTAL)
+		subcomp.setData("type", "configurator")
+
+		sourceplatformselector.setData("type", "platformselector")
+		sourceplatformselector.addSelectionListener(
+			new SelectionAdapter() {
+				override widgetSelected(SelectionEvent e) {
+					super.widgetSelected(e)
+					controllermap.put(String.format("controller_platform_%s", c.text), sourceplatformselector.text)
+					subcomp.buildConfigurator(sourceplatformselector.text)
+					scheduleUpdateJob
+				}
+			})
+
 	}
 
 	def buildAppConfigurator(Group c, String labeltext) {
@@ -186,7 +221,7 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 	}
 
 	override initializeFrom(ILaunchConfiguration configuration) {
-		
+
 		textfield.text = configuration.attributes.get("topologymodel") as String ?: ""
 
 		configuration.attributes.keySet.forEach[k|
@@ -206,6 +241,7 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 						case "POX": 1
 						case "Pyretic": 2
 						case "Floodlight": 3
+						case "Cross-Controller": 4
 						default: 0
 					})
 			}
