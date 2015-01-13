@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.widgets.Display
 import org.eclipse.swt.widgets.Group
 import org.eclipse.swt.widgets.Text
+import org.eclipse.swt.widgets.Event
 
 class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 
@@ -135,9 +136,7 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 	}
 
 	def buildConfigurator(Group c, String text) {
-		c.children.filter[s|
-			s instanceof Composite && (s.getData("type") == "configurator" || s.getData("type") == "crossselector")].forEach[
-			dispose]
+		c.children.filter[s|s instanceof Composite && (s.getData("type") == "configurator")].forEach[dispose]
 		if (text == "Ryu") {
 			c.buildAppConfigurator("Ryu App")
 		} else if (text == "POX") {
@@ -148,6 +147,7 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 		} else if (text == "Cross-Controller") {
 			c.buildCrossControllerConfigurator()
 		}
+		scheduleUpdateJob
 	}
 
 	def buildCrossControllerConfigurator(Group c) {
@@ -157,23 +157,34 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 		var targetlabel = SWTFactory.createLabel(comp, "Target Framework", 1)
 		val targetplatformselector = SWTFactory.createCombo(comp, SWT.READ_ONLY, 2,
 			newArrayList("Ryu", "POX", "Pyretic", "OpenDaylight"))
-		targetplatformselector.setData("type", "crossselector")
+		targetplatformselector.setData("type", "crossselector_target")
+		targetplatformselector.addSelectionListener(
+			new SelectionAdapter() {
+				override widgetSelected(SelectionEvent e) {
+					super.widgetSelected(e)
+					controllermap.put(String.format("controller_platform_target_%s", c.text),
+						targetplatformselector.text)
+					scheduleUpdateJob
+				}
+			})
 
 		val sourcelabel = SWTFactory.createLabel(comp, "Source Framework", 1)
 
 		val sourceplatformselector = SWTFactory.createCombo(comp, SWT.READ_ONLY, 2,
 			newArrayList("Ryu", "POX", "Pyretic", "OpenDaylight"))
-		sourceplatformselector.setData("type", "crossselector")
+		sourceplatformselector.setData("type", "crossselector_source")
 
-		val subcomp = SWTFactory.createGroup(comp, "", 2, 2, GridData.FILL_HORIZONTAL)
+		val subcomp = SWTFactory.createGroup(comp, c.text, 2, 2, GridData.FILL_HORIZONTAL)
 		subcomp.setData("type", "configurator")
 
 		sourceplatformselector.setData("type", "platformselector")
+		subcomp.buildConfigurator(sourceplatformselector.text)
 		sourceplatformselector.addSelectionListener(
 			new SelectionAdapter() {
 				override widgetSelected(SelectionEvent e) {
 					super.widgetSelected(e)
-					controllermap.put(String.format("controller_platform_%s", c.text), sourceplatformselector.text)
+					controllermap.put(String.format("controller_platform_source_%s", c.text),
+						sourceplatformselector.text)
 					subcomp.buildConfigurator(sourceplatformselector.text)
 					scheduleUpdateJob
 				}
@@ -244,6 +255,34 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 						case "Cross-Controller": 4
 						default: 0
 					})
+				d.notifyListeners(SWT.Selection, new Event())
+			}
+			if (configuration.attributes.get(String.format("controller_platform_%s", g.text)) as String ==
+				"Cross-Controller") {
+				for (d : g.children.filter[!disposed].filter(typeof(Composite)).map[children].filter(typeof(Combo)).filter(
+					x|x.getData("type").equals("crossselector_target"))) {
+					d.select(
+						switch (configuration.attributes.get(String.format("controller_platform_target_%s", g.text)) as String) {
+							case "Ryu": 0
+							case "POX": 1
+							case "Pyretic": 2
+							case "Floodlight": 3
+							default: 0
+						})
+					d.notifyListeners(SWT.Selection, new Event())
+				}
+				for (d : g.children.filter[!disposed].filter(typeof(Composite)).map[children].filter(typeof(Combo)).filter(
+					x|x.getData("type").equals("crossselector_source"))) {
+					d.select(
+						switch (configuration.attributes.get(String.format("controller_platform_source_%s", g.text)) as String) {
+							case "Ryu": 0
+							case "POX": 1
+							case "Pyretic": 2
+							case "Floodlight": 3
+							default: 0
+						})
+					d.notifyListeners(SWT.Selection, new Event())
+				}
 			}
 		]
 

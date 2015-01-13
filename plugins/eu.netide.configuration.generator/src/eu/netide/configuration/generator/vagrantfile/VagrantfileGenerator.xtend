@@ -57,7 +57,6 @@ class VagrantfileGenerator {
 				
 				# Configuring mininet
 				config.vm.provision "shell", path: "«mininetscriptpath»", privileged: false
-				
 				«IF requiredPlatforms.contains("Ryu")»
 					config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
 				«ENDIF»

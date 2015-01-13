@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <eu.netide.configuration:NetworkEnvironment xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eu.netide.configuration="eu.netide.configuration.topology" name="UC3">
-  <networks name="Headquarters">
+  <networks name="HQ">
     <networkelements xsi:type="eu.netide.configuration:Switch" name="sw1" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.0"/>
       <ports id="2" connector="//@networks.0/@connectors.2"/>
@@ -39,7 +39,7 @@
     <connectors connectedports="//@networks.0/@networkelements.2/@ports.1 //@networks.0/@networkelements.3/@ports.1"/>
     <connectors connectedports="//@networks.0/@networkelements.2/@ports.2 //@networks.1/@networkelements.0/@ports.0"/>
   </networks>
-  <networks name="Remote_Branch">
+  <networks name="RB">
     <networkelements xsi:type="eu.netide.configuration:Switch" name="sw5" controller="//@controllers.1">
       <ports id="1" connector="//@networks.0/@connectors.7"/>
       <ports id="2" connector="//@networks.1/@connectors.0"/>
@@ -59,19 +59,19 @@
     <networkelements xsi:type="eu.netide.configuration:Host" name="h4">
       <ports id="1" connector="//@networks.1/@connectors.0"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Host" name="h6">
-      <ports id="1" connector="//@networks.1/@connectors.3"/>
-    </networkelements>
     <networkelements xsi:type="eu.netide.configuration:Host" name="h5">
       <ports id="1" connector="//@networks.1/@connectors.4"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Host" name="h6">
+      <ports id="1" connector="//@networks.1/@connectors.3"/>
     </networkelements>
     <connectors connectedports="//@networks.1/@networkelements.0/@ports.1 //@networks.1/@networkelements.3/@ports.0"/>
     <connectors connectedports="//@networks.1/@networkelements.0/@ports.2 //@networks.1/@networkelements.2/@ports.0"/>
     <connectors connectedports="//@networks.1/@networkelements.1/@ports.0 //@networks.1/@networkelements.2/@ports.1"/>
-    <connectors connectedports="//@networks.1/@networkelements.2/@ports.3 //@networks.1/@networkelements.4/@ports.0"/>
-    <connectors connectedports="//@networks.1/@networkelements.2/@ports.2 //@networks.1/@networkelements.5/@ports.0"/>
+    <connectors connectedports="//@networks.1/@networkelements.2/@ports.3 //@networks.1/@networkelements.5/@ports.0"/>
+    <connectors connectedports="//@networks.1/@networkelements.2/@ports.2 //@networks.1/@networkelements.4/@ports.0"/>
     <connectors connectedports="//@networks.1/@networkelements.0/@ports.3 //@networks.1/@networkelements.1/@ports.1"/>
   </networks>
-  <controllers name="Floodlight" switches="//@networks.0/@networkelements.2 //@networks.0/@networkelements.0 //@networks.0/@networkelements.3 //@networks.0/@networkelements.1" ip="127.0.0.1" portNo="6633"/>
-  <controllers name="OpenDaylight" switches="//@networks.1/@networkelements.0 //@networks.1/@networkelements.2 //@networks.1/@networkelements.1" ip="127.0.0.1" portNo="6634"/>
+  <controllers name="HQ_Controller" switches="//@networks.0/@networkelements.2 //@networks.0/@networkelements.0 //@networks.0/@networkelements.3 //@networks.0/@networkelements.1" ip="127.0.0.1" portNo="6634"/>
+  <controllers name="RB_Controller" switches="//@networks.1/@networkelements.0 //@networks.1/@networkelements.2 //@networks.1/@networkelements.1" ip="127.0.0.1" portNo="6633"/>
 </eu.netide.configuration:NetworkEnvironment>
