@@ -13,6 +13,12 @@ import org.eclipse.xtext.generator.OutputConfiguration
 import java.util.List
 import org.eclipse.debug.core.ILaunchConfiguration
 
+
+/**
+ * Sets up the necessary tools to generate a Vagrantfile
+ * 
+ * @author Christian Stritzke
+ */
 class VagrantfileGenerateAction {
 
 	private IResource resource

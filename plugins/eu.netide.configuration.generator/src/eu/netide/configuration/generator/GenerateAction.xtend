@@ -11,6 +11,12 @@ import java.util.Map
 import org.eclipse.xtext.generator.OutputConfiguration
 import java.util.HashMap
 
+
+/**
+ * Sets up the necessary tools to generate a Vagrantfile
+ * 
+ * @author Christian Stritzke
+ */
 class GenerateAction {
 
 	@Inject

@@ -21,6 +21,8 @@ import org.eclipse.jface.preference.FileFieldEditor
  * are stored in the preference store that belongs to
  * the main plug-in class. That way, preferences can
  * be accessed directly via the preference store.
+ * 
+ * @author Christian Stritzke
  */
 public class NetIDEPreferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 

@@ -12,7 +12,13 @@ import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import eu.netide.configuration.utils.NetIDEUtil
+import Topology.Controller
 
+/**
+ * Generates and writes a Vagrantfile depending on required controller platforms and network applications.
+ * 
+ * @author Christian Stritzke
+ */
 class VagrantfileGenerator {
 
 	private ILaunchConfiguration configuration
@@ -30,19 +36,20 @@ class VagrantfileGenerator {
 
 		url = bundle.getEntry("scripts/install_ryu.sh")
 		var ryuscriptpath = FileLocator.resolve(url).path
-		
+
 		url = bundle.getEntry("scripts/install_pyretic.sh")
 		var pyreticscriptpath = FileLocator.resolve(url).path
 
-		var controllerPlatformKeys = configuration.attributes.keySet.filter[startsWith("controller_platform_")]
+		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map[c|
+			String.format("controller_platform_%s", c.name)]
 		var requiredPlatforms = controllerPlatformKeys.map[k|configuration.attributes.get(k) as String].toList
 
 		var ne = input.allContents.filter(typeof(NetworkEnvironment)).next
 
-		var appPaths = ne.controllers.map[
+		var appPaths = ne.controllers.map [
 			var platform = configuration.attributes.get("controller_platform_" + name)
 			configuration.attributes.get(String.format("controller_data_%s_%s", name, platform)) as String
-			].toSet.map[e|NetIDEUtil.absolutePath(e)]
+		].toSet.map[e|NetIDEUtil.absolutePath(e)]
 
 		return '''
 			# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
@@ -66,6 +73,8 @@ class VagrantfileGenerator {
 				
 				# Syncing the mininet configuration folder with the vm
 				config.vm.synced_folder "«res.project.location»/gen/mininet", "/home/vagrant/mn-configs"
+				
+				# Syncing controller paths with the vm
 				«FOR p : appPaths»
 					config.vm.synced_folder "«p.removeLastSegments(1)»", "/home/vagrant/controllers/«p.removeFileExtension.lastSegment»"
 				«ENDFOR»

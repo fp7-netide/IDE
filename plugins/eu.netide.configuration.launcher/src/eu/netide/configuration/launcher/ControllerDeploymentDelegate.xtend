@@ -27,6 +27,13 @@ import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
 import Topology.Controller
 import org.eclipse.core.runtime.IPath
 
+
+/**
+ * Triggers the automatic creation of virtual machines and execution of 
+ * controllers on them
+ * 
+ * @author Christian Stritzke
+ */
 class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 	Path location = null
@@ -126,7 +133,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 		var cline = switch (platform) {
 			case "Ryu": String.format("sudo ryu-manager --ofp-tcp-listen-port=%d controllers/%s/%s", c.portNo, path.removeFileExtension.lastSegment, path.lastSegment)
-			case "POX": String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pox/pox.py %s --port=%d", path.removeFileExtension.lastSegment, path.removeFileExtension.lastSegment, c.portNo)
+			case "POX": String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pox/pox.py openflow.of_01 --port=%s %s ", path.removeFileExtension.lastSegment, c.portNo, path.removeFileExtension.lastSegment)
 			case "Pyretic": String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pyretic.py %s", path.removeFileExtension.lastSegment, path.removeFileExtension.lastSegment)
 			default: "echo No valid platform specified" 
 		}

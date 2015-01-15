@@ -12,6 +12,11 @@ import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.widgets.Group
 import org.eclipse.swt.widgets.Label
 
+/**
+ * Creates a tab for miscellaneous options.
+ * 
+ * @author Christian Stritzke
+ */
 class ControllerDeploymentTab2 extends AbstractLaunchConfigurationTab {
 
 	private Label label

@@ -19,7 +19,7 @@ In order to execute commands on your VM through the IDE, you also need an instal
 5. Go back to the Java perspective and open eu.netide.configuration/model/Topology.genmodel
 6. Right-click the root element in the tree view and select "Generate All"
 7. Right-click the project eu.netide.configuration and select "Run As -> Eclipse Application"
-8. In the new eclipse instance, clone or add this repository like in step 3 and import the project "Network.design"
+8. In the new eclipse instance, clone or add this repository like in step 4 and import the project "Network.design"
 9. If you want to develop your Python-based controllers in Eclipse as well, you can install the [PyDev](http://www.pydev.org/) plug-in for Eclipse.
 
 
@@ -78,3 +78,7 @@ For examples, have a look at the examples folder. You can import the examples in
 ### Compiler errors after pulling
 
 The code you just pulled may use a more recent version of the Topology meta-model. If you run into compiler errors, just repeat step 5 and 6 from the Installation guide. This generates new model code from the newest version of the meta-model.
+
+### Large amounts of disk space used
+
+NetIDE creates a VM for each specified topology to set up a clean simulation environment. Delete the gen folder in your project and open the Virtualbox GUI to delete the VM completely, once you do not need it anymore.

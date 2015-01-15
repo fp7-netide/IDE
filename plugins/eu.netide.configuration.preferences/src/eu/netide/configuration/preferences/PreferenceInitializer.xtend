@@ -5,6 +5,8 @@ import org.eclipse.core.runtime.Platform
 
 /**
  * Class used to initialize default preference values.
+ * 
+ * @author Christian Stritzke
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 

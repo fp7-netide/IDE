@@ -11,6 +11,12 @@ import Topology.NetworkEnvironment;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+/**
+ * Invokes the generation of a mininet configuration file from the context menu.
+ * 
+ * @author Christian Stritzke
+ *
+ */
 public class GenerateActionDelegate implements IObjectActionDelegate {
 
 	private NetworkEnvironment ne;

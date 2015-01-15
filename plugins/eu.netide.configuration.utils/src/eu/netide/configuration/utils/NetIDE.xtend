@@ -1,5 +1,10 @@
 package eu.netide.configuration.utils
 
+/**
+ * Some useful constants
+ * 
+ * @author Christian Stritzke
+ */
 class NetIDE {
 	
 	public static val VAGRANTFILE_PATH = "/vagrant/trusty/"

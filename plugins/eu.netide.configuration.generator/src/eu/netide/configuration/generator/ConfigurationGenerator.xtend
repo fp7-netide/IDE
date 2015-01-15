@@ -10,6 +10,11 @@ import org.eclipse.xtext.generator.IGenerator
 import Topology.NetworkElement
 import Topology.Controller
 
+/**
+ * Generates a Mininet configuration based on the specified topology model
+ * 
+ * @author Christian Stritzke
+ */
 class ConfigurationGenerator implements IGenerator {
 	
 	var nodemap = newHashMap()

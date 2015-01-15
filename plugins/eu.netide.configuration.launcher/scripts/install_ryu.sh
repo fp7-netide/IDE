@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ "$(which pip)" == "" ] || [ "$(pip list | grep ryu)" == "" ]; then
   sudo apt-get update
-  sudo apt-get install -y python-dev libxml2-dev libxslt-dev python-pip
+  sudo apt-get install -y python-dev python-repoze.lru libxml2-dev libxslt-dev libxslt1-dev python-pip zlib1g-dev
   sudo pip install ryu
   sudo pip install WebOb
   sudo pip install routes

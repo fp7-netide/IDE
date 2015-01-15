@@ -3,6 +3,11 @@ package eu.netide.configuration.utils
 import org.eclipse.core.runtime.Path
 import org.eclipse.core.resources.ResourcesPlugin
 
+/**
+ * Some useful methods for everyday use
+ * 
+ * @author Christian Stritzke
+ */
 class NetIDEUtil {
 	
 	

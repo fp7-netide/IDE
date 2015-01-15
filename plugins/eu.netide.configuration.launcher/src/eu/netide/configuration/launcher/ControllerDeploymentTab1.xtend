@@ -28,6 +28,12 @@ import org.eclipse.swt.widgets.Group
 import org.eclipse.swt.widgets.Text
 import org.eclipse.swt.widgets.Event
 
+
+/**
+ * Creates a tab to link topology models and network applications
+ * 
+ * @author Christian Stritzke
+ */
 class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 
 	private Composite comp
