@@ -72,7 +72,7 @@ class ConfigurationGenerator implements IGenerator {
 			        
 			        # Adding Hosts
 			        «FOR Host h : ne.networks.map[networkelements].flatten.filter(typeof(Host))»
-			        	self.«h.fullname» = self.addHost('«h.fullname»', dpid=int2dpid(«nodemap.get(h.fullname)»))
+			        	self.«h.fullname» = self.addHost('«h.fullname»')
 			        «ENDFOR»
 			        
 			        # Adding Links
@@ -89,39 +89,43 @@ class ConfigurationGenerator implements IGenerator {
 	def compileRunscript(NetworkEnvironment ne) {
 				
 		return '''
-        from mininet.net import Mininet
-        from mininet.node import Controller, OVSSwitch, RemoteController
-        from mininet.cli import CLI
-        from mininet.log import setLogLevel
-        from «ne.envName» import «ne.envName»
-        
-                
-        def setup_and_run_«ne.envName» ():
-        
-            topo = «ne.envName»()
-            net = Mininet(topo=topo, build=False)
-            
-            «FOR Controller c : ne.controllers»
-            «c.name» = net.addController('c«nodemap.get(c.name)»', controller=RemoteController, ip='«c.ip»', port=«c.portNo»)
-            «ENDFOR»
-            net.build()
-            
-            «FOR Controller c : ne.controllers»
-            # Starting Controller «c.name»
-            «c.name».start()
-            
-            «FOR Switch s : c.switches»
-            net.get('«s.fullname»').start([«c.name»])
-            «ENDFOR»
-            «ENDFOR»
-            
-            CLI(net)
-            
-            net.stop()
-            
-        if __name__ == '__main__':
-            setLogLevel( 'info' ) # for CLI output
-            setup_and_run_«ne.envName»()
+			from mininet.net import Mininet
+			from mininet.node import Controller, OVSSwitch, RemoteController
+			from mininet.cli import CLI
+			from mininet.log import setLogLevel
+			from «ne.envName» import «ne.envName»
+			
+			
+			def setup_and_run_«ne.envName» ():
+			    controllers = []
+			    «FOR Controller c : ne.controllers»
+			    «c.name» = RemoteController( '«c.name»', ip='«c.ip»', port=«c.portNo» )
+			    controllers.append(«c.name»)
+			    «ENDFOR»
+			    
+			    cmap = {
+			    «FOR Switch s : ne.networks.map[networkelements].flatten.filter(typeof(Switch))»
+			        '«s.fullname»' : «s.controller.name»,
+			    «ENDFOR»
+			    }
+			    
+			    class MultiSwitch( OVSSwitch ):
+			        "Custom Switch() subclass that connects to different controllers"
+			        def start( self, controllers ):
+			            return OVSSwitch.start( self, [ cmap[ self.name ] ] )
+			    
+			    topo = «ne.envName»()
+			    net = Mininet(topo=topo, switch=MultiSwitch, build=False)
+			    for c in controllers:
+			        net.addController(c)
+			    net.build()
+			    net.start()
+			    CLI(net)
+			    net.stop()
+			    
+			if __name__ == '__main__':
+			    setLogLevel( 'info' ) # for CLI output
+			    setup_and_run_«ne.envName»()
 		'''
 	}
 

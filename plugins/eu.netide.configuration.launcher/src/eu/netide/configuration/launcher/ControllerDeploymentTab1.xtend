@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Display
 import org.eclipse.swt.widgets.Group
 import org.eclipse.swt.widgets.Text
 import org.eclipse.swt.widgets.Event
-
+import eu.netide.configuration.utils.NetIDE
 
 /**
  * Creates a tab to link topology models and network applications
@@ -123,7 +123,8 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 	def buildControllerConfigurator(Group c) {
 		val label = SWTFactory.createLabel(c, "Select Platform:", 1)
 		val platformselector = SWTFactory.createCombo(c, SWT.READ_ONLY, 1,
-			newArrayList("Ryu", "POX", "Pyretic", "OpenDaylight", "Cross-Controller"))
+			newArrayList(NetIDE.CONTROLLER_RYU, NetIDE.CONTROLLER_POX, NetIDE.CONTROLLER_PYRETIC,
+				NetIDE.CONTROLLER_FLOODLIGHT, NetIDE.CONTROLLER_ODL, NetIDE.CONTROLLER_CROSS))
 
 		platformselector.select(0)
 		c.buildConfigurator(platformselector.text)
@@ -138,19 +139,18 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 					scheduleUpdateJob
 				}
 			})
-
 	}
 
 	def buildConfigurator(Group c, String text) {
 		c.children.filter[s|s instanceof Composite && (s.getData("type") == "configurator")].forEach[dispose]
 		if (text == "Ryu") {
 			c.buildAppConfigurator("Ryu App")
-		} else if (text == "POX") {
+		} else if (text == NetIDE.CONTROLLER_POX) {
 			c.buildAppConfigurator("POX App")
-		} else if (text == "Pyretic") {
+		} else if (text == NetIDE.CONTROLLER_PYRETIC) {
 			c.buildAppConfigurator("Pyretic App")
 		} else if (text == "OpenDaylight") {
-		} else if (text == "Cross-Controller") {
+		} else if (text == NetIDE.CONTROLLER_CROSS) {
 			c.buildCrossControllerConfigurator()
 		}
 		scheduleUpdateJob
@@ -160,9 +160,10 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 		val comp = SWTFactory.createComposite(c, 3, 3, GridData.FILL_HORIZONTAL)
 		comp.setData("type", "configurator")
 
-		var targetlabel = SWTFactory.createLabel(comp, "Target Framework", 1)
+		var targetlabel = SWTFactory.createLabel(comp, "Server Controller", 1)
 		val targetplatformselector = SWTFactory.createCombo(comp, SWT.READ_ONLY, 2,
-			newArrayList("Ryu", "POX", "Pyretic", "OpenDaylight"))
+			newArrayList(NetIDE.CONTROLLER_RYU, NetIDE.CONTROLLER_POX, NetIDE.CONTROLLER_PYRETIC,
+				NetIDE.CONTROLLER_FLOODLIGHT, NetIDE.CONTROLLER_ODL))
 		targetplatformselector.setData("type", "crossselector_target")
 		targetplatformselector.addSelectionListener(
 			new SelectionAdapter() {
@@ -174,10 +175,11 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 				}
 			})
 
-		val sourcelabel = SWTFactory.createLabel(comp, "Source Framework", 1)
+		val sourcelabel = SWTFactory.createLabel(comp, "Client Controller", 1)
 
 		val sourceplatformselector = SWTFactory.createCombo(comp, SWT.READ_ONLY, 2,
-			newArrayList("Ryu", "POX", "Pyretic", "OpenDaylight"))
+			newArrayList(NetIDE.CONTROLLER_RYU, NetIDE.CONTROLLER_POX, NetIDE.CONTROLLER_PYRETIC,
+				NetIDE.CONTROLLER_FLOODLIGHT, NetIDE.CONTROLLER_ODL))
 		sourceplatformselector.setData("type", "crossselector_source")
 
 		val subcomp = SWTFactory.createGroup(comp, c.text, 2, 2, GridData.FILL_HORIZONTAL)
@@ -254,37 +256,40 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 			for (d : g.children.filter(typeof(Combo)).filter(x|x.getData("type").equals("platformselector"))) {
 				d.select(
 					switch (configuration.attributes.get(String.format("controller_platform_%s", g.text)) as String) {
-						case "Ryu": 0
-						case "POX": 1
-						case "Pyretic": 2
-						case "Floodlight": 3
-						case "Cross-Controller": 4
+						case NetIDE.CONTROLLER_RYU: 0
+						case NetIDE.CONTROLLER_POX: 1
+						case NetIDE.CONTROLLER_PYRETIC: 2
+						case NetIDE.CONTROLLER_FLOODLIGHT: 3
+						case NetIDE.CONTROLLER_ODL: 4
+						case NetIDE.CONTROLLER_CROSS: 5
 						default: 0
 					})
 				d.notifyListeners(SWT.Selection, new Event())
 			}
 			if (configuration.attributes.get(String.format("controller_platform_%s", g.text)) as String ==
 				"Cross-Controller") {
-				for (d : g.children.filter[!disposed].filter(typeof(Composite)).map[children].filter(typeof(Combo)).filter(
-					x|x.getData("type").equals("crossselector_target"))) {
+				for (d : g.children.filter[!disposed].filter(typeof(Composite)).map[children].filter(typeof(Combo)).
+					filter(x|x.getData("type").equals("crossselector_target"))) {
 					d.select(
 						switch (configuration.attributes.get(String.format("controller_platform_target_%s", g.text)) as String) {
-							case "Ryu": 0
-							case "POX": 1
-							case "Pyretic": 2
-							case "Floodlight": 3
+							case NetIDE.CONTROLLER_RYU: 0
+							case NetIDE.CONTROLLER_POX: 1
+							case NetIDE.CONTROLLER_PYRETIC: 2
+							case NetIDE.CONTROLLER_FLOODLIGHT: 3
+							case NetIDE.CONTROLLER_ODL: 4
 							default: 0
 						})
 					d.notifyListeners(SWT.Selection, new Event())
 				}
-				for (d : g.children.filter[!disposed].filter(typeof(Composite)).map[children].filter(typeof(Combo)).filter(
-					x|x.getData("type").equals("crossselector_source"))) {
+				for (d : g.children.filter[!disposed].filter(typeof(Composite)).map[children].filter(typeof(Combo)).
+					filter(x|x.getData("type").equals("crossselector_source"))) {
 					d.select(
 						switch (configuration.attributes.get(String.format("controller_platform_source_%s", g.text)) as String) {
-							case "Ryu": 0
-							case "POX": 1
-							case "Pyretic": 2
-							case "Floodlight": 3
+							case NetIDE.CONTROLLER_RYU: 0
+							case NetIDE.CONTROLLER_POX: 1
+							case NetIDE.CONTROLLER_PYRETIC: 2
+							case NetIDE.CONTROLLER_FLOODLIGHT: 3
+							case NetIDE.CONTROLLER_ODL: 4
 							default: 0
 						})
 					d.notifyListeners(SWT.Selection, new Event())

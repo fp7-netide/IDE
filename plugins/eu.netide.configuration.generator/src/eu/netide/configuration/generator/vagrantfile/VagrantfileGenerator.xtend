@@ -30,6 +30,8 @@ class VagrantfileGenerator {
 
 	def compile(Resource input, IResource res) {
 
+		var ne = input.allContents.filter(typeof(NetworkEnvironment)).next
+	
 		var bundle = Platform.getBundle(NetIDE.LAUNCHER_PLUGIN)
 		var url = bundle.getEntry("scripts/install_mininet.sh")
 		var mininetscriptpath = FileLocator.resolve(url).path
@@ -39,12 +41,26 @@ class VagrantfileGenerator {
 
 		url = bundle.getEntry("scripts/install_pyretic.sh")
 		var pyreticscriptpath = FileLocator.resolve(url).path
+		
+		url = bundle.getEntry("scripts/install_ryu_on_pox.sh")
+		var ryuonpoxscriptpath = FileLocator.resolve(url).path
+		
+		url = bundle.getEntry("scripts/install_logger.sh")
+		var loggerscriptpath = FileLocator.resolve(url).path
 
 		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map[c|
 			String.format("controller_platform_%s", c.name)]
+			
 		var requiredPlatforms = controllerPlatformKeys.map[k|configuration.attributes.get(k) as String].toList
-
-		var ne = input.allContents.filter(typeof(NetworkEnvironment)).next
+			
+		var crosscontrollers = ne.controllers.filter[configuration.attributes.get("controller_platform_" + name) == NetIDE.CONTROLLER_CROSS]
+		
+		var serverPlatforms = crosscontrollers.map[c | configuration.attributes.get("controller_platform_target_" + c.name) as String].toList
+		
+		var clientPlatforms = crosscontrollers.map[c | configuration.attributes.get("controller_platform_source_" + c.name) as String].toList
+		
+		requiredPlatforms.addAll(serverPlatforms)
+		requiredPlatforms.addAll(clientPlatforms)
 
 		var appPaths = ne.controllers.map [
 			var platform = configuration.attributes.get("controller_platform_" + name)
@@ -64,11 +80,15 @@ class VagrantfileGenerator {
 				
 				# Configuring mininet
 				config.vm.provision "shell", path: "«mininetscriptpath»", privileged: false
+				config.vm.provision "shell", path: "«loggerscriptpath»", privileged: false
 				«IF requiredPlatforms.contains("Ryu")»
 					config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
 				«ENDIF»
 				«IF requiredPlatforms.contains("Pyretic")»
 					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
+				«ENDIF»
+				«IF requiredPlatforms.contains(NetIDE.CONTROLLER_CROSS)»
+					config.vm.provision "shell", path: "«ryuonpoxscriptpath»", privileged: false
 				«ENDIF»
 				
 				# Syncing the mininet configuration folder with the vm

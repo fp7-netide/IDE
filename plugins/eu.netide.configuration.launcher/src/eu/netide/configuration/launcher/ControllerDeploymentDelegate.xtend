@@ -27,7 +27,6 @@ import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
 import Topology.Controller
 import org.eclipse.core.runtime.IPath
 
-
 /**
  * Triggers the automatic creation of virtual machines and execution of 
  * controllers on them
@@ -89,34 +88,93 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
 
 		for (c : ne.controllers) {
+			var controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
 
-			var controllerplatform = (configuration.attributes.get("controller_platform_" + c.name) as String)
-			var controllerpath = (configuration.attributes.get("controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
+			if (controllerplatform == NetIDE.CONTROLLER_CROSS) {
+				var serverplatform = configuration.attributes.get("controller_platform_target_" + c.name) as String
+				var clientplatform = configuration.attributes.get("controller_platform_source_" + c.name) as String
 
-			cmdline = getCommandLine(controllerplatform, controllerpath, c)
+				if (serverplatform == NetIDE.CONTROLLER_POX && clientplatform == NetIDE.CONTROLLER_RYU) {
+					var clientcontrollerpath = (configuration.attributes.get(
+						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
 
-			var controllerthread = new Thread() {
-				var File workingDir
-				var ArrayList<String> cmdline
 
-				def setParameters(File wd, ArrayList<String> cl) {
-					this.workingDir = wd
-					this.cmdline = cl
+					cmdline = getCommandLine("Ryu_on_Pox", clientcontrollerpath, c)
+					
+					var clientthread = new Thread() {
+						var File workingDir
+						var ArrayList<String> cmdline
+
+						def setParameters(File wd, ArrayList<String> cl) {
+							this.workingDir = wd
+							this.cmdline = cl
+						}
+
+						override run() {
+							super.run()
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+						}
+					}
+					
+					clientthread.setParameters(workingDir, cmdline)
+					clientthread.start
+
+					cmdline = getCommandLine("Pox_Shim", clientcontrollerpath, c)
+
+					var serverthread = new Thread() {
+						var File workingDir
+						var ArrayList<String> cmdline
+
+						def setParameters(File wd, ArrayList<String> cl) {
+							this.workingDir = wd
+							this.cmdline = cl
+						}
+
+						override run() {
+							super.run()
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+						}
+					}
+					
+					serverthread.setParameters(workingDir, cmdline)
+					serverthread.start
+					
+					
+
 				}
 
-				override run() {
-					super.run()
-					startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+			} else {
+
+				var controllerpath = (configuration.attributes.get(
+					"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
+
+				cmdline = getCommandLine(controllerplatform, controllerpath, c)
+
+				var controllerthread = new Thread() {
+					var File workingDir
+					var ArrayList<String> cmdline
+
+					def setParameters(File wd, ArrayList<String> cl) {
+						this.workingDir = wd
+						this.cmdline = cl
+					}
+
+					override run() {
+						super.run()
+						startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+					}
 				}
+
+				controllerthread.setParameters(workingDir, cmdline)
+				Thread.sleep(2000)
+				controllerthread.start
+
 			}
-
-			controllerthread.setParameters(workingDir, cmdline)
-			controllerthread.start
 
 		}
 
 		Thread.sleep(2000)
-		
+
 		cmdline = newArrayList(location.toOSString, "ssh", "-c",
 			"sudo python ~/mn-configs/" + if(ne.name != null) ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
 
@@ -132,10 +190,23 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 	def getCommandLine(String platform, IPath path, Controller c) {
 
 		var cline = switch (platform) {
-			case "Ryu": String.format("sudo ryu-manager --ofp-tcp-listen-port=%d controllers/%s/%s", c.portNo, path.removeFileExtension.lastSegment, path.lastSegment)
-			case "POX": String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pox/pox.py openflow.of_01 --port=%s %s ", path.removeFileExtension.lastSegment, c.portNo, path.removeFileExtension.lastSegment)
-			case "Pyretic": String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pyretic.py %s", path.removeFileExtension.lastSegment, path.removeFileExtension.lastSegment)
-			default: "echo No valid platform specified" 
+			case "Ryu":
+				String.format("sudo ryu-manager --ofp-tcp-listen-port=%d controllers/%s/%s", c.portNo,
+					path.removeFileExtension.lastSegment, path.lastSegment)
+			case "POX":
+				String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pox/pox.py openflow.of_01 --port=%s %s ",
+					path.removeFileExtension.lastSegment, c.portNo, path.removeFileExtension.lastSegment)
+			case "Pyretic":
+				String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pyretic.py %s",
+					path.removeFileExtension.lastSegment, path.removeFileExtension.lastSegment)
+			case "Pox_Shim":
+				String.format("PYTHONPATH=$PYTHONPATH:Engine/ryu-backend/tests pox/pox.py openflow.of_01 --port=%s pox_client", c.portNo)
+			case "Ryu_on_Pox":
+				String.format(
+					"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend sudo ryu-manager --ofp-tcp-listen-port 7733 Engine/ryu-backend/backend.py controllers/%s/%s", 
+					path.removeFileExtension.lastSegment, path.lastSegment)
+			default:
+				"echo No valid platform specified"
 		}
 
 		newArrayList(location.toOSString, "ssh", "-c", cline)
