@@ -136,6 +136,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 						}
 					}
 					
+					Thread.sleep(2000)
+					
 					serverthread.setParameters(workingDir, cmdline)
 					serverthread.start
 					
