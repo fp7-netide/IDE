@@ -5,7 +5,7 @@
       <metamodel href="eu.netide.configuration.topology#/"/>
       <defaultLayer name="Default">
         <nodeMappings name="Controller" labelDirectEdit="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@toolSections.0/@ownedTools[name='NameEdit']" semanticCandidatesExpression="feature:eAllContents" domainClass="Topology.Controller">
-          <style xsi:type="style:SquareDescription" labelFormat="bold" showIcon="false" labelExpression="[self.name+' ('+self.ip+':'+self.portNo+')' /]" labelPosition="node" resizeKind="NSEW">
+          <style xsi:type="style:SquareDescription" labelFormat="bold" showIcon="false" labelExpression="[self.name+' ('+self.ip+':'+self.portNo+')' /]" labelPosition="node" resizeKind="NSEW" width="15" height="3">
             <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
             <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='dark_blue']"/>
@@ -118,6 +118,8 @@
               <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:container">
                 <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Controller" referenceName="controllers">
                   <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="['c'+container.eContents()->filter(Controller)->size() /]"/>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="ip" valueExpression="127.0.0.1"/>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="portNo" valueExpression="[6633/]"/>
                 </subModelOperations>
               </firstModelOperations>
             </initialOperation>
