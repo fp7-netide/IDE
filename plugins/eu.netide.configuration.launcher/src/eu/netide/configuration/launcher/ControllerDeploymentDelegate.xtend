@@ -90,7 +90,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		for (c : ne.controllers) {
 			var controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
 
-			if (controllerplatform == NetIDE.CONTROLLER_CROSS) {
+			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
 				var serverplatform = configuration.attributes.get("controller_platform_target_" + c.name) as String
 				var clientplatform = configuration.attributes.get("controller_platform_source_" + c.name) as String
 

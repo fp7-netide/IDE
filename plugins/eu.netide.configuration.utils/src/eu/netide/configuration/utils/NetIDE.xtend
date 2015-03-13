@@ -21,5 +21,5 @@ class NetIDE {
 	public static val CONTROLLER_FLOODLIGHT = "Floodlight"
 	public static val CONTROLLER_ODL = "OpenDaylight"
 	public static val CONTROLLER_PYRETIC = "Pyretic"
-	public static val CONTROLLER_CROSS = "Cross-Controller"
+	public static val CONTROLLER_ENGINE = "Network Engine"
 }

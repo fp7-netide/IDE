@@ -53,7 +53,7 @@ class VagrantfileGenerator {
 			
 		var requiredPlatforms = controllerPlatformKeys.map[k|configuration.attributes.get(k) as String].toList
 			
-		var crosscontrollers = ne.controllers.filter[configuration.attributes.get("controller_platform_" + name) == NetIDE.CONTROLLER_CROSS]
+		var crosscontrollers = ne.controllers.filter[configuration.attributes.get("controller_platform_" + name) == NetIDE.CONTROLLER_ENGINE]
 		
 		var serverPlatforms = crosscontrollers.map[c | configuration.attributes.get("controller_platform_target_" + c.name) as String].toList
 		
@@ -87,7 +87,7 @@ class VagrantfileGenerator {
 				«IF requiredPlatforms.contains("Pyretic")»
 					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
 				«ENDIF»
-				«IF requiredPlatforms.contains(NetIDE.CONTROLLER_CROSS)»
+				«IF requiredPlatforms.contains(NetIDE.CONTROLLER_ENGINE)»
 					config.vm.provision "shell", path: "«ryuonpoxscriptpath»", privileged: false
 				«ENDIF»
 				

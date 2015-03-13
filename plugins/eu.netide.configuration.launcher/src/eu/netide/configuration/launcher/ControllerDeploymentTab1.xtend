@@ -59,7 +59,7 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 			})
 
 		control = comp
-		val g = SWTFactory.createGroup(comp, "Configuration Selection", 3, 1, GridData.FILL_HORIZONTAL) //new Group(comp, SWT.NONE)
+		val g = SWTFactory.createGroup(comp, "Topology Selection", 3, 1, GridData.FILL_HORIZONTAL) //new Group(comp, SWT.NONE)
 		g.createConfigurationChooser
 	}
 
@@ -124,7 +124,7 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 		val label = SWTFactory.createLabel(c, "Select Platform:", 1)
 		val platformselector = SWTFactory.createCombo(c, SWT.READ_ONLY, 1,
 			newArrayList(NetIDE.CONTROLLER_RYU, NetIDE.CONTROLLER_POX, NetIDE.CONTROLLER_PYRETIC,
-				NetIDE.CONTROLLER_FLOODLIGHT, NetIDE.CONTROLLER_ODL, NetIDE.CONTROLLER_CROSS))
+				NetIDE.CONTROLLER_FLOODLIGHT, NetIDE.CONTROLLER_ODL, NetIDE.CONTROLLER_ENGINE))
 
 		platformselector.select(0)
 		c.buildConfigurator(platformselector.text)
@@ -150,7 +150,7 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 		} else if (text == NetIDE.CONTROLLER_PYRETIC) {
 			c.buildAppConfigurator("Pyretic App")
 		} else if (text == "OpenDaylight") {
-		} else if (text == NetIDE.CONTROLLER_CROSS) {
+		} else if (text == NetIDE.CONTROLLER_ENGINE) {
 			c.buildCrossControllerConfigurator()
 		}
 		scheduleUpdateJob
@@ -261,7 +261,7 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 						case NetIDE.CONTROLLER_PYRETIC: 2
 						case NetIDE.CONTROLLER_FLOODLIGHT: 3
 						case NetIDE.CONTROLLER_ODL: 4
-						case NetIDE.CONTROLLER_CROSS: 5
+						case NetIDE.CONTROLLER_ENGINE: 5
 						default: 0
 					})
 				d.notifyListeners(SWT.Selection, new Event())
