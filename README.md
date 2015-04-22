@@ -14,7 +14,7 @@ In order to execute commands on your VM through the IDE, you also need an instal
 
 1. Download Eclipse Luna Modeling Tools at www.eclipse.org.
 2. Start Eclipse and open the Git Perspective.
-3. From the window menu, select "Help -> Install Modeling Components". Select and install XText.
+3. From the window menu, select "Help -> Install Modeling Components". Select and install Xtext. Note that NetIDE needs Xtext at version 2.7.3.
 4. Clone or add this repository and import all projects in the "plugins"-folder into your workspace. Import "eu.netide.configuration" as a general project.
 5. Go back to the Java perspective and open eu.netide.configuration/model/Topology.genmodel
 6. Right-click the root element in the tree view and select "Generate All"
@@ -75,10 +75,14 @@ For examples, have a look at the examples folder. You can import the examples in
 
 ## Troubleshooting
 
+### Configuration generation does not work
+
+NetIDE is not yet compatible to the newest versions of Xtend. We recommend using version 2.7.3.
+
 ### Compiler errors after pulling
 
 The code you just pulled may use a more recent version of the Topology meta-model. If you run into compiler errors, just repeat step 5 and 6 from the Installation guide. This generates new model code from the newest version of the meta-model.
 
 ### Large amounts of disk space used
 
-NetIDE creates a VM for each specified topology to set up a clean simulation environment. Delete the gen folder in your project and open the Virtualbox GUI to delete the VM completely, once you do not need it anymore.
+NetIDE creates a VM for each topology modeling project to set up a clean simulation environment. Delete the gen folder in your project and open the Virtualbox GUI to delete the VM completely, once you do not need it anymore.
