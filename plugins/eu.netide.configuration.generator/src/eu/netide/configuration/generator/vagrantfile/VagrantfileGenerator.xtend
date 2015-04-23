@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import eu.netide.configuration.utils.NetIDEUtil
 import Topology.Controller
+import java.net.URL
 
 /**
  * Generates and writes a Vagrantfile depending on required controller platforms and network applications.
@@ -34,19 +35,19 @@ class VagrantfileGenerator {
 	
 		var bundle = Platform.getBundle(NetIDE.LAUNCHER_PLUGIN)
 		var url = bundle.getEntry("scripts/install_mininet.sh")
-		var mininetscriptpath = FileLocator.resolve(url).path
+		var mininetscriptpath = scriptpath(url)
 
 		url = bundle.getEntry("scripts/install_ryu.sh")
-		var ryuscriptpath = FileLocator.resolve(url).path
+		var ryuscriptpath = scriptpath(url)
 
 		url = bundle.getEntry("scripts/install_pyretic.sh")
-		var pyreticscriptpath = FileLocator.resolve(url).path
+		var pyreticscriptpath = scriptpath(url)
 		
 		url = bundle.getEntry("scripts/install_ryu_on_pox.sh")
-		var ryuonpoxscriptpath = FileLocator.resolve(url).path
+		var ryuonpoxscriptpath = scriptpath(url)
 		
 		url = bundle.getEntry("scripts/install_logger.sh")
-		var loggerscriptpath = FileLocator.resolve(url).path
+		var loggerscriptpath = scriptpath(url)
 
 		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map[c|
 			String.format("controller_platform_%s", c.name)]
@@ -115,6 +116,15 @@ class VagrantfileGenerator {
 			n.name
 		else
 			"NetworkEnvironment"
+	}
+	
+	def scriptpath(URL url) {
+	
+		if (Platform.getOS == Platform.OS_LINUX || Platform.getOS == Platform.OS_MACOSX)
+			FileLocator.resolve(url).path
+		else if (Platform.getOS == Platform.OS_WIN32)
+			FileLocator.resolve(url).path.substring(1)
+		
 	}
 
 }
