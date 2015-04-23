@@ -20,7 +20,10 @@ class NetIDEUtil {
             else if (Platform.getOS == Platform.OS_LINUX || Platform.getOS == Platform.OS_MACOSX)
                     ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(e).removeFirstSegments(2)).rawLocation
         } else if (e.startsWith("file:/")) {
-            new Path("/" + new Path(e).removeFirstSegments(1))
+        	if (Platform.getOS == Platform.OS_WIN32)
+        		new Path("" + new Path(e.substring(5)))
+        	else if (Platform.getOS == Platform.OS_LINUX || Platform.getOS == Platform.OS_MACOSX)
+        	    new Path("/" + new Path(e).removeFirstSegments(1))
         } else {
             new Path(e)
         }
