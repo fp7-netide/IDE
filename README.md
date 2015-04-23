@@ -79,6 +79,10 @@ For examples, have a look at the examples folder. You can import the examples in
 
 NetIDE is not yet compatible to the newest versions of Xtend. We recommend using version 2.7.3.
 
+### Vagrant does not start when running a launch configuration
+
+If your vagrant executable is not in a standard location (`/usr/bin/vagrant` or `C:\Hashicorp\Vagrant\bin\vagrant.exe`) you have to enter your custom location under "Window -> Preferences -> NetIDE".
+
 ### Compiler errors after pulling
 
 The code you just pulled may use a more recent version of the Topology meta-model. If you run into compiler errors, just repeat step 5 and 6 from the Installation guide. This generates new model code from the newest version of the meta-model.
