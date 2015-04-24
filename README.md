@@ -81,7 +81,14 @@ NetIDE is not yet compatible to the newest versions of Xtend. We recommend using
 
 ### Vagrant does not start when running a launch configuration
 
+If Vagrant displays the error message `The box 'ubuntu/trusty32' could not be found`, make sure you have installed a recent version of vagrant. For example, the version in the repositories for Ubuntu 14.04 LTS (1.4.3-1) is too old. After upgrading Vagrant, it may be necessary to remove the directory `~/.vagrant.d`.
+
 If your vagrant executable is not in a standard location (`/usr/bin/vagrant` or `C:\Hashicorp\Vagrant\bin\vagrant.exe`) you have to enter your custom location under "Window -> Preferences -> NetIDE".
+
+### Generating mininet configurations fails with "The chosen operation is not currently available"
+
+This error occurs if the projects in the `plugins`-folder have not been imported properly. They have to be imported as Projects, or, in the case of `eu.netide.configuration`, as General Projects. The simplest way to do this is to right-click the `plugins`-folder in the Git perspective and choosing "Import Projects..." from the menu.
+
 
 ### Compiler errors after pulling
 
