@@ -43,8 +43,8 @@ class VagrantfileGenerator {
 		url = bundle.getEntry("scripts/install_pyretic.sh")
 		var pyreticscriptpath = scriptpath(url)
 		
-		url = bundle.getEntry("scripts/install_ryu_on_pox.sh")
-		var ryuonpoxscriptpath = scriptpath(url)
+		url = bundle.getEntry("scripts/install_engine.sh")
+		var netideenginescriptpath = scriptpath(url)
 		
 		url = bundle.getEntry("scripts/install_logger.sh")
 		var loggerscriptpath = scriptpath(url)
@@ -56,12 +56,12 @@ class VagrantfileGenerator {
 			
 		var crosscontrollers = ne.controllers.filter[configuration.attributes.get("controller_platform_" + name) == NetIDE.CONTROLLER_ENGINE]
 		
-		var serverPlatforms = crosscontrollers.map[c | configuration.attributes.get("controller_platform_target_" + c.name) as String].toList
-		
 		var clientPlatforms = crosscontrollers.map[c | configuration.attributes.get("controller_platform_source_" + c.name) as String].toList
 		
-		requiredPlatforms.addAll(serverPlatforms)
+		var serverPlatforms = crosscontrollers.map[c | configuration.attributes.get("controller_platform_target_" + c.name) as String].toList
+		
 		requiredPlatforms.addAll(clientPlatforms)
+		requiredPlatforms.addAll(serverPlatforms)
 
 		var appPaths = ne.controllers.map [
 			var platform = configuration.attributes.get("controller_platform_" + name)
@@ -89,7 +89,7 @@ class VagrantfileGenerator {
 					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
 				«ENDIF»
 				«IF requiredPlatforms.contains(NetIDE.CONTROLLER_ENGINE)»
-					config.vm.provision "shell", path: "«ryuonpoxscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
 				«ENDIF»
 				
 				# Syncing the mininet configuration folder with the vm

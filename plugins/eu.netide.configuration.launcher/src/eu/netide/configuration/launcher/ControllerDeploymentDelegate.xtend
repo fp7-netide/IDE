@@ -99,7 +99,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
 
 
-					cmdline = getCommandLine("Ryu_on_Pox", clientcontrollerpath, c)
+					cmdline = getCommandLine("Ryu_backend", clientcontrollerpath, c)
 					
 					var clientthread = new Thread() {
 						var File workingDir
@@ -144,7 +144,56 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 					
 
 				}
+				else if (serverplatform == NetIDE.CONTROLLER_RYU && clientplatform == NetIDE.CONTROLLER_RYU) {
+					var clientcontrollerpath = (configuration.attributes.get(
+						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
 
+
+					cmdline = getCommandLine("Ryu_backend", clientcontrollerpath, c)
+					
+					var clientthread = new Thread() {
+						var File workingDir
+						var ArrayList<String> cmdline
+
+						def setParameters(File wd, ArrayList<String> cl) {
+							this.workingDir = wd
+							this.cmdline = cl
+						}
+
+						override run() {
+							super.run()
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+						}
+					}
+					
+					clientthread.setParameters(workingDir, cmdline)
+					clientthread.start
+
+					cmdline = getCommandLine("Ryu_Shim", clientcontrollerpath, c)
+
+					var serverthread = new Thread() {
+						var File workingDir
+						var ArrayList<String> cmdline
+
+						def setParameters(File wd, ArrayList<String> cl) {
+							this.workingDir = wd
+							this.cmdline = cl
+						}
+
+						override run() {
+							super.run()
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+						}
+					}
+					
+					Thread.sleep(2000)
+					
+					serverthread.setParameters(workingDir, cmdline)
+					serverthread.start
+					
+					
+
+				}
 			} else {
 
 				var controllerpath = (configuration.attributes.get(
@@ -178,7 +227,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		Thread.sleep(2000)
 
 		cmdline = newArrayList(location.toOSString, "ssh", "-c",
-			"sudo python ~/mn-configs/" + if(ne.name != null && ne.name != "") ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
+			"sudo python ~/mn-configs/" + if(ne.name != null) ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
 
 		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
 
@@ -203,7 +252,9 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 					path.removeFileExtension.lastSegment, path.removeFileExtension.lastSegment)
 			case "Pox_Shim":
 				String.format("PYTHONPATH=$PYTHONPATH:Engine/ryu-backend/tests pox/pox.py openflow.of_01 --port=%s pox_client", c.portNo)
-			case "Ryu_on_Pox":
+			case "Ryu_Shim":
+				String.format("PYTHONPATH=$PYTHONPATH:Engine/ryu-shim sudo ryu-manager --ofp-tcp-listen-port=%s Engine/ryu-shim/ryu_shim.py", c.portNo)
+			case "Ryu_backend":
 				String.format(
 					"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend sudo ryu-manager --ofp-tcp-listen-port 7733 Engine/ryu-backend/backend.py controllers/%s/%s", 
 					path.removeFileExtension.lastSegment, path.lastSegment)

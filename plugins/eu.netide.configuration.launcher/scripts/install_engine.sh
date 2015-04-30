@@ -5,8 +5,11 @@ if [ ! -d ~/Engine ]; then
   echo "export PYTHONPATH=\$PYTHONPATH:~/Engine/ryu-backend:~/Engine/ryu-backend/tests" >> $HOME/.bashrc
   echo "export PYTHONPATH=\$PYTHONPATH:~/Engine/ryu-backend:~/Engine/ryu-backend/tests" >> $HOME/.profile
   
-  sudo cp -r Engine/ryu-backend/netide /usr/local/lib/python2.7/dist-packages/ryu/
+  echo "export PYTHONPATH=\$PYTHONPATH:~/Engine/ryu-shim" >> $HOME/.bashrc
+  echo "export PYTHONPATH=\$PYTHONPATH:~/Engine/ryu-shim" >> $HOME/.profile
   
+  sudo cp -r Engine/ryu-backend/netide /usr/local/lib/python2.7/dist-packages/ryu/
+  sudo cp -r Engine/ryu-shim/netide /usr/local/lib/python2.7/dist-packages/ryu/
 else
   echo "Engine Repo already exists. Skipping..."
 fi
