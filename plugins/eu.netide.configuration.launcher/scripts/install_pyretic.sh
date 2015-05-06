@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ ! -d ~/pyretic ]; then
-  sudo apt-get install python-dev python-pip python-netaddr screen hping3 ml-lpt graphviz ruby1.9.1-dev libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev python-all python-all-dev python-all-dbg
+  sudo apt-get --yes install python-pip python-dev python-pip python-netaddr screen hping3 ml-lpt graphviz ruby1.9.1-dev libboost-dev libboost-test-dev libboost-program-options-dev libevent-dev automake libtool flex bison pkg-config g++ libssl-dev python-all python-all-dev python-all-dbg gem
 
   sudo pip install networkx bitarray netaddr ipaddr pytest ipdb sphinx pyparsing==1.5.7 yappi
 
@@ -21,9 +21,8 @@ if [ ! -d ~/pyretic ]; then
   cd ~
   git clone git://github.com/frenetic-lang/pyretic.git
 
-  echo -e 'export PATH=$PATH:$HOME/pyretic:$HOME/pox\nexport PYTHONPATH=$HOME/pyretic:$HOME/mininet:$HOME/pox' >> .profile
+  echo "export PYTHONPATH=\$PYTHONPATH:$HOME/pyretic" >> $HOME/.bashrc
 
-  wget http://frenetic-lang.org/pyretic/useful/.screenrc
 else
   echo "Pyretic seems to be already installed. Skipping..."
 fi

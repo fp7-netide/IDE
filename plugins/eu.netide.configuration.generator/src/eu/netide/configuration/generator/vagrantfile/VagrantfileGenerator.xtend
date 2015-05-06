@@ -43,6 +43,12 @@ class VagrantfileGenerator {
 		url = bundle.getEntry("scripts/install_pyretic.sh")
 		var pyreticscriptpath = scriptpath(url)
 		
+		url = bundle.getEntry("scripts/install_pox.sh")
+		var poxscriptpath = scriptpath(url)
+		
+		url = bundle.getEntry("scripts/install_odl.sh")
+		var odlscriptpath = scriptpath(url)
+		
 		url = bundle.getEntry("scripts/install_engine.sh")
 		var netideenginescriptpath = scriptpath(url)
 		
@@ -88,7 +94,16 @@ class VagrantfileGenerator {
 				«IF requiredPlatforms.contains("Pyretic")»
 					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
 				«ENDIF»
+				«IF requiredPlatforms.contains("POX")»
+					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
+				«ENDIF»
+				«IF requiredPlatforms.contains("OpenDaylight")»
+					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
+				«ENDIF»
 				«IF requiredPlatforms.contains(NetIDE.CONTROLLER_ENGINE)»
+					config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
 				«ENDIF»
 				
