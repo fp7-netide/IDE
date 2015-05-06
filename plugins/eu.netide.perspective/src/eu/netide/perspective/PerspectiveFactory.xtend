@@ -6,6 +6,9 @@ import org.eclipse.ui.IPerspectiveFactory
 import org.eclipse.ui.console.IConsoleConstants
 import org.eclipse.debug.ui.IDebugUIConstants
 import org.eclipse.jdt.ui.JavaUI
+import eu.netide.newproject.NetIDEProjectConstants
+import eu.netide.debug.views.DebugView
+import eu.netide.profile.views.ProfileView
 
 class PerspectiveFactory implements IPerspectiveFactory {
 
@@ -18,6 +21,8 @@ class PerspectiveFactory implements IPerspectiveFactory {
 		var bottomFolder = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.7f, layout.editorArea)
 		bottomFolder.addView(IConsoleConstants.ID_CONSOLE_VIEW)
 		bottomFolder.addView(IPageLayout.ID_PROP_SHEET)
+		bottomFolder.addView(DebugView.ID)
+		bottomFolder.addView(ProfileView.ID)
 
 		layout.addView(IPageLayout.ID_EDITOR_AREA, IPageLayout.LEFT, 0.7f, layout.editorArea)
 
@@ -30,6 +35,8 @@ class PerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW)
 		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST)
 		layout.addShowViewShortcut(IPageLayout.ID_PROJECT_EXPLORER)
-	}
+		
+		layout.addNewWizardShortcut(NetIDEProjectConstants.ID)
+}
 
 }
