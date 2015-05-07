@@ -402,12 +402,14 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 					path.removeFileExtension.lastSegment, path.removeFileExtension.lastSegment)
 			case "POX_Shim":
 				String.format("PYTHONPATH=$PYTHONPATH:Engine/ryu-backend/tests pox/pox.py openflow.of_01 --port=%s pox_client", c.portNo)
+				//String.format("PYTHONPATH=$PYTHONPATH:Engine/ryu-backend/tests pox/pox.py pox_client") AB
 			case "Ryu_Shim":
 				String.format("PYTHONPATH=$PYTHONPATH:Engine/ryu-shim sudo ryu-manager --ofp-tcp-listen-port=%s Engine/ryu-shim/ryu_shim.py", c.portNo)
 			case "Ryu_backend":
 				String.format(
-					"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend sudo ryu-manager --ofp-tcp-listen-port 7733 Engine/ryu-backend/backend.py controllers/%s/%s", 
-					path.removeFileExtension.lastSegment, path.lastSegment)
+					"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend sudo ryu-manager --ofp-tcp-listen-port 7733 Engine/ryu-backend/backend.py controllers/%s/%s",path.removeFileExtension.lastSegment, path.lastSegment)
+					//"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend sudo ryu-manager --ofp-tcp-listen-port 7733 Engine/ryu-backend/backend.py Engine/ryu-backend/tests/%s", 
+					//path.removeFileExtension.lastSegment) AB
 			case "Pyretic_backend":
 				String.format("PYTHONPATH=$PYTHONPATH:pyretic pyretic/pyretic.py -v high -f -m i pyretic.modules.%s",path.removeFileExtension.lastSegment)
 			case "ODL_Shim":
