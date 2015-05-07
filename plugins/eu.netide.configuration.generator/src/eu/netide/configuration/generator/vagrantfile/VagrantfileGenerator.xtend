@@ -14,6 +14,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import eu.netide.configuration.utils.NetIDEUtil
 import Topology.Controller
 import java.net.URL
+import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 
 /**
  * Generates and writes a Vagrantfile depending on required controller platforms and network applications.
@@ -67,6 +68,9 @@ class VagrantfileGenerator {
 			var platform = configuration.attributes.get("controller_platform_" + name)
 			configuration.attributes.get(String.format("controller_data_%s_%s", name, platform)) as String
 		].toSet.map[e|NetIDEUtil.absolutePath(e)]
+		
+		var proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.PROXY_ON, false, null)
+		var proxyAddress = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.PROXY_ADDRESS, "", null)
 
 		return '''
 			# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
@@ -74,12 +78,28 @@ class VagrantfileGenerator {
 			
 			$path = "«mininetscriptpath»"
 			
+			«IF proxyOn»
+			$proxysetup = <<SCRIPT
+				echo "all_proxy=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "ALL_PROXY=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "http_proxy=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "HTTP_PROXY=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "ftp_proxy=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "FTP_PROXY=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "https_proxy=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "HTTPS_PROXY=«proxyAddress»" | sudo tee -a /etc/profile
+			SCRIPT
+			«ENDIF»
+			
 			Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			
 				# We use a relatively new Ubuntu box
 				config.vm.box = "ubuntu/trusty32"
 				
 				# Configuring mininet
+				«IF proxyOn»
+				config.vm.provision "shell", inline: $proxysetup, privileged: false
+				«ENDIF»
 				config.vm.provision "shell", path: "«mininetscriptpath»", privileged: false
 				config.vm.provision "shell", path: "«loggerscriptpath»", privileged: false
 				«IF requiredPlatforms.contains("Ryu")»

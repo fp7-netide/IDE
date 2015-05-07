@@ -26,6 +26,9 @@ import org.eclipse.core.runtime.Platform
 import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
 import Topology.Controller
 import org.eclipse.core.runtime.IPath
+import eu.netide.configuration.preferences.NetIDEPreferenceConstants
+import java.net.Proxy.Type
+import org.eclipse.debug.internal.core.LaunchConfiguration
 
 /**
  * Triggers the automatic creation of virtual machines and execution of 
@@ -43,8 +46,17 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			return
 		}
 
-		val vagrantpath = Platform.getPreferencesService.getString("eu.netide.configuration.preferences", "vagrantPath",
-			"", null)
+		val proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.PROXY_ON, false, null)
+
+		val proxyAddress = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.PROXY_ADDRESS, "", null)
+
+		val vagrantpath = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.VAGRANT_PATH, "", null)
+
+		val env = null //if(Platform.getOS == Platform.OS_LINUX && proxyOn) newArrayList("http_proxy=" + proxyAddress,
+				//"https_proxy=" + proxyAddress, "HOME=/home/piotr") as String[] else null as String[]
 
 		var path = configuration.attributes.get("topologymodel") as String
 		generateConfiguration(path)
@@ -64,7 +76,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 		location = new Path(vagrantpath)
 
-		var cmdline = newArrayList(location.toOSString, "init", "ubuntu/trusty64")
+		var cmdline = newArrayList(location.toOSString, "init", "ubuntu/trusty32")
 
 		var workingDirectory = file.project.location
 
@@ -79,13 +91,13 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			return;
 		}
 
-		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+		startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 
 		cmdline = newArrayList(location.toOSString, "up")
 
 		if(configuration.attributes.get("reprovision") as Boolean) cmdline.add("--provision")
 
-		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+		startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 
 		for (c : ne.controllers) {
 			var controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
@@ -98,9 +110,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 					var clientcontrollerpath = (configuration.attributes.get(
 						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
 
-
 					cmdline = getCommandLine("Ryu_on_Pox", clientcontrollerpath, c)
-					
+
 					var clientthread = new Thread() {
 						var File workingDir
 						var ArrayList<String> cmdline
@@ -112,10 +123,10 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
-					
+
 					clientthread.setParameters(workingDir, cmdline)
 					clientthread.start
 
@@ -132,16 +143,14 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
-					
+
 					Thread.sleep(2000)
-					
+
 					serverthread.setParameters(workingDir, cmdline)
 					serverthread.start
-					
-					
 
 				}
 
@@ -163,7 +172,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 					override run() {
 						super.run()
-						startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+						startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 					}
 				}
 
@@ -178,13 +187,14 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		Thread.sleep(2000)
 
 		cmdline = newArrayList(location.toOSString, "ssh", "-c",
-			"sudo python ~/mn-configs/" + if(ne.name != null && ne.name != "") ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
+			"sudo python ~/mn-configs/" +
+				if(ne.name != null && ne.name != "") ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
 
-		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+		startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 
 		if (configuration.attributes.get("shutdown") as Boolean) {
 			cmdline = newArrayList(location.toOSString, "halt")
-			startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+			startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 		}
 
 	}
@@ -202,10 +212,12 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 				String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pyretic.py %s",
 					path.removeFileExtension.lastSegment, path.removeFileExtension.lastSegment)
 			case "Pox_Shim":
-				String.format("PYTHONPATH=$PYTHONPATH:Engine/ryu-backend/tests pox/pox.py openflow.of_01 --port=%s pox_client", c.portNo)
+				String.format(
+					"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend/tests pox/pox.py openflow.of_01 --port=%s pox_client",
+					c.portNo)
 			case "Ryu_on_Pox":
 				String.format(
-					"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend sudo ryu-manager --ofp-tcp-listen-port 7733 Engine/ryu-backend/backend.py controllers/%s/%s", 
+					"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend sudo ryu-manager --ofp-tcp-listen-port 7733 Engine/ryu-backend/backend.py controllers/%s/%s",
 					path.removeFileExtension.lastSegment, path.lastSegment)
 			default:
 				"echo No valid platform specified"
@@ -215,8 +227,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 	}
 
 	def startProcess(ArrayList<String> cmdline, File workingDir, Path location, IProgressMonitor monitor, ILaunch launch,
-		ILaunchConfiguration configuration) {
-		var p = DebugPlugin.exec(cmdline, workingDir, null as String[])
+		ILaunchConfiguration configuration, String[] env) {
+		var p = DebugPlugin.exec(cmdline, workingDir, env)
 
 		var IProcess process = null;
 

@@ -39,7 +39,9 @@ public class NetIDEPreferences extends FieldEditorPreferencePage implements IWor
 	 * restore itself.
 	 */
 	override createFieldEditors() {
-		addField(new FileFieldEditor(PreferenceConstants.VAGRANT_PATH, "&Vagrant path:", getFieldEditorParent()));
+		addField(new FileFieldEditor(NetIDEPreferenceConstants.VAGRANT_PATH, "&Vagrant path:", fieldEditorParent))
+		addField(new BooleanFieldEditor(NetIDEPreferenceConstants.PROXY_ON, "&Use Proxy:", fieldEditorParent))
+		addField(new StringFieldEditor(NetIDEPreferenceConstants.PROXY_ADDRESS, "Proxy Address:", fieldEditorParent))
 //		addField(
 //			new BooleanFieldEditor(PreferenceConstants.P_BOOLEAN, "&An example of a boolean preference",
 //				getFieldEditorParent()));
