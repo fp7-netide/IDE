@@ -33,7 +33,10 @@ class VagrantfileGenerator {
 	def compile(Resource input, IResource res) {
 
 		var ne = input.allContents.filter(typeof(NetworkEnvironment)).next
-	
+		
+		
+		var projectName = res.fullPath.segment(0)
+		
 		var bundle = Platform.getBundle(NetIDE.LAUNCHER_PLUGIN)
 		var url = bundle.getEntry("scripts/install_mininet.sh")
 		var mininetscriptpath = scriptpath(url)
@@ -78,6 +81,9 @@ class VagrantfileGenerator {
 		var proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.PROXY_ON, false, null)
 		var proxyAddress = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.PROXY_ADDRESS, "", null)
 
+		var customBox = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.CUSTOM_BOX, false, null)
+		var customBoxName = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.CUSTOM_BOX_NAME, "", null)
+
 		return '''
 			# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 			VAGRANTFILE_API_VERSION = "2"
@@ -87,21 +93,59 @@ class VagrantfileGenerator {
 			«IF proxyOn»
 			$proxysetup = <<SCRIPT
 				echo "all_proxy=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "all_proxy=«proxyAddress»" | sudo tee -a /etc/environment
+				echo "all_proxy=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+				
+
 				echo "ALL_PROXY=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "ALL_PROXY=«proxyAddress»" | sudo tee -a /etc/environment
+				echo "ALL_PROXY=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+				
+
 				echo "http_proxy=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "http_proxy=«proxyAddress»" | sudo tee -a /etc/environment
+				echo "http_proxy=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+
 				echo "HTTP_PROXY=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "HTTP_PROXY=«proxyAddress»" | sudo tee -a /etc/environment
+				echo "HTTP_PROXY=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+
 				echo "ftp_proxy=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "ftp_proxy=«proxyAddress»" | sudo tee -a /etc/environment
+				echo "ftp_proxy=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+
 				echo "FTP_PROXY=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "FTP_PROXY=«proxyAddress»" | sudo tee -a /etc/environment
+				echo "FTP_PROXY=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+				
 				echo "https_proxy=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "https_proxy=«proxyAddress»" | sudo tee -a /etc/environment
+				echo "http_proxy=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+
 				echo "HTTPS_PROXY=«proxyAddress»" | sudo tee -a /etc/profile
+				echo "HTTPS_PROXY=«proxyAddress»" | sudo tee -a /etc/environment
+				echo "HTTP_PROXY=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+				
+				echo "Acquire::http::Proxy "«proxyAddress»";" | sudo tee -a /etc/apt/apt.conf.d/71proxy
+				echo "Acquire::ftp::Proxy "«proxyAddress»";" | sudo tee -a /etc/apt/apt.conf.d/71proxy
+				
 			SCRIPT
 			«ENDIF»
 			
 			Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			
 				# We use a relatively new Ubuntu box
+				«IF !customBox»
 				config.vm.box = "ubuntu/trusty32"
+				«ELSE»
+				config.vm.box = "«customBoxName»"
+				«ENDIF»
 				
+				config.vm.provider "virtualbox" do |v|
+				  v.name = "«projectName»"
+				end
+				
+				«IF !customBox»
 				# Configuring mininet
 				«IF proxyOn»
 				config.vm.provision "shell", inline: $proxysetup, privileged: false
@@ -125,6 +169,7 @@ class VagrantfileGenerator {
 					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
+				«ENDIF»
 				«ENDIF»
 				
 				# Syncing the mininet configuration folder with the vm
