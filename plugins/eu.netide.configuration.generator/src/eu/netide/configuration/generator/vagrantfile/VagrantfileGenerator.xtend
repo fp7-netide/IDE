@@ -83,7 +83,11 @@ class VagrantfileGenerator {
 			Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			
 				# We use a relatively new Ubuntu box
-				config.vm.box = "ubuntu/trusty32"
+				config.vm.box = "ubuntu/trusty64"
+				
+				config.vm.provider "virtualbox" do |v|
+			v.memory = 2048
+				end
 				
 				# Configuring mininet
 				config.vm.provision "shell", path: "«mininetscriptpath»", privileged: false
@@ -105,6 +109,7 @@ class VagrantfileGenerator {
 					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
+					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
 				«ENDIF»
 				
 				# Syncing the mininet configuration folder with the vm

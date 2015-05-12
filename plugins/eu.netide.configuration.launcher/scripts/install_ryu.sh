@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ ! -d ~/ryu ]; then
+if [ "$(which pip)" == "" ] || [ "$(pip list | grep ryu)" == "" ]; then
 
   sudo apt-get --yes install python-pip python-dev python-repoze.lru libxml2-dev libxslt1-dev zlib1g-dev
   sudo pip install ecdsa

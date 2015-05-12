@@ -42,6 +42,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		if (monitor.isCanceled()) {
 			return
 		}
+		
+		var NetIDE_server = ""
 
 		val vagrantpath = Platform.getPreferencesService.getString("eu.netide.configuration.preferences", "vagrantPath",
 			"", null)
@@ -93,6 +95,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
 				var serverplatform = configuration.attributes.get("controller_platform_target_" + c.name) as String
 				var clientplatform = configuration.attributes.get("controller_platform_source_" + c.name) as String
+				
+				NetIDE_server = serverplatform // to know if server_platform is ODL #AB
 
 				if (serverplatform == NetIDE.CONTROLLER_POX && clientplatform == NetIDE.CONTROLLER_RYU) {
 					var clientcontrollerpath = (configuration.attributes.get(
@@ -344,6 +348,56 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 					
 
 				}
+				else if (serverplatform == NetIDE.CONTROLLER_ODL && clientplatform == NetIDE.CONTROLLER_PYRETIC) {
+					var clientcontrollerpath = (configuration.attributes.get(
+						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
+
+
+					cmdline = getCommandLine("Pyretic_backend", clientcontrollerpath, c)
+					
+					var clientthread = new Thread() {
+						var File workingDir
+						var ArrayList<String> cmdline
+
+						def setParameters(File wd, ArrayList<String> cl) {
+							this.workingDir = wd
+							this.cmdline = cl
+						}
+
+						override run() {
+							super.run()
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+						}
+					}
+					
+					clientthread.setParameters(workingDir, cmdline)
+					clientthread.start
+
+					cmdline = getCommandLine("ODL_Shim", clientcontrollerpath, c)
+
+					var serverthread = new Thread() {
+						var File workingDir
+						var ArrayList<String> cmdline
+
+						def setParameters(File wd, ArrayList<String> cl) {
+							this.workingDir = wd
+							this.cmdline = cl
+						}
+
+						override run() {
+							super.run()
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+						}
+					}
+					
+					Thread.sleep(2000)
+					
+					serverthread.setParameters(workingDir, cmdline)
+					serverthread.start
+					
+					
+
+				}
 			} else {
 
 				var controllerpath = (configuration.attributes.get(
@@ -373,9 +427,14 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			}
 
 		}
-
-		Thread.sleep(2000)
-
+		
+		if (NetIDE_server == NetIDE.CONTROLLER_ODL){
+			Thread.sleep(90000)
+		}
+		else{
+			Thread.sleep(2000)	
+		}
+		
 		cmdline = newArrayList(location.toOSString, "ssh", "-c",
 			"sudo python ~/mn-configs/" + if(ne.name != null) ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
 

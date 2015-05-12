@@ -2,7 +2,7 @@
 cd
 if [ ! -d ~/Engine ]; then
 
-   sudo apt-get --yes install maven
+   sudo apt-get --yes install maven openjdk-7-jdk openjdk-7-doc openjdk-7-jre-lib
    git clone https://git.opendaylight.org/gerrit/openflowplugin
    cd openflowplugin
    git checkout release/helium-sr1.1
@@ -16,8 +16,8 @@ if [ ! -d ~/Engine ]; then
    mvn clean install
    
 elif [ ! -d ~/openflowplugin ]; then
-  
-   sudo apt-get --yes install maven
+   
+   sudo apt-get --yes install maven openjdk-7-jdk openjdk-7-doc openjdk-7-jre-lib
    git clone https://git.opendaylight.org/gerrit/openflowplugin
    cd openflowplugin
    git checkout release/helium-sr1.1
