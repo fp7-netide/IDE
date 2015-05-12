@@ -436,7 +436,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		}
 		
 		cmdline = newArrayList(location.toOSString, "ssh", "-c",
-			"sudo python ~/mn-configs/" + if(ne.name != null) ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
+				"sudo python ~/mn-configs/" + if(ne.name != null && ne.name != "") ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
 
 		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
 
