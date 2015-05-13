@@ -92,42 +92,42 @@ class VagrantfileGenerator {
 			
 			«IF proxyOn»
 			$proxysetup = <<SCRIPT
-				echo "all_proxy=«proxyAddress»" | sudo tee -a /etc/profile
-				echo "all_proxy=«proxyAddress»" | sudo tee -a /etc/environment
-				echo "all_proxy=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+				echo "export all_proxy=socks://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export all_proxy=socks://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export all_proxy=socks://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
 				
 
-				echo "ALL_PROXY=«proxyAddress»" | sudo tee -a /etc/profile
-				echo "ALL_PROXY=«proxyAddress»" | sudo tee -a /etc/environment
-				echo "ALL_PROXY=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+				echo "export ALL_PROXY=socks://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export ALL_PROXY=socks://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export ALL_PROXY=socks://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
 				
 
-				echo "http_proxy=«proxyAddress»" | sudo tee -a /etc/profile
-				echo "http_proxy=«proxyAddress»" | sudo tee -a /etc/environment
-				echo "http_proxy=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+				echo "export http_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export http_proxy=http://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export http_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
 
-				echo "HTTP_PROXY=«proxyAddress»" | sudo tee -a /etc/profile
-				echo "HTTP_PROXY=«proxyAddress»" | sudo tee -a /etc/environment
-				echo "HTTP_PROXY=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+				echo "export HTTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export HTTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export HTTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
 
-				echo "ftp_proxy=«proxyAddress»" | sudo tee -a /etc/profile
-				echo "ftp_proxy=«proxyAddress»" | sudo tee -a /etc/environment
-				echo "ftp_proxy=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+				echo "export ftp_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export ftp_proxy=http://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export ftp_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
 
-				echo "FTP_PROXY=«proxyAddress»" | sudo tee -a /etc/profile
-				echo "FTP_PROXY=«proxyAddress»" | sudo tee -a /etc/environment
-				echo "FTP_PROXY=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+				echo "export FTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export FTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export FTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+
+				echo "export https_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export https_proxy=http://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export https_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+
+				echo "export HTTPS_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export HTTPS_PROXY=http://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export HTTPS_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
 				
-				echo "https_proxy=«proxyAddress»" | sudo tee -a /etc/profile
-				echo "https_proxy=«proxyAddress»" | sudo tee -a /etc/environment
-				echo "http_proxy=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
-
-				echo "HTTPS_PROXY=«proxyAddress»" | sudo tee -a /etc/profile
-				echo "HTTPS_PROXY=«proxyAddress»" | sudo tee -a /etc/environment
-				echo "HTTP_PROXY=«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
-				
-				echo "Acquire::http::Proxy "«proxyAddress»";" | sudo tee -a /etc/apt/apt.conf.d/71proxy
-				echo "Acquire::ftp::Proxy "«proxyAddress»";" | sudo tee -a /etc/apt/apt.conf.d/71proxy
+				echo 'Acquire::http::Proxy "http://«proxyAddress»";' | sudo tee -a /etc/apt/apt.conf.d/71proxy
+				echo 'Acquire::ftp::Proxy "http://«proxyAddress»";' | sudo tee -a /etc/apt/apt.conf.d/71proxy
 				
 			SCRIPT
 			«ENDIF»
@@ -136,7 +136,10 @@ class VagrantfileGenerator {
 			
 				# We use a relatively new Ubuntu box
 				«IF !customBox»
-				config.vm.box = "ubuntu/trusty32"
+				config.vm.box = "ubuntu/trusty64"
+				config.vm.provider "virtualbox" do |v|
+				  v.memory = 2048
+				end
 				«ELSE»
 				config.vm.box = "«customBoxName»"
 				«ENDIF»
@@ -169,6 +172,7 @@ class VagrantfileGenerator {
 					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
+					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
 				«ENDIF»
 				«ENDIF»
 				

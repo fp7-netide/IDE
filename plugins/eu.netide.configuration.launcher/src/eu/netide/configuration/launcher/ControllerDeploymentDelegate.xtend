@@ -1,8 +1,10 @@
 package eu.netide.configuration.launcher
 
+import Topology.Controller
 import Topology.NetworkEnvironment
 import eu.netide.configuration.generator.GenerateActionDelegate
 import eu.netide.configuration.generator.vagrantfile.VagrantfileGenerateAction
+import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 import eu.netide.configuration.utils.NetIDE
 import java.io.File
 import java.util.ArrayList
@@ -10,9 +12,11 @@ import java.util.HashMap
 import java.util.Map
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.CoreException
+import org.eclipse.core.runtime.IPath
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Path
+import org.eclipse.core.runtime.Platform
 import org.eclipse.core.runtime.Status
 import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunch
@@ -22,13 +26,8 @@ import org.eclipse.debug.core.model.IProcess
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.core.runtime.Platform
+
 import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
-import Topology.Controller
-import org.eclipse.core.runtime.IPath
-import eu.netide.configuration.preferences.NetIDEPreferenceConstants
-import java.net.Proxy.Type
-import org.eclipse.debug.internal.core.LaunchConfiguration
 
 /**
  * Triggers the automatic creation of virtual machines and execution of 
@@ -45,6 +44,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		if (monitor.isCanceled()) {
 			return
 		}
+		
+		var NetIDE_server = ""
 
 		val proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
 			NetIDEPreferenceConstants.PROXY_ON, false, null)
@@ -105,6 +106,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
 				var serverplatform = configuration.attributes.get("controller_platform_target_" + c.name) as String
 				var clientplatform = configuration.attributes.get("controller_platform_source_" + c.name) as String
+				
+				NetIDE_server = serverplatform // to know if server_platform is ODL #AB
 
 				if (serverplatform == NetIDE.CONTROLLER_POX && clientplatform == NetIDE.CONTROLLER_RYU) {
 					var clientcontrollerpath = (configuration.attributes.get(
@@ -353,6 +356,56 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 					
 
 				}
+				else if (serverplatform == NetIDE.CONTROLLER_ODL && clientplatform == NetIDE.CONTROLLER_PYRETIC) {
+					var clientcontrollerpath = (configuration.attributes.get(
+						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
+
+
+					cmdline = getCommandLine("Pyretic_backend", clientcontrollerpath, c)
+					
+					var clientthread = new Thread() {
+						var File workingDir
+						var ArrayList<String> cmdline
+
+						def setParameters(File wd, ArrayList<String> cl) {
+							this.workingDir = wd
+							this.cmdline = cl
+						}
+
+						override run() {
+							super.run()
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
+						}
+					}
+					
+					clientthread.setParameters(workingDir, cmdline)
+					clientthread.start
+
+					cmdline = getCommandLine("ODL_Shim", clientcontrollerpath, c)
+
+					var serverthread = new Thread() {
+						var File workingDir
+						var ArrayList<String> cmdline
+
+						def setParameters(File wd, ArrayList<String> cl) {
+							this.workingDir = wd
+							this.cmdline = cl
+						}
+
+						override run() {
+							super.run()
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
+						}
+					}
+					
+					Thread.sleep(2000)
+					
+					serverthread.setParameters(workingDir, cmdline)
+					serverthread.start
+					
+					
+
+				}
 			} else {
 
 				var controllerpath = (configuration.attributes.get(
@@ -382,9 +435,14 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			}
 
 		}
-
-		Thread.sleep(2000)
-
+		
+		if (NetIDE_server == NetIDE.CONTROLLER_ODL){
+			Thread.sleep(90000)
+		}
+		else{
+			Thread.sleep(2000)	
+		}
+		
 		cmdline = newArrayList(location.toOSString, "ssh", "-c",
 			"sudo python ~/mn-configs/" +
 				if(ne.name != null && ne.name != "") ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
