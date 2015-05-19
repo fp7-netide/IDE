@@ -54,6 +54,9 @@ class VagrantfileGenerator {
 		
 		url = bundle.getEntry("scripts/install_logger.sh")
 		var loggerscriptpath = scriptpath(url)
+		
+		url = bundle.getEntry("scripts/install_floodlight.sh")
+		var floodlightscriptpath = scriptpath(url)
 
 		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map[c|
 			String.format("controller_platform_%s", c.name)]
@@ -86,7 +89,7 @@ class VagrantfileGenerator {
 				config.vm.box = "ubuntu/trusty64"
 				
 				config.vm.provider "virtualbox" do |v|
-			v.memory = 2048
+			v.memory = 4096
 				end
 				
 				# Configuring mininet
@@ -104,12 +107,16 @@ class VagrantfileGenerator {
 				«IF requiredPlatforms.contains("OpenDaylight")»
 					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
 				«ENDIF»
+				«IF requiredPlatforms.contains("Floodlight")»
+					config.vm.provision "shell", path: "«floodlightscriptpath»", privileged: false
+				«ENDIF»
 				«IF requiredPlatforms.contains(NetIDE.CONTROLLER_ENGINE)»
+					config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
 					config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
-					config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
 					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«floodlightscriptpath»", privileged: false
 				«ENDIF»
 				
 				# Syncing the mininet configuration folder with the vm
