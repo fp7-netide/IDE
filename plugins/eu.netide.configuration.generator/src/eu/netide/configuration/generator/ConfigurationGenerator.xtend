@@ -105,7 +105,9 @@ class ConfigurationGenerator implements IGenerator {
 			    
 			    cmap = {
 			    «FOR Switch s : ne.networks.map[networkelements].flatten.filter(typeof(Switch))»
+			    	«IF s.controller != null»
 			        '«s.fullname»' : «s.controller.name»,
+			        «ENDIF»
 			    «ENDFOR»
 			    }
 			    

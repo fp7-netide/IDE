@@ -424,7 +424,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -444,7 +444,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -474,7 +474,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -494,7 +494,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -524,7 +524,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -544,7 +544,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
