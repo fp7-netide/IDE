@@ -6,12 +6,12 @@
          point="org.eclipse.ui.views">
       <category
             name="NetIDE"
-            id="eu.netide.debug">
+            id="eu.netide.views">
       </category>
       <view
             name="NetIDE Debugger View"
             icon="icons/netide-debug.png"
-            category="eu.netide.debug"
+            category="eu.netide.views"
             class="eu.netide.debug.views.DebugView"
             id="eu.netide.debug.views.DebugView">
       </view>
