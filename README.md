@@ -14,13 +14,21 @@ In order to execute commands on your VM through the IDE, you also need an instal
 
 1. Download Eclipse Luna Modeling Tools at www.eclipse.org.
 2. Start Eclipse and open the Git Perspective.
-3. From the window menu, select "Help -> Install Modeling Components". Select and install Xtext. Note that NetIDE needs Xtext at version 2.7.3.
-4. Clone or add this repository and import all projects in the "plugins"-folder into your workspace. Import "eu.netide.configuration" as a general project.
-5. Go back to the Java perspective and open eu.netide.configuration/model/Topology.genmodel
-6. Right-click the root element in the tree view and select "Generate All"
-7. Right-click the project eu.netide.configuration and select "Run As -> Eclipse Application"
-8. In the new eclipse instance, clone or add this repository like in step 4 and import the project "Network.design"
-9. If you want to develop your Python-based controllers in Eclipse as well, you can install the [PyDev](http://www.pydev.org/) plug-in for Eclipse.
+3. From the window menu, select `Help -> Install Modeling Components`. Select and install Xtext. Note that NetIDE needs Xtext at version 2.7.3.
+4. Clone or add this repository and import the following projects from the "plugins"-folder into your workspace. 
+
+  ```
+  eu.netide.configuration.launcher  
+  eu.netide.configuration.generator
+  eu.netide.configuration.preferences
+  eu.netide.configuration.utils
+  ```
+5. Import `eu.netide.configuration` as a general project.  
+6. Go back to the Java perspective and open eu.netide.configuration/model/Topology.genmodel
+7. Right-click the root element in the tree view and select `Generate All`
+8. Right-click the project eu.netide.configuration and select `Run As -> Eclipse Application`
+9. In the new eclipse instance, clone or add this repository like in step 4 and import the project "Network.design"
+10. If you want to develop your Python-based controllers in Eclipse as well, you can install the [PyDev](http://www.pydev.org/) plug-in for Eclipse.
 
 
 
