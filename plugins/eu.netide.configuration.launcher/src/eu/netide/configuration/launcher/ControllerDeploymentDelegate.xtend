@@ -616,7 +616,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 				String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pox/pox.py openflow.of_01 --port=%s %s ",
 					path.removeFileExtension.lastSegment, c.portNo, path.removeFileExtension.lastSegment)
 			case "Pyretic":
-				String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pyretic.py %s",
+				String.format("PYTHONPATH=$PYTHONPATH:controllers/%s:$HOME/pyretic:$HOME/pox $HOME/pyretic/pyretic.py %s",
 					path.removeFileExtension.lastSegment, path.removeFileExtension.lastSegment)
 			case "POX_Shim":
 				String.format("PYTHONPATH=$PYTHONPATH:Engine/ryu-backend/tests pox/pox.py openflow.of_01 --port=%s pox_client", c.portNo)
