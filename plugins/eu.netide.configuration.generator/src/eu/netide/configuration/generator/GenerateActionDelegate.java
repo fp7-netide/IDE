@@ -29,7 +29,6 @@ public class GenerateActionDelegate implements IObjectActionDelegate {
 		this.ne = ne;
 	}
 
-	@Override
 	public void run(IAction action) {
 		Injector injector = Guice
 				.createInjector(new CommonConfigurationModule());
@@ -38,7 +37,6 @@ public class GenerateActionDelegate implements IObjectActionDelegate {
 		ga.run(ne);
 	}
 
-	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredselection = (IStructuredSelection) selection;
@@ -49,7 +47,6 @@ public class GenerateActionDelegate implements IObjectActionDelegate {
 
 	}
 
-	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 
 	}
