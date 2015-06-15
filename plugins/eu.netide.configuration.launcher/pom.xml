@@ -1,28 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>eu.netide.configuration.launcher</groupId>
-  <artifactId>eu.netide.configuration.launcher</artifactId>
-  <version>0.2</version>
-  <name>eu.netide.launcher</name>
-  <build>
-    <sourceDirectory>xtend-gen</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>src</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eu.netide.configuration.launcher</groupId>
+	<artifactId>eu.netide.configuration.launcher</artifactId>
+	<name>eu.netide.configuration.launcher</name>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.xtend</groupId>
+				<artifactId>xtend-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	<parent>
+		<groupId>eu.netide.parent</groupId>
+		<artifactId>eu.netide.parent</artifactId>
+		<version>0.2.0</version>
+		<relativePath>../../releng/eu.netide.parent/pom.xml</relativePath>
+	</parent>
+	<packaging>eclipse-plugin</packaging>
 </project>

@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Generator
 Bundle-SymbolicName: eu.netide.configuration.generator;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.2
 Export-Package: eu.netide.configuration.generator, eu.netide.configuration.generator.vagrantfile
-Require-Bundle: eu.netide.configuration;bundle-version="1.0.0",
+Require-Bundle: eu.netide.configuration;bundle-version="0.2",
  org.eclipse.xtext.ui;bundle-version="2.7.2",
  org.eclipse.xtext.builder;bundle-version="2.7.2",
  org.eclipse.xtext.ui.shared;bundle-version="2.7.2",
  org.eclipse.xtext.generator;bundle-version="2.7.2",
- eu.netide.configuration.utils;bundle-version="1.0.0"
+ eu.netide.configuration.utils;bundle-version="0.2"
 Bundle-Vendor: NetIDE
