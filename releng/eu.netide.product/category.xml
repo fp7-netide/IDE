@@ -3,27 +3,6 @@
    <feature url="features/eu.netide.feature_0.2.0.jar" id="eu.netide.feature" version="0.2.0">
       <category name="eu.netide"/>
    </feature>
-   <bundle id="eu.netide.configuration" version="0.2.0">
-      <category name="eu.netide"/>
-   </bundle>
-   <bundle id="eu.netide.configuration.edit" version="0.2.0">
-      <category name="eu.netide"/>
-   </bundle>
-   <bundle id="eu.netide.configuration.editor" version="0.2.0">
-      <category name="eu.netide"/>
-   </bundle>
-   <bundle id="eu.netide.configuration.generator" version="0.2.0">
-      <category name="eu.netide"/>
-   </bundle>
-   <bundle id="eu.netide.configuration.launcher" version="0.2.0">
-      <category name="eu.netide"/>
-   </bundle>
-   <bundle id="eu.netide.configuration.preferences" version="0.2.0">
-      <category name="eu.netide"/>
-   </bundle>
-   <bundle id="eu.netide.configuration.utils" version="0.2.0">
-      <category name="eu.netide"/>
-   </bundle>
    <category-def name="eu.netide" label="NetIDE">
       <description>
          My Eclipse tool built with Tycho
