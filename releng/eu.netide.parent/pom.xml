@@ -23,6 +23,8 @@
 	<modules>
 		<!-- plugins -->
 		<module>../../plugins/eu.netide.configuration</module>
+                <module>../../plugins/eu.netide.configuration.edit</module>
+                <module>../../plugins/eu.netide.configuration.editor</module>
 		<module>../../plugins/eu.netide.configuration.utils</module>
 		<module>../../plugins/eu.netide.configuration.generator</module>
 		<module>../../plugins/eu.netide.configuration.launcher</module>
