@@ -7,6 +7,7 @@ Bundle-Activator: eu.netide.deployment.topologyimport.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  eu.netide.configuration;bundle-version="1.0.0",
- org.eclipse.emf.edit;bundle-version="2.10.1"
+ org.eclipse.emf.edit;bundle-version="2.10.1",
+ org.eclipse.emf.ecore.xmi;bundle-version="2.10.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
