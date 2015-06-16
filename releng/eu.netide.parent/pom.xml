@@ -23,8 +23,8 @@
 	<modules>
 		<!-- plugins -->
 		<module>../../plugins/eu.netide.configuration</module>
-                <module>../../plugins/eu.netide.configuration.edit</module>
-                <module>../../plugins/eu.netide.configuration.editor</module>
+		<module>../../plugins/eu.netide.configuration.edit</module>
+		<module>../../plugins/eu.netide.configuration.editor</module>
 		<module>../../plugins/eu.netide.configuration.utils</module>
 		<module>../../plugins/eu.netide.configuration.generator</module>
 		<module>../../plugins/eu.netide.configuration.launcher</module>
@@ -32,6 +32,7 @@
 			../../plugins/eu.netide.configuration.preferences
 		</module>
 		<module>../eu.netide.feature</module>
+		<module>../eu.netide.product</module>
 	</modules>
 
 	<build>
