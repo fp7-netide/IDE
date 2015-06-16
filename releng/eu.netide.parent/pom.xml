@@ -31,6 +31,7 @@
 		<module>
 			../../plugins/eu.netide.configuration.preferences
 		</module>
+		<module>../eu.netide.feature</module>
 	</modules>
 
 	<build>
