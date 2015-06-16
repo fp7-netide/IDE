@@ -26,6 +26,9 @@
 		<module>../../plugins/eu.netide.configuration.utils</module>
 		<module>../../plugins/eu.netide.configuration.generator</module>
 		<module>../../plugins/eu.netide.configuration.launcher</module>
+		<module>
+			../../plugins/eu.netide.configuration.preferences
+		</module>
 	</modules>
 
 	<build>
@@ -204,6 +207,9 @@
 									<source>${project.build.directory}/src-gen</source>
 								</sources>
 								<sources>
+									<source>${project.build.directory}/xtend-gen</source>
+								</sources>
+								<sources>
 									<source>${project.build.directory}/emf-gen</source>
 								</sources>
 							</configuration>
@@ -224,10 +230,10 @@
 							<goals>
 								<goal>compile</goal>
 							</goals>
-<!-- 							<configuration>
-								need to prefix by basedir to generate to currently built module
+							<configuration>
+								<!-- need to prefix by basedir to generate to currently built module -->
 								<outputDirectory>${basedir}/xtend-gen</outputDirectory>
-							</configuration> -->
+							</configuration>
 						</execution>
 					</executions>
 				</plugin>
