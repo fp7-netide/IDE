@@ -10,6 +10,7 @@
 	<properties>
 		<tycho-version>0.23.0</tycho-version>
 		<xtend-version>2.7.3</xtend-version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<repositories>
@@ -33,9 +34,13 @@
 		</module>
 		<module>../eu.netide.feature</module>
 		<module>../eu.netide.product</module>
+		<module>../../plugins/eu.netide.newproject</module>
+		<module>../../plugins/eu.netide.perspective</module>
+		<module>../../plugins/eu.netide.profile</module>
 	</modules>
 
 	<build>
+
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
