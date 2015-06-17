@@ -5,10 +5,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import Topology.Connector;
 import Topology.Host;
@@ -35,16 +39,14 @@ import Topology.TopologyFactory;
 
 public class TopologyImport {
 	
-	public void dootherstuff() {
-		Logger logger = Logger.getLogger("Topology Importer");
-		logger.setLevel(Level.ALL);
-		logger.info("You clicked the right button.");
-	}
 	
-	public void dostuff(String[] args) {
+	public void createTopologyModelFromFile(IFile ifile) {
 		
-		File file = new File(args[0]);
+		File file = ifile.getLocation().toFile();
 		BufferedReader reader = null;
+		
+		ResourceSet resset = new ResourceSetImpl();
+		Resource res = resset.createResource(URI.createURI(ifile.getFullPath().removeLastSegments(1).toPortableString() + "/file.topology"));
 		
 		TopologyFactory factory = TopologyFactory.eINSTANCE;
 		NetworkEnvironment ne = factory.createNetworkEnvironment();
@@ -87,7 +89,7 @@ public class TopologyImport {
 				port2.setConnector(con);
 				ports[0] = port1;
 				ports[1] = port2;
-				// port1.setNetworkelement(ne); WHICH Network Environment ?
+				// port1.setNetworkelement(ne); WHICH Network Environment ? - Element, not environment :) -CS
 				port_list.put(con, ports);
 		    }
 		    while ((text = reader.readLine()) != null) {
@@ -115,7 +117,12 @@ public class TopologyImport {
 	    Port port = factory.createPort();
 	    port.setConnector(con);
 	    
-	    
+		res.getContents().add(ne);
+		try {
+			res.save(Collections.EMPTY_MAP);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	    
 		//Read from topology file
 		//create objects 
