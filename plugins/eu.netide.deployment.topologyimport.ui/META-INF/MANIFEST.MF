@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ui
+Bundle-SymbolicName: eu.netide.deployment.topologyimport.ui;singleton:=true
+Bundle-Version: 0.2.0
+Bundle-Activator: eu.netide.deployment.topologyimport.ui.Activator
+Bundle-Vendor: NetIDE Project
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ eu.netide.deployment.topologyimport,
+ org.eclipse.core.resources
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy

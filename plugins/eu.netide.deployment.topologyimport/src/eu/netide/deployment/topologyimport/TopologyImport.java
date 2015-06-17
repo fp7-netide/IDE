@@ -7,7 +7,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
+import Topology.Connector;
+import Topology.Host;
+import Topology.Network;
+import Topology.NetworkEnvironment;
+import Topology.Port;
+import Topology.Switch;
 /*import java.lang.reflect.InvocationTargetException;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -22,11 +30,18 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource; */
-import Topology.*;
+import Topology.TopologyFactory;
 
 
 public class TopologyImport {
-	public static void main(String[] args) {
+	
+	public void dootherstuff() {
+		Logger logger = Logger.getLogger("Topology Importer");
+		logger.setLevel(Level.ALL);
+		logger.info("You clicked the right button.");
+	}
+	
+	public void dostuff(String[] args) {
 		
 		File file = new File(args[0]);
 		BufferedReader reader = null;
