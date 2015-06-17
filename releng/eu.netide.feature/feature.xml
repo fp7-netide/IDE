@@ -93,4 +93,32 @@
          version="0.2.0"
          unpack="false"/>
 
+   <plugin
+         id="eu.netide.debug"
+         download-size="0"
+         install-size="0"
+         version="0.2.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.newproject"
+         download-size="0"
+         install-size="0"
+         version="0.2.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.perspective"
+         download-size="0"
+         install-size="0"
+         version="0.2.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.profile"
+         download-size="0"
+         install-size="0"
+         version="0.2.0"
+         unpack="false"/>
+
 </feature>
