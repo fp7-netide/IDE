@@ -2,7 +2,7 @@
 <feature
       id="eu.netide.feature"
       label="NetIDE"
-      version="0.2.0"
+      version="0.2.0.qualifier"
       provider-name="NetIDE Project">
 
    <description url="http://www.example.com/description">
@@ -25,16 +25,20 @@
       <import plugin="org.eclipse.emf.ecore.xmi"/>
       <import plugin="org.eclipse.emf.edit.ui"/>
       <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="eu.netide.configuration" version="0.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtext.ui" version="2.7.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtext.builder" version="2.7.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtext.ui.shared" version="2.7.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtext.generator" version="2.7.2" match="greaterOrEqual"/>
+      <import plugin="eu.netide.configuration.utils" version="0.2.0" match="greaterOrEqual"/>
+      <import plugin="eu.netide.configuration.preferences" version="0.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.debug.ui" version="3.10.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtend.lib"/>
       <import plugin="org.eclipse.emf.common.ui" version="2.9.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.ecore" version="2.10.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.console" version="3.5.300" match="greaterOrEqual"/>
+      <import plugin="eu.netide.configuration.generator" version="0.2.0" match="greaterOrEqual"/>
       <import plugin="com.google.inject" version="3.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.xtend.lib.macro"/>
@@ -46,83 +50,86 @@
       <import plugin="org.eclipse.debug.ui" version="3.10.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.sirius.ui" version="1.0.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jdt.ui" version="3.10.2" match="greaterOrEqual"/>
+      <import plugin="eu.netide.newproject" version="0.2.0" match="greaterOrEqual"/>
+      <import plugin="eu.netide.debug" version="0.2.0" match="greaterOrEqual"/>
+      <import plugin="eu.netide.profile" version="0.2.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
          id="eu.netide.configuration"
          download-size="0"
          install-size="0"
-         version="0.2.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="eu.netide.configuration.edit"
          download-size="0"
          install-size="0"
-         version="0.2.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="eu.netide.configuration.editor"
          download-size="0"
          install-size="0"
-         version="0.2.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="eu.netide.configuration.generator"
          download-size="0"
          install-size="0"
-         version="0.2.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="eu.netide.configuration.launcher"
          download-size="0"
          install-size="0"
-         version="0.2.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="eu.netide.configuration.preferences"
          download-size="0"
          install-size="0"
-         version="0.2.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="eu.netide.configuration.utils"
          download-size="0"
          install-size="0"
-         version="0.2.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="eu.netide.debug"
          download-size="0"
          install-size="0"
-         version="0.2.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="eu.netide.newproject"
          download-size="0"
          install-size="0"
-         version="0.2.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="eu.netide.perspective"
          download-size="0"
          install-size="0"
-         version="0.2.0"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="eu.netide.profile"
          download-size="0"
          install-size="0"
-         version="0.2.0"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>

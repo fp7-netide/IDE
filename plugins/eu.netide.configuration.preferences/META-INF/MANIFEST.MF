@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Preferences
 Bundle-SymbolicName: eu.netide.configuration.preferences;singleton:=true
-Bundle-Version: 0.2
+Bundle-Version: 0.2.0.qualifier
 Bundle-Activator: eu.netide.configuration.preferences.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
