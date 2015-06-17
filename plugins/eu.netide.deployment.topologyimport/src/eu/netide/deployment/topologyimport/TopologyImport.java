@@ -46,7 +46,7 @@ public class TopologyImport {
 		BufferedReader reader = null;
 		
 		ResourceSet resset = new ResourceSetImpl();
-		Resource res = resset.createResource(URI.createURI(ifile.getFullPath().removeLastSegments(1).toPortableString() + "/file.topology"));
+		Resource res = resset.createResource(URI.createURI(ifile.getFullPath().removeLastSegments(1).toPortableString() + "/" + ifile.getName() + ".topology"));
 		
 		TopologyFactory factory = TopologyFactory.eINSTANCE;
 		NetworkEnvironment ne = factory.createNetworkEnvironment();
