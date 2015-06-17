@@ -32,12 +32,14 @@
 		<module>
 			../../plugins/eu.netide.configuration.preferences
 		</module>
-		<module>../eu.netide.feature</module>
-		<module>../eu.netide.product</module>
 		<module>../../plugins/eu.netide.newproject</module>
-		<module>../../plugins/eu.netide.perspective</module>
 		<module>../../plugins/eu.netide.profile</module>
 		<module>../../plugins/eu.netide.debug</module>
+		<module>../../plugins/eu.netide.perspective</module>
+		<module>../eu.netide.feature</module>
+		<module>../eu.netide.product</module>
+
+
 	</modules>
 
 	<build>
