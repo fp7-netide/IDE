@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Topologyimport
 Bundle-SymbolicName: eu.netide.deployment.topologyimport
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.2
 Bundle-Activator: eu.netide.deployment.topologyimport.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,

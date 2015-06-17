@@ -4,7 +4,7 @@
 	<groupId>eu.netide.debug</groupId>
 	<artifactId>eu.netide.debug</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<name>eu.netide.perspective</name>
+	<name>eu.netide.debug</name>
 	<build>
 		<plugins>
 			<plugin>
