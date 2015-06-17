@@ -37,6 +37,7 @@
 		<module>../../plugins/eu.netide.newproject</module>
 		<module>../../plugins/eu.netide.perspective</module>
 		<module>../../plugins/eu.netide.profile</module>
+		<module>../../plugins/eu.netide.debug</module>
 	</modules>
 
 	<build>
