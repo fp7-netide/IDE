@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="eu.netide.newproject.category"
+            name="NetIDE">
+      </category>
+      <wizard
+            category="eu.netide.newproject.category"
+            class="eu.netide.newproject.NewNetIDEProjectWizard"
+            finalPerspective="eu.netide.perspective"
+            icon="icons/netide.png"
+            id="eu.netide.newproject.wizard"
+            name="NetIDE Project"
+            project="true">
+      </wizard>
+      <category
+            id="eu.netide.newproject"
+            name="Sample Wizards">
+      </category>
+      <wizard
+            category="eu.netide.newproject"
+            class="eu.netide.newproject.wizards.SampleNewWizard"
+            icon="icons/sample.gif"
+            id="eu.netide.newproject.wizards.SampleNewWizard"
+            name="Multi-page Editor file">
+      </wizard>
+   </extension>
+
+</plugin>

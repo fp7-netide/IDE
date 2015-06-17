@@ -17,7 +17,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	override initializeDefaultPreferences() {
 		var store = Activator.getDefault().getPreferenceStore()
-		store.setDefault(PreferenceConstants.VAGRANT_PATH, 
+		store.setDefault(NetIDEPreferenceConstants.VAGRANT_PATH, 
 			switch Platform.getOS {
 				case Platform.OS_LINUX: "/usr/bin/vagrant"
 				case Platform.OS_WIN32: "C:\\Hashicorp\\Vagrant\\bin\\vagrant.exe"

@@ -16,33 +16,59 @@ import Topology.Controller
  * @author Christian Stritzke
  */
 class ConfigurationGenerator implements IGenerator {
-	
+
 	var nodemap = newHashMap()
 
 	override def doGenerate(Resource input, IFileSystemAccess fsa) {
 		var ne = input.allContents.filter(typeof(NetworkEnvironment)).next
-		
+
 		populateNodeMap(ne)
-		
+
 		fsa.generateFile("mininet/" + ne.envName + ".py", ne.compileTopo)
 		fsa.generateFile("mininet/" + ne.envName + "_run.py", ne.compileRunscript)
 	}
-	
+
 	def populateNodeMap(NetworkEnvironment ne) {
 		var scounter = 1
-		for (s : ne.networks.map[networkelements].flatten.filter(typeof(Switch))) nodemap.put(s.fullname, scounter++)
-		
+		var switches = ne.networks.map[networkelements].flatten.filter(typeof(Switch))
+		var all_sdpid = switches.map[dpid]
+		for (s : switches) {
+			if (s.dpid > 0) {
+				nodemap.put(s.fullname, s.dpid)
+			} else {
+				while (all_sdpid.toSet.contains(scounter))
+					scounter++
+				nodemap.put(s.fullname, scounter++)
+			}
+			
+		}
+
 		var hcounter = 1
-		for (h : ne.networks.map[networkelements].flatten.filter(typeof(Host))) nodemap.put(h.fullname, hcounter++)
-		
+		var hosts = ne.networks.map[networkelements].flatten.filter(typeof(Host))
+		var all_hdpid = switches.map[dpid]
+		for (h : hosts) {
+			if (h.dpid > 0) {
+				nodemap.put(h.fullname, h.dpid)
+			} else {
+				while (all_hdpid.toSet.contains(hcounter))
+					hcounter++
+				nodemap.put(h.fullname, hcounter++)
+			}
+			
+		}
+
+
 		var ccounter = 1
-		for (c : ne.controllers) nodemap.put(c.name, ccounter++)
-		
-		
+		for (c : ne.controllers)
+			nodemap.put(c.name, ccounter++)
+
 	}
 
 	def compileTopo(NetworkEnvironment ne) {
 
+		var switches = ne.networks.map[networkelements].flatten.filter(typeof(Switch))
+		var hosts = ne.networks.map[networkelements].flatten.filter(typeof(Host))
+		var connectors = ne.networks.map[connectors].flatten.filter(typeof(Connector))
 
 		return '''
 			from mininet.topo import Topo
@@ -66,28 +92,40 @@ class ConfigurationGenerator implements IGenerator {
 			        Topo.__init__(self)
 			    
 			        # Adding Switches
-			        «FOR Switch s : ne.networks.map[networkelements].flatten.filter(typeof(Switch))»
+			        «FOR Switch s : switches»
 			        	self.«s.fullname» = self.addSwitch('«s.fullname»', dpid=int2dpid(«nodemap.get(s.fullname)»))
 			        «ENDFOR»
 			        
 			        # Adding Hosts
-			        «FOR Host h : ne.networks.map[networkelements].flatten.filter(typeof(Host))»
+			        «FOR Host h : hosts»
 			        	self.«h.fullname» = self.addHost('«h.fullname»')
 			        «ENDFOR»
 			        
 			        # Adding Links
-			        «FOR Connector c : ne.networks.map[connectors].flatten.filter(typeof(Connector))»
-			        	self.addLink(self.«c.connectedports.get(0).networkelement.fullname», self.«c.connectedports.get(1).networkelement.
-				fullname»)
+			        «FOR Connector c : connectors»
+			        	self.addLink(self.«c.connectedports.get(0).networkelement.fullname», self.«c.connectedports.get(1).networkelement.fullname»)
 			        «ENDFOR»
 			        
-			        
+			    «IF switches.exists[x|x.ip!=null && x.ip != ""] || hosts.exists[x|x.ip!=null && x.ip != ""]»
+			    def SetIPConfiguration(self, net):
+			        «FOR s : switches»
+			        «IF s.ip != null && s.ip != ""»
+			            net.get("«s.fullname»").setIP("«s.ip»"«IF s.prefix > 0», "«s.prefix»"«ENDIF»)
+			        «ENDIF»
+			        «ENDFOR»
+			        «FOR h : hosts»
+			        «IF h.ip != null && h.ip != ""»
+			            net.get("«h.fullname»").setIP("«h.ip»"«IF h.prefix > 0», "«h.prefix»"«ENDIF»)
+			        «ENDIF»
+			        «ENDFOR»
+			        «ENDIF»
+			    
 			topos = { '«ne.envName»': ( lambda: «ne.envName»() ) }
 		'''
 	}
 
 	def compileRunscript(NetworkEnvironment ne) {
-				
+
 		return '''
 			from mininet.net import Mininet
 			from mininet.node import Controller, OVSSwitch, RemoteController
@@ -99,13 +137,15 @@ class ConfigurationGenerator implements IGenerator {
 			def setup_and_run_«ne.envName» ():
 			    controllers = []
 			    «FOR Controller c : ne.controllers»
-			    «c.name» = RemoteController( '«c.name»', ip='«c.ip»', port=«c.portNo» )
-			    controllers.append(«c.name»)
+			    	«c.name» = RemoteController( '«c.name»', ip='«c.ip»', port=«c.portNo» )
+			    	controllers.append(«c.name»)
 			    «ENDFOR»
 			    
 			    cmap = {
 			    «FOR Switch s : ne.networks.map[networkelements].flatten.filter(typeof(Switch))»
-			        '«s.fullname»' : «s.controller.name»,
+			    	«IF s.controller != null»
+			    		'«s.fullname»' : «s.controller.name»,
+			    	«ENDIF»
 			    «ENDFOR»
 			    }
 			    
@@ -119,6 +159,7 @@ class ConfigurationGenerator implements IGenerator {
 			    for c in controllers:
 			        net.addController(c)
 			    net.build()
+			    topo.SetIPConfiguration(net)
 			    net.start()
 			    CLI(net)
 			    net.stop()

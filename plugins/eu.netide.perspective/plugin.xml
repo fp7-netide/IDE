@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="eu.netide.perspective.PerspectiveFactory"
+            icon="icons/netide.png"
+            id="eu.netide.perspective"
+            name="NetIDE">
+         <description>
+            The NetIDE perspective
+         </description>
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="eu.netide.perspective">
+      </perspectiveExtension>
+   </extension>
+
+</plugin>

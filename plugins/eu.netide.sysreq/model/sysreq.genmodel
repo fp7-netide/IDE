@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/eu.netide.sysreq/src" modelPluginID="eu.netide.sysreq"
+    modelName="Sysreq" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
+    usedGenPackages="../../eu.netide.configuration/model/Topology.genmodel#//Topology"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>sysreq.ecore</foreignModel>
+  <genPackages prefix="Sysreq" disposableProviderFactory="true" ecorePackage="sysreq.ecore#/">
+    <genClasses ecoreClass="sysreq.ecore#//SystemRequirements">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sysreq.ecore#//SystemRequirements/hardware"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sysreq.ecore#//SystemRequirements/software"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sysreq.ecore#//SystemRequirements/network"/>
+    </genClasses>
+    <genClasses ecoreClass="sysreq.ecore#//Network">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysreq.ecore#//Network/switchtype"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysreq.ecore#//Network/of_version"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysreq.ecore#//Network/topologyrequirements"/>
+    </genClasses>
+    <genClasses ecoreClass="sysreq.ecore#//Hardware">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysreq.ecore#//Hardware/arch"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysreq.ecore#//Hardware/cpucores"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysreq.ecore#//Hardware/cpufreq"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysreq.ecore#//Hardware/memory"/>
+    </genClasses>
+    <genClasses ecoreClass="sysreq.ecore#//Software">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sysreq.ecore#//Software/controllers"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sysreq.ecore#//Software/programminglanguages"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sysreq.ecore#//Software/libraries"/>
+    </genClasses>
+    <genClasses ecoreClass="sysreq.ecore#//Controller">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysreq.ecore#//Controller/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysreq.ecore#//Controller/version"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sysreq.ecore#//Controller/programminglanguages"/>
+    </genClasses>
+    <genClasses ecoreClass="sysreq.ecore#//ProgrammingLanguage">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysreq.ecore#//ProgrammingLanguage/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysreq.ecore#//ProgrammingLanguage/version"/>
+    </genClasses>
+    <genClasses ecoreClass="sysreq.ecore#//Library">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysreq.ecore#//Library/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sysreq.ecore#//Library/version"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sysreq.ecore#//Library/programminglanguage"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

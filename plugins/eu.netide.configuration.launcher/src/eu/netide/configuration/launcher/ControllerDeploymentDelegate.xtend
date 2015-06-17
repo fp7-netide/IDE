@@ -1,8 +1,10 @@
 package eu.netide.configuration.launcher
 
+import Topology.Controller
 import Topology.NetworkEnvironment
 import eu.netide.configuration.generator.GenerateActionDelegate
 import eu.netide.configuration.generator.vagrantfile.VagrantfileGenerateAction
+import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 import eu.netide.configuration.utils.NetIDE
 import java.io.File
 import java.util.ArrayList
@@ -10,9 +12,11 @@ import java.util.HashMap
 import java.util.Map
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.CoreException
+import org.eclipse.core.runtime.IPath
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Path
+import org.eclipse.core.runtime.Platform
 import org.eclipse.core.runtime.Status
 import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunch
@@ -22,10 +26,8 @@ import org.eclipse.debug.core.model.IProcess
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.core.runtime.Platform
+
 import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
-import Topology.Controller
-import org.eclipse.core.runtime.IPath
 
 /**
  * Triggers the automatic creation of virtual machines and execution of 
@@ -45,8 +47,17 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		
 		var NetIDE_server = ""
 
-		val vagrantpath = Platform.getPreferencesService.getString("eu.netide.configuration.preferences", "vagrantPath",
-			"", null)
+		val proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.PROXY_ON, false, null)
+
+		val proxyAddress = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.PROXY_ADDRESS, "", null)
+
+		val vagrantpath = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.VAGRANT_PATH, "", null)
+
+		val env = null //if(Platform.getOS == Platform.OS_LINUX && proxyOn) newArrayList("http_proxy=" + proxyAddress,
+				//"https_proxy=" + proxyAddress, "HOME=/home/piotr") as String[] else null as String[]
 
 		var path = configuration.attributes.get("topologymodel") as String
 		generateConfiguration(path)
@@ -66,7 +77,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 		location = new Path(vagrantpath)
 
-		var cmdline = newArrayList(location.toOSString, "init", "ubuntu/trusty64")
+		var cmdline = newArrayList(location.toOSString, "init", "ubuntu/trusty32")
 
 		var workingDirectory = file.project.location
 
@@ -81,13 +92,13 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			return;
 		}
 
-		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+		startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 
 		cmdline = newArrayList(location.toOSString, "up")
 
 		if(configuration.attributes.get("reprovision") as Boolean) cmdline.add("--provision")
 
-		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+		startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 
 		for (c : ne.controllers) {
 			var controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
@@ -102,9 +113,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 					var clientcontrollerpath = (configuration.attributes.get(
 						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
 
-
 					cmdline = getCommandLine("Ryu_backend", clientcontrollerpath, c)
-					
+
 					var clientthread = new Thread() {
 						var File workingDir
 						var ArrayList<String> cmdline
@@ -116,10 +126,10 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
-					
+
 					clientthread.setParameters(workingDir, cmdline)
 					clientthread.start
 
@@ -136,7 +146,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -166,7 +176,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -186,7 +196,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -216,7 +226,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -236,16 +246,14 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
-					
+
 					Thread.sleep(2000)
-					
+
 					serverthread.setParameters(workingDir, cmdline)
 					serverthread.start
-					
-					
 
 				}
 				else if (serverplatform == NetIDE.CONTROLLER_RYU && clientplatform == NetIDE.CONTROLLER_PYRETIC) {
@@ -266,7 +274,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -286,7 +294,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -316,7 +324,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -336,7 +344,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -366,7 +374,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -386,7 +394,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -416,7 +424,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -436,7 +444,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -466,7 +474,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -486,7 +494,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -516,7 +524,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -536,7 +544,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 						override run() {
 							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 						}
 					}
 					
@@ -566,7 +574,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 					override run() {
 						super.run()
-						startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+						startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 					}
 				}
 
@@ -586,13 +594,14 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		}
 		
 		cmdline = newArrayList(location.toOSString, "ssh", "-c",
-			"sudo python ~/mn-configs/" + if(ne.name != null && ne.name != "") ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
+			"sudo python ~/mn-configs/" +
+				if(ne.name != null && ne.name != "") ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
 
-		startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+		startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 
 		if (configuration.attributes.get("shutdown") as Boolean) {
 			cmdline = newArrayList(location.toOSString, "halt")
-			startProcess(cmdline, workingDir, location, monitor, launch, configuration)
+			startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 		}
 
 	}
@@ -607,7 +616,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 				String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pox/pox.py openflow.of_01 --port=%s %s ",
 					path.removeFileExtension.lastSegment, c.portNo, path.removeFileExtension.lastSegment)
 			case "Pyretic":
-				String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pyretic.py %s",
+				String.format("PYTHONPATH=$PYTHONPATH:controllers/%s:$HOME/pyretic:$HOME/pox $HOME/pyretic/pyretic.py %s",
 					path.removeFileExtension.lastSegment, path.removeFileExtension.lastSegment)
 			case "POX_Shim":
 				String.format("PYTHONPATH=$PYTHONPATH:Engine/ryu-backend/tests pox/pox.py openflow.of_01 --port=%s pox_client", c.portNo)
@@ -633,8 +642,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 	}
 
 	def startProcess(ArrayList<String> cmdline, File workingDir, Path location, IProgressMonitor monitor, ILaunch launch,
-		ILaunchConfiguration configuration) {
-		var p = DebugPlugin.exec(cmdline, workingDir, null as String[])
+		ILaunchConfiguration configuration, String[] env) {
+		var p = DebugPlugin.exec(cmdline, workingDir, env)
 
 		var IProcess process = null;
 

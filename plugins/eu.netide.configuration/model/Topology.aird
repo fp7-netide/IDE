@@ -133,6 +133,15 @@
           <children xmi:type="notation:Node" xmi:id="_s01eI3VrEeSp_Z-jKS26mQ" type="2003" element="_sz_woHVrEeSp_Z-jKS26mQ">
             <children xmi:type="notation:Node" xmi:id="_s02FMHVrEeSp_Z-jKS26mQ" type="5007"/>
             <children xmi:type="notation:Node" xmi:id="_s02sQHVrEeSp_Z-jKS26mQ" type="7004">
+              <children xmi:type="notation:Node" xmi:id="_Q8UKUBBGEeWLcrLBeQS3xQ" type="3010" element="_Q7UEwBBGEeWLcrLBeQS3xQ">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_Q8UxYBBGEeWLcrLBeQS3xQ"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_iGmPkBBHEeWLcrLBeQS3xQ" type="3010" element="_iFcZABBHEeWLcrLBeQS3xQ">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_iGmPkRBHEeWLcrLBeQS3xQ"/>
+              </children>
+              <children xmi:type="notation:Node" xmi:id="_a_iJcBBLEeWLcrLBeQS3xQ" type="3010" element="_a-9hsBBLEeWLcrLBeQS3xQ">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_a_iJcRBLEeWLcrLBeQS3xQ"/>
+              </children>
               <styles xmi:type="notation:SortingStyle" xmi:id="_s02sQXVrEeSp_Z-jKS26mQ"/>
               <styles xmi:type="notation:FilteringStyle" xmi:id="_s02sQnVrEeSp_Z-jKS26mQ"/>
             </children>
@@ -622,14 +631,47 @@
       <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_sz_woHVrEeSp_Z-jKS26mQ" name="NetworkElement" tooltipText="" outgoingEdges="_s0ijMHVrEeSp_Z-jKS26mQ _s0s7QHVrEeSp_Z-jKS26mQ" incomingEdges="_s0gG8HVrEeSp_Z-jKS26mQ _s0kYYHVrEeSp_Z-jKS26mQ _s0qfAHVrEeSp_Z-jKS26mQ" width="12" height="10">
         <target xmi:type="ecore:EClass" href="Topology.ecore#//NetworkElement"/>
         <semanticElements xmi:type="ecore:EClass" href="Topology.ecore#//NetworkElement"/>
-        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_s0AXsHVrEeSp_Z-jKS26mQ" labelFormat="italic" iconPath="/org.eclipse.emf.ecoretools.design/icons/full/obj16/EClass_abstract.gif" backgroundStyle="Liquid">
-          <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_s0AXsXVrEeSp_Z-jKS26mQ"/>
+        <ownedStyle xmi:type="diagram:FlatContainerStyle" xmi:id="_dE_aEBBLEeWLcrLBeQS3xQ" labelFormat="italic" iconPath="/org.eclipse.emf.ecoretools.design/icons/full/obj16/EClass_abstract.gif" backgroundStyle="Liquid">
+          <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_dE_aERBLEeWLcrLBeQS3xQ"/>
           <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@conditionnalStyles.1/@style"/>
-          <borderColor xmi:type="viewpoint:RGBValues" xmi:id="_s0AXsnVrEeSp_Z-jKS26mQ" red="125" green="125" blue="125"/>
-          <backgroundColor xmi:type="viewpoint:RGBValues" xmi:id="_s0AXs3VrEeSp_Z-jKS26mQ" red="255" green="255" blue="255"/>
-          <foregroundColor xmi:type="viewpoint:RGBValues" xmi:id="_s0AXtHVrEeSp_Z-jKS26mQ" red="228" green="228" blue="228"/>
+          <borderColor xmi:type="viewpoint:RGBValues" xmi:id="_dE_aEhBLEeWLcrLBeQS3xQ" red="125" green="125" blue="125"/>
+          <backgroundColor xmi:type="viewpoint:RGBValues" xmi:id="_dE_aExBLEeWLcrLBeQS3xQ" red="255" green="255" blue="255"/>
+          <foregroundColor xmi:type="viewpoint:RGBValues" xmi:id="_dE_aFBBLEeWLcrLBeQS3xQ" red="228" green="228" blue="228"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']"/>
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_Q7UEwBBGEeWLcrLBeQS3xQ" name="ip : EString" tooltipText="&#xA;ERROR : The required feature 'eAttributeType' of 'org.eclipse.emf.ecore.impl.EAttributeImpl@1dbd7a90{platform:/resource/eu.netide.configuration/model/Topology.ecore#//NetworkElement/newAttribute}' must be set&#xA;ERROR : The typed element must have a type">
+          <target xmi:type="ecore:EAttribute" href="Topology.ecore#//NetworkElement/ip"/>
+          <semanticElements xmi:type="ecore:EAttribute" href="Topology.ecore#//NetworkElement/ip"/>
+          <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_RoQDQBBGEeWLcrLBeQS3xQ" labelAlignment="LEFT">
+            <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_RoQDQRBGEeWLcrLBeQS3xQ"/>
+            <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']/@style"/>
+            <borderColor xmi:type="viewpoint:RGBValues" xmi:id="_RoQDQhBGEeWLcrLBeQS3xQ"/>
+            <color xmi:type="viewpoint:RGBValues" xmi:id="_RoQDQxBGEeWLcrLBeQS3xQ"/>
+          </ownedStyle>
+          <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
+        </ownedElements>
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_iFcZABBHEeWLcrLBeQS3xQ" name="dpid : EInt = -1" tooltipText="&#xA;ERROR : The required feature 'eAttributeType' of 'org.eclipse.emf.ecore.impl.EAttributeImpl@f2c890f{platform:/resource/eu.netide.configuration/model/Topology.ecore#//NetworkElement/newAttribute}' must be set&#xA;ERROR : The typed element must have a type">
+          <target xmi:type="ecore:EAttribute" href="Topology.ecore#//NetworkElement/dpid"/>
+          <semanticElements xmi:type="ecore:EAttribute" href="Topology.ecore#//NetworkElement/dpid"/>
+          <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_kdt38BBHEeWLcrLBeQS3xQ" labelAlignment="LEFT">
+            <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_kdt38RBHEeWLcrLBeQS3xQ"/>
+            <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']/@style"/>
+            <borderColor xmi:type="viewpoint:RGBValues" xmi:id="_kdt38hBHEeWLcrLBeQS3xQ"/>
+            <color xmi:type="viewpoint:RGBValues" xmi:id="_kdt38xBHEeWLcrLBeQS3xQ"/>
+          </ownedStyle>
+          <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
+        </ownedElements>
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_a-9hsBBLEeWLcrLBeQS3xQ" name="prefix : EInt = -1" tooltipText="&#xA;ERROR : The required feature 'eAttributeType' of 'org.eclipse.emf.ecore.impl.EAttributeImpl@7d7487ce{platform:/resource/eu.netide.configuration/model/Topology.ecore#//NetworkElement/newAttribute}' must be set&#xA;ERROR : The typed element must have a type">
+          <target xmi:type="ecore:EAttribute" href="Topology.ecore#//NetworkElement/prefix"/>
+          <semanticElements xmi:type="ecore:EAttribute" href="Topology.ecore#//NetworkElement/prefix"/>
+          <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_dFE5oBBLEeWLcrLBeQS3xQ" labelAlignment="LEFT">
+            <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_dFE5oRBLEeWLcrLBeQS3xQ"/>
+            <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']/@style"/>
+            <borderColor xmi:type="viewpoint:RGBValues" xmi:id="_dFE5ohBLEeWLcrLBeQS3xQ"/>
+            <color xmi:type="viewpoint:RGBValues" xmi:id="_dFE5oxBLEeWLcrLBeQS3xQ"/>
+          </ownedStyle>
+          <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
+        </ownedElements>
       </ownedDiagramElements>
       <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_s0A-wHVrEeSp_Z-jKS26mQ" name="NetworkEnvironment" tooltipText="" outgoingEdges="_s0jKRnVrEeSp_Z-jKS26mQ" incomingEdges="_s0mNkHVrEeSp_Z-jKS26mQ _s0pQ4HVrEeSp_Z-jKS26mQ" width="12" height="10">
         <target xmi:type="ecore:EClass" href="Topology.ecore#//NetworkEnvironment"/>
@@ -731,14 +773,14 @@
       <ownedDiagramElements xmi:type="diagram:DEdge" xmi:id="_s0ijMHVrEeSp_Z-jKS26mQ" sourceNode="_sz_woHVrEeSp_Z-jKS26mQ" targetNode="_sz8GQHVrEeSp_Z-jKS26mQ">
         <target xmi:type="ecore:EClass" href="Topology.ecore#//NetworkElement"/>
         <semanticElements xmi:type="ecore:EGenericType" href="Topology.ecore#//NetworkElement/@eGenericSuperTypes.0"/>
-        <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_s0jKQHVrEeSp_Z-jKS26mQ" targetArrow="InputClosedArrow" routingStyle="tree">
+        <ownedStyle xmi:type="diagram:EdgeStyle" xmi:id="_dFKZMBBLEeWLcrLBeQS3xQ" targetArrow="InputClosedArrow" routingStyle="tree">
           <description xmi:type="style:EdgeStyleDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@edgeMappings[name='EC%20ESupertypes']/@style"/>
-          <strokeColor xmi:type="viewpoint:RGBValues" xmi:id="_s0jKQXVrEeSp_Z-jKS26mQ" red="136" green="136" blue="136"/>
-          <beginLabelStyle xmi:type="diagram:BeginLabelStyle" xmi:id="_s0jKQnVrEeSp_Z-jKS26mQ" labelFormat="italic" showIcon="false">
-            <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_s0jKQ3VrEeSp_Z-jKS26mQ"/>
+          <strokeColor xmi:type="viewpoint:RGBValues" xmi:id="_dFKZMRBLEeWLcrLBeQS3xQ" red="136" green="136" blue="136"/>
+          <beginLabelStyle xmi:type="diagram:BeginLabelStyle" xmi:id="_dFKZMhBLEeWLcrLBeQS3xQ" labelFormat="italic" showIcon="false">
+            <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_dFKZMxBLEeWLcrLBeQS3xQ"/>
           </beginLabelStyle>
-          <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_s0jKRHVrEeSp_Z-jKS26mQ" showIcon="false">
-            <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_s0jKRXVrEeSp_Z-jKS26mQ"/>
+          <centerLabelStyle xmi:type="diagram:CenterLabelStyle" xmi:id="_dFKZNBBLEeWLcrLBeQS3xQ" showIcon="false">
+            <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_dFKZNRBLEeWLcrLBeQS3xQ"/>
           </centerLabelStyle>
         </ownedStyle>
         <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@edgeMappings[name='EC%20ESupertypes']"/>
