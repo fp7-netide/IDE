@@ -24,6 +24,7 @@
 	<modules>
 		<!-- plugins -->
 		<module>../../plugins/eu.netide.configuration</module>
+		<module>../../plugins/eu.netide.configuration.design</module>
 		<module>../../plugins/eu.netide.configuration.edit</module>
 		<module>../../plugins/eu.netide.configuration.editor</module>
 		<module>../../plugins/eu.netide.configuration.utils</module>
