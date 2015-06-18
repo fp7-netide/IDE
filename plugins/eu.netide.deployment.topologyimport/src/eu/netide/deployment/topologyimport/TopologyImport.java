@@ -5,9 +5,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
+import Topology.Connector;
+import Topology.Host;
+import Topology.Network;
+import Topology.NetworkEnvironment;
+import Topology.Port;
+import Topology.Switch;
 /*import java.lang.reflect.InvocationTargetException;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
@@ -22,14 +34,19 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource; */
-import Topology.*;
+import Topology.TopologyFactory;
 
 
 public class TopologyImport {
-	public static void main(String[] args) {
+	
+	
+	public void createTopologyModelFromFile(IFile ifile) {
 		
-		File file = new File(args[0]);
+		File file = ifile.getLocation().toFile();
 		BufferedReader reader = null;
+		
+		ResourceSet resset = new ResourceSetImpl();
+		Resource res = resset.createResource(URI.createURI(ifile.getFullPath().removeLastSegments(1).toPortableString() + "/" + ifile.getName() + ".topology"));
 		
 		TopologyFactory factory = TopologyFactory.eINSTANCE;
 		NetworkEnvironment ne = factory.createNetworkEnvironment();
@@ -72,7 +89,7 @@ public class TopologyImport {
 				port2.setConnector(con);
 				ports[0] = port1;
 				ports[1] = port2;
-				// port1.setNetworkelement(ne); WHICH Network Environment ?
+				// port1.setNetworkelement(ne); WHICH Network Environment ? - Element, not environment :) -CS
 				port_list.put(con, ports);
 		    }
 		    while ((text = reader.readLine()) != null) {
@@ -100,7 +117,12 @@ public class TopologyImport {
 	    Port port = factory.createPort();
 	    port.setConnector(con);
 	    
-	    
+		res.getContents().add(ne);
+		try {
+			res.save(Collections.EMPTY_MAP);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	    
 		//Read from topology file
 		//create objects 

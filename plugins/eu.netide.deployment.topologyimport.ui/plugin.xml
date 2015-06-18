@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            id="eu.netide.deployment.topologyimport.ui.contribution1"
+            nameFilter="*.import"
+            objectClass="org.eclipse.core.resources.IFile">
+         <menu
+               id="eu.netide.deployment.topologyimport.ui.menu1"
+               label="Deployment"
+               path="additions">
+            <separator
+                  name="group1">
+            </separator>
+         </menu>
+         <action
+               class="eu.netide.deployment.topologyimport.ui.popup.actions.TopologyImportAction"
+               enablesFor="1"
+               id="eu.netide.deployment.topologyimport.ui.newAction"
+               label="Topology Import"
+               menubarPath="eu.netide.deployment.topologyimport.ui.menu1/group1">
+         </action>
+      </objectContribution>
+   </extension>
+
+</plugin>
