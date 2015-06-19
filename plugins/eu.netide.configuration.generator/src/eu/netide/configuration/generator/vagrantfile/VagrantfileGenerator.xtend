@@ -162,6 +162,7 @@ class VagrantfileGenerator {
 					config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
 				«ENDIF»
 				«IF requiredPlatforms.contains("Pyretic")»
+					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
 				«ENDIF»
 				«IF requiredPlatforms.contains("POX")»
