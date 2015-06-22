@@ -3,11 +3,7 @@
       id="eu.netide.feature"
       label="NetIDE"
       version="0.2.0.qualifier"
-      provider-name="NetIDE Project"
-      os="linux,macosx,win32"
-      ws="cocoa,gtk,win32"
-      nl="en_US"
-      arch="x86,x86_64">
+      provider-name="NetIDE Project">
 
    <description>
       An IDE for SDN App development.
