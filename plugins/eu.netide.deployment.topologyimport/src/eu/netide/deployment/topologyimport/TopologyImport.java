@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -59,8 +60,9 @@ public class TopologyImport {
 		try {
 		    reader = new BufferedReader(new FileReader(file));
 		    String text = null;
-		    int nr_switches = Integer.parseInt(reader.readLine());
 		    String base_str = "sw";
+		    int nr_switches = Integer.parseInt(reader.readLine());
+
 		    HashMap<String, Switch> sw_list = new HashMap<String, Switch>();
 		    for (int i=0 ; i < nr_switches; i++) {
 		    	text = reader.readLine();
@@ -70,52 +72,58 @@ public class TopologyImport {
 		    	sw.setTopology(net);
 		    	sw_list.put(name, sw);
 		    }
+		    
 		    int nr_edges = Integer.parseInt(reader.readLine());
 		    HashMap<String, Connector> connector_list = new HashMap<String, Connector>();
-		    HashMap<Connector, Port[]> port_list = new HashMap<Connector, Port[]>();
+		    HashMap<Connector, ArrayList<Port>>  port_list= new HashMap<Connector, ArrayList<Port>>();
+		    ArrayList<Port> all_ports = new ArrayList<Port>();
+
 		    for (int i=0 ; i < nr_edges; i++) {
 		    	text = reader.readLine();
-		    	String[] edges = new String[2] ;
-		    	Port[] ports = new Port[2];
-		    	edges = text.split("   ");
+		    	ArrayList<Port> ports = new ArrayList<Port>();
 		    	String name =  "edge_" +String.valueOf(i);
-		    	//System.out.println(edges[0]+" "+edges[1]);
+
 		    	Connector con = factory.createConnector();
 				con.setNetwork(net);
 				connector_list.put(name, con);
+				
 				Port port1= factory.createPort();
 				port1.setConnector(con);
+				port1.setId(1);
+				
 				Port port2 = factory.createPort();
 				port2.setConnector(con);
-				ports[0] = port1;
-				ports[1] = port2;
-				// port1.setNetworkelement(ne); WHICH Network Environment ? - Element, not environment :) -CS
+				port2.setId(2);
+				
+				ports.add(port1);
+				ports.add(port2);
 				port_list.put(con, ports);
+				
+				all_ports.add(port1);
+				all_ports.add(port2);
+				
+				con.getConnectedports().clear();
+				con.getConnectedports().addAll(ports);
+				
+				
 		    }
-		    while ((text = reader.readLine()) != null) {
-		    	System.out.println(text);
-		    }
+		    
+		    Switch s0 = sw_list.get("sw_0");
+		    Switch s1 = sw_list.get("sw_1");
+		    s0.getPorts().clear();
+		    s0.getPorts().add(all_ports.get(0));
+		    
+		    s1.getPorts().clear();
+		    s1.getPorts().add(all_ports.get(1));
+		    
 		} catch (FileNotFoundException e) {
 		    e.printStackTrace();
 		} catch (IOException e) {
 		    e.printStackTrace();
 		} 
 		
-
 		
-		Switch sw = factory.createSwitch();
-		sw.setName("TestSwitch");
-		sw.setTopology(net);
 		
-		Host host = factory.createHost();
-		host.setName("TestHost");
-		host.setTopology(net);
-		
-		Connector con = factory.createConnector();
-		con.setNetwork(net);
-		
-	    Port port = factory.createPort();
-	    port.setConnector(con);
 	    
 		res.getContents().add(ne);
 		try {
