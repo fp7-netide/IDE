@@ -5,7 +5,7 @@
    </feature>
    <category-def name="eu.netide" label="NetIDE">
       <description>
-         My Eclipse tool built with Tycho
+         An IDE for SDN App development.
       </description>
    </category-def>
 </site>

@@ -3,15 +3,15 @@
       id="eu.netide.feature"
       label="NetIDE"
       version="0.2.0.qualifier"
-      provider-name="NetIDE Project">
+      provider-name="NetIDE Project"
+      os="linux,macosx,win32"
+      ws="cocoa,gtk,win32"
+      nl="en_US"
+      arch="x86,x86_64">
 
-   <description url="http://www.example.com/description">
-      An IDE for SDN development.
+   <description>
+      An IDE for SDN App development.
    </description>
-
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
-   </copyright>
 
    <license url="">
       Eclipse Public License - v 1.0
@@ -263,7 +263,7 @@ any resulting litigation.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="eu.netide.configuration.design"
          download-size="0"
