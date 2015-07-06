@@ -2,3 +2,4 @@ eu.netide.configuration.edit
 eu.netide.configuration.editor
 eu.netide.configuration.tests
 !eu.netide.debug
+target
