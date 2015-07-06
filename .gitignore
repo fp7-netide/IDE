@@ -13,6 +13,7 @@ gen/
 target/
 target-android/
 xtend-gen/
+src-gen/
 build/
 *.apk
 *.jar

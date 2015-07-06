@@ -14,6 +14,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import eu.netide.configuration.utils.NetIDEUtil
 import Topology.Controller
 import java.net.URL
+import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 
 /**
  * Generates and writes a Vagrantfile depending on required controller platforms and network applications.
@@ -32,7 +33,10 @@ class VagrantfileGenerator {
 	def compile(Resource input, IResource res) {
 
 		var ne = input.allContents.filter(typeof(NetworkEnvironment)).next
-	
+		
+		
+		var projectName = res.fullPath.segment(0)
+		
 		var bundle = Platform.getBundle(NetIDE.LAUNCHER_PLUGIN)
 		var url = bundle.getEntry("scripts/install_mininet.sh")
 		var mininetscriptpath = scriptpath(url)
@@ -76,6 +80,12 @@ class VagrantfileGenerator {
 			var platform = configuration.attributes.get("controller_platform_" + name)
 			configuration.attributes.get(String.format("controller_data_%s_%s", name, platform)) as String
 		].toSet.map[e|NetIDEUtil.absolutePath(e)]
+		
+		var proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.PROXY_ON, false, null)
+		var proxyAddress = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.PROXY_ADDRESS, "", null)
+
+		var customBox = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.CUSTOM_BOX, false, null)
+		var customBoxName = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.CUSTOM_BOX_NAME, "", null)
 
 		return '''
 			# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
@@ -83,16 +93,69 @@ class VagrantfileGenerator {
 			
 			$path = "«mininetscriptpath»"
 			
+			«IF proxyOn»
+			$proxysetup = <<SCRIPT
+				echo "export all_proxy=socks://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export all_proxy=socks://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export all_proxy=socks://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+				
+
+				echo "export ALL_PROXY=socks://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export ALL_PROXY=socks://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export ALL_PROXY=socks://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+				
+
+				echo "export http_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export http_proxy=http://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export http_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+
+				echo "export HTTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export HTTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export HTTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+
+				echo "export ftp_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export ftp_proxy=http://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export ftp_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+
+				echo "export FTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export FTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export FTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+
+				echo "export https_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export https_proxy=http://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export https_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+
+				echo "export HTTPS_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile
+				echo "export HTTPS_PROXY=http://«proxyAddress»" | sudo tee -a /etc/environment
+				echo "export HTTPS_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+				
+				echo 'Acquire::http::Proxy "http://«proxyAddress»";' | sudo tee -a /etc/apt/apt.conf.d/71proxy
+				echo 'Acquire::ftp::Proxy "http://«proxyAddress»";' | sudo tee -a /etc/apt/apt.conf.d/71proxy
+				
+			SCRIPT
+			«ENDIF»
+			
 			Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			
 				# We use a relatively new Ubuntu box
+				«IF !customBox»
 				config.vm.box = "ubuntu/trusty64"
-				
 				config.vm.provider "virtualbox" do |v|
 			v.memory = 4096
 				end
+				«ELSE»
+				config.vm.box = "«customBoxName»"
+				«ENDIF»
 				
+				config.vm.provider "virtualbox" do |v|
+				  v.name = "«projectName»"
+				end
+				
+				«IF !customBox»
 				# Configuring mininet
+				«IF proxyOn»
+				config.vm.provision "shell", inline: $proxysetup, privileged: false
+				«ENDIF»
 				config.vm.provision "shell", path: "«mininetscriptpath»", privileged: false
 				config.vm.provision "shell", path: "«loggerscriptpath»", privileged: false
 				«IF requiredPlatforms.contains("Ryu")»
@@ -117,6 +180,7 @@ class VagrantfileGenerator {
 					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«floodlightscriptpath»", privileged: false
+				«ENDIF»
 				«ENDIF»
 				
 				# Syncing the mininet configuration folder with the vm

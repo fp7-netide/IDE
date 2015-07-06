@@ -16,7 +16,7 @@ if [ ! -d ~/mininet ]; then
   sudo dpkg-reconfigure openvswitch-datapath-dkms
   sudo service openflow-switch restart
   
-  git clone git://github.com/mininet/mininet
+  git clone https://github.com/mininet/mininet
   mininet/util/install.sh -fw
   
   if [ ! -d ~/controllers ]; then

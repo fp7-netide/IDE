@@ -19,7 +19,7 @@ if [ ! -d ~/pyretic ]; then
   rm -rf git
 
   cd ~
-  git clone git://github.com/frenetic-lang/pyretic.git
+  git clone https://github.com/frenetic-lang/pyretic.git
 
   echo "export PYTHONPATH=\$PYTHONPATH:$HOME/pyretic" >> $HOME/.bashrc
 

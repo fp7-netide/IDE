@@ -11,5 +11,6 @@ Require-Bundle: org.eclipse.xtext.generator;bundle-version="2.7.2",
  org.eclipse.xtext.builder;bundle-version="2.7.2",
  org.eclipse.core.resources,
  org.eclipse.xtext.ui.shared;bundle-version="2.7.2",
- eu.netide.configuration.utils;bundle-version="1.0.0"
+ eu.netide.configuration.utils;bundle-version="1.0.0",
+ eu.netide.configuration.preferences;bundle-version="1.0.0"
 Bundle-Vendor: NetIDE
