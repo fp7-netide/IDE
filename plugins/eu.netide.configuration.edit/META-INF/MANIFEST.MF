@@ -10,6 +10,6 @@ Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: Topology.provider
 Require-Bundle: org.eclipse.core.runtime,
- eu.netide.configuration;visibility:=reexport,
- org.eclipse.emf.edit;visibility:=reexport
+ org.eclipse.emf.edit;visibility:=reexport,
+ eu.netide.configuration;visibility:=reexport
 Bundle-ActivationPolicy: lazy
