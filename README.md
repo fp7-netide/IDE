@@ -18,6 +18,9 @@ In order to execute commands on your VM through the IDE, you also need an instal
 4. Clone or add this repository and import the following projects from the "plugins"-folder into your workspace.
  
   ```
+  eu.netide.configuration
+  eu.netide.configuration.edit
+  eu.netide.configuration.editor
   eu.netide.configuration.design
   eu.netide.configuration.launcher  
   eu.netide.configuration.generator
@@ -29,11 +32,10 @@ In order to execute commands on your VM through the IDE, you also need an instal
   eu.netide.configuration.newproject
   ```
 
-5. Import `eu.netide.configuration` as a general project.  
-6. Go back to the Java perspective and open eu.netide.configuration/model/Topology.genmodel
-7. Right-click the root element in the tree view and select `Generate All`
-8. Right-click the project eu.netide.configuration and select `Run As -> Eclipse Application`
-9. If you want to develop your Python-based controllers in Eclipse as well, you can install the [PyDev](http://www.pydev.org/) plug-in for Eclipse from the Eclipse Marketplace.
+5. Go back to the Java perspective and open eu.netide.configuration/model/Topology.genmodel
+6. Right-click the root element in the tree view and select `Generate All`
+7. Right-click the project eu.netide.configuration and select `Run As -> Eclipse Application`
+8. If you want to develop your Python-based controllers in Eclipse as well, you can install the [PyDev](http://www.pydev.org/) plug-in for Eclipse from the Eclipse Marketplace.
 
 
 
