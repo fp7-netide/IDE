@@ -1,9 +1,9 @@
 # ignore Eclipse workspace files:
 .metadata
-#.settings
-#.project
+.settings
+.project
 
-#.classpath
+.classpath
 
 # ignore java compile time files:
 *.class
