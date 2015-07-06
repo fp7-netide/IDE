@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Configuration Design
+Bundle-SymbolicName: eu.netide.configuration.design;singleton:=true
+Bundle-Version: 0.2.0.qualifier
+Bundle-Activator: eu.netide.configuration.design.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.sirius,
+ org.eclipse.sirius.common.acceleo.mtl,
+ org.eclipse.sirius.common.ui,
+ org.eclipse.sirius.diagram.ui;bundle-version="1.0.2"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

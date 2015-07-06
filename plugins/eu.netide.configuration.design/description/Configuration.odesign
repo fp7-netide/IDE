@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:tool="http://www.eclipse.org/sirius/diagram/description/tool/1.1.0" xmlns:tool_1="http://www.eclipse.org/sirius/description/tool/1.1.0" name="Configuration" version="8.1.0">
-  <ownedViewpoints name="Topology">
+  <ownedViewpoints name="Topology" modelFileExtension="topology">
     <ownedRepresentations xsi:type="description_1:DiagramDescription" name="NetworkEnvironment" domainClass="Topology.NetworkEnvironment">
       <metamodel href="eu.netide.configuration.topology#/"/>
       <defaultLayer name="Default">
@@ -36,7 +36,7 @@
                 <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
               </style>
             </borderedNodeMappings>
-            <style xsi:type="style:WorkspaceImageDescription" showIcon="false" sizeComputationExpression="5" workspacePath="/Network.design/icons/host.png">
+            <style xsi:type="style:WorkspaceImageDescription" showIcon="false" sizeComputationExpression="5" workspacePath="/eu.netide.configuration.design/icons/host.png">
               <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
               <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             </style>
@@ -63,7 +63,7 @@
           </style>
         </containerMappings>
         <toolSections name="Nodes">
-          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateSwitch" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort']" iconPath="Network.design/icons/switch_icon.png">
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateSwitch" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort']" iconPath="eu.netide.configuration.design/icons/switch_icon.png">
             <variable name="container"/>
             <viewVariable name="containerView"/>
             <initialOperation>
@@ -77,7 +77,7 @@
               </firstModelOperations>
             </initialOperation>
           </ownedTools>
-          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateHost" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']" iconPath="Network.design/icons/host_icon.png">
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateHost" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']" iconPath="eu.netide.configuration.design/icons/host_icon.png">
             <variable name="container"/>
             <viewVariable name="containerView"/>
             <initialOperation>
@@ -91,7 +91,7 @@
               </firstModelOperations>
             </initialOperation>
           </ownedTools>
-          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreatePort" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']/@borderedNodeMappings[name='HostPort']" iconPath="Network.design/icons/port_icon.png">
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreatePort" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']/@borderedNodeMappings[name='HostPort']" iconPath="eu.netide.configuration.design/icons/port_icon.png">
             <variable name="container"/>
             <viewVariable name="containerView"/>
             <initialOperation>
@@ -100,7 +100,7 @@
               </firstModelOperations>
             </initialOperation>
           </ownedTools>
-          <ownedTools xsi:type="tool:ContainerCreationDescription" name="CreateNetwork" containerMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']" iconPath="Network.design/icons/network_icon.png">
+          <ownedTools xsi:type="tool:ContainerCreationDescription" name="CreateNetwork" containerMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']" iconPath="eu.netide.configuration.design/icons/network_icon.png">
             <variable name="container"/>
             <viewVariable name="containerView"/>
             <initialOperation>
@@ -111,7 +111,7 @@
               </firstModelOperations>
             </initialOperation>
           </ownedTools>
-          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateController" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@nodeMappings[name='Controller']" iconPath="Network.design/icons/controller_icon.png">
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateController" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@nodeMappings[name='Controller']" iconPath="eu.netide.configuration.design/icons/controller_icon.png">
             <variable name="container"/>
             <viewVariable name="containerView"/>
             <initialOperation>
@@ -132,7 +132,7 @@
           </ownedTools>
         </toolSections>
         <toolSections name="Edges">
-          <ownedTools xsi:type="tool:EdgeCreationDescription" name="CreateConnector" edgeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@edgeMappings[name='Connector']" iconPath="Network.design/icons/connector_icon.png">
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="CreateConnector" edgeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@edgeMappings[name='Connector']" iconPath="eu.netide.configuration.design/icons/connector_icon.png">
             <sourceVariable name="source"/>
             <targetVariable name="target"/>
             <sourceViewVariable name="sourceView"/>
@@ -150,7 +150,7 @@
               </firstModelOperations>
             </initialOperation>
           </ownedTools>
-          <ownedTools xsi:type="tool:EdgeCreationDescription" name="CreateControllerConnector" edgeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@edgeMappings[name='ControllerConnector']" iconPath="Network.design/icons/controllerconnector_icon.png">
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="CreateControllerConnector" edgeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@edgeMappings[name='ControllerConnector']" iconPath="eu.netide.configuration.design/icons/controllerconnector_icon.png">
             <sourceVariable name="source"/>
             <targetVariable name="target"/>
             <sourceViewVariable name="sourceView"/>

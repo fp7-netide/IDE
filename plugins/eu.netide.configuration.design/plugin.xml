@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
   <extension point="org.eclipse.sirius.componentization">
-    <component class="Network.design.Activator"
+    <component class="eu.netide.configuration.design.Activator"
                id="Network.design"
 	       name="Configuration">
     </component>

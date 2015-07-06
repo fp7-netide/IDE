@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Network.design</name>
+	<name>eu.netide.configuration.design</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -32,4 +32,3 @@
 		<nature>org.eclipse.pde.PluginNature</nature>
 	</natures>
 </projectDescription>
-
