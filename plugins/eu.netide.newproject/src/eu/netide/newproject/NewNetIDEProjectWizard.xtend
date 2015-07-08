@@ -1,33 +1,22 @@
 package eu.netide.newproject;
 
+import Topology.NetworkEnvironment
 import java.io.ByteArrayInputStream
 import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.core.runtime.NullProgressMonitor
+import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.core.runtime.Status
+import org.eclipse.emf.common.util.URI
 import org.eclipse.jface.viewers.IStructuredSelection
 import org.eclipse.jface.wizard.Wizard
-import org.eclipse.sirius.business.api.componentization.ViewpointRegistry
+import org.eclipse.sirius.business.api.dialect.DialectManager
+import org.eclipse.sirius.business.api.dialect.command.CreateRepresentationCommand
 import org.eclipse.sirius.business.api.session.SessionManager
-import org.eclipse.sirius.ui.business.api.viewpoint.ViewpointSelectionCallback
-import org.eclipse.sirius.ui.business.internal.commands.ChangeViewpointSelectionCommand
+import org.eclipse.sirius.ui.business.api.session.UserSession
 import org.eclipse.sirius.ui.tools.api.project.ModelingProjectManager
 import org.eclipse.ui.INewWizard
 import org.eclipse.ui.IWorkbench
-import org.eclipse.sirius.business.api.session.Session
-import org.eclipse.sirius.ui.business.api.session.UserSession
-import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.ResourceSet
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.sirius.viewpoint.DAnalysis
-import Topology.NetworkEnvironment
-import java.util.Collection
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.sirius.business.api.dialect.DialectManager
-import org.eclipse.sirius.viewpoint.description.RepresentationDescription
-import org.eclipse.core.runtime.jobs.Job
-import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.ui.progress.UIJob
-import org.eclipse.core.runtime.Status
-import javax.sound.sampled.BooleanControl.Type
+import org.eclipse.sirius.business.api.session.Session
 
 class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 	NewNetIDEProjectWizardPage1 page
@@ -97,34 +86,40 @@ class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 
 			var root = ResourcesPlugin.getWorkspace().getRoot()
 			var project = root.getProject(projectName)
-			project.create(null)
-			project.open(null)
-			project.setDefaultCharset("UTF-8", null)
+			project.create(monitor)
+			project.open(monitor)
+			project.setDefaultCharset("UTF-8", monitor)
 
 			ModelingProjectManager.INSTANCE.convertToModelingProject(project, monitor)
 
-			var object = NewProjectUtils.newTopologyModelFile(project.fullPath, projectName) as NetworkEnvironment
+			NewProjectUtils.newTopologyModelFile(project.fullPath, projectName) as NetworkEnvironment
 
 			var sessionResourceURI = URI.createPlatformResourceURI(
 				String.format("/%s/representations.aird", projectName), true)
 
-			var session = SessionManager.INSTANCE.getSession(sessionResourceURI, monitor)
+			
+			var session = SessionManager.INSTANCE.getSession(sessionResourceURI, monitor) as Session
 			session.open(monitor)
-
+			
 			var usersession = UserSession.from(session)
 			usersession.selectViewpoints(#["Topology"])
 			
-//			usersession.save(monitor)
-//			session.open(monitor)
+			var ne = session.getSemanticResources().iterator.next.getContents.get(0)
 			
-//			var viewpoints = session.getSelectedViewpoints(true)
-//			var viewpoint = viewpoints.iterator.next()
-//			
-//			var desc = DialectManager.INSTANCE.getAvailableRepresentationDescriptions(viewpoints, object).iterator.next
-//			
-//			DialectManager.INSTANCE.createRepresentation(projectName, object, desc, session, monitor)
-
-			//session.createView(viewpoint, newHashSet(object), monitor)
+			usersession.save(monitor)
+			session.open(monitor)
+			
+			var viewpoints = session.getSelectedViewpoints(true)
+			var viewpoint = viewpoints.iterator.next()
+			
+			var desc = DialectManager.INSTANCE.getAvailableRepresentationDescriptions(viewpoints, ne).iterator.next
+			
+			//DialectManager.INSTANCE.createRepresentation(projectName, ne, desc, session, monitor)
+			
+			var createViewCommand = new CreateRepresentationCommand(session, desc, ne, projectName, monitor)
+			session.getTransactionalEditingDomain().getCommandStack().execute(createViewCommand)
+			
+			session.createView(viewpoint, newHashSet(ne), monitor)
 			
 			var appsFolder = project.getFolder("apps")
 			appsFolder.create(false, true, null)
@@ -144,7 +139,5 @@ class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 
 			return Status.OK_STATUS
 		}
-
 	}
-
 }
