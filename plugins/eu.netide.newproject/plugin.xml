@@ -16,17 +16,6 @@
             name="NetIDE Project"
             project="true">
       </wizard>
-      <category
-            id="eu.netide.newproject"
-            name="Sample Wizards">
-      </category>
-      <wizard
-            category="eu.netide.newproject"
-            class="eu.netide.newproject.wizards.SampleNewWizard"
-            icon="icons/sample.gif"
-            id="eu.netide.newproject.wizards.SampleNewWizard"
-            name="Multi-page Editor file">
-      </wizard>
    </extension>
 
 </plugin>
