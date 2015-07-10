@@ -27,9 +27,9 @@
             </centerLabelStyleDescription>
           </style>
         </edgeMappings>
-        <containerMappings name="Network" labelDirectEdit="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@toolSections.0/@ownedTools[name='NameEdit']" domainClass="Topology.Network">
-          <subNodeMappings name="Host" labelDirectEdit="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@toolSections.0/@ownedTools[name='NameEdit']" semanticCandidatesExpression="feature:networkelements" domainClass="Topology.Host">
-            <borderedNodeMappings name="HostPort" semanticCandidatesExpression="feature:eAllContents" domainClass="Topology.Port">
+        <containerMappings name="Network" deletionDescription="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@toolSections.0/@ownedTools[name='DeleteNetwork']" labelDirectEdit="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@toolSections.0/@ownedTools[name='NameEdit']" domainClass="Topology.Network" dropDescriptions="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@toolSections.0/@ownedTools[name='DropElement']">
+          <subNodeMappings name="Host" deletionDescription="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@toolSections.0/@ownedTools[name='DeleteNetworkElement']" labelDirectEdit="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@toolSections.0/@ownedTools[name='NameEdit']" semanticCandidatesExpression="feature:networkelements" domainClass="Topology.Host">
+            <borderedNodeMappings name="HostPort" deletionDescription="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@toolSections.0/@ownedTools[name='DeleteNetworkElement']" semanticCandidatesExpression="feature:eAllContents" domainClass="Topology.Port">
               <style xsi:type="style:SquareDescription" labelSize="6" labelFormat="bold" showIcon="false" labelExpression="feature:id" labelPosition="node" width="1" height="1">
                 <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
                 <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
@@ -41,8 +41,8 @@
               <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             </style>
           </subNodeMappings>
-          <subNodeMappings name="Switch" labelDirectEdit="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@toolSections.0/@ownedTools[name='NameEdit']" semanticCandidatesExpression="feature:networkelements" domainClass="Topology.Switch">
-            <borderedNodeMappings name="SwitchPort" semanticCandidatesExpression="feature:eAllContents" domainClass="Topology.Port">
+          <subNodeMappings name="Switch" deletionDescription="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@toolSections.0/@ownedTools[name='DeleteNetworkElement']" labelDirectEdit="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@toolSections.0/@ownedTools[name='NameEdit']" semanticCandidatesExpression="feature:networkelements" domainClass="Topology.Switch">
+            <borderedNodeMappings name="SwitchPort" deletionDescription="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@toolSections.0/@ownedTools[name='DeleteNetworkElement']" semanticCandidatesExpression="feature:eAllContents" domainClass="Topology.Port">
               <style xsi:type="style:SquareDescription" labelSize="6" labelFormat="bold" showIcon="false" labelExpression="feature:id" labelPosition="node" width="1" height="1">
                 <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
                 <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
@@ -63,44 +63,7 @@
           </style>
         </containerMappings>
         <toolSections name="Nodes">
-          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateSwitch" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort']" iconPath="eu.netide.configuration.design/icons/switch_icon.png">
-            <variable name="container"/>
-            <viewVariable name="containerView"/>
-            <initialOperation>
-              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:container">
-                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Switch" referenceName="networkelements" variableName="switchinstance">
-                  <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="['s'+container.eContents()->filter(Switch)->size() /]"/>
-                  <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Port" referenceName="ports" variableName="portinstance">
-                    <subModelOperations xsi:type="tool_1:SetValue" featureName="id" valueExpression="[1 /]"/>
-                  </subModelOperations>
-                </subModelOperations>
-              </firstModelOperations>
-            </initialOperation>
-          </ownedTools>
-          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateHost" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']" iconPath="eu.netide.configuration.design/icons/host_icon.png">
-            <variable name="container"/>
-            <viewVariable name="containerView"/>
-            <initialOperation>
-              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:container">
-                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Host" referenceName="networkelements" variableName="hostinstance">
-                  <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="['h'+container.eContents()->filter(Host)->size() /]"/>
-                  <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Port" referenceName="ports">
-                    <subModelOperations xsi:type="tool_1:SetValue" featureName="id" valueExpression="1"/>
-                  </subModelOperations>
-                </subModelOperations>
-              </firstModelOperations>
-            </initialOperation>
-          </ownedTools>
-          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreatePort" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']/@borderedNodeMappings[name='HostPort']" iconPath="eu.netide.configuration.design/icons/port_icon.png">
-            <variable name="container"/>
-            <viewVariable name="containerView"/>
-            <initialOperation>
-              <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Port" referenceName="ports">
-                <subModelOperations xsi:type="tool_1:SetValue" featureName="id" valueExpression="[container.eContents()->filter(Port)->size() /]"/>
-              </firstModelOperations>
-            </initialOperation>
-          </ownedTools>
-          <ownedTools xsi:type="tool:ContainerCreationDescription" name="CreateNetwork" containerMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']" iconPath="eu.netide.configuration.design/icons/network_icon.png">
+          <ownedTools xsi:type="tool:ContainerCreationDescription" name="CreateNetwork" label="Network" containerMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']" iconPath="eu.netide.configuration.design/icons/network_icon.png">
             <variable name="container"/>
             <viewVariable name="containerView"/>
             <initialOperation>
@@ -111,7 +74,7 @@
               </firstModelOperations>
             </initialOperation>
           </ownedTools>
-          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateController" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@nodeMappings[name='Controller']" iconPath="eu.netide.configuration.design/icons/controller_icon.png">
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateController" label="Controller" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@nodeMappings[name='Controller']" iconPath="eu.netide.configuration.design/icons/controller_icon.png">
             <variable name="container"/>
             <viewVariable name="containerView"/>
             <initialOperation>
@@ -124,33 +87,120 @@
               </firstModelOperations>
             </initialOperation>
           </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateSwitch" label="Switch" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort']" iconPath="eu.netide.configuration.design/icons/switch_icon.png">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:container">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Switch" referenceName="networkelements" variableName="switchinstance">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="['s'+container.eContents()->filter(Switch)->size() /]"/>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateHost" label="Host" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']" iconPath="eu.netide.configuration.design/icons/host_icon.png">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:container">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Host" referenceName="networkelements" variableName="hostinstance">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="['h'+container.eContents()->filter(Host)->size() /]"/>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreatePort" label="Port" nodeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']/@borderedNodeMappings[name='HostPort']" iconPath="eu.netide.configuration.design/icons/port_icon.png">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Port" referenceName="ports">
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="id" valueExpression="[container.eContents()->filter(Port)->size() /]"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
           <ownedTools xsi:type="tool:DirectEditLabel" name="NameEdit">
             <mask mask="{0}"/>
             <initialOperation>
               <firstModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="var:arg0"/>
             </initialOperation>
           </ownedTools>
+          <ownedTools xsi:type="tool:DeleteElementDescription" name="DeleteNetworkElement" label="Delete Element">
+            <element name="element"/>
+            <elementView name="elementView"/>
+            <containerView name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="element">
+                <subModelOperations xsi:type="tool_1:For" expression="[if element.oclIsKindOf(NetworkElement) then element.oclAsType(NetworkElement).ports->collect(connector) else element.oclAsType(Port)->collect(connector) endif /]">
+                  <subModelOperations xsi:type="tool_1:RemoveElement"/>
+                </subModelOperations>
+                <subModelOperations xsi:type="tool_1:RemoveElement"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:DeleteElementDescription" name="DeleteNetwork">
+            <element name="element"/>
+            <elementView name="elementView"/>
+            <containerView name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="element">
+                <subModelOperations xsi:type="tool_1:For" expression="[element.oclAsType(Network).networkelements->collect(ports)->collect(connector) /]">
+                  <subModelOperations xsi:type="tool_1:RemoveElement"/>
+                </subModelOperations>
+                <subModelOperations xsi:type="tool_1:RemoveElement"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:ContainerDropDescription" name="DropElement" label="Drop Element" mappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']">
+            <oldContainer name="oldSemanticContainer"/>
+            <newContainer name="newSemanticContainer"/>
+            <element name="element"/>
+            <newViewContainer name="newContainerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:element">
+                <subModelOperations xsi:type="tool_1:MoveElement" newContainerExpression="var:newSemanticContainer" featureName="networkelements"/>
+                <subModelOperations xsi:type="tool_1:For" expression="[element.ports->collect(connector) /]">
+                  <subModelOperations xsi:type="tool_1:MoveElement" newContainerExpression="var:newSemanticContainer" featureName="connectors"/>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
         </toolSections>
         <toolSections name="Edges">
-          <ownedTools xsi:type="tool:EdgeCreationDescription" name="CreateConnector" edgeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@edgeMappings[name='Connector']" iconPath="eu.netide.configuration.design/icons/connector_icon.png">
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="CreateConnector" label="Connector" edgeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@edgeMappings[name='Connector']" iconPath="eu.netide.configuration.design/icons/connector_icon.png" extraSourceMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']" extraTargetMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch'] //@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']">
             <sourceVariable name="source"/>
             <targetVariable name="target"/>
             <sourceViewVariable name="sourceView"/>
             <targetViewVariable name="targetView"/>
             <initialOperation>
-              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[source.eContainer().eContainer()/]">
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[if source.oclIsKindOf(Port) then source.eContainer().eContainer() else source.eContainer() endif/]">
                 <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Connector" referenceName="connectors">
                   <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:source">
-                    <subModelOperations xsi:type="tool_1:SetValue" featureName="connector" valueExpression="var:instance"/>
+                    <subModelOperations xsi:type="tool_1:If" conditionExpression="[source.oclIsKindOf(NetworkElement) /]">
+                      <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Port" referenceName="ports" variableName="portinstance">
+                        <subModelOperations xsi:type="tool_1:SetValue" featureName="id" valueExpression="[source.eContents()->filter(Port)->size() /]"/>
+                        <subModelOperations xsi:type="tool_1:SetValue" featureName="connector" valueExpression="var:instance"/>
+                      </subModelOperations>
+                    </subModelOperations>
+                    <subModelOperations xsi:type="tool_1:If" conditionExpression="[source.oclIsKindOf(Port) /]">
+                      <subModelOperations xsi:type="tool_1:SetValue" featureName="connector" valueExpression="var:instance"/>
+                    </subModelOperations>
                   </subModelOperations>
                   <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:target">
-                    <subModelOperations xsi:type="tool_1:SetValue" featureName="connector" valueExpression="var:instance"/>
+                    <subModelOperations xsi:type="tool_1:If" conditionExpression="[target.oclIsKindOf(NetworkElement) /]">
+                      <subModelOperations xsi:type="tool_1:CreateInstance" typeName="Topology.Port" referenceName="ports" variableName="portinstance">
+                        <subModelOperations xsi:type="tool_1:SetValue" featureName="id" valueExpression="[target.eContents()->filter(Port)->size() /]"/>
+                        <subModelOperations xsi:type="tool_1:SetValue" featureName="connector" valueExpression="var:instance"/>
+                      </subModelOperations>
+                    </subModelOperations>
+                    <subModelOperations xsi:type="tool_1:If" conditionExpression="[target.oclIsKindOf(Port) /]">
+                      <subModelOperations xsi:type="tool_1:SetValue" featureName="connector" valueExpression="var:instance"/>
+                    </subModelOperations>
                   </subModelOperations>
                 </subModelOperations>
               </firstModelOperations>
             </initialOperation>
           </ownedTools>
-          <ownedTools xsi:type="tool:EdgeCreationDescription" name="CreateControllerConnector" edgeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@edgeMappings[name='ControllerConnector']" iconPath="eu.netide.configuration.design/icons/controllerconnector_icon.png">
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="CreateControllerConnector" label="Controller Connector" edgeMappings="//@ownedViewpoints[name='Topology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@edgeMappings[name='ControllerConnector']" iconPath="eu.netide.configuration.design/icons/controllerconnector_icon.png">
             <sourceVariable name="source"/>
             <targetVariable name="target"/>
             <sourceViewVariable name="sourceView"/>
