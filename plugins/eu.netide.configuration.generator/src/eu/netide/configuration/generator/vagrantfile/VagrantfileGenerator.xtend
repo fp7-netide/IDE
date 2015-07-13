@@ -15,6 +15,7 @@ import eu.netide.configuration.utils.NetIDEUtil
 import Topology.Controller
 import java.net.URL
 import eu.netide.configuration.preferences.NetIDEPreferenceConstants
+import eu.netide.configuration.generator.fsa.FileSystemAccess
 
 /**
  * Generates and writes a Vagrantfile depending on required controller platforms and network applications.
@@ -25,7 +26,7 @@ class VagrantfileGenerator {
 
 	private ILaunchConfiguration configuration
 
-	def doGenerate(IResource resource, Resource input, ILaunchConfiguration configuration, IFileSystemAccess fsa) {
+	def doGenerate(IResource resource, Resource input, ILaunchConfiguration configuration, FileSystemAccess fsa) {
 		this.configuration = configuration
 		fsa.generateFile(NetIDE.VAGRANTFILE_PATH + "Vagrantfile", input.compile(resource))
 	}

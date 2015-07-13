@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.xtend.lib.macro,
  com.google.guava,
  org.eclipse.xtext.xbase.lib,
- org.eclipse.core.resources;bundle-version="3.9.1"
+ org.eclipse.core.resources
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: NetIDE
