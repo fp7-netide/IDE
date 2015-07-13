@@ -1,16 +1,14 @@
 package eu.netide.configuration.generator
 
 import Topology.NetworkEnvironment
-import com.google.inject.Inject
+import eu.netide.configuration.generator.fsa.FSAProvider
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2
-import com.google.inject.Provider
-import org.eclipse.core.runtime.NullProgressMonitor
-import java.util.Map
 import org.eclipse.xtext.generator.OutputConfiguration
+import java.util.Map
 import java.util.HashMap
-
+import org.eclipse.core.runtime.NullProgressMonitor
 
 /**
  * Sets up the necessary tools to generate a Vagrantfile
@@ -19,15 +17,14 @@ import java.util.HashMap
  */
 class GenerateAction {
 
-	@Inject
-	private Provider<EclipseResourceFileSystemAccess2> fsaprovider
+	private FSAProvider fsaprovider
 
-	def run(NetworkEnvironment ne) {
+	def run(NetworkEnvironment ne) { 
+		
 		var file = getIFile(ne.eResource)
 		var cg = new ConfigurationGenerator();
-		var fsa = fsaprovider.get
-		fsa.monitor = new NullProgressMonitor
-		fsa.outputConfigurations = defaultConfig
+		var fsa = FSAProvider.get
+		fsa.outputDirectory = "./gen"
 		fsa.project = file.project
 		cg.doGenerate(ne.eResource, fsa)
 	}

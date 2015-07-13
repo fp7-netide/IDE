@@ -31,10 +31,9 @@ public class GenerateActionDelegate implements IObjectActionDelegate {
 	}
 
 	public void run(IAction action) {
-		Injector injector = Guice
-				.createInjector(new CommonConfigurationModule());
+		
 
-		GenerateAction ga = injector.getInstance(GenerateAction.class);
+		GenerateAction ga = new GenerateAction();
 		ga.run(ne);
 	}
 

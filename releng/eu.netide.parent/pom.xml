@@ -19,6 +19,11 @@
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/releases/luna</url>
 		</repository>
+		<repository>
+			<id>eclipse-mars</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/mars</url>
+		</repository>
 	</repositories>
 
 	<modules>

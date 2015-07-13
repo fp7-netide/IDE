@@ -9,17 +9,19 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 import Topology.NetworkElement
 import Topology.Controller
+import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2
+import eu.netide.configuration.generator.fsa.FileSystemAccess
 
 /**
  * Generates a Mininet configuration based on the specified topology model
  * 
  * @author Christian Stritzke
  */
-class ConfigurationGenerator implements IGenerator {
+class ConfigurationGenerator  {
 
 	var nodemap = newHashMap()
 
-	override def doGenerate(Resource input, IFileSystemAccess fsa) {
+	def doGenerate(Resource input, FileSystemAccess fsa) {
 		var ne = input.allContents.filter(typeof(NetworkEnvironment)).next
 
 		populateNodeMap(ne)

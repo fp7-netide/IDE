@@ -7,9 +7,9 @@ Bundle-Activator: eu.netide.deployment.topologyimport.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  eu.netide.configuration,
- org.eclipse.emf.edit;bundle-version="2.10.1",
- org.eclipse.emf.ecore.xmi;bundle-version="2.10.2",
- org.apache.log4j;bundle-version="1.2.15"
+ org.eclipse.emf.edit,
+ org.eclipse.emf.ecore.xmi,
+ org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: eu.netide.deployment.topologyimport

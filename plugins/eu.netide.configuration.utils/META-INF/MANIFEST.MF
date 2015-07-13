@@ -6,8 +6,11 @@ Bundle-Version: 0.2.0.qualifier
 Bundle-Activator: eu.netide.configuration.utils.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.core.resources;bundle-version="3.9.1",
- org.eclipse.xtend.lib;bundle-version="2.7.3"
+ org.eclipse.xtend.lib,
+ org.eclipse.xtend.lib.macro,
+ com.google.guava,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.core.resources
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: NetIDE
