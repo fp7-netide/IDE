@@ -6,9 +6,6 @@ Bundle-Version: 0.2.0.qualifier
 Bundle-Activator: eu.netide.configuration.design.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.sirius,
- org.eclipse.sirius.common.acceleo.mtl,
- org.eclipse.sirius.common.ui,
  org.eclipse.sirius.diagram.ui
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

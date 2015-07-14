@@ -215,39 +215,44 @@ after the cause of action arose. Each party waives its rights to a jury trial in
 any resulting litigation.
    </license>
 
+   <includes
+         id="org.eclipse.sirius.specifier"
+         version="0.0.0"
+         optional="true"/>
+
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.emf.ecore"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.sirius"/>
+      <import plugin="org.eclipse.sirius.common.acceleo.mtl"/>
+      <import plugin="org.eclipse.sirius.common.ui"/>
+      <import plugin="org.eclipse.sirius.diagram.ui"/>
       <import plugin="org.eclipse.emf.edit"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.emf.ecore.xmi"/>
       <import plugin="org.eclipse.emf.edit.ui"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="eu.netide.configuration" version="0.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext.ui" version="2.7.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext.builder" version="2.7.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext.ui.shared" version="2.7.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext.generator" version="2.7.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.ui"/>
+      <import plugin="org.eclipse.xtext.builder"/>
+      <import plugin="org.eclipse.xtext.ui.shared"/>
+      <import plugin="org.eclipse.xtext.generator"/>
       <import plugin="eu.netide.configuration.utils" version="0.2.0" match="greaterOrEqual"/>
       <import plugin="eu.netide.configuration.preferences" version="0.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.debug.ui" version="3.10.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.xtend.lib"/>
-      <import plugin="org.eclipse.emf.common.ui" version="2.9.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.ecore" version="2.10.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.console" version="3.5.300" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.common.ui"/>
+      <import plugin="org.eclipse.emf"/>
+      <import plugin="org.eclipse.ui.console"/>
       <import plugin="eu.netide.configuration.generator" version="0.2.0" match="greaterOrEqual"/>
-      <import plugin="com.google.inject" version="3.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.xtend.lib.macro"/>
       <import plugin="com.google.guava"/>
       <import plugin="org.eclipse.xtext.xbase.lib"/>
-      <import plugin="org.eclipse.core.resources" version="3.9.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtend.lib" version="2.7.3" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext.xbase" version="2.7.3" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.debug.ui" version="3.10.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.sirius.ui" version="1.0.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.ui" version="3.10.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.xbase"/>
+      <import plugin="org.eclipse.sirius.ui"/>
+      <import plugin="org.eclipse.emf.transaction"/>
+      <import plugin="org.eclipse.jdt.ui"/>
       <import plugin="eu.netide.newproject" version="0.2.0" match="greaterOrEqual"/>
       <import plugin="eu.netide.debug" version="0.2.0" match="greaterOrEqual"/>
       <import plugin="eu.netide.profile" version="0.2.0" match="greaterOrEqual"/>
