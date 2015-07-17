@@ -127,6 +127,8 @@ class ConfigurationGenerator  {
 	}
 
 	def compileRunscript(NetworkEnvironment ne) {
+		var switches = ne.networks.map[networkelements].flatten.filter(typeof(Switch))
+		var hosts = ne.networks.map[networkelements].flatten.filter(typeof(Host))
 
 		return '''
 			from mininet.net import Mininet
@@ -161,7 +163,9 @@ class ConfigurationGenerator  {
 			    for c in controllers:
 			        net.addController(c)
 			    net.build()
+			    «IF switches.exists[x|x.ip!=null && x.ip != ""] || hosts.exists[x|x.ip!=null && x.ip != ""]»
 			    topo.SetIPConfiguration(net)
+			    «ENDIF»
 			    net.start()
 			    CLI(net)
 			    net.stop()
