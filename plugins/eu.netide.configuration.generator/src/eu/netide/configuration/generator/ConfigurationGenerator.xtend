@@ -42,7 +42,7 @@ class ConfigurationGenerator  {
 					scounter++
 				nodemap.put(s.fullname, scounter++)
 			}
-			
+
 		}
 
 		var hcounter = 1
@@ -56,9 +56,8 @@ class ConfigurationGenerator  {
 					hcounter++
 				nodemap.put(h.fullname, hcounter++)
 			}
-			
-		}
 
+		}
 
 		var ccounter = 1
 		for (c : ne.controllers)
@@ -71,6 +70,7 @@ class ConfigurationGenerator  {
 		var switches = ne.networks.map[networkelements].flatten.filter(typeof(Switch))
 		var hosts = ne.networks.map[networkelements].flatten.filter(typeof(Host))
 		var connectors = ne.networks.map[connectors].flatten.filter(typeof(Connector))
+		var hasIPs = switches.exists[x|x.ip != null && x.ip != ""] || hosts.exists[x|x.ip != null && x.ip != ""]
 
 		return '''
 			from mininet.topo import Topo
@@ -108,7 +108,7 @@ class ConfigurationGenerator  {
 			        	self.addLink(self.«c.connectedports.get(0).networkelement.fullname», self.«c.connectedports.get(1).networkelement.fullname»)
 			        «ENDFOR»
 			        
-			    «IF switches.exists[x|x.ip!=null && x.ip != ""] || hosts.exists[x|x.ip!=null && x.ip != ""]»
+			    «IF hasIPs»
 			    def SetIPConfiguration(self, net):
 			        «FOR s : switches»
 			        «IF s.ip != null && s.ip != ""»
@@ -127,8 +127,10 @@ class ConfigurationGenerator  {
 	}
 
 	def compileRunscript(NetworkEnvironment ne) {
+
 		var switches = ne.networks.map[networkelements].flatten.filter(typeof(Switch))
 		var hosts = ne.networks.map[networkelements].flatten.filter(typeof(Host))
+		var hasIPs = switches.exists[x|x.ip != null && x.ip != ""] || hosts.exists[x|x.ip != null && x.ip != ""]
 
 		return '''
 			from mininet.net import Mininet
@@ -146,7 +148,7 @@ class ConfigurationGenerator  {
 			    «ENDFOR»
 			    
 			    cmap = {
-			    «FOR Switch s : ne.networks.map[networkelements].flatten.filter(typeof(Switch))»
+			    «FOR Switch s : switches»
 			    	«IF s.controller != null»
 			    		'«s.fullname»' : «s.controller.name»,
 			    	«ENDIF»
@@ -163,7 +165,7 @@ class ConfigurationGenerator  {
 			    for c in controllers:
 			        net.addController(c)
 			    net.build()
-			    «IF switches.exists[x|x.ip!=null && x.ip != ""] || hosts.exists[x|x.ip!=null && x.ip != ""]»
+			    «IF hasIPs»
 			    topo.SetIPConfiguration(net)
 			    «ENDIF»
 			    net.start()
