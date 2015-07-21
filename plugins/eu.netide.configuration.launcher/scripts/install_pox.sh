@@ -8,7 +8,9 @@ if [ ! -d ~/pox ]; then
 
   git clone http://github.com/noxrepo/pox
 
-echo "export PYTHONPATH=\$PYTHONPATH:$HOME/pox" >> $HOME/.bashrc
+  echo "export PYTHONPATH=\$PYTHONPATH:$HOME/pox" >> $HOME/.bashrc
+
+  cp -r Engine/ryu-backend/tests/pox_client.py pox/ext
     
 else
   echo "Pox already installed. Skipping..."

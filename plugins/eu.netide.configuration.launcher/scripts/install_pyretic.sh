@@ -21,8 +21,11 @@ if [ ! -d ~/pyretic ]; then
   cd ~
   git clone https://github.com/frenetic-lang/pyretic.git
 
-  echo "export PYTHONPATH=\$PYTHONPATH:$HOME/pyretic" >> $HOME/.bashrc
-
+  echo "export PYTHONPATH=\$PYTHONPATH:~/pyretic" >> $HOME/.bashrc
+  echo "export PYTHONPATH=\$PYTHONPATH:~/pyretic" >> $HOME/.profile
+  
+  cp -r Engine/ryu-shim/tests/pyretic.py pyretic/
+  
 else
   echo "Pyretic seems to be already installed. Skipping..."
 fi
