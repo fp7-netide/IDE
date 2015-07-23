@@ -158,7 +158,15 @@ class VagrantfileGenerator {
 				config.vm.provision "shell", inline: $proxysetup, privileged: false
 				«ENDIF»
 				config.vm.provision "shell", path: "«mininetscriptpath»", privileged: false
-				config.vm.provision "shell", path: "«loggerscriptpath»", privileged: false
+				«IF requiredPlatforms.contains(NetIDE.CONTROLLER_ENGINE)»
+					config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
+					config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«floodlightscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«loggerscriptpath»", privileged: false
+				«ENDIF»
 				«IF requiredPlatforms.contains("Ryu")»
 					config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
 				«ENDIF»
@@ -173,14 +181,6 @@ class VagrantfileGenerator {
 					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
 				«ENDIF»
 				«IF requiredPlatforms.contains("Floodlight")»
-					config.vm.provision "shell", path: "«floodlightscriptpath»", privileged: false
-				«ENDIF»
-				«IF requiredPlatforms.contains(NetIDE.CONTROLLER_ENGINE)»
-					config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
-					config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
-					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
-					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
-					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«floodlightscriptpath»", privileged: false
 				«ENDIF»
 				«ENDIF»
