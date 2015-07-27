@@ -1,6 +1,5 @@
 #!/bin/bash
 cd
-mkdir -p ryu/ryu
 
 if [ ! -d ~/Engine ]; then
   git clone -b development https://github.com/fp7-netide/Engine
