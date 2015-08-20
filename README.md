@@ -6,34 +6,24 @@ This Repository contains the plug-ins needed for a graphical network editing and
 
 ### Requirements
 
-In order to use NetIDE to the full extend, you need to install [VirtualBox](http://virtualbox.org) and [Vagrant](http://www.vagrantup.com). NetIDE deploys your network apps on virtual machines which are set up and managed with vagrant. 
+In order to use NetIDE to the full extend, you need to install [VirtualBox](http://virtualbox.org) and [Vagrant](http://www.vagrantup.com). NetIDE deploys your network apps on virtual machines which are set up and managed with vagrant.
 
 In order to execute commands on your VM through the IDE, you also need an installation of SSH. If you are running Windows, make sure that your ssh executable is referenced in the PATH variable.
 
+You'll also need at least Java 7.
+
 ### Set up Eclipse
 
-1. Download Eclipse Luna Modeling Tools at www.eclipse.org.
+1. Download Eclipse Mars or Luna Modeling Tools at www.eclipse.org.
 2. Start Eclipse and open the Git Perspective.
-3. From the window menu, select `Help -> Install Modeling Components`. Select and install Xtext. Note that NetIDE needs Xtext at version 2.7.3.
-4. Clone or add this repository and import the following projects from the "plugins"-folder into your workspace.
- 
-  ```
-  eu.netide.configuration
-  eu.netide.configuration.edit
-  eu.netide.configuration.editor
-  eu.netide.configuration.design
-  eu.netide.configuration.launcher  
-  eu.netide.configuration.generator
-  eu.netide.configuration.preferences
-  eu.netide.configuration.utils
-  eu.netide.configuration.profile
-  eu.netide.configuration.debug
-  eu.netide.configuration.perspective
-  eu.netide.configuration.newproject
-  ```
-
-5. Go back to the Java perspective and open eu.netide.configuration/model/Topology.genmodel
+3. From the window menu, select `Help -> Install Modeling Components`. Select and install Sirius and Xtext.
+4. Clone or add this repository and import all projects from the "plugins"-folder into your workspace. To do so, enter to the folder "Working Directory", right-click on the folder "plugins" and select "Import Projects". Follow the steps in the wizard.
+5. Open the Plug-In Development perspective and open eu.netide.configuration/model/Topology.genmodel
 6. Right-click the root element in the tree view and select `Generate All`
+7. For both projects "eu.netide.parameters.language" and "eu.netide.sysreq", do the following:
+  1. Find the \*.mwe2 file in the source folder.
+  2. Right-click on the mwe2 file and select "Run As -> MWE2 Workflow". Click "Proceed" in the following dialog box.
+  3. A console view in the bottom region will appear and ask you to install the Antlr parser. Type "y" into the console and hit Return.
 7. Right-click the project eu.netide.configuration and select `Run As -> Eclipse Application`
 8. If you want to develop your Python-based controllers in Eclipse as well, you can install the [PyDev](http://www.pydev.org/) plug-in for Eclipse from the Eclipse Marketplace.
 
@@ -74,8 +64,8 @@ You can launch your network app on the topology you just specified as follows:
 1. Switch to the Java or PyDev perspective.
 2. In the window menu, select "Run -> Debug Configurations"
 3. Right-click "NetIDE Controller Deployment" in the left pane and select "New".
-4. Click "Choose Model" and enter the location of your topology model. 
-5. For each controller, you can now select a platform and the location of your app. 
+4. Click "Choose Model" and enter the location of your topology model.
+5. For each controller, you can now select a platform and the location of your app.
    *WARNING: Currently, only POX, Ryu, Pyretic, and the Network Engine with ODL and POX as a server controller actually work.*
 6. Once everything is configured, click "Debug".
 7. NetIDE will set up and start a VM. This is going to take some time for the first run.
