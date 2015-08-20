@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: eu.netide.sysreq.tests
-Bundle-Vendor: My Company
-Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: NetIDE Project
+Bundle-Version: 0.2.0.qualifier
 Bundle-SymbolicName: eu.netide.sysreq.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: eu.netide.sysreq,
@@ -20,5 +20,5 @@ Import-Package: org.apache.log4j,
  org.junit.runners;version="4.5.0",
  org.junit.runners.model;version="4.5.0",
  org.hamcrest.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: eu.netide
