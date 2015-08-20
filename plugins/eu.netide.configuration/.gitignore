@@ -1,6 +1,5 @@
 /bin/
 .classpath
-.project
 plugin.properties
 plugin.xml
 src/
