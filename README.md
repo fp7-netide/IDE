@@ -22,7 +22,7 @@ You'll also need at least Java 7.
 6. Right-click the root element in the tree view and select `Generate All`
 7. For both projects "eu.netide.parameters.language" and "eu.netide.sysreq", do the following:
   1. Find the \*.mwe2 file in the source folder.
-  2. Right-click on the mwe2 file and select "Run As -> MWE2 Workflow". Click "Proceed" in the following dialog box.
+  2. Right-click on the mwe2 file and select "Run As -> MWE2 Workflow". A dialog box should pop up informing you about errors in the project. Click "Proceed".
   3. A console view in the bottom region will appear and ask you to install the Antlr parser. Type "y" into the console and hit Return.
 7. Right-click the project eu.netide.configuration and select `Run As -> Eclipse Application`
 8. If you want to develop your Python-based controllers in Eclipse as well, you can install the [PyDev](http://www.pydev.org/) plug-in for Eclipse from the Eclipse Marketplace.
