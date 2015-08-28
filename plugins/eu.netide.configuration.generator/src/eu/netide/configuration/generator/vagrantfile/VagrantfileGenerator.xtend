@@ -57,8 +57,8 @@ class VagrantfileGenerator {
 		url = bundle.getEntry("scripts/install_engine.sh")
 		var netideenginescriptpath = scriptpath(url)
 		
-		url = bundle.getEntry("scripts/install_logger.sh")
-		var loggerscriptpath = scriptpath(url)
+		url = bundle.getEntry("scripts/install_logger_debugger.sh")
+		var logger_debuggerscriptpath = scriptpath(url)
 		
 		url = bundle.getEntry("scripts/install_floodlight.sh")
 		var floodlightscriptpath = scriptpath(url)
@@ -165,7 +165,7 @@ class VagrantfileGenerator {
 					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«floodlightscriptpath»", privileged: false
-					config.vm.provision "shell", path: "«loggerscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«logger_debuggerscriptpath»", privileged: false
 				«ENDIF»
 				«IF requiredPlatforms.contains("Ryu")»
 					config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
@@ -186,6 +186,9 @@ class VagrantfileGenerator {
 				
 				# Syncing the mininet configuration folder with the vm
 				config.vm.synced_folder "«res.project.location»/gen/mininet", "/home/vagrant/mn-configs"
+
+				# Syncing the debugger results folder with the vm
+				config.vm.synced_folder "«res.project.location»/results", "/home/vagrant/debug_results"
 				
 				# Syncing controller paths with the vm
 				«FOR p : appPaths»
