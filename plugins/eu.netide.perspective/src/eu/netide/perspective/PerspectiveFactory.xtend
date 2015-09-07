@@ -21,8 +21,8 @@ class PerspectiveFactory implements IPerspectiveFactory {
 		var bottomFolder = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.7f, layout.editorArea)
 		bottomFolder.addView(IConsoleConstants.ID_CONSOLE_VIEW)
 		bottomFolder.addView(IPageLayout.ID_PROP_SHEET)
-		bottomFolder.addView(DebugView.ID)
-		bottomFolder.addView(ProfileView.ID)
+		//bottomFolder.addView(DebugView.ID)
+		//bottomFolder.addView(ProfileView.ID)
 
 		layout.addView(IPageLayout.ID_EDITOR_AREA, IPageLayout.LEFT, 0.7f, layout.editorArea)
 
