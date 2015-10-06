@@ -1,0 +1,71 @@
+grammar eu.netide.telefonica.nemo.NemoDSL with org.eclipse.xtext.common.Terminals //hidden (NEMO_COMMENT,WS)
+generate nemoDSL "http://www.netide.eu/telefonica/nemo/NemoDSL"
+
+Model:
+	(nemoElems+=NemoElem)*
+;
+	
+NemoElem:
+	(Object | NodeModel | Node | LinkModel | Link)';'
+;
+
+LinkModel:
+	//LinkModel InternalLink Property ***;
+	//LinkModel AccessLink Property IPPrefix node_addr;
+	//LinkModel L2Segment Property Integer:nodes, list(String):nodeIDs, IPPrefix: subnet;
+	'LinkModel' name=ID 'Property' modelProperty=ModelProperty
+;
+
+Link:
+	//Link link_1 Type AccessLink EndNodes internet, load_balancer;
+	'Link' name=ID 'Type' lType=[LinkModel] 'EndNodes' nodes+=[Node] (',' nodes+=[Node])+
+;
+
+NodeModel:
+	//NodeModel LogicNW Property list(IPPrefix): subnets, list(String): services;
+	//NodeModel ExtLogicNW Property ***;
+	'NodeModel' name=ID 'Property' modelProperty=ModelProperty
+;
+
+Object:
+	// Object NetRule Property String:from, String:to, String:relation;
+	// Object AccRule Property String:from, String:to, list(String):sessions, Boolean:allow;
+	'Object' name=ID "Property" typeRules+=TypeRule (',' typeRules+=TypeRule)*
+;
+
+ModelProperty:
+	{ModelProperty} '***' | typeRules+=TypeRule (',' typeRules+=TypeRule)*
+;
+
+TypeRule:
+	type=Type ':' name=ID
+;
+
+Node:
+	// Node tenant_demo Type LogicNW;
+	// Node internet Type ExtLogicNW NW tenant_demo;
+	// Node unprotected_zone Property subnet:"Public_IP", services:"DHCP";
+	'Node' name=ID 'Type' nodeType=[NodeModel] ('NW' network=ID)?  | 
+	'Node' name=ID 'Property' nodeProp+=[NodeProperty] (',' nodeProp+=[NodeProperty])*
+;
+
+
+NodeProperty:
+	typeName=[TypeRule] ':' typeValue=STRING
+;
+
+Type:
+	AtomicType | TypeList 
+;
+
+TypeList:
+	('List' | 'list') '(' type=AtomicType ')'
+;
+
+AtomicType:
+	{AtomicType} 'String' | 'Boolean' | 'IPPrefix' | 'Integer' | object=[Object]
+;
+
+
+//terminal NEMO_COMMENT : '//' (!('\n'|'\r'))* ('\r'? '\n');
+terminal NEMO_STRING : '"' (!('"'))* '"';

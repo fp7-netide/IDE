@@ -22,6 +22,7 @@ R.java
 *.dat
 *.lck
 *.ctrl
+plugin.xml_gen
 
 # ignore temporary Linux files
 *.swp
@@ -36,6 +37,7 @@ R.java
 .DS_store
 # ignore thumbnails created by windows
 Thumbs.db
+.launch
 
 # ignore intellij build files
 *.iml

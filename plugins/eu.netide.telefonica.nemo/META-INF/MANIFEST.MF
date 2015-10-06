@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: eu.netide.telefonica.nemo
+Bundle-Vendor: Telefonica I+D, S.A.U.
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: eu.netide.telefonica.nemo; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext;visibility:=reexport,
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.xtext.util,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common,
+ org.eclipse.xtext.xbase.lib,
+ org.antlr.runtime,
+ org.eclipse.xtext.common.types,
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional
+Import-Package: org.apache.log4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: eu.netide.telefonica.nemo,
+ eu.netide.telefonica.nemo.services,
+ eu.netide.telefonica.nemo.nemoDSL,
+ eu.netide.telefonica.nemo.nemoDSL.impl,
+ eu.netide.telefonica.nemo.nemoDSL.util,
+ eu.netide.telefonica.nemo.serializer,
+ eu.netide.telefonica.nemo.parser.antlr,
+ eu.netide.telefonica.nemo.parser.antlr.internal,
+ eu.netide.telefonica.nemo.validation,
+ eu.netide.telefonica.nemo.scoping,
+ eu.netide.telefonica.nemo.generator,
+ eu.netide.telefonica.nemo.formatting

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="nemoDSL" nsURI="http://www.netide.eu/telefonica/nemo/NemoDSL"
+    nsPrefix="nemoDSL">
+  <eClassifiers xsi:type="ecore:EClass" name="Model">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nemoElems" upperBound="-1"
+        eType="#//NemoElem" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NemoElem">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LinkModel" eSuperTypes="#//NemoElem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="modelProperty" eType="#//ModelProperty"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Link" eSuperTypes="#//NemoElem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lType" eType="#//LinkModel"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" unique="false" upperBound="-1"
+        eType="#//Node"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NodeModel" eSuperTypes="#//NemoElem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="modelProperty" eType="#//ModelProperty"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Object" eSuperTypes="#//NemoElem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="typeRules" upperBound="-1"
+        eType="#//TypeRule" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelProperty">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="typeRules" upperBound="-1"
+        eType="#//TypeRule" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TypeRule">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Type" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Node" eSuperTypes="#//NemoElem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodeType" eType="#//NodeModel"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="network" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodeProp" unique="false"
+        upperBound="-1" eType="#//NodeProperty"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NodeProperty">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="typeName" eType="#//TypeRule"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Type"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TypeList" eSuperTypes="#//Type">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//AtomicType"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AtomicType" eSuperTypes="#//Type">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="object" eType="#//Object"/>
+  </eClassifiers>
+</ecore:EPackage>
