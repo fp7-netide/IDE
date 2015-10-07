@@ -34,6 +34,10 @@ class VagrantfileGenerateAction {
 		fsa.outputDirectory = "./gen"
 		fsa.project = resource.project
 		
+		var fsa2 = FSAProvider.get
+		fsa2.project = resource.project
+		fsa2.generateFolder("results/blub/bla")
+		
 		var generator = new VagrantfileGenerator
 
 		var resset = new ResourceSetImpl
