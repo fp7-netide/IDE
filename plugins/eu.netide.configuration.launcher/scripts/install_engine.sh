@@ -1,9 +1,8 @@
 #!/bin/bash
 cd
-mkdir -p ryu/ryu
 
 if [ ! -d ~/Engine ]; then
-  git clone -b development https://github.com/fp7-netide/Engine
+  git clone -b pyretic_intermediate_protocol https://github.com/fp7-netide/Engine
 fi
 
 #echo "export PYTHONPATH=\$PYTHONPATH:~/Engine/ryu-backend:~/Engine/ryu-backend/tests" >> $HOME/.bashrc
