@@ -586,7 +586,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 		}
 
-		cmdline = newArrayList(location.toOSString, "ssh", "-c", "sudo python ~/Tools/Tool_debugger/Ryu_shim/debugger.py")
+		cmdline = newArrayList(location.toOSString, "ssh", "-c", "sudo python ~/Tools/debugger/Ryu_shim/debugger.py")
 		var serverthread = new Thread() {
 			var File workingDir
 			var ArrayList<String> cmdline
