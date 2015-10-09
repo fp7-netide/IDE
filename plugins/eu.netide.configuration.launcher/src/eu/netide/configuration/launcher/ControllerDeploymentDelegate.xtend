@@ -585,6 +585,27 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			}
 
 		}
+
+		cmdline = newArrayList(location.toOSString, "ssh", "-c", "sudo python ~/Tools/debugger/Ryu_shim/debugger.py")
+		var serverthread = new Thread() {
+			var File workingDir
+			var ArrayList<String> cmdline
+
+			def setParameters(File wd, ArrayList<String> cl) {
+				this.workingDir = wd
+				this.cmdline = cl
+			}
+
+			override run() {
+				super.run()
+				startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
+				}
+		}
+					
+		Thread.sleep(2000)
+					
+		serverthread.setParameters(workingDir, cmdline)
+		serverthread.start
 		
 		if (NetIDE_server == NetIDE.CONTROLLER_ODL){
 			Thread.sleep(90000)

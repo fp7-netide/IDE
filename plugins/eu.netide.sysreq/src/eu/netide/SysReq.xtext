@@ -1,0 +1,65 @@
+grammar eu.netide.SysReq with org.eclipse.xtext.common.Terminals
+
+generate sysReq "http://www.netide.eu/SysReq"
+
+Model:
+	(app += App)*;
+	
+App:
+	'app' (name = STRING)?
+	'{'
+		'name' STRING
+		'version' STRING
+		(controller += Controller)|
+		(hardware += Hardware)|
+		(network += Network)|
+		(software += Software)
+	'}'
+;
+
+Controller:
+	{Controller}
+	'controller' (name = STRING)?
+	'{'
+		'name' STRING
+		'version' STRING
+	'}'
+;
+
+
+Hardware:
+	{Hardware}
+	'hardwareReq' (name = STRING)?
+	'{'
+		'CPU' STRING
+		'RAM' STRING
+		'OS' STRING
+	'}'
+;
+
+Network:
+	{Network}
+	'networkReq' (name = STRING)?
+	'{'
+		'protocolType' STRING
+		'switchType' STRING
+	'}'
+;
+
+Software:
+	{Software}
+	'softwareReq' (name = STRING)?
+	'{'
+		(software += SoftwareList)*
+	'}'
+;
+
+SoftwareList:
+	{SoftwareList}
+	'software' (name = STRING)?
+	'{'
+		'name' STRING
+		'version' STRING
+	'}'
+;
+

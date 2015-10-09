@@ -6,6 +6,14 @@ if [ "$(which pip)" == "" ] || [ "$(pip list | grep ryu)" == "" ]; then
   sudo -E pip install stevedore
   sudo -E pip install greenlet
   sudo -E pip install ryu
+  
+  sudo cp -r Engine/ryu-backend/netide /usr/local/lib/python2.7/dist-packages/ryu/
+  sudo cp -r Engine/ryu-shim/netide /usr/local/lib/python2.7/dist-packages/ryu/
+
+  mkdir -p ryu/ryu
+  cp -r Engine/ryu-backend/netide ryu/ryu
+  cp -r Engine/ryu-shim/netide ryu/ryu
+
   #git clone git://github.com/osrg/ryu.git
   #cd ryu
   #sudo python ./setup.py install
