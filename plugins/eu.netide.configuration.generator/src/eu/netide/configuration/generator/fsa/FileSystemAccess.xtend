@@ -23,7 +23,7 @@ class FileSystemAccess {
 
 		val monitor = new NullProgressMonitor
 
-		val file = project.getFile(String.format("%s/%s", outputDirectory, filename))
+		val file = project.getFile(String.format("%s/%s", outputDirectory ?: ".", filename))
 
 		for (var i = 2; i < file.fullPath.segmentCount; i++) {
 			var folder = project.getFolder(
@@ -35,16 +35,36 @@ class FileSystemAccess {
 
 		}
 
-
 		project.refreshLocal(IProject.DEPTH_INFINITE, monitor)
 
-		if(file.accessible)
+		if (file.accessible)
 			file.setContents(new ByteArrayInputStream(content.toString.bytes), true, false, monitor)
-		else 
+		else
 			file.create(new ByteArrayInputStream(content.toString.bytes), IResource.FORCE, monitor)
 
 		project.refreshLocal(IProject.DEPTH_INFINITE, monitor)
 
 	}
+
+	def generateFolder(String foldername) {
+		val monitor = new NullProgressMonitor
+
+		val file = project.getFile(String.format("%s/%s", outputDirectory ?: "", foldername))
+
+		for (var i = 2; i <= file.fullPath.segmentCount; i++) {
+			var folder = project.getFolder(
+				file.fullPath.removeLastSegments(file.fullPath.segmentCount - i).removeFirstSegments(1))
+			try {
+				folder.create(false, true, monitor)
+			} catch (CoreException e) {
+			}
+
+		}
+
+		project.refreshLocal(IProject.DEPTH_INFINITE, monitor)
+		project.refreshLocal(IProject.DEPTH_INFINITE, monitor)
+		return
+	}
+	
 
 }

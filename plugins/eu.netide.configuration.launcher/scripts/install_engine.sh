@@ -3,10 +3,7 @@ cd
 
 if [ ! -d ~/Engine ]; then
   git clone -b pyretic_intermediate_protocol https://github.com/fp7-netide/Engine
+  
+else
+   echo "Engine seems to be already installed. Skipping..."
 fi
-
-#echo "export PYTHONPATH=\$PYTHONPATH:~/Engine/ryu-backend:~/Engine/ryu-backend/tests" >> $HOME/.bashrc
-#echo "export PYTHONPATH=\$PYTHONPATH:~/Engine/ryu-backend:~/Engine/ryu-backend/tests" >> $HOME/.profile
-
-#echo "export PYTHONPATH=\$PYTHONPATH:~/Engine/ryu-shim" >> $HOME/.bashrc
-#echo "export PYTHONPATH=\$PYTHONPATH:~/Engine/ryu-shim" >> $HOME/.profile
