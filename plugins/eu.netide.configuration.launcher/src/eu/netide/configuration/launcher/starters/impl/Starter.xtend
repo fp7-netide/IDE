@@ -45,7 +45,7 @@ abstract class Starter implements IStarter {
 	@Accessors(PROTECTED_GETTER)
 	private String vagrantpath
 
-	@Accessors(PUBLIC_GETTER)
+	@Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
 	private String name
 	
 	protected IProgressMonitor monitor

@@ -14,7 +14,7 @@ abstract class ControllerStarter extends Starter {
 	private Controller controller
 
 	@Accessors(PROTECTED_GETTER)
-	private IPath controllerpath
+	private IPath appPath
 
 	@Accessors(PROTECTED_GETTER)
 	private String controllerplatform
@@ -30,7 +30,7 @@ abstract class ControllerStarter extends Starter {
 		else
 			null
 
-		this.controllerpath = if (controller != null)
+		this.appPath = if (controller != null)
 			(configuration.attributes.get("controller_data_" + controller.name + "_" + controllerplatform) as String).
 				absolutePath
 		else
