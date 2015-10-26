@@ -5,8 +5,9 @@ if [ ! -d ~/Engine ]; then
   git clone -b pyretic_intermediate_protocol https://github.com/fp7-netide/Engine
 fi
 
-#echo "export PYTHONPATH=\$PYTHONPATH:~/Engine/ryu-backend:~/Engine/ryu-backend/tests" >> $HOME/.bashrc
-#echo "export PYTHONPATH=\$PYTHONPATH:~/Engine/ryu-backend:~/Engine/ryu-backend/tests" >> $HOME/.profile
+x="export PYTHONPATH=\$PYTHONPATH:~/Engine/libraries/netip/python"
 
-#echo "export PYTHONPATH=\$PYTHONPATH:~/Engine/ryu-shim" >> $HOME/.bashrc
-#echo "export PYTHONPATH=\$PYTHONPATH:~/Engine/ryu-shim" >> $HOME/.profile
+echo "$x" >> $HOME/.bashrc
+echo "$x" >> $HOME/.profile
+
+# TODO: install netip libraries so that java can find them
