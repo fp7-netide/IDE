@@ -100,8 +100,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			var controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
 
 			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
-				NetIDE_server = configuration.attributes.get("controller_platform_target_" + c.name) as String // to know if server_platform is ODL #AB
 				var backendStarter = factory.createBackendStarter(configuration, launch, c, monitor)
+				NetIDE_server = configuration.attributes.get("controller_platform_target_" + c.name) as String // to know if server_platform is ODL #AB
 				var shimStarter = factory.createShimStarter(configuration, launch, c, monitor)
 
 				backendStarter.asyncStart
