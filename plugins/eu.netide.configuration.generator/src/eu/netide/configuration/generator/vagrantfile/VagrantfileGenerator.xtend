@@ -28,7 +28,10 @@ class VagrantfileGenerator {
 
 	def doGenerate(IResource resource, Resource input, ILaunchConfiguration configuration, FileSystemAccess fsa) {
 		this.configuration = configuration
-		fsa.generateFile(NetIDE.VAGRANTFILE_PATH + "proxyconf.sh", proxySetupScript)
+		var proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.PROXY_ON, false, null)
+		if (proxyOn)
+			fsa.generateFile(NetIDE.VAGRANTFILE_PATH + "proxyconf.sh", proxySetupScript)
 		fsa.generateFile(NetIDE.VAGRANTFILE_PATH + "Vagrantfile", input.compile(resource))
 	}
 
