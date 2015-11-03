@@ -26,7 +26,7 @@ if [ ! -d ~/Tools ]; then
 	sudo invoke-rc.d rabbitmq-server start
 	
 	sudo apt-get install python-pip git-core
-	sudo pip install pika==0.9.8
+	sudo -E pip install pika==0.9.8
 	
 else
 
