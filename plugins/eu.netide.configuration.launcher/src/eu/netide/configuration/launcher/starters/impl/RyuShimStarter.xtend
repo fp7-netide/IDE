@@ -14,8 +14,7 @@ class RyuShimStarter extends ControllerStarter {
 
 	override getCommandLine() {
 		return String.format(
-			"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend sudo ryu-manager --ofp-tcp-listen-port 7733 Engine/ryu-backend/backend.py controllers/%s/%s",
-			appPath.removeFileExtension.lastSegment, appPath.lastSegment).cmdLineArray
+			"PYTHONPATH=$PYTHONPATH:Engine/ryu-shim sudo ryu-manager --ofp-tcp-listen-port=%s Engine/ryu-shim/ryu_shim.py", controller.portNo).cmdLineArray
 	}
 
 }

@@ -11,7 +11,7 @@ class DebuggerStarter extends Starter {
 	}
 	
 	override getCommandLine() {
-		String.format("sudo python ~/Tools/Tool_debugger/Ryu_shim/debugger.py").cmdLineArray
+		String.format("sudo python ~/Tools/debugger/Ryu_shim/debugger.py").cmdLineArray
 	}
 	
 }
