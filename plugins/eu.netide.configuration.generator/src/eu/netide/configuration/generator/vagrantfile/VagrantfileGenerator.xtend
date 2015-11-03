@@ -28,16 +28,19 @@ class VagrantfileGenerator {
 
 	def doGenerate(IResource resource, Resource input, ILaunchConfiguration configuration, FileSystemAccess fsa) {
 		this.configuration = configuration
+		var proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.PROXY_ON, false, null)
+		if (proxyOn)
+			fsa.generateFile(NetIDE.VAGRANTFILE_PATH + "proxyconf.sh", proxySetupScript)
 		fsa.generateFile(NetIDE.VAGRANTFILE_PATH + "Vagrantfile", input.compile(resource))
 	}
 
 	def compile(Resource input, IResource res) {
 
 		var ne = input.allContents.filter(typeof(NetworkEnvironment)).next
-		
-		
+
 		var projectName = res.fullPath.segment(0)
-		
+
 		var bundle = Platform.getBundle(NetIDE.LAUNCHER_PLUGIN)
 		var url = bundle.getEntry("scripts/install_mininet.sh")
 		var mininetscriptpath = scriptpath(url)
@@ -47,33 +50,40 @@ class VagrantfileGenerator {
 
 		url = bundle.getEntry("scripts/install_pyretic.sh")
 		var pyreticscriptpath = scriptpath(url)
-		
+
 		url = bundle.getEntry("scripts/install_pox.sh")
 		var poxscriptpath = scriptpath(url)
-		
+
 		url = bundle.getEntry("scripts/install_odl.sh")
 		var odlscriptpath = scriptpath(url)
-		
+
 		url = bundle.getEntry("scripts/install_engine.sh")
 		var netideenginescriptpath = scriptpath(url)
-		
+
 		url = bundle.getEntry("scripts/install_logger_debugger.sh")
 		var logger_debuggerscriptpath = scriptpath(url)
-		
+
 		url = bundle.getEntry("scripts/install_floodlight.sh")
 		var floodlightscriptpath = scriptpath(url)
 
-		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map[c|
-			String.format("controller_platform_%s", c.name)]
-			
+		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map [ c |
+			String.format("controller_platform_%s", c.name)
+		]
+
 		var requiredPlatforms = controllerPlatformKeys.map[k|configuration.attributes.get(k) as String].toList
-			
-		var crosscontrollers = ne.controllers.filter[configuration.attributes.get("controller_platform_" + name) == NetIDE.CONTROLLER_ENGINE]
-		
-		var clientPlatforms = crosscontrollers.map[c | configuration.attributes.get("controller_platform_source_" + c.name) as String].toList
-		
-		var serverPlatforms = crosscontrollers.map[c | configuration.attributes.get("controller_platform_target_" + c.name) as String].toList
-		
+
+		var crosscontrollers = ne.controllers.filter [
+			configuration.attributes.get("controller_platform_" + name) == NetIDE.CONTROLLER_ENGINE
+		]
+
+		var clientPlatforms = crosscontrollers.map [ c |
+			configuration.attributes.get("controller_platform_source_" + c.name) as String
+		].toList
+
+		var serverPlatforms = crosscontrollers.map [ c |
+			configuration.attributes.get("controller_platform_target_" + c.name) as String
+		].toList
+
 		requiredPlatforms.addAll(clientPlatforms)
 		requiredPlatforms.addAll(serverPlatforms)
 
@@ -81,71 +91,29 @@ class VagrantfileGenerator {
 			var platform = configuration.attributes.get("controller_platform_" + name)
 			configuration.attributes.get(String.format("controller_data_%s_%s", name, platform)) as String
 		].toSet.map[e|NetIDEUtil.absolutePath(e)]
-		
-		var proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.PROXY_ON, false, null)
-		var proxyAddress = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.PROXY_ADDRESS, "", null)
 
-		var customBox = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.CUSTOM_BOX, false, null)
-		var customBoxName = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID, NetIDEPreferenceConstants.CUSTOM_BOX_NAME, "", null)
+		var proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.PROXY_ON, false, null)
+			
+		var customBox = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.CUSTOM_BOX, false, null)
+		var customBoxName = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.CUSTOM_BOX_NAME, "", null)
 
 		return '''
 			# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 			VAGRANTFILE_API_VERSION = "2"
 			
-			$path = "«mininetscriptpath»"
-			
-			«IF proxyOn»
-			$proxysetup = <<SCRIPT
-				echo "export all_proxy=socks://«proxyAddress»" | sudo tee -a /etc/profile
-				echo "export all_proxy=socks://«proxyAddress»" | sudo tee -a /etc/environment
-				echo "export all_proxy=socks://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
-				
-
-				echo "export ALL_PROXY=socks://«proxyAddress»" | sudo tee -a /etc/profile
-				echo "export ALL_PROXY=socks://«proxyAddress»" | sudo tee -a /etc/environment
-				echo "export ALL_PROXY=socks://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
-				
-
-				echo "export http_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile
-				echo "export http_proxy=http://«proxyAddress»" | sudo tee -a /etc/environment
-				echo "export http_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
-
-				echo "export HTTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile
-				echo "export HTTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/environment
-				echo "export HTTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
-
-				echo "export ftp_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile
-				echo "export ftp_proxy=http://«proxyAddress»" | sudo tee -a /etc/environment
-				echo "export ftp_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
-
-				echo "export FTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile
-				echo "export FTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/environment
-				echo "export FTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
-
-				echo "export https_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile
-				echo "export https_proxy=http://«proxyAddress»" | sudo tee -a /etc/environment
-				echo "export https_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
-
-				echo "export HTTPS_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile
-				echo "export HTTPS_PROXY=http://«proxyAddress»" | sudo tee -a /etc/environment
-				echo "export HTTPS_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
-				
-				echo 'Acquire::http::Proxy "http://«proxyAddress»";' | sudo tee -a /etc/apt/apt.conf.d/71proxy
-				echo 'Acquire::ftp::Proxy "http://«proxyAddress»";' | sudo tee -a /etc/apt/apt.conf.d/71proxy
-				
-			SCRIPT
-			«ENDIF»
-			
 			Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			
 				# We use a relatively new Ubuntu box
 				«IF !customBox»
-				config.vm.box = "ubuntu/trusty64"
-				config.vm.provider "virtualbox" do |v|
-			v.memory = 4096
-				end
+					config.vm.box = "ubuntu/trusty64"
+					config.vm.provider "virtualbox" do |v|
+					  v.memory = 4096
+					end
 				«ELSE»
-				config.vm.box = "«customBoxName»"
+					config.vm.box = "«customBoxName»"
 				«ENDIF»
 				
 				config.vm.provider "virtualbox" do |v|
@@ -153,41 +121,40 @@ class VagrantfileGenerator {
 				end
 				
 				«IF !customBox»
-				# Configuring mininet
-				«IF proxyOn»
-				config.vm.provision "shell", inline: $proxysetup, privileged: false
-				«ENDIF»
-				config.vm.provision "shell", path: "«mininetscriptpath»", privileged: false
-				«IF requiredPlatforms.contains(NetIDE.CONTROLLER_ENGINE)»
-					config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
-					config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
-					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
-					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
-					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
-					config.vm.provision "shell", path: "«floodlightscriptpath»", privileged: false
-					config.vm.provision "shell", path: "«logger_debuggerscriptpath»", privileged: false
-				«ENDIF»
-				«IF requiredPlatforms.contains("Ryu")»
-					config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
-				«ENDIF»
-				«IF requiredPlatforms.contains("Pyretic")»
-					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
-					config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
-				«ENDIF»
-				«IF requiredPlatforms.contains("POX")»
-					config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
-				«ENDIF»
-				«IF requiredPlatforms.contains("OpenDaylight")»
-					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
-				«ENDIF»
-				«IF requiredPlatforms.contains("Floodlight")»
-					config.vm.provision "shell", path: "«floodlightscriptpath»", privileged: false
-				«ENDIF»
+					# Configuring mininet
+					«IF proxyOn»
+						config.vm.provision "shell", path: "proxyconf.sh", privileged: false
+					«ENDIF»
+					config.vm.provision "shell", path: "«mininetscriptpath»", privileged: false
+					«IF requiredPlatforms.contains(NetIDE.CONTROLLER_ENGINE)»
+						config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
+						config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
+						config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
+						config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
+						config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
+						config.vm.provision "shell", path: "«floodlightscriptpath»", privileged: false
+						config.vm.provision "shell", path: "«logger_debuggerscriptpath»", privileged: false
+					«ENDIF»
+					«IF requiredPlatforms.contains("Ryu")»
+						config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
+					«ENDIF»
+					«IF requiredPlatforms.contains("Pyretic")»
+						config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
+					«ENDIF»
+					«IF requiredPlatforms.contains("POX")»
+						config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
+					«ENDIF»
+					«IF requiredPlatforms.contains("OpenDaylight")»
+						config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
+					«ENDIF»
+					«IF requiredPlatforms.contains("Floodlight")»
+						config.vm.provision "shell", path: "«floodlightscriptpath»", privileged: false
+					«ENDIF»
 				«ENDIF»
 				
 				# Syncing the mininet configuration folder with the vm
 				config.vm.synced_folder "«res.project.location»/gen/mininet", "/home/vagrant/mn-configs"
-
+			
 				# Syncing the debugger results folder with the vm
 				config.vm.synced_folder "«res.project.location»/results", "/home/vagrant/debug_results"
 				
@@ -197,6 +164,55 @@ class VagrantfileGenerator {
 				«ENDFOR»
 				
 			end
+		'''
+	}
+
+	def proxySetupScript() {
+		var proxyAddress = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.PROXY_ADDRESS, "", null)
+
+		return '''
+			echo "export all_proxy=socks://«proxyAddress»" | sudo tee -a /etc/profile
+			echo "export all_proxy=socks://«proxyAddress»" | sudo tee -a /etc/environment
+			echo "export all_proxy=socks://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+			
+			
+			echo "export ALL_PROXY=socks://«proxyAddress»" | sudo tee -a /etc/profile
+			echo "export ALL_PROXY=socks://«proxyAddress»" | sudo tee -a /etc/environment
+			echo "export ALL_PROXY=socks://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+			
+			
+			echo "export http_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile
+			echo "export http_proxy=http://«proxyAddress»" | sudo tee -a /etc/environment
+			echo "export http_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+			
+			echo "export HTTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile
+			echo "export HTTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/environment
+			echo "export HTTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+			
+			echo "export ftp_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile
+			echo "export ftp_proxy=http://«proxyAddress»" | sudo tee -a /etc/environment
+			echo "export ftp_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+			
+			echo "export FTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile
+			echo "export FTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/environment
+			echo "export FTP_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+			
+			echo "export https_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile
+			echo "export https_proxy=http://«proxyAddress»" | sudo tee -a /etc/environment
+			echo "export https_proxy=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+			
+			echo "export HTTPS_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile
+			echo "export HTTPS_PROXY=http://«proxyAddress»" | sudo tee -a /etc/environment
+			echo "export HTTPS_PROXY=http://«proxyAddress»" | sudo tee -a /etc/profile.d/vagrant.sh
+			
+			echo 'Acquire::http::Proxy "http://«proxyAddress»";' | sudo tee -a /etc/apt/apt.conf.d/71proxy
+			echo 'Acquire::ftp::Proxy "http://«proxyAddress»";' | sudo tee -a /etc/apt/apt.conf.d/71proxy
+			
+			mkdir -p $HOME/.m2
+			cat > $HOME/.m2/settings.xml << EOL
+				«mavenProxyConfig»
+			EOL
 		'''
 	}
 
@@ -213,14 +229,47 @@ class VagrantfileGenerator {
 		else
 			"NetworkEnvironment"
 	}
-	
+
 	def scriptpath(URL url) {
-	
+
 		if (Platform.getOS == Platform.OS_LINUX || Platform.getOS == Platform.OS_MACOSX)
 			FileLocator.resolve(url).path
 		else if (Platform.getOS == Platform.OS_WIN32)
 			FileLocator.resolve(url).path.substring(1)
-		
+
+	}
+
+	def mavenProxyConfig() {
+		var proxyon = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.PROXY_ADDRESS, false, null)
+		var proxy = Platform.preferencesService.getString(NetIDEPreferenceConstants.ID,
+			NetIDEPreferenceConstants.PROXY_ADDRESS, "", null).split(":", 2)
+		var proxyHost = proxy.get(0)
+		var proxyPort = proxy.get(1)
+
+		return '''
+			<settings>
+			  <proxies>
+			   <proxy>
+			      <id>box-proxy</id>
+			      <active>true</active>
+			      <protocol>http</protocol>
+			      <host>«proxyHost»</host>
+			      <port>«proxyPort»</port>
+			      <nonProxyHosts>localhost</nonProxyHosts>
+			    </proxy>
+			    <proxy>
+			      <id>box-proxy-tls</id>
+			      <active>true</active>
+			      <protocol>https</protocol>
+			      <host>«proxyHost»</host>
+			      <port>«proxyPort»</port>
+			      <nonProxyHosts>localhost</nonProxyHosts>
+			    </proxy>
+			  </proxies>
+			</settings>
+		'''
+
 	}
 
 }
