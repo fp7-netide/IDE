@@ -65,3 +65,7 @@ Thumbs.db
 obj/
 [Rr]elease*/
 _ReSharper*/
+
+!Debug*.xtend
+!Release*.xtend
+!Bin*.xtend

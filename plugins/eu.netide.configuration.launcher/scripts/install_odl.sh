@@ -12,6 +12,28 @@ if [ ! -d ~/openflowplugin ]; then
    mv pom.xml pom_other_release.xml
    mv pom_sr1.xml pom.xml
    mvn clean install
+
+   cd
+   cd ./openflowplugin/distribution/karaf/
+   mvn clean package
+   cd ./target/assembly/bin
+
+   chmod +x ./client ./start ./stop
+   echo "Installing karaf dependencies for ODL shim"
+   ./start
+   
+   while [ $(./client test 2>&1 | grep "Failed to get the session." | wc -l) -eq 1 ]; do
+	echo "No Connection to Karaf server. Trying again..."
+	sleep 1
+   done
+   
+   ./client "bundle:install -s mvn:com.googlecode.json-simple/json-simple/1.1.1"
+   ./client "bundle:install -s mvn:org.apache.commons/commons-lang3/3.3.2"
+   ./client "bundle:install -s mvn:org.opendaylight.openflowplugin/pyretic-odl/0.0.4-Helium-SR1.1"
+   sleep 10
+   ./stop
+
+   cd 
    
 else
 

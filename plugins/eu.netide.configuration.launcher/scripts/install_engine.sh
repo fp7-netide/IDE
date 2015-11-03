@@ -3,7 +3,11 @@ cd
 
 if [ ! -d ~/Engine ]; then
   git clone -b pyretic_intermediate_protocol https://github.com/fp7-netide/Engine
-  
-else
-   echo "Engine seems to be already installed. Skipping..."
 fi
+
+x="export PYTHONPATH=\$PYTHONPATH:~/Engine/libraries/netip/python"
+
+echo "$x" >> $HOME/.bashrc
+echo "$x" >> $HOME/.profile
+
+# TODO: install netip libraries so that java can find them

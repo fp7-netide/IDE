@@ -1,9 +1,9 @@
 package eu.netide.configuration.launcher
 
-import Topology.Controller
 import Topology.NetworkEnvironment
 import eu.netide.configuration.generator.GenerateActionDelegate
 import eu.netide.configuration.generator.vagrantfile.VagrantfileGenerateAction
+import eu.netide.configuration.launcher.starters.StarterFactory
 import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 import eu.netide.configuration.utils.NetIDE
 import java.io.File
@@ -12,7 +12,6 @@ import java.util.HashMap
 import java.util.Map
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.CoreException
-import org.eclipse.core.runtime.IPath
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Path
@@ -27,8 +26,6 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
-import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
-
 /**
  * Triggers the automatic creation of virtual machines and execution of 
  * controllers on them
@@ -39,25 +36,19 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 	Path location = null
 
-	override launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+	override launch(ILaunchConfiguration configuration, String mode, ILaunch launch,
+		IProgressMonitor monitor) throws CoreException {
 
 		if (monitor.isCanceled()) {
 			return
 		}
-		
+
 		var NetIDE_server = ""
-
-		val proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
-			NetIDEPreferenceConstants.PROXY_ON, false, null)
-
-		val proxyAddress = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
-			NetIDEPreferenceConstants.PROXY_ADDRESS, "", null)
 
 		val vagrantpath = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
 			NetIDEPreferenceConstants.VAGRANT_PATH, "", null)
 
-		val env = null //if(Platform.getOS == Platform.OS_LINUX && proxyOn) newArrayList("http_proxy=" + proxyAddress,
-				//"https_proxy=" + proxyAddress, "HOME=/home/piotr") as String[] else null as String[]
+		val env = null
 
 		var path = configuration.attributes.get("topologymodel") as String
 		generateConfiguration(path)
@@ -74,6 +65,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		if (monitor.isCanceled()) {
 			return
 		}
+
+		var factory = new StarterFactory
 
 		location = new Path(vagrantpath)
 
@@ -96,529 +89,56 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 		cmdline = newArrayList(location.toOSString, "up")
 
+		var starters = newArrayList()
+
 		if(configuration.attributes.get("reprovision") as Boolean) cmdline.add("--provision")
 
 		startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
 
+		// Iterate controllers in the network model and start apps for them 
 		for (c : ne.controllers) {
 			var controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
 
 			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
-				var serverplatform = configuration.attributes.get("controller_platform_target_" + c.name) as String
-				var clientplatform = configuration.attributes.get("controller_platform_source_" + c.name) as String
-				
-				NetIDE_server = serverplatform // to know if server_platform is ODL #AB
+				NetIDE_server = configuration.attributes.get("controller_platform_target_" + c.name) as String // to know if server_platform is ODL #AB
+				var backendStarter = factory.createBackendStarter(configuration, launch, c, monitor)
+				var shimStarter = factory.createShimStarter(configuration, launch, c, monitor)
 
-				if (serverplatform == NetIDE.CONTROLLER_POX && clientplatform == NetIDE.CONTROLLER_RYU) {
-					var clientcontrollerpath = (configuration.attributes.get(
-						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
+				backendStarter.asyncStart
 
-					cmdline = getCommandLine("Ryu_backend", clientcontrollerpath, c)
+				Thread.sleep(2000)
 
-					var clientthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
+				shimStarter.asyncStart
 
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-
-					clientthread.setParameters(workingDir, cmdline)
-					clientthread.start
-
-					cmdline = getCommandLine("POX_Shim", clientcontrollerpath, c)
-
-					var serverthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					Thread.sleep(2000)
-					
-					serverthread.setParameters(workingDir, cmdline)
-					serverthread.start
-					
-					
-
-				}
-				else if (serverplatform == NetIDE.CONTROLLER_RYU && clientplatform == NetIDE.CONTROLLER_RYU) {
-					var clientcontrollerpath = (configuration.attributes.get(
-						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
-
-
-					cmdline = getCommandLine("Ryu_backend", clientcontrollerpath, c)
-					
-					var clientthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					clientthread.setParameters(workingDir, cmdline)
-					clientthread.start
-
-					cmdline = getCommandLine("Ryu_Shim", clientcontrollerpath, c)
-
-					var serverthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					Thread.sleep(2000)
-					
-					serverthread.setParameters(workingDir, cmdline)
-					serverthread.start
-					
-					
-
-				}
-				else if (serverplatform == NetIDE.CONTROLLER_POX && clientplatform == NetIDE.CONTROLLER_PYRETIC) {
-					var clientcontrollerpath = (configuration.attributes.get(
-						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
-
-
-					cmdline = getCommandLine("Pyretic_backend", clientcontrollerpath, c)
-					
-					var clientthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					clientthread.setParameters(workingDir, cmdline)
-					clientthread.start
-
-					cmdline = getCommandLine("POX_Shim", clientcontrollerpath, c)
-
-					var serverthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-
-					Thread.sleep(2000)
-
-					serverthread.setParameters(workingDir, cmdline)
-					serverthread.start
-
-				}
-				else if (serverplatform == NetIDE.CONTROLLER_RYU && clientplatform == NetIDE.CONTROLLER_PYRETIC) {
-					var clientcontrollerpath = (configuration.attributes.get(
-						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
-
-
-					cmdline = getCommandLine("Pyretic_backend", clientcontrollerpath, c)
-					
-					var clientthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					clientthread.setParameters(workingDir, cmdline)
-					clientthread.start
-
-					cmdline = getCommandLine("Ryu_Shim", clientcontrollerpath, c)
-
-					var serverthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					Thread.sleep(2000)
-					
-					serverthread.setParameters(workingDir, cmdline)
-					serverthread.start
-					
-					
-
-				}
-				else if (serverplatform == NetIDE.CONTROLLER_ODL && clientplatform == NetIDE.CONTROLLER_RYU) {
-					var clientcontrollerpath = (configuration.attributes.get(
-						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
-
-
-					cmdline = getCommandLine("Ryu_backend", clientcontrollerpath, c)
-					
-					var clientthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					clientthread.setParameters(workingDir, cmdline)
-					clientthread.start
-
-					cmdline = getCommandLine("ODL_Shim", clientcontrollerpath, c)
-
-					var serverthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					Thread.sleep(2000)
-					
-					serverthread.setParameters(workingDir, cmdline)
-					serverthread.start
-					
-					
-
-				}
-				else if (serverplatform == NetIDE.CONTROLLER_ODL && clientplatform == NetIDE.CONTROLLER_PYRETIC) {
-					var clientcontrollerpath = (configuration.attributes.get(
-						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
-
-
-					cmdline = getCommandLine("Pyretic_backend", clientcontrollerpath, c)
-					
-					var clientthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					clientthread.setParameters(workingDir, cmdline)
-					clientthread.start
-
-					cmdline = getCommandLine("ODL_Shim", clientcontrollerpath, c)
-
-					var serverthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					Thread.sleep(2000)
-					
-					serverthread.setParameters(workingDir, cmdline)
-					serverthread.start
-					
-					
-
-				}
-				else if (serverplatform == NetIDE.CONTROLLER_POX && clientplatform == NetIDE.CONTROLLER_FLOODLIGHT) {
-					var clientcontrollerpath = (configuration.attributes.get(
-						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
-
-
-					cmdline = getCommandLine("Floodlight_backend", clientcontrollerpath, c)
-					
-					var clientthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					clientthread.setParameters(workingDir, cmdline)
-					clientthread.start
-
-					cmdline = getCommandLine("POX_Shim", clientcontrollerpath, c)
-
-					var serverthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					Thread.sleep(2000)
-					
-					serverthread.setParameters(workingDir, cmdline)
-					serverthread.start
-					
-					
-
-				}
-				else if (serverplatform == NetIDE.CONTROLLER_RYU && clientplatform == NetIDE.CONTROLLER_FLOODLIGHT) {
-					var clientcontrollerpath = (configuration.attributes.get(
-						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
-
-
-					cmdline = getCommandLine("Floodlight_backend", clientcontrollerpath, c)
-					
-					var clientthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					clientthread.setParameters(workingDir, cmdline)
-					clientthread.start
-
-					cmdline = getCommandLine("Ryu_Shim", clientcontrollerpath, c)
-
-					var serverthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					Thread.sleep(2000)
-					
-					serverthread.setParameters(workingDir, cmdline)
-					serverthread.start
-					
-					
-
-				}
-				else if (serverplatform == NetIDE.CONTROLLER_ODL && clientplatform == NetIDE.CONTROLLER_FLOODLIGHT) {
-					var clientcontrollerpath = (configuration.attributes.get(
-						"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
-
-
-					cmdline = getCommandLine("Floodlight_backend", clientcontrollerpath, c)
-					
-					var clientthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					clientthread.setParameters(workingDir, cmdline)
-					clientthread.start
-
-					cmdline = getCommandLine("ODL_Shim", clientcontrollerpath, c)
-
-					var serverthread = new Thread() {
-						var File workingDir
-						var ArrayList<String> cmdline
-
-						def setParameters(File wd, ArrayList<String> cl) {
-							this.workingDir = wd
-							this.cmdline = cl
-						}
-
-						override run() {
-							super.run()
-							startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-						}
-					}
-					
-					Thread.sleep(2000)
-					
-					serverthread.setParameters(workingDir, cmdline)
-					serverthread.start
-					
-					
-
-				}
 			} else {
 
-				var controllerpath = (configuration.attributes.get(
-					"controller_data_" + c.name + "_" + controllerplatform) as String).absolutePath
-
-				cmdline = getCommandLine(controllerplatform, controllerpath, c)
-
-				var controllerthread = new Thread() {
-					var File workingDir
-					var ArrayList<String> cmdline
-
-					def setParameters(File wd, ArrayList<String> cl) {
-						this.workingDir = wd
-						this.cmdline = cl
-					}
-
-					override run() {
-						super.run()
-						startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-					}
-				}
-
-				controllerthread.setParameters(workingDir, cmdline)
-				Thread.sleep(2000)
-				controllerthread.start
+				var starter = factory.createSingleControllerStarter(configuration, launch, c, monitor)
+				starters.add(starter)
+				starter.asyncStart()
 
 			}
 
 		}
 
-		cmdline = newArrayList(location.toOSString, "ssh", "-c", "sudo python ~/Tools/debugger/Ryu_shim/debugger.py")
-		var serverthread = new Thread() {
-			var File workingDir
-			var ArrayList<String> cmdline
-
-			def setParameters(File wd, ArrayList<String> cl) {
-				this.workingDir = wd
-				this.cmdline = cl
-			}
-
-			override run() {
-				super.run()
-				startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-				}
+		// Start the debugger if the Apps are started in Debug mode
+		if (launch.launchMode.equals("debug")) {
+			var debuggerStarter = factory.createDebuggerStarter(configuration, launch, monitor)
+			debuggerStarter.asyncStart
 		}
-					
-		Thread.sleep(2000)
-					
-		serverthread.setParameters(workingDir, cmdline)
-		serverthread.start
-		
-		if (NetIDE_server == NetIDE.CONTROLLER_ODL){
-			Thread.sleep(90000)
-		}
-		else{
-			Thread.sleep(2000)	
-		}
-		
-		cmdline = newArrayList(location.toOSString, "ssh", "-c",
-			"sudo python ~/mn-configs/" +
-				if(ne.name != null && ne.name != "") ne.name + "_run.py" else "NetworkEnvironment" + "_run.py")
 
-		startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
+		// ODL needs some more time...
+		if (NetIDE_server == NetIDE.CONTROLLER_ODL) {
+			Thread.sleep(30000)
+		} else {
+			Thread.sleep(2000)
+		}
+
+		// Start Mininet synchronously. 
+		// After Mininet is stopped, all other processes are stopped too and the VM halts.
+		var mnstarter = factory.createMininetStarter(configuration, launch, monitor)
+		mnstarter.syncStart
+
+		starters.forEach[stop]
 
 		if (configuration.attributes.get("shutdown") as Boolean) {
 			cmdline = newArrayList(location.toOSString, "halt")
@@ -627,43 +147,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 	}
 
-	def getCommandLine(String platform, IPath path, Controller c) {
-
-		var cline = switch (platform) {
-			case "Ryu":
-				String.format("sudo ryu-manager --ofp-tcp-listen-port=%d controllers/%s/%s", c.portNo,
-					path.removeFileExtension.lastSegment, path.lastSegment)
-			case "POX":
-				String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pox/pox.py openflow.of_01 --port=%s %s ",
-					path.removeFileExtension.lastSegment, c.portNo, path.removeFileExtension.lastSegment)
-			case "Pyretic":
-				String.format("PYTHONPATH=$PYTHONPATH:controllers/%s:$HOME/pyretic:$HOME/pox $HOME/pyretic/pyretic.py %s",
-					path.removeFileExtension.lastSegment, path.removeFileExtension.lastSegment)
-			case "POX_Shim":
-				String.format("PYTHONPATH=$PYTHONPATH:Engine/ryu-backend/tests pox/pox.py openflow.of_01 --port=%s pox_client", c.portNo)
-				//String.format("PYTHONPATH=$PYTHONPATH:Engine/ryu-backend/tests pox/pox.py pox_client") AB
-			case "Ryu_Shim":
-				String.format("PYTHONPATH=$PYTHONPATH:Engine/ryu-shim sudo ryu-manager --ofp-tcp-listen-port=%s Engine/ryu-shim/ryu_shim.py", c.portNo)
-			case "Ryu_backend":
-				String.format(
-					"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend sudo ryu-manager --ofp-tcp-listen-port 7733 Engine/ryu-backend/backend.py controllers/%s/%s",path.removeFileExtension.lastSegment, path.lastSegment)
-					//"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend sudo ryu-manager --ofp-tcp-listen-port 7733 Engine/ryu-backend/backend.py Engine/ryu-backend/tests/%s", 
-					//path.removeFileExtension.lastSegment) AB
-			case "Pyretic_backend":
-				String.format("PYTHONPATH=$PYTHONPATH:pyretic pyretic/pyretic.py -v high -f -m i pyretic.modules.%s",path.removeFileExtension.lastSegment)
-			case "ODL_Shim":
-				String.format("./openflowplugin/distribution/karaf/target/assembly/bin/karaf")
-			case "Floodlight_backend":
-				String.format("java -jar $HOME/floodlight/target/floodlight.jar")
-			default:
-				"echo No valid platform specified"
-		}
-
-		newArrayList(location.toOSString, "ssh", "-c", cline)
-	}
-
-	def startProcess(ArrayList<String> cmdline, File workingDir, Path location, IProgressMonitor monitor, ILaunch launch,
-		ILaunchConfiguration configuration, String[] env) {
+	def startProcess(ArrayList<String> cmdline, File workingDir, Path location, IProgressMonitor monitor,
+		ILaunch launch, ILaunchConfiguration configuration, String[] env) {
 		var p = DebugPlugin.exec(cmdline, workingDir, env)
 
 		var IProcess process = null;
@@ -694,7 +179,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		while (!process.isTerminated()) {
 			try {
 				if (monitor.isCanceled()) {
-					process.terminate();
+					process.launch.terminate();
 				}
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
