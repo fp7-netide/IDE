@@ -14,6 +14,6 @@ class FloodlightBackendStarter extends ControllerStarter {
 	}
 
 	override getCommandLine() {
-		return String.format("java -jar $HOME/floodlight/target/floodlight.jar").cmdLineArray
+		return String.format("java -jar $HOME/floodlight/target/floodlight.jar")
 	}
 }

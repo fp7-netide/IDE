@@ -13,11 +13,11 @@ class PoxStarter extends ControllerStarter {
 		name = String.format("%s (%s)", name, appPath.lastSegment)
 	}
 	
-	override ArrayList<String> getCommandLine() {
+	override getCommandLine() {
 		var poxline = String.format("PYTHONPATH=$PYTHONPATH:controllers/%s pox/pox.py openflow.of_01 --port=%s %s ",
 			getAppPath.removeFileExtension.lastSegment, controller.portNo, getAppPath.removeFileExtension.lastSegment)
 		
-		return poxline.cmdLineArray
+		return poxline
 	}
 	
 

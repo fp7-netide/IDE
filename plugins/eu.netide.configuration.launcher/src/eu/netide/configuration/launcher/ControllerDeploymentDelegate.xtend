@@ -138,12 +138,12 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		var mnstarter = factory.createMininetStarter(configuration, launch, monitor)
 		mnstarter.syncStart
 
-		starters.forEach[stop]
+//		starters.forEach[stop]
 
-		if (configuration.attributes.get("shutdown") as Boolean) {
-			cmdline = newArrayList(location.toOSString, "halt")
-			startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
-		}
+//		if (configuration.attributes.get("shutdown") as Boolean) {
+//			cmdline = newArrayList(location.toOSString, "halt")
+//			startProcess(cmdline, workingDir, location, monitor, launch, configuration, env)
+//		}
 
 	}
 

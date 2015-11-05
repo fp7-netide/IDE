@@ -15,7 +15,7 @@ class PoxShimStarter extends ControllerStarter {
 	override getCommandLine() {
 		return String.format(
 			"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend/tests pox/pox.py openflow.of_01 --port=%s pox_client",
-			controller.portNo).cmdLineArray
+			controller.portNo)
 	}
 
 }

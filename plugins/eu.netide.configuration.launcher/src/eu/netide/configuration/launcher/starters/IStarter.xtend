@@ -7,7 +7,7 @@ import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunch
 
 interface IStarter {
-	def ArrayList<String> getCommandLine()
+	def String getCommandLine()
 	def void setLaunchConfiguration(ILaunchConfiguration configuration)
 	def void syncStart()
 	def void asyncStart()

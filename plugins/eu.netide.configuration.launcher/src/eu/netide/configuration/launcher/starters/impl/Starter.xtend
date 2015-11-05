@@ -5,25 +5,30 @@ import eu.netide.configuration.launcher.starters.IStarter
 import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 import eu.netide.configuration.utils.NetIDE
 import java.io.File
-import java.util.ArrayList
-import java.util.HashMap
 import java.util.Map
-import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.core.runtime.IStatus
-import org.eclipse.core.runtime.NullProgressMonitor
-import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Platform
-import org.eclipse.core.runtime.Status
-import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunch
 import org.eclipse.debug.core.ILaunchConfiguration
-import org.eclipse.debug.core.RefreshUtil
 import org.eclipse.debug.core.model.IProcess
-import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.tm.terminal.view.core.TerminalServiceFactory
+import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants
 import org.eclipse.xtend.lib.annotations.Accessors
+import java.util.ArrayList
+import org.eclipse.core.runtime.Path
+import org.eclipse.core.runtime.NullProgressMonitor
+import org.eclipse.debug.core.DebugPlugin
+import java.util.HashMap
+import org.eclipse.core.runtime.CoreException
+import org.eclipse.core.runtime.Status
+import org.eclipse.core.runtime.IStatus
+import org.eclipse.debug.core.RefreshUtil
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.emf.common.util.URI
+import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.tm.terminal.view.ui.launcher.LauncherDelegateManager
+import org.eclipse.tm.terminal.connector.local.launcher.LocalLauncherDelegate
+import org.eclipse.tm.terminal.view.core.interfaces.ITerminalTabListener
 
 abstract class Starter implements IStarter {
 
@@ -47,9 +52,8 @@ abstract class Starter implements IStarter {
 
 	@Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
 	private String name
-	
+
 	protected IProgressMonitor monitor
-	
 
 	new(String name, ILaunch launch, ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		this.name = name
@@ -57,13 +61,12 @@ abstract class Starter implements IStarter {
 		this.configuration = configuration
 		this.controller = controller
 		this.monitor = monitor
-		
 
 		this.vagrantpath = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
 			NetIDEPreferenceConstants.VAGRANT_PATH, "", null)
 
 		var path = configuration.attributes.get("topologymodel") as String
-		
+
 		this.workingDir = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
 	}
 
@@ -74,7 +77,25 @@ abstract class Starter implements IStarter {
 	public override syncStart() {
 		var line = getCommandLine()
 		var env = null
-		startProcess(line, workingDir, new Path(vagrantpath), monitor, launch, configuration, env)
+		var ts = TerminalServiceFactory.service
+
+		var delegate = new LocalLauncherDelegate
+
+		var options = newHashMap(
+			// ITerminalsConnectorConstants.PROP_ID -> ""+Math.random as Object,
+			ITerminalsConnectorConstants.PROP_TITLE -> name as Object,
+			ITerminalsConnectorConstants.PROP_FORCE_NEW -> true as Object,
+			ITerminalsConnectorConstants.PROP_DELEGATE_ID ->
+				"org.eclipse.tm.terminal.connector.local.launcher.local" as Object,
+			ITerminalsConnectorConstants.PROP_PROCESS_PATH -> vagrantpath as Object,
+			ITerminalsConnectorConstants.PROP_PROCESS_MERGE_ENVIRONMENT -> true as Object,
+			ITerminalsConnectorConstants.PROP_PROCESS_ARGS -> String.format("ssh -c \"%s\" -- -t", line) as Object,
+			ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR -> workingDir.absolutePath as Object
+		)
+
+		ts.openConsole(options, null)
+
+	// startProcess(line, workingDir, new Path(vagrantpath), monitor, launch, configuration, env)
 	}
 
 	public override asyncStart() {
@@ -87,17 +108,39 @@ abstract class Starter implements IStarter {
 
 		var controllerthread = new Thread() {
 			var File workingDir
-			var ArrayList<String> cmdline
+			var String cmdline
 
-			def setParameters(File wd, ArrayList<String> cl) {
+			def setParameters(File wd, String cl) {
 				this.workingDir = wd
 				this.cmdline = cl
 			}
 
 			override run() {
 				super.run()
-				startProcess(cmdline, workingDir, new Path(vagrantpath), new NullProgressMonitor, launch, configuration,
-					env)
+
+				var line = getCommandLine()
+				var env = null
+				var ts = TerminalServiceFactory.service
+
+				var delegate = new LocalLauncherDelegate
+
+				var options = newHashMap(
+//					ITerminalsConnectorConstants.PROP_ID -> ""+Math.random as Object,
+					ITerminalsConnectorConstants.PROP_TITLE -> name as Object,
+					ITerminalsConnectorConstants.PROP_FORCE_NEW -> true as Object,
+					ITerminalsConnectorConstants.PROP_DELEGATE_ID ->
+						"org.eclipse.tm.terminal.connector.local.launcher.local" as Object,
+					ITerminalsConnectorConstants.PROP_PROCESS_PATH -> vagrantpath as Object,
+					ITerminalsConnectorConstants.PROP_PROCESS_MERGE_ENVIRONMENT -> true as Object,
+					ITerminalsConnectorConstants.PROP_PROCESS_ARGS ->
+						String.format("ssh -c \"%s\" -- -t", line) as Object,
+					ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR -> workingDir.absolutePath as Object
+				)
+
+				ts.openConsole(options, null)
+
+			// startProcess(cmdline, workingDir, new Path(vagrantpath), new NullProgressMonitor, launch, configuration,
+			// env)
 			}
 		}
 
@@ -116,7 +159,8 @@ abstract class Starter implements IStarter {
 			Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
 				NetIDEPreferenceConstants.VAGRANT_PATH, "", null))
 
-		newArrayList(location.toOSString, "ssh", "-c", cline, "--", "-tt")
+		newArrayList(location.toOSString, "ssh", "-c", "screen -S " + name.replaceAll("[ ()]", "_") + " " + cline, "--",
+			"-tt")
 	}
 
 	/**
@@ -148,7 +192,7 @@ abstract class Starter implements IStarter {
 			if (p != null) {
 				p.destroy();
 			}
-			throw new CoreException(new Status(IStatus.ERROR, "Bla", "Blub"))
+			throw new CoreException(new Status(IStatus.ERROR, "eu.netide.core.launcher", "No process available"))
 		}
 
 		process.setAttribute(IProcess.ATTR_CMDLINE, generateCommandLine(cmdline))
@@ -157,7 +201,8 @@ abstract class Starter implements IStarter {
 		while (!process.isTerminated()) {
 			try {
 				if (monitor.isCanceled()) {
-//					process.terminate();
+					var quitline = newArrayList(location.toOSString, "ssh", "-c", "screen", "-X", "-S", name, "quit")
+					startProcess(quitline, workingDir, location, monitor, launch, configuration, env)
 					process.launch.terminate
 				}
 				Thread.sleep(50);

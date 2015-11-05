@@ -14,7 +14,7 @@ class PyreticBackendStarter extends ControllerStarter {
 
 	override getCommandLine() {
 		return String.format("PYTHONPATH=$PYTHONPATH:pyretic pyretic/pyretic.py -v high -f -m i pyretic.modules.%s",
-			appPath.removeFileExtension.lastSegment).cmdLineArray
+			appPath.removeFileExtension.lastSegment)
 	}
 
 }

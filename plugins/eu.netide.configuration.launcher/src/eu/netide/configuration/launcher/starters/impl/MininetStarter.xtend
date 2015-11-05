@@ -25,7 +25,7 @@ class MininetStarter extends Starter {
 		var mnpath = "sudo python ~/mn-configs/" +
 			if(ne.name != null && ne.name != "") ne.name + "_run.py" else "NetworkEnvironment" + "_run.py"
 
-		return mnpath.cmdLineArray
+		return mnpath
 	}
 
 }

@@ -14,6 +14,6 @@ class OdlShimStarter extends ControllerStarter {
 	
 	override getCommandLine() {
 		var str = String.format("./openflowplugin/distribution/karaf/target/assembly/bin/karaf")
-		return str.cmdLineArray	
+		return str	
 	}
 }
