@@ -5,30 +5,26 @@ import eu.netide.configuration.launcher.starters.IStarter
 import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 import eu.netide.configuration.utils.NetIDE
 import java.io.File
+import java.util.ArrayList
+import java.util.HashMap
 import java.util.Map
+import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.core.runtime.IStatus
+import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Platform
+import org.eclipse.core.runtime.Status
+import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunch
 import org.eclipse.debug.core.ILaunchConfiguration
+import org.eclipse.debug.core.RefreshUtil
 import org.eclipse.debug.core.model.IProcess
+import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.tm.terminal.view.core.TerminalServiceFactory
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants
 import org.eclipse.xtend.lib.annotations.Accessors
-import java.util.ArrayList
-import org.eclipse.core.runtime.Path
-import org.eclipse.core.runtime.NullProgressMonitor
-import org.eclipse.debug.core.DebugPlugin
-import java.util.HashMap
-import org.eclipse.core.runtime.CoreException
-import org.eclipse.core.runtime.Status
-import org.eclipse.core.runtime.IStatus
-import org.eclipse.debug.core.RefreshUtil
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.emf.common.util.URI
-import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.tm.terminal.view.ui.launcher.LauncherDelegateManager
-import org.eclipse.tm.terminal.connector.local.launcher.LocalLauncherDelegate
-import org.eclipse.tm.terminal.view.core.interfaces.ITerminalTabListener
 
 abstract class Starter implements IStarter {
 
@@ -75,27 +71,7 @@ abstract class Starter implements IStarter {
 	}
 
 	public override syncStart() {
-		var line = getCommandLine()
-		var env = null
-		var ts = TerminalServiceFactory.service
-
-		var delegate = new LocalLauncherDelegate
-
-		var options = newHashMap(
-			// ITerminalsConnectorConstants.PROP_ID -> ""+Math.random as Object,
-			ITerminalsConnectorConstants.PROP_TITLE -> name as Object,
-			ITerminalsConnectorConstants.PROP_FORCE_NEW -> true as Object,
-			ITerminalsConnectorConstants.PROP_DELEGATE_ID ->
-				"org.eclipse.tm.terminal.connector.local.launcher.local" as Object,
-			ITerminalsConnectorConstants.PROP_PROCESS_PATH -> vagrantpath as Object,
-			ITerminalsConnectorConstants.PROP_PROCESS_MERGE_ENVIRONMENT -> true as Object,
-			ITerminalsConnectorConstants.PROP_PROCESS_ARGS -> String.format("ssh -c \"%s\" -- -t", line) as Object,
-			ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR -> workingDir.absolutePath as Object
-		)
-
-		ts.openConsole(options, null)
-
-	// startProcess(line, workingDir, new Path(vagrantpath), monitor, launch, configuration, env)
+		startProcess()
 	}
 
 	public override asyncStart() {
@@ -118,29 +94,7 @@ abstract class Starter implements IStarter {
 			override run() {
 				super.run()
 
-				var line = getCommandLine()
-				var env = null
-				var ts = TerminalServiceFactory.service
-
-				var delegate = new LocalLauncherDelegate
-
-				var options = newHashMap(
-//					ITerminalsConnectorConstants.PROP_ID -> ""+Math.random as Object,
-					ITerminalsConnectorConstants.PROP_TITLE -> name as Object,
-					ITerminalsConnectorConstants.PROP_FORCE_NEW -> true as Object,
-					ITerminalsConnectorConstants.PROP_DELEGATE_ID ->
-						"org.eclipse.tm.terminal.connector.local.launcher.local" as Object,
-					ITerminalsConnectorConstants.PROP_PROCESS_PATH -> vagrantpath as Object,
-					ITerminalsConnectorConstants.PROP_PROCESS_MERGE_ENVIRONMENT -> true as Object,
-					ITerminalsConnectorConstants.PROP_PROCESS_ARGS ->
-						String.format("ssh -c \"%s\" -- -t", line) as Object,
-					ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR -> workingDir.absolutePath as Object
-				)
-
-				ts.openConsole(options, null)
-
-			// startProcess(cmdline, workingDir, new Path(vagrantpath), new NullProgressMonitor, launch, configuration,
-			// env)
+				startProcess()
 			}
 		}
 
@@ -258,6 +212,32 @@ abstract class Starter implements IStarter {
 			return ResourcesPlugin.getWorkspace().getRoot().findMember(platformString)
 		}
 		return null
+	}
+
+	private def startProcess() {
+		var line = getCommandLine()
+
+		var cmdline = String.format("ssh -c \"%s screen -S %s %s\" -- -t", environmentVariables,
+			name.replaceAll("[ ()]", "_"), line)
+
+		var ts = TerminalServiceFactory.service
+
+		var options = newHashMap(
+			ITerminalsConnectorConstants.PROP_TITLE -> name as Object,
+			ITerminalsConnectorConstants.PROP_FORCE_NEW -> true as Object,
+			ITerminalsConnectorConstants.PROP_DELEGATE_ID ->
+				"org.eclipse.tm.terminal.connector.local.launcher.local" as Object,
+			ITerminalsConnectorConstants.PROP_PROCESS_PATH -> vagrantpath as Object,
+			ITerminalsConnectorConstants.PROP_PROCESS_MERGE_ENVIRONMENT -> true as Object,
+			ITerminalsConnectorConstants.PROP_PROCESS_ARGS -> cmdline as Object,
+			ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR -> workingDir.absolutePath as Object
+		)
+
+		ts.openConsole(options, null)
+	}
+
+	override getEnvironmentVariables() {
+		return ""
 	}
 
 }

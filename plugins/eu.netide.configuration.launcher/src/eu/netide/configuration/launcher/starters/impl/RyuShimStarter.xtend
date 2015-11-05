@@ -12,9 +12,13 @@ class RyuShimStarter extends ControllerStarter {
 		super("Ryu Shim", launch, configuration, controller, monitor)
 	}
 
+	override getEnvironmentVariables() {
+		return "PYTHONPATH=$PYTHONPATH:Engine/ryu-shim"
+	}
+
 	override getCommandLine() {
 		return String.format(
-			"PYTHONPATH=$PYTHONPATH:Engine/ryu-shim sudo ryu-manager --ofp-tcp-listen-port=%s Engine/ryu-shim/ryu_shim.py", controller.portNo)
+			"sudo ryu-manager --ofp-tcp-listen-port=%s Engine/ryu-shim/ryu_shim.py", controller.portNo)
 	}
 
 }

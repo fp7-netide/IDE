@@ -8,6 +8,7 @@ import org.eclipse.debug.core.ILaunch
 
 interface IStarter {
 	def String getCommandLine()
+	def String getEnvironmentVariables()
 	def void setLaunchConfiguration(ILaunchConfiguration configuration)
 	def void syncStart()
 	def void asyncStart()

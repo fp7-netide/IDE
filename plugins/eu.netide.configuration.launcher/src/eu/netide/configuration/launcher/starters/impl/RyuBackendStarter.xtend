@@ -13,9 +13,13 @@ class RyuBackendStarter extends ControllerStarter {
 		name = String.format("%s (%s)", name, appPath.lastSegment)
 	}
 
+	override getEnvironmentVariables() {
+		"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend"
+	}
+	
 	override getCommandLine() {
 		return String.format(
-			"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend sudo ryu-manager --ofp-tcp-listen-port 7733 Engine/ryu-backend/backend.py controllers/%s/%s",
+			"sudo ryu-manager --ofp-tcp-listen-port 7733 Engine/ryu-backend/backend.py controllers/%s/%s",
 			appPath.removeFileExtension.lastSegment, appPath.lastSegment)
 	}
 
