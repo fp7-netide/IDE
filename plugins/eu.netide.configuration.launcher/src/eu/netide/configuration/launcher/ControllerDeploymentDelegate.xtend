@@ -106,7 +106,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		}
 
 		// Start Mininet. 
-		var mnstarter = factory.createMininetStarter(configuration, launch, monitor)
+		val mnstarter = factory.createMininetStarter(configuration, launch, monitor)
 		mnstarter.syncStart
 
 		Display.getDefault().asyncExec(
@@ -117,6 +117,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 						DummyGUI.ID) as DummyGUI
 					dummygui.vagrantManager = vagrantManager
 					dummygui.starters = starters
+					dummygui.mininet = mnstarter
 				}
 			})
 

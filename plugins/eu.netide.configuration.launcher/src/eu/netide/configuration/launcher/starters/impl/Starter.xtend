@@ -49,7 +49,7 @@ abstract class Starter implements IStarter {
 
 	@Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
 	private String name
-	
+
 	@Accessors(PROTECTED_GETTER)
 	private String id
 
@@ -68,8 +68,8 @@ abstract class Starter implements IStarter {
 		var path = configuration.attributes.get("topologymodel") as String
 
 		this.workingDir = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
-		
-		this.id = "" + (Math.random*10000) as int
+
+		this.id = "" + (Math.random * 10000) as int
 	}
 
 	override void setLaunchConfiguration(ILaunchConfiguration configuration) {
@@ -81,7 +81,6 @@ abstract class Starter implements IStarter {
 	}
 
 	public override asyncStart() {
-
 
 		var cmdline = getCommandLine()
 
@@ -95,13 +94,10 @@ abstract class Starter implements IStarter {
 			}
 
 			override run(IProgressMonitor monitor) {
-				//super.run()
+				// super.run()
 				startProcess(fullCommandLine)
 				return Status.OK_STATUS
 			}
-			
-
-			
 		}
 
 		controllerthread.setParameters(workingDir, cmdline)
@@ -110,15 +106,21 @@ abstract class Starter implements IStarter {
 	}
 
 	override void stop() {
-		startProcess(String.format("ssh -c \"sudo kill $(ps h --ppid $(screen -ls | grep %s | cut -d. -f1) -o pid)\"", safeName))
+		var job = new Job("Stop" + name) {
+			override protected run(IProgressMonitor monitor) {
+				startProcess(
+					String.format("ssh -c \"sudo kill $(ps h --ppid $(screen -ls | grep %s | cut -d. -f1) -o pid)\"",
+						safeName))
+				return Status.OK_STATUS
+			}
+
+		}
+		job.schedule
 	}
 
-	
 	def safeName() {
 		return name.replaceAll("[ ()]", "_") + "." + id
 	}
-
-
 
 	def getIFile(String s) {
 
@@ -132,11 +134,10 @@ abstract class Starter implements IStarter {
 		}
 		return null
 	}
-	
+
 	private def getFullCommandLine() {
-		var cmdline = String.format("ssh -c \"%s screen -S %s %s\" -- -t", environmentVariables,
-			safeName, commandLine)
-			
+		var cmdline = String.format("ssh -c \"%s screen -S %s %s\" -- -t", environmentVariables, safeName, commandLine)
+
 		return cmdline
 	}
 

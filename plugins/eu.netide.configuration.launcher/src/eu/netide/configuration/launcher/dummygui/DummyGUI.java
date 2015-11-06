@@ -6,6 +6,8 @@ import org.eclipse.ui.part.ViewPart;
 
 import eu.netide.configuration.launcher.starters.IStarter;
 import eu.netide.configuration.launcher.starters.VagrantManager;
+import eu.netide.configuration.launcher.starters.impl.MininetStarter;
+
 import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -21,6 +23,8 @@ public class DummyGUI extends ViewPart {
 	public static String ID = "eu.netide.configuration.launcher.dummygui";
 
 	private VagrantManager vagrant;
+	
+	private IStarter mininet;
 
 	private ArrayList<IStarter> starters;
 
@@ -30,6 +34,10 @@ public class DummyGUI extends ViewPart {
 
 	public void setVagrantManager(VagrantManager vm) {
 		this.vagrant = vm;
+	}
+	
+	public void setMininet(IStarter mn) {
+		this.mininet = mn;
 	}
 
 	public void setStarters(ArrayList<IStarter> starters) {
@@ -78,11 +86,11 @@ public class DummyGUI extends ViewPart {
 	public void createPartControl(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(1, false));
+		composite.setLayout(new GridLayout(2, false));
 
 		Group grpVagrant = new Group(composite, SWT.NONE);
 		grpVagrant.setLayout(new GridLayout(3, false));
-		grpVagrant.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		grpVagrant.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpVagrant.setText("Vagrant");
 
 		Button btnNewButton = new Button(grpVagrant, SWT.NONE);
@@ -115,11 +123,37 @@ public class DummyGUI extends ViewPart {
 		});
 		btnNewButton_2.setBounds(0, 0, 70, 25);
 		btnNewButton_2.setText("Halt");
+		
+		Group grpMininet = new Group(composite, SWT.NONE);
+		grpMininet.setText("Mininet");
+		grpMininet.setLayout(new GridLayout(2, false));
+		grpMininet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		Button btnNewButton_3 = new Button(grpMininet, SWT.NONE);
+		btnNewButton_3.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				mininet.syncStart();
+			}
+		});
+		btnNewButton_3.setText("On");
+		
+		Button btnNewButton_4 = new Button(grpMininet, SWT.NONE);
+		btnNewButton_4.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				mininet.stop();
+			}
+		});
+		btnNewButton_4.setText("Off");
+		
 
 		grpStarters = new Group(composite, SWT.NONE);
 		grpStarters.setText("Starters");
 		grpStarters.setLayout(new GridLayout(2, false));
-		grpStarters.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
+		grpStarters.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 2, 1));
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 
 		// TODO Auto-generated method stub
 
