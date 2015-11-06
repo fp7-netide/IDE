@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.tm.terminal.view.core.TerminalServiceFactory
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants
 import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.core.runtime.jobs.Job
 
 abstract class Starter implements IStarter {
 
@@ -48,6 +49,9 @@ abstract class Starter implements IStarter {
 
 	@Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
 	private String name
+	
+	@Accessors(PROTECTED_GETTER)
+	private String id
 
 	protected IProgressMonitor monitor
 
@@ -64,6 +68,8 @@ abstract class Starter implements IStarter {
 		var path = configuration.attributes.get("topologymodel") as String
 
 		this.workingDir = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
+		
+		this.id = "" + (Math.random*10000) as int
 	}
 
 	override void setLaunchConfiguration(ILaunchConfiguration configuration) {
@@ -71,18 +77,15 @@ abstract class Starter implements IStarter {
 	}
 
 	public override syncStart() {
-		startProcess()
+		startProcess(fullCommandLine)
 	}
 
 	public override asyncStart() {
-		val vagrantpath = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
-			NetIDEPreferenceConstants.VAGRANT_PATH, "", null)
 
-		val env = null
 
 		var cmdline = getCommandLine()
 
-		var controllerthread = new Thread() {
+		var controllerthread = new Job(name) {
 			var File workingDir
 			var String cmdline
 
@@ -91,115 +94,31 @@ abstract class Starter implements IStarter {
 				this.cmdline = cl
 			}
 
-			override run() {
-				super.run()
-
-				startProcess()
+			override run(IProgressMonitor monitor) {
+				//super.run()
+				startProcess(fullCommandLine)
+				return Status.OK_STATUS
 			}
+			
+
+			
 		}
 
 		controllerthread.setParameters(workingDir, cmdline)
 		Thread.sleep(2000)
-		controllerthread.start
+		controllerthread.schedule
 	}
 
 	override void stop() {
-		process.launch.terminate
+		startProcess(String.format("ssh -c \"sudo kill $(ps h --ppid $(screen -ls | grep %s | cut -d. -f1) -o pid)\"", safeName))
 	}
 
-	def ArrayList<String> cmdLineArray(String cline) {
-
-		var location = new Path(
-			Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
-				NetIDEPreferenceConstants.VAGRANT_PATH, "", null))
-
-		newArrayList(location.toOSString, "ssh", "-c", "screen -S " + name.replaceAll("[ ()]", "_") + " " + cline, "--",
-			"-tt")
+	
+	def safeName() {
+		return name.replaceAll("[ ()]", "_") + "." + id
 	}
 
-	/**
-	 * Starts a process 
-	 */
-	def startProcess(ArrayList<String> cmdline, File workingDir, Path location, IProgressMonitor monitor,
-		ILaunch launch, ILaunchConfiguration configuration, String[] env) {
-		var p = DebugPlugin.exec(cmdline, workingDir, env)
 
-		var IProcess process = null;
-
-		// add process type to process attributes
-		var Map<String, String> processAttributes = new HashMap<String, String>();
-		var programName = location.lastSegment();
-		var ext = location.getFileExtension();
-		if (ext != null) {
-			programName = programName.substring(0, programName.length() - (ext.length() + 1));
-		}
-		programName = programName.toLowerCase();
-		var programLabel = String.format("%s", this.name)
-		processAttributes.put(IProcess.ATTR_PROCESS_LABEL, programLabel)
-		processAttributes.put(IProcess.ATTR_PROCESS_TYPE, programName)
-
-		if (p != null) {
-			monitor.beginTask("Vagrant up", 0);
-			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
-		}
-		if (p == null || process == null) {
-			if (p != null) {
-				p.destroy();
-			}
-			throw new CoreException(new Status(IStatus.ERROR, "eu.netide.core.launcher", "No process available"))
-		}
-
-		process.setAttribute(IProcess.ATTR_CMDLINE, generateCommandLine(cmdline))
-		this.process = process
-
-		while (!process.isTerminated()) {
-			try {
-				if (monitor.isCanceled()) {
-					var quitline = newArrayList(location.toOSString, "ssh", "-c", "screen", "-X", "-S", name, "quit")
-					startProcess(quitline, workingDir, location, monitor, launch, configuration, env)
-					process.launch.terminate
-				}
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-			}
-
-			// refresh resources
-			RefreshUtil.refreshResources(configuration, monitor)
-		}
-
-	}
-
-	def generateCommandLine(String[] commandLine) {
-		if (commandLine.length < 1) {
-			return ""
-		}
-
-		val buf = new StringBuffer()
-
-		commandLine.forEach [ a |
-			buf.append(' ')
-			var characters = a.toCharArray
-			val command = new StringBuffer()
-			var containsSpace = false
-			for (c : characters) {
-				if (c == '\"') {
-					command.append('\\');
-				} else if (c == ' ') {
-					containsSpace = true;
-				}
-				command.append(c)
-			}
-			if (containsSpace) {
-				buf.append('\"');
-				buf.append(command);
-				buf.append('\"');
-			} else {
-				buf.append(command);
-			}
-		]
-
-		return buf.toString
-	}
 
 	def getIFile(String s) {
 
@@ -213,12 +132,15 @@ abstract class Starter implements IStarter {
 		}
 		return null
 	}
-
-	private def startProcess() {
-		var line = getCommandLine()
-
+	
+	private def getFullCommandLine() {
 		var cmdline = String.format("ssh -c \"%s screen -S %s %s\" -- -t", environmentVariables,
-			name.replaceAll("[ ()]", "_"), line)
+			safeName, commandLine)
+			
+		return cmdline
+	}
+
+	private def startProcess(String command) {
 
 		var ts = TerminalServiceFactory.service
 
@@ -229,7 +151,7 @@ abstract class Starter implements IStarter {
 				"org.eclipse.tm.terminal.connector.local.launcher.local" as Object,
 			ITerminalsConnectorConstants.PROP_PROCESS_PATH -> vagrantpath as Object,
 			ITerminalsConnectorConstants.PROP_PROCESS_MERGE_ENVIRONMENT -> true as Object,
-			ITerminalsConnectorConstants.PROP_PROCESS_ARGS -> cmdline as Object,
+			ITerminalsConnectorConstants.PROP_PROCESS_ARGS -> command as Object,
 			ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR -> workingDir.absolutePath as Object
 		)
 
