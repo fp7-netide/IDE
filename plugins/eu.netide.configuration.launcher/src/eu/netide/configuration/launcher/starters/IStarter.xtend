@@ -1,10 +1,6 @@
 package eu.netide.configuration.launcher.starters
 
-import Topology.Controller
-import java.util.ArrayList
-import org.eclipse.core.runtime.IPath
 import org.eclipse.debug.core.ILaunchConfiguration
-import org.eclipse.debug.core.ILaunch
 
 interface IStarter {
 	
@@ -22,10 +18,42 @@ interface IStarter {
 	 */
 	def String getEnvironmentVariables()
 	
+	/**
+	 * Returns the name of the starter session
+	 * 
+	 * @returns The Name of the starter
+	 */
 	def String getName()
+	
+	/**
+	 * Returns a unique and Unix-Safe name of the starter session
+	 * 
+	 * @returns Safe Name of the starter
+	 */
+	def String getSafeName()
+	
+	/**
+	 * Sets the launch configuration to configure the starter
+	 * 
+	 * @params A launch configuration
+	 */
 	def void setLaunchConfiguration(ILaunchConfiguration configuration)
+	
+	/**
+	 * Synchronously starts a controller, tool, etc.
+	 */
 	def void syncStart()
+	
+	/**
+	 * Asynchronously starts a controller, tool, etc.
+	 */
 	def void asyncStart()
+	
+	/**
+	 * Kills a started process
+	 */
 	def void stop()
+	
+	def void reattach()
 	
 }

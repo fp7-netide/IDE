@@ -20,6 +20,9 @@ import org.eclipse.debug.core.model.IProcess
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.core.runtime.jobs.Job
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.util.regex.Pattern
 
 class VagrantManager {
 
@@ -102,6 +105,27 @@ class VagrantManager {
 			}
 		}
 		command.schedule
+	}
+
+	def getRunningSessions() {
+
+		var p = DebugPlugin.exec(newArrayList(vagrantpath, "ssh", "-c", "screen -list"), workingDirectory, null)
+		var br = new BufferedReader(new InputStreamReader(p.getInputStream()))
+		p.waitFor
+		var output = newArrayList()
+		var pattern = Pattern.compile("\\d+\\.[\\w\\.]+\\.\\d+")
+
+		var l = br.readLine
+		while (l != null) {
+			var matcher = pattern.matcher(l)
+			if (matcher.find())
+				output.add(matcher.group)
+			l = br.readLine
+
+		}
+		p.waitFor
+		return output
+
 	}
 
 	def startProcess(ArrayList<String> cmdline) {

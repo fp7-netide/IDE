@@ -3,9 +3,10 @@ package eu.netide.configuration.launcher
 import Topology.NetworkEnvironment
 import eu.netide.configuration.generator.GenerateActionDelegate
 import eu.netide.configuration.generator.vagrantfile.VagrantfileGenerateAction
-import eu.netide.configuration.launcher.starters.StarterFactory
-import eu.netide.configuration.launcher.starters.VagrantManager
 import eu.netide.configuration.launcher.dummygui.DummyGUI
+import eu.netide.configuration.launcher.starters.StarterFactory
+import eu.netide.configuration.launcher.starters.StarterRegistry
+import eu.netide.configuration.launcher.starters.VagrantManager
 import eu.netide.configuration.utils.NetIDE
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.CoreException
@@ -15,8 +16,9 @@ import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.ui.PlatformUI
 import org.eclipse.swt.widgets.Display
+import org.eclipse.ui.PlatformUI
+import eu.netide.configuration.launcher.starters.IStarterRegistry
 
 /**
  * Triggers the automatic creation of virtual machines and execution of 
@@ -53,7 +55,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 		var factory = new StarterFactory
 		val vagrantManager = new VagrantManager(launch, monitor)
-		val starters = newArrayList()
+		val reg = IStarterRegistry.instance
 
 		if (monitor.isCanceled()) {
 			return;
@@ -74,18 +76,18 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 				NetIDE_server = configuration.attributes.get("controller_platform_target_" + c.name) as String // to know if server_platform is ODL #AB
 				var shimStarter = factory.createShimStarter(configuration, launch, c, monitor)
 
-				starters.add(backendStarter)
+				reg.register(backendStarter.safeName, backendStarter)
 				backendStarter.asyncStart
 
 				Thread.sleep(2000)
 
-				starters.add(shimStarter)
+				reg.register(shimStarter.safeName, shimStarter)
 				shimStarter.asyncStart
 
 			} else {
 
 				var starter = factory.createSingleControllerStarter(configuration, launch, c, monitor)
-				starters.add(starter)
+				reg.register(starter.safeName, starter)
 				starter.asyncStart()
 
 			}
@@ -95,18 +97,21 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		// Start the debugger if the Apps are started in Debug mode
 		if (launch.launchMode.equals("debug")) {
 			var debuggerStarter = factory.createDebuggerStarter(configuration, launch, monitor)
+			reg.register(debuggerStarter.safeName, debuggerStarter)
 			debuggerStarter.asyncStart
 		}
 
 		// ODL needs some more time...
-		if (NetIDE_server == NetIDE.CONTROLLER_ODL) {
-			Thread.sleep(30000)
-		} else {
-			Thread.sleep(2000)
-		}
+//		if (NetIDE_server == NetIDE.CONTROLLER_ODL) {
+//			Thread.sleep(30000)
+//		} else {
+//			Thread.sleep(2000)
+//		}
+		Thread.sleep(2000)
 
 		// Start Mininet. 
 		val mnstarter = factory.createMininetStarter(configuration, launch, monitor)
+		reg.register(mnstarter.safeName, mnstarter)
 		mnstarter.syncStart
 
 		Display.getDefault().asyncExec(
@@ -116,7 +121,6 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 					var dummygui = PlatformUI.getWorkbench().activeWorkbenchWindow.activePage.showView(
 						DummyGUI.ID) as DummyGUI
 					dummygui.vagrantManager = vagrantManager
-					dummygui.starters = starters
 					dummygui.mininet = mnstarter
 				}
 			})
