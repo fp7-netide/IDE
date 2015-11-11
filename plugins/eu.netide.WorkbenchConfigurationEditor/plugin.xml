@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="workbenchconfigurationeditor.editors.WbConfigurationEditor"
+            extensions="txt"
+            icon="icons/sample.gif"
+            id="workbenchconfigurationeditor.editors.WbConfigurationEditor"
+            name="Workbench Configuration Editor">
+      </editor>
+   </extension>
+
+</plugin>
