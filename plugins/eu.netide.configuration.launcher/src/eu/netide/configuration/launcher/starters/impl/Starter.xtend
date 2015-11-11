@@ -39,9 +39,6 @@ abstract class Starter implements IStarter {
 	private ILaunch launch
 
 	@Accessors(PROTECTED_GETTER)
-	private Controller controller
-
-	@Accessors(PROTECTED_GETTER)
 	private File workingDir
 
 	@Accessors(PROTECTED_GETTER)
@@ -59,7 +56,6 @@ abstract class Starter implements IStarter {
 		this.name = name
 		this.launch = launch
 		this.configuration = configuration
-		this.controller = controller
 		this.monitor = monitor
 
 		this.vagrantpath = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
