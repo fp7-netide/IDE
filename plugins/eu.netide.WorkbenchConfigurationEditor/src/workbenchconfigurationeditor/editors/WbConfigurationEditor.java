@@ -3,9 +3,16 @@ package workbenchconfigurationeditor.editors;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,6 +32,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -65,15 +73,19 @@ public class WbConfigurationEditor extends EditorPart {
 
 	}
 
+	// parsed xml document
+	private Document doc;
+	private IFile file;
+
 	private void parseFileToModel(IFileEditorInput input) {
 		try {
-			IFile file = input.getFile();
+			file = input.getFile();
 			File xmlFile = new File(file.getRawLocationURI());
 			modelList = new ArrayList<LaunchConfigurationModel>();
-
+			
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(xmlFile);
+			doc = dBuilder.parse(xmlFile);
 			doc.getDocumentElement().normalize();
 
 			// System.out.println("Root element :" +
@@ -101,15 +113,16 @@ public class WbConfigurationEditor extends EditorPart {
 			System.out.println("current node name: " + tempNode.getNodeName());
 			// make sure it's element node.
 			if (tempNode.getNodeType() == Node.ELEMENT_NODE) {
-
+				System.out.println("got here");
 				switch (tempNode.getNodeName()) {
 				case XmlConstants.ELEMENT_APP_PATH:
 					System.out.println("Setting as node Value for app path: " + tempNode.getTextContent());
 					model.setAppPath(tempNode.getTextContent());
 					break;
 				case XmlConstants.ELEMENT_TOPOLOGY_PATH:
-					model.setTopology(tempNode.getTextContent());
 					System.out.println("Setting as node topology for app path: " + tempNode.getTextContent());
+					LaunchConfigurationModel.setTopology(tempNode.getTextContent());
+
 					break;
 				case XmlConstants.NODE_APP:
 					model = new LaunchConfigurationModel();
@@ -122,7 +135,7 @@ public class WbConfigurationEditor extends EditorPart {
 
 							Node node = nodeMap.item(i);
 							if (node.getNodeName().equals(XmlConstants.ATTRIBUTE_APP_ID)) {
-								model.setID(Long.parseLong(node.getNodeValue()));
+								model.setID(node.getNodeValue());
 							} else {
 								if (node.getNodeName().equals(XmlConstants.ATTRIBUTE_APP_NAME)) {
 									model.setAppName(node.getNodeValue());
@@ -171,6 +184,7 @@ public class WbConfigurationEditor extends EditorPart {
 		createLayout(parent);
 		addContentToTable();
 		addButtonListener();
+		
 
 	}
 
@@ -187,7 +201,7 @@ public class WbConfigurationEditor extends EditorPart {
 		Composite startAppComposite = new Composite(container, SWT.BORDER);
 		startAppComposite.setLocation(10, 10);
 
-		startAppComposite.setSize(523, 514);
+		startAppComposite.setSize(523, 361);
 		startAppComposite.setLayout(null);
 
 		Composite buttonComposite = new Composite(startAppComposite, SWT.BORDER);
@@ -258,7 +272,7 @@ public class WbConfigurationEditor extends EditorPart {
 	 *            with 4 entries data[0] = pathName
 	 */
 	private void addTableEntry(LaunchConfigurationModel model) {
-
+		System.out.println("Adding Table Entry. ModelName:  " +model.getAppName());
 		String[] tmpS = new String[] { model.getAppName(), "offline" };
 		TableItem tmp = new TableItem(table, SWT.NONE);
 		tableConfigMap.put(tmp, model);
@@ -283,6 +297,8 @@ public class WbConfigurationEditor extends EditorPart {
 					for (int i : toRemoveIndex) {
 						table.remove(i);
 					}
+
+					// TODO: remove test from xml
 				} else {
 					showMessage("Select a test to remove from the table.");
 				}
@@ -300,33 +316,76 @@ public class WbConfigurationEditor extends EditorPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				tmpModel = new LaunchConfigurationModel();
-				FileDialog dlg = new FileDialog(container.getShell(), SWT.OPEN);
-				String path = dlg.open();
-				if (path != null) {
-					tmpModel.setAppPath(path);
-					String pathNames[] = path.split("/");
-					String pathName = pathNames[pathNames.length - 1];
-					tmpModel.setAppName(pathName);
-				} else {
-					System.err.println("No valid path!");
-				}
 
 				tempShell = new ConfigurationShell(container.getDisplay());
 
 				String[] content = tempShell.getSelectedContent();
 				if (content != null) {
-					tmpModel.setTopology(content[0]);
 					tmpModel.setPlatform(content[1]);
 					tmpModel.setClientController(content[2]);
 					tmpModel.setServerController(content[3]);
+					tmpModel.setAppPath(content[4]);
+					String [] tmp = content[4].split("/");
+					String appName = tmp[tmp.length-1];
+					tmpModel.setAppName(appName);
+					tmpModel.setID(UUID.randomUUID().toString());
 				}
-
+				addModelToXmlFile(tmpModel);
 				modelList.add(tmpModel);
 				addTableEntry(tmpModel);
 				// TODO: generateCodeToXML
 			}
 
 		});
+	}
+
+	private void addModelToXmlFile(LaunchConfigurationModel model) {
+		Node wb = doc.getFirstChild();
+		System.out.println("Node name: " + wb.getNodeName());
+		if (wb.getNodeName().equals(XmlConstants.WORKBENCH)) {
+			Element app = doc.createElement(XmlConstants.NODE_APP);
+			app.setAttribute(XmlConstants.ATTRIBUTE_APP_NAME, model.getAppName());
+			app.setAttribute(XmlConstants.ATTRIBUTE_APP_ID, "" + model.getID());
+
+			Element appPath = doc.createElement(XmlConstants.ELEMENT_APP_PATH);
+			appPath.setTextContent(model.getAppPath());
+			app.appendChild(appPath);
+
+			Element platform = doc.createElement(XmlConstants.ELEMENT_PLATFORM);
+			platform.setTextContent(model.getPlatform());
+			app.appendChild(platform);
+
+			Element clientController = doc.createElement(XmlConstants.ELEMENT_CLIENT_CONTROLLER);
+			clientController.setTextContent(model.getClientController());
+			app.appendChild(clientController);
+
+			Element serverController = doc.createElement(XmlConstants.ELEMENT_SERVER_CONTROLLER);
+			serverController.setTextContent(model.getServerController());
+			app.appendChild(serverController);
+
+			wb.appendChild(app);
+			
+			
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer;
+			try {
+				transformer = transformerFactory.newTransformer();
+				DOMSource source = new DOMSource(doc);
+				System.out.println("Location: " + file.getLocation());
+				File actualFile = new File(file.getLocation().toOSString());
+				System.out.println(actualFile.exists());
+				StreamResult result = new StreamResult(actualFile);
+
+				// Output to console for testing
+				// StreamResult result = new StreamResult(System.out);
+
+				transformer.transform(source, result);
+			} catch (TransformerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
 	}
 
 	private void showMessage(String msg) {

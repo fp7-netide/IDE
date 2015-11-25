@@ -15,19 +15,19 @@ public class LaunchConfigurationModel {
 
 	private String appPath;
 	private String platform;
-	private long id;
+	private String id;
 	private String clientController;
 	private String serverController;
-	private String topology;
+	private static String topology;
 	private String appName;
 
-	public LaunchConfigurationModel(long id, String appPath, String clientController, String serverController,
+	public LaunchConfigurationModel(String id, String appPath, String clientController, String serverController,
 			String topology) {
 		this.appPath = appPath;
 		this.id = id;
 		this.clientController = clientController;
 		this.serverController = serverController;
-		this.topology = topology;
+		LaunchConfigurationModel.topology = topology;
 	}
 
 	public String getPlatform() {
@@ -50,11 +50,11 @@ public class LaunchConfigurationModel {
 		this.appName = name;
 	}
 
-	public void setID(long id) {
+	public void setID(String id) {
 		this.id = id;
 	}
 
-	public long getID() {
+	public String getID() {
 		return this.id;
 	}
 
@@ -67,6 +67,8 @@ public class LaunchConfigurationModel {
 	}
 
 	public String getClientController() {
+		if(clientController == null)
+			clientController = "";
 		return clientController;
 	}
 
@@ -75,6 +77,8 @@ public class LaunchConfigurationModel {
 	}
 
 	public String getServerController() {
+		if(serverController == null)
+			serverController = "";
 		return serverController;
 	}
 
@@ -82,21 +86,15 @@ public class LaunchConfigurationModel {
 		changes.firePropertyChange(SERVER_CONTROLLER, this.serverController, this.serverController = serverController);
 	}
 
-	public String getTopology() {
+	public static String getTopology() {
 		return topology;
 	}
 
-	public void setTopology(String topology) {
-		changes.firePropertyChange(TOPOLOGY, this.topology, this.topology = topology);
+	public static void setTopology(String topology) {
+		LaunchConfigurationModel.topology = topology;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
-		return result;
-	}
+
 
 	@Override
 	public boolean equals(Object obj) {

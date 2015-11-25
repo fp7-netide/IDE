@@ -45,7 +45,6 @@ public class ConfigurationShell extends Shell {
 	private Group client_server;
 	private CCombo serverControllerCombo;
 	private CCombo clientControllerCombo;
-	private Text topologyPathText;
 
 	/**
 	 * Create the shell.
@@ -58,7 +57,7 @@ public class ConfigurationShell extends Shell {
 		this.shell = this;
 
 		client_server = new Group(this, SWT.NONE);
-		client_server.setBounds(10, 131, 430, 82);
+		client_server.setBounds(10, 113, 430, 82);
 
 		Label lblNewLabel = new Label(client_server, SWT.NONE);
 		lblNewLabel.setLocation(10, 44);
@@ -83,7 +82,7 @@ public class ConfigurationShell extends Shell {
 		client_server.setVisible(false);
 
 		Group platform = new Group(this, SWT.NONE);
-		platform.setBounds(10, 81, 430, 44);
+		platform.setBounds(10, 63, 430, 44);
 
 		platformCombo = new CCombo(platform, SWT.BORDER);
 		platformCombo.addSelectionListener(new SelectionAdapter() {
@@ -114,10 +113,10 @@ public class ConfigurationShell extends Shell {
 		btnSaveConfig.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				content = new String[4];
-				if (!topologyPathText.getText().equals("")) {
+				content = new String[5];
+				if (!appPathText.getText().equals("")) {
 
-					content[0] = topologyPathText.getText();
+					content[4] = appPathText.getText();
 
 					if (platformCombo.getSelectionIndex() != -1) {
 
@@ -142,33 +141,35 @@ public class ConfigurationShell extends Shell {
 				shell.dispose();
 			}
 		});
-		btnSaveConfig.setBounds(186, 219, 95, 28);
+		btnSaveConfig.setBounds(188, 201, 95, 28);
 		btnSaveConfig.setText("Save Config");
 
-		Group group = new Group(this, SWT.NONE);
-		group.setBounds(10, 31, 430, 44);
+		Group appGroup = new Group(this, SWT.NONE);
+		appGroup.setBounds(10, 13, 430, 44);
 
-		Label lblTopology = new Label(group, SWT.NONE);
-		lblTopology.setText("Topology");
-		lblTopology.setBounds(10, 10, 81, 14);
+		Label lblApp = new Label(appGroup, SWT.NONE);
+		lblApp.setText("App");
+		lblApp.setBounds(10, 10, 81, 14);
 
-		Button btnBrowse = new Button(group, SWT.NONE);
-		btnBrowse.addSelectionListener(new SelectionAdapter() {
+		Button btnBrowseApp = new Button(appGroup, SWT.NONE);
+		btnBrowseApp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dlg = new FileDialog(shell, SWT.OPEN);
 				String path = dlg.open();
 
 				if (path != null) {
-					topologyPathText.setText(path);
+					appPathText.setText(path);
 				}
 			}
-		});
-		btnBrowse.setBounds(322, 3, 94, 28);
-		btnBrowse.setText("Browse");
 
-		topologyPathText = new Text(group, SWT.BORDER);
-		topologyPathText.setBounds(177, 7, 137, 19);
+		});
+
+		btnBrowseApp.setText("Browse");
+		btnBrowseApp.setBounds(322, 3, 94, 28);
+
+		appPathText = new Text(appGroup, SWT.BORDER);
+		appPathText.setBounds(177, 7, 137, 19);
 
 		createContents();
 
@@ -176,10 +177,13 @@ public class ConfigurationShell extends Shell {
 	}
 
 	private String[] content;
+	private Text appPathText;
 
 	/**
 	 * 
-	 * @return 0 = topology, 1 = platform, 2 = clientController,  3 = serverController, null if content wasn't set or an error occurred
+	 * @return 0 = topology, 1 = platform, 2 = clientController, 3 =
+	 *         serverController, 4 = appPath, null if content wasn't set or an
+	 *         error occurred
 	 */
 	public String[] getSelectedContent() {
 		return this.content;
@@ -201,7 +205,7 @@ public class ConfigurationShell extends Shell {
 	 */
 	protected void createContents() {
 		setText("Choose App Run Configuration");
-		setSize(450, 285);
+		setSize(450, 275);
 
 	}
 
