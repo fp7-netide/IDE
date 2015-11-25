@@ -1,18 +1,11 @@
 package workbenchconfigurationeditor.wizards;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -28,6 +21,7 @@ import org.eclipse.ui.IWorkbench;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import workbenchconfigurationeditor.editors.XmlHelper;
 import workbenchconfigurationeditor.model.XmlConstants;
 
 public class Configuration_Wizard extends Wizard implements INewWizard {
@@ -92,7 +86,7 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 
 	private void writeContent(File file, String topoName) {
 		try {
-			
+
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
@@ -105,27 +99,10 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 			Element topo = doc.createElement(XmlConstants.ELEMENT_TOPOLOGY_PATH);
 			topo.setTextContent(topoName);
 			rootElement.appendChild(topo);
-			
-			// write the content into xml file
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(file);
 
-			// Output to console for testing
-			// StreamResult result = new StreamResult(System.out);
+			XmlHelper.saveContentToXml(doc, file);
 
-			transformer.transform(source, result);
-			
-		
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -170,6 +147,7 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 			}
 
 		} else {
+			System.out.println("got here");
 			path = ResourcesPlugin.getWorkspace().getRoot().getFullPath().toString();
 		}
 		return path;

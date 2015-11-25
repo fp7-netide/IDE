@@ -1,18 +1,8 @@
 package workbenchconfigurationeditor.editors;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,7 +12,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -32,13 +21,8 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import workbenchconfigurationeditor.model.LaunchConfigurationModel;
-import workbenchconfigurationeditor.model.XmlConstants;
 
 /**
  * 
@@ -49,12 +33,9 @@ public class WbConfigurationEditor extends EditorPart {
 
 	public static final String ID = "workbenchconfigurationeditor.editors.WbConfigurationEditor"; //$NON-NLS-1$
 
-	private IFileEditorInput input;
-
-	private WbConfigurationEditor workbench;
 
 	public WbConfigurationEditor() {
-		this.workbench = this;
+		
 	}
 
 	@Override
@@ -63,9 +44,11 @@ public class WbConfigurationEditor extends EditorPart {
 		IFileEditorInput fileInput = (IFileEditorInput) input;
 		this.tableConfigMap = new HashMap<TableItem, LaunchConfigurationModel>();
 		// fills the modelList with the data from the xml file
-		parseFileToModel(fileInput);
 
-		this.input = fileInput;
+		file = fileInput.getFile();
+		doc = XmlHelper.getDocFromFile(file);
+		modelList = XmlHelper.parseFileToModel(file, doc);
+
 		setSite(site);
 		setInput(input);
 
@@ -76,100 +59,7 @@ public class WbConfigurationEditor extends EditorPart {
 	// parsed xml document
 	private Document doc;
 	private IFile file;
-
-	private void parseFileToModel(IFileEditorInput input) {
-		try {
-			file = input.getFile();
-			File xmlFile = new File(file.getRawLocationURI());
-			modelList = new ArrayList<LaunchConfigurationModel>();
-			
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			doc = dBuilder.parse(xmlFile);
-			doc.getDocumentElement().normalize();
-
-			// System.out.println("Root element :" +
-			// doc.getDocumentElement().getNodeName());
-
-			if (doc.hasChildNodes()) {
-
-				printNote(doc.getChildNodes(), null);
-
-			}
-
-		} catch (Exception e) {
-
-		}
-
-	}
-
 	private ArrayList<LaunchConfigurationModel> modelList;
-
-	private void printNote(NodeList nodeList, LaunchConfigurationModel model) {
-
-		for (int count = 0; count < nodeList.getLength(); count++) {
-
-			Node tempNode = nodeList.item(count);
-			System.out.println("current node name: " + tempNode.getNodeName());
-			// make sure it's element node.
-			if (tempNode.getNodeType() == Node.ELEMENT_NODE) {
-				System.out.println("got here");
-				switch (tempNode.getNodeName()) {
-				case XmlConstants.ELEMENT_APP_PATH:
-					System.out.println("Setting as node Value for app path: " + tempNode.getTextContent());
-					model.setAppPath(tempNode.getTextContent());
-					break;
-				case XmlConstants.ELEMENT_TOPOLOGY_PATH:
-					System.out.println("Setting as node topology for app path: " + tempNode.getTextContent());
-					LaunchConfigurationModel.setTopology(tempNode.getTextContent());
-
-					break;
-				case XmlConstants.NODE_APP:
-					model = new LaunchConfigurationModel();
-					modelList.add(model);
-
-					if (tempNode.hasAttributes()) {
-						NamedNodeMap nodeMap = tempNode.getAttributes();
-
-						for (int i = 0; i < nodeMap.getLength(); i++) {
-
-							Node node = nodeMap.item(i);
-							if (node.getNodeName().equals(XmlConstants.ATTRIBUTE_APP_ID)) {
-								model.setID(node.getNodeValue());
-							} else {
-								if (node.getNodeName().equals(XmlConstants.ATTRIBUTE_APP_NAME)) {
-									model.setAppName(node.getNodeValue());
-								}
-							}
-						}
-					}
-					break;
-				case XmlConstants.ELEMENT_CLIENT_CONTROLLER:
-					System.out.println("Setting as node client controller for app path: " + tempNode.getTextContent());
-					model.setClientController(tempNode.getTextContent());
-					break;
-				case XmlConstants.ELEMENT_SERVER_CONTROLLER:
-					System.out.println("Setting as node server controller for app path: " + tempNode.getTextContent());
-					model.setServerController(tempNode.getTextContent());
-					break;
-				case XmlConstants.ELEMENT_PLATFORM:
-					System.out.println("Setting as node platform for app path: " + tempNode.getTextContent());
-					model.setPlatform(tempNode.getTextContent());
-					break;
-				default:
-					System.err.println("No match for node: " + tempNode.getNodeName());
-
-				}
-
-				if (tempNode.hasChildNodes()) {
-					// loop again if has child nodes
-					printNote(tempNode.getChildNodes(), model);
-				}
-			}
-
-		}
-
-	}
 
 	private Composite container;
 	private Table table;
@@ -184,7 +74,6 @@ public class WbConfigurationEditor extends EditorPart {
 		createLayout(parent);
 		addContentToTable();
 		addButtonListener();
-		
 
 	}
 
@@ -272,7 +161,7 @@ public class WbConfigurationEditor extends EditorPart {
 	 *            with 4 entries data[0] = pathName
 	 */
 	private void addTableEntry(LaunchConfigurationModel model) {
-		System.out.println("Adding Table Entry. ModelName:  " +model.getAppName());
+		System.out.println("Adding Table Entry. ModelName:  " + model.getAppName());
 		String[] tmpS = new String[] { model.getAppName(), "offline" };
 		TableItem tmp = new TableItem(table, SWT.NONE);
 		tableConfigMap.put(tmp, model);
@@ -292,13 +181,13 @@ public class WbConfigurationEditor extends EditorPart {
 					for (TableItem i : toRemove) {
 						LaunchConfigurationModel tmp = tableConfigMap.get(i);
 						modelList.remove(tmp);
+						XmlHelper.removeFromXml(doc, tmp, file);
 					}
 					int[] toRemoveIndex = table.getSelectionIndices();
 					for (int i : toRemoveIndex) {
 						table.remove(i);
 					}
 
-					// TODO: remove test from xml
 				} else {
 					showMessage("Select a test to remove from the table.");
 				}
@@ -325,67 +214,18 @@ public class WbConfigurationEditor extends EditorPart {
 					tmpModel.setClientController(content[2]);
 					tmpModel.setServerController(content[3]);
 					tmpModel.setAppPath(content[4]);
-					String [] tmp = content[4].split("/");
-					String appName = tmp[tmp.length-1];
+					String[] tmp = content[4].split("/");
+					String appName = tmp[tmp.length - 1];
 					tmpModel.setAppName(appName);
 					tmpModel.setID(UUID.randomUUID().toString());
 				}
-				addModelToXmlFile(tmpModel);
+				XmlHelper.addModelToXmlFile(doc, tmpModel, file);
 				modelList.add(tmpModel);
 				addTableEntry(tmpModel);
-				// TODO: generateCodeToXML
+
 			}
 
 		});
-	}
-
-	private void addModelToXmlFile(LaunchConfigurationModel model) {
-		Node wb = doc.getFirstChild();
-		System.out.println("Node name: " + wb.getNodeName());
-		if (wb.getNodeName().equals(XmlConstants.WORKBENCH)) {
-			Element app = doc.createElement(XmlConstants.NODE_APP);
-			app.setAttribute(XmlConstants.ATTRIBUTE_APP_NAME, model.getAppName());
-			app.setAttribute(XmlConstants.ATTRIBUTE_APP_ID, "" + model.getID());
-
-			Element appPath = doc.createElement(XmlConstants.ELEMENT_APP_PATH);
-			appPath.setTextContent(model.getAppPath());
-			app.appendChild(appPath);
-
-			Element platform = doc.createElement(XmlConstants.ELEMENT_PLATFORM);
-			platform.setTextContent(model.getPlatform());
-			app.appendChild(platform);
-
-			Element clientController = doc.createElement(XmlConstants.ELEMENT_CLIENT_CONTROLLER);
-			clientController.setTextContent(model.getClientController());
-			app.appendChild(clientController);
-
-			Element serverController = doc.createElement(XmlConstants.ELEMENT_SERVER_CONTROLLER);
-			serverController.setTextContent(model.getServerController());
-			app.appendChild(serverController);
-
-			wb.appendChild(app);
-			
-			
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer;
-			try {
-				transformer = transformerFactory.newTransformer();
-				DOMSource source = new DOMSource(doc);
-				System.out.println("Location: " + file.getLocation());
-				File actualFile = new File(file.getLocation().toOSString());
-				System.out.println(actualFile.exists());
-				StreamResult result = new StreamResult(actualFile);
-
-				// Output to console for testing
-				// StreamResult result = new StreamResult(System.out);
-
-				transformer.transform(source, result);
-			} catch (TransformerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
 	}
 
 	private void showMessage(String msg) {
