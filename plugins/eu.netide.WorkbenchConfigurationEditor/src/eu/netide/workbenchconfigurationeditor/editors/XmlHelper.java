@@ -1,4 +1,4 @@
-package workbenchconfigurationeditor.editors;
+package eu.netide.workbenchconfigurationeditor.editors;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,8 +21,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import workbenchconfigurationeditor.model.LaunchConfigurationModel;
-import workbenchconfigurationeditor.model.XmlConstants;
+import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
+import eu.netide.workbenchconfigurationeditor.model.XmlConstants;
 
 public class XmlHelper {
 

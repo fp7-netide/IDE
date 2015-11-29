@@ -13,5 +13,7 @@ Require-Bundle: org.eclipse.core.runtime,
  eu.netide.configuration.utils,
  org.eclipse.emf.emfstore.client.ui,
  org.eclipse.jdt.core;bundle-version="3.11.1",
- org.eclipse.swt
+ org.eclipse.swt,
+ org.eclipse.debug.core,
+ org.eclipse.emf.ecore
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

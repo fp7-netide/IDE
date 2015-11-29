@@ -1,4 +1,4 @@
-package workbenchconfigurationeditor.wizards;
+package eu.netide.workbenchconfigurationeditor.wizards;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,8 +21,8 @@ import org.eclipse.ui.IWorkbench;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import workbenchconfigurationeditor.editors.XmlHelper;
-import workbenchconfigurationeditor.model.XmlConstants;
+import eu.netide.workbenchconfigurationeditor.editors.XmlHelper;
+import eu.netide.workbenchconfigurationeditor.model.XmlConstants;
 
 public class Configuration_Wizard extends Wizard implements INewWizard {
 

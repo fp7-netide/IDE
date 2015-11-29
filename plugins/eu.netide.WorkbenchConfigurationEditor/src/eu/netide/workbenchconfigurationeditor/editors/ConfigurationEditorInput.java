@@ -1,4 +1,4 @@
-package workbenchconfigurationeditor.editors;
+package eu.netide.workbenchconfigurationeditor.editors;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;

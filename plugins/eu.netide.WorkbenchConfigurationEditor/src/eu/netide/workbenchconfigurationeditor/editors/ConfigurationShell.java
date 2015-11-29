@@ -1,4 +1,4 @@
-package workbenchconfigurationeditor.editors;
+package eu.netide.workbenchconfigurationeditor.editors;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;

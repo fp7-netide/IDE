@@ -1,4 +1,4 @@
-package workbenchconfigurationeditor.model;
+package eu.netide.workbenchconfigurationeditor.model;
 
 public class XmlConstants {
 	public static final String NODE_APP = "app";

@@ -1,4 +1,4 @@
-package workbenchconfigurationeditor.wizards;
+package eu.netide.workbenchconfigurationeditor.wizards;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -67,7 +67,8 @@ public class Configuration_Wizard_Page extends WizardPage {
 
 				if (path != null) {
 					topologyPathText.setText(path);
-					topologyPath = path;
+					topologyPath = "file:".concat(path);
+
 					topoSet = true;
 					checkForFinish();
 				}

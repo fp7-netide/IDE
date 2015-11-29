@@ -1,11 +1,33 @@
-package workbenchconfigurationeditor.editors;
+package eu.netide.workbenchconfigurationeditor.editors;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -22,7 +44,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.w3c.dom.Document;
 
-import workbenchconfigurationeditor.model.LaunchConfigurationModel;
+import eu.netide.configuration.utils.NetIDE;
+import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 
 /**
  * 
@@ -33,9 +56,8 @@ public class WbConfigurationEditor extends EditorPart {
 
 	public static final String ID = "workbenchconfigurationeditor.editors.WbConfigurationEditor"; //$NON-NLS-1$
 
-
 	public WbConfigurationEditor() {
-		
+
 	}
 
 	@Override
@@ -204,6 +226,41 @@ public class WbConfigurationEditor extends EditorPart {
 		btnAddTest.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				ILaunchManager m = DebugPlugin.getDefault().getLaunchManager();
+				System.out.println("launch manager: " + m);
+				Object o = null;
+				try {
+					for (ILaunchConfiguration lc : m.getLaunchConfigurations()) {
+						System.out.println("launch Configuration: " + lc.getName());
+						Map<String, Object> attr = lc.getAttributes();
+						o = attr.get("topologymodel");
+
+						Set<Entry<String, Object>> s = attr.entrySet();
+						System.out.println("Set: " + s);
+					}
+				} catch (CoreException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+				// for (ILaunchConfigurationType l :
+				// m.getLaunchConfigurationTypes()) {
+				//
+				//
+				// if (l.getName().equals("NetIDE Controller Deployment")) {
+				// System.out.println("Found: " +l.getName());
+				// try {
+				// ILaunchConfigurationWorkingCopy c = l.newInstance(null,
+				// "test");
+				// c.setAttribute("topologymodel", "123");
+				//
+				// ILaunchConfiguration saved = c.doSave();
+				// } catch (CoreException e1) {
+				// // TODO Auto-generated catch block
+				// e1.printStackTrace();
+				// }
+				// }
+				// }
+
 				tmpModel = new LaunchConfigurationModel();
 
 				tempShell = new ConfigurationShell(container.getDisplay());
@@ -223,9 +280,38 @@ public class WbConfigurationEditor extends EditorPart {
 				modelList.add(tmpModel);
 				addTableEntry(tmpModel);
 
+//				// String path = (String)o;
+//				String path = tmpModel.getTopology();
+//				System.out.println("topo Path: " + path);
+//
+//				IResource _iFile = getIFile(path);
+//				IProject _project = _iFile.getProject();
+//				IPath _location = _project.getLocation();
+//				IPath _append = _location.append(("/gen" + NetIDE.VAGRANTFILE_PATH));
+//				System.out.println("modified path: " + _append);
+//				File _file = _append.toFile();
 			}
 
 		});
+	}
+
+	public IResource getIFile(final String s) {
+		ResourceSetImpl resSet = new ResourceSetImpl();
+		URI _createURI = URI.createURI(s);
+		System.out.println("URI: " + _createURI);
+		Resource res = resSet.getResource(_createURI, true);
+		URI eUri = res.getURI();
+		System.out.println("resource: " + res + " uri: " + eUri);
+
+		boolean _isPlatformResource = eUri.isPlatformResource();
+		if (_isPlatformResource) {
+			String platformString = eUri.toPlatformString(true);
+			IWorkspace _workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceRoot _root = _workspace.getRoot();
+
+			return _root.findMember(platformString);
+		} 
+		return null;
 	}
 
 	private void showMessage(String msg) {

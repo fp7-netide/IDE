@@ -1,4 +1,4 @@
-package workbenchconfigurationeditor.model;
+package eu.netide.workbenchconfigurationeditor.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
