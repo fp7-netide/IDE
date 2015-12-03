@@ -35,7 +35,7 @@ public class DummyGUI extends ViewPart {
 	private Group grpStarters;
 
 	private List list;
-	
+
 	private IStarterRegistry reg = IStarterRegistry.instance;
 
 	public DummyGUI() {
@@ -51,11 +51,14 @@ public class DummyGUI extends ViewPart {
 
 	public void refreshStarters() {
 		list.removeAll();
-		
-		java.util.List<String> t = vagrant.getRunningSessions();
-		
-		for (String s : t)
-			list.add(s.substring(s.indexOf(".")+1));
+
+		java.util.List<String> t = null;
+
+		if (vagrant != null) {
+			t = vagrant.getRunningSessions();
+			for (String s : t)
+				list.add(s.substring(s.indexOf(".") + 1));
+		}
 	}
 
 	@Override
@@ -149,14 +152,14 @@ public class DummyGUI extends ViewPart {
 		grpStarters.setText("Sessions");
 		grpStarters.setLayout(new GridLayout(2, false));
 		grpStarters.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 2, 1));
-		
+
 		list = new List(grpStarters, SWT.BORDER | SWT.V_SCROLL);
 		list.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-				
+
 		Composite composite_1 = new Composite(grpStarters, SWT.NONE);
 		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		composite_1.setLayout(new GridLayout(1, false));
-		
+
 		Button btnStartSession = new Button(composite_1, SWT.NONE);
 		btnStartSession.addMouseListener(new MouseAdapter() {
 			@Override
@@ -167,7 +170,7 @@ public class DummyGUI extends ViewPart {
 		});
 		btnStartSession.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnStartSession.setText("Start");
-		
+
 		Button btnStopSession = new Button(composite_1, SWT.NONE);
 		btnStopSession.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnStopSession.setText("Stop");
@@ -178,7 +181,7 @@ public class DummyGUI extends ViewPart {
 				reg.get(name).stop();
 			}
 		});
-		
+
 		Button btnReattachSession = new Button(composite_1, SWT.NONE);
 		btnReattachSession.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnReattachSession.setText("Reattach");
@@ -189,8 +192,8 @@ public class DummyGUI extends ViewPart {
 				reg.get(name).reattach();
 			}
 		});
-		
 
+		refreshStarters();
 
 		// TODO Auto-generated method stub
 
