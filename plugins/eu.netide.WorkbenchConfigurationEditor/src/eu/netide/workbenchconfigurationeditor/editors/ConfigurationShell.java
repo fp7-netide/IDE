@@ -1,16 +1,23 @@
 package eu.netide.workbenchconfigurationeditor.editors;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import eu.netide.configuration.utils.NetIDE;
 
@@ -45,6 +52,7 @@ public class ConfigurationShell extends Shell {
 	private Group client_server;
 	private CCombo serverControllerCombo;
 	private CCombo clientControllerCombo;
+	private Button btnSaveConfig;
 
 	/**
 	 * Create the shell.
@@ -90,6 +98,7 @@ public class ConfigurationShell extends Shell {
 			public void widgetSelected(SelectionEvent e) {
 				int index = platformCombo.getSelectionIndex();
 				if (index != -1) {
+					platformSet = true;
 					if (platformCombo.getItem(index).equals(NetIDE.CONTROLLER_ENGINE)) {
 						client_server.setVisible(true);
 					} else {
@@ -97,7 +106,10 @@ public class ConfigurationShell extends Shell {
 							client_server.setVisible(false);
 						}
 					}
+				} else {
+					platformSet = false;
 				}
+				checkForFinish();
 			}
 		});
 		platformCombo.setLocation(177, 10);
@@ -109,7 +121,8 @@ public class ConfigurationShell extends Shell {
 		lblAppController.setSize(81, 14);
 		lblAppController.setText("Platform");
 
-		Button btnSaveConfig = new Button(this, SWT.NONE);
+		btnSaveConfig = new Button(this, SWT.NONE);
+		btnSaveConfig.setEnabled(false);
 		btnSaveConfig.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -135,10 +148,11 @@ public class ConfigurationShell extends Shell {
 							content[2] = "";
 							content[3] = "";
 						}
-					}
 
+					}
 				}
 				shell.dispose();
+
 			}
 		});
 		btnSaveConfig.setBounds(188, 201, 95, 28);
@@ -155,10 +169,30 @@ public class ConfigurationShell extends Shell {
 		btnBrowseApp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog dlg = new FileDialog(shell, SWT.OPEN);
-				String path = dlg.open();
+				IFile selectedFile = null;
+				String path = null;
+				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, new WorkbenchLabelProvider(),
+						new BaseWorkbenchContentProvider());
+				dialog.setTitle("Tree Selection");
+				dialog.setMessage("Select the elements from the tree:");
+				dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+				if (dialog.open() == ElementTreeSelectionDialog.OK) {
+					Object[] result = dialog.getResult();
+					if (result.length == 1) {
+						if (result[0] instanceof IFile) {
+							System.out.println("is file");
+							selectedFile = (IFile) result[0];
+							System.out.println(selectedFile.getFullPath());
+							path = selectedFile.getFullPath().toString();
+							System.out.println("to os string: " + path);
+						} else {
+							showMessage("Please select an app.");
+						}
+					}
+				}
 
 				if (path != null) {
+					path = "platform:/resource".concat(path);
 					appPathText.setText(path);
 				}
 			}
@@ -170,10 +204,32 @@ public class ConfigurationShell extends Shell {
 
 		appPathText = new Text(appGroup, SWT.BORDER);
 		appPathText.setBounds(177, 7, 137, 19);
+		appPathText.addModifyListener(new ModifyListener() {
 
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (!appPathText.getText().equals("")) {
+					appPathSet = true;
+				} else {
+					appPathSet = false;
+				}
+				checkForFinish();
+
+			}
+		});
 		createContents();
 
 		openShell(display);
+	}
+
+	private boolean appPathSet = false;
+	private boolean platformSet = false;
+
+	private void checkForFinish() {
+		if (appPathSet && platformSet)
+			btnSaveConfig.setEnabled(true);
+		else
+			btnSaveConfig.setEnabled(false);
 	}
 
 	private String[] content;
@@ -207,6 +263,10 @@ public class ConfigurationShell extends Shell {
 		setText("Choose App Run Configuration");
 		setSize(450, 275);
 
+	}
+
+	private void showMessage(String msg) {
+		MessageDialog.openInformation(shell, "NetIDE Workbench View", msg);
 	}
 
 	@Override

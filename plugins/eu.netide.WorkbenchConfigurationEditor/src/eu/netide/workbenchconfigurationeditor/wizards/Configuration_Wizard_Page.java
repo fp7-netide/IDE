@@ -1,5 +1,8 @@
 package eu.netide.workbenchconfigurationeditor.wizards;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -8,9 +11,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class Configuration_Wizard_Page extends WizardPage {
 	private Text topologyPathText;
@@ -27,91 +32,118 @@ public class Configuration_Wizard_Page extends WizardPage {
 		this.topoSet = false;
 		this.nameSet = false;
 	}
-	
+
 	private boolean topoSet;
 	private boolean nameSet;
+	private Composite container;
 
 	/**
 	 * Create contents of the wizard.
+	 * 
 	 * @param parent
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
+		container = new Composite(parent, SWT.NULL);
 
 		setControl(container);
-		
+
 		Label lblTopology = new Label(container, SWT.NONE);
 		lblTopology.setBounds(10, 158, 59, 14);
 		lblTopology.setText("Topology");
-		
+
 		topologyPathText = new Text(container, SWT.BORDER);
 		topologyPathText.setBounds(116, 155, 291, 19);
 		topologyPathText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if(!topologyPathText.getText().equals(""))
+				if (!topologyPathText.getText().equals(""))
 					topoSet = true;
 				else
 					topoSet = false;
-				
+
 				checkForFinish();
 			}
 		});
-		
+
 		Button btnBrowse = new Button(container, SWT.NONE);
 		btnBrowse.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
-				String path = dlg.open();
 
-				if (path != null) {
-					topologyPathText.setText(path);
-					topologyPath = "file:".concat(path);
+				String path = null;
 
-					topoSet = true;
-					checkForFinish();
+				IFile selectedFile = null;
+				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(container.getShell(),
+						new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
+				dialog.setTitle("Tree Selection");
+				dialog.setMessage("Select the elements from the tree:");
+				dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+				if (dialog.open() == ElementTreeSelectionDialog.OK) {
+					Object[] result = dialog.getResult();
+					if (result.length == 1) {
+						if (result[0] instanceof IFile) {
+							System.out.println("is file");
+							selectedFile = (IFile) result[0];
+							System.out.println(selectedFile.getFullPath());
+							path = selectedFile.getFullPath().toOSString();
+						} else {
+							showMessage("Please select a topology.");
+						}
+
+						if (path != null) {
+							topologyPathText.setText(path);
+							topologyPath = "file:".concat(path);
+
+							topoSet = true;
+							checkForFinish();
+						}
+					}
 				}
 			}
 		});
 		btnBrowse.setBounds(441, 151, 94, 28);
 		btnBrowse.setText("Browse");
-		
+
 		Label lblFileName = new Label(container, SWT.NONE);
 		lblFileName.setBounds(10, 113, 59, 14);
 		lblFileName.setText("File Name");
-		
+
 		fileName = new Text(container, SWT.BORDER);
 		fileName.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if(!fileName.getText().equals(""))
+				if (!fileName.getText().equals(""))
 					nameSet = true;
 				else
 					nameSet = false;
-				
+
 				checkForFinish();
 			}
 		});
 		fileName.setBounds(116, 110, 291, 19);
-		
 
 	}
+
 	protected void checkForFinish() {
-		if(topoSet == true && nameSet == true)
+		if (topoSet == true && nameSet == true)
 			this.setPageComplete(true);
 		else
 			this.setPageComplete(false);
-		
+
 	}
 
 	private String topologyPath;
 
-	public String getTopologyPath(){
+	public String getTopologyPath() {
 		return topologyPath;
 	}
-	
+
 	private Text fileName;
-	public String getFileName(){
+
+	public String getFileName() {
 		return fileName.getText();
+	}
+
+	private void showMessage(String msg) {
+		MessageDialog.openInformation(container.getShell(), "NetIDE Workbench View", msg);
 	}
 }

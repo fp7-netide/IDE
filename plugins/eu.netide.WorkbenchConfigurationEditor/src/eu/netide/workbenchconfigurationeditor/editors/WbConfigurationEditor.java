@@ -1,26 +1,19 @@
 package eu.netide.workbenchconfigurationeditor.editors;
 
-import java.io.File;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -41,6 +34,9 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.EditorPart;
 import org.w3c.dom.Document;
 
@@ -194,7 +190,27 @@ public class WbConfigurationEditor extends EditorPart {
 	private LaunchConfigurationModel tmpModel;
 
 	private void addButtonListener() {
-
+		btnStatus.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IFile selectedFile = null;
+				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(container.getShell(),
+						new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
+				dialog.setTitle("Tree Selection");
+				dialog.setMessage("Select the elements from the tree:");
+				dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+				if (dialog.open() == ElementTreeSelectionDialog.OK) {
+					Object[] result = dialog.getResult();
+					if (result.length == 1) {
+						if (result[0] instanceof IFile) {
+							System.out.println("is file");
+							selectedFile = (IFile) result[0];
+							System.out.println(selectedFile.getFullPath());
+						}
+					}
+				}
+			}
+		});
 		btnRemoveTest.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -219,47 +235,21 @@ public class WbConfigurationEditor extends EditorPart {
 		startBTN.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
+				LaunchConfigurationModel toStart = null;
+				if (table.getSelectionCount() > 0) {
+					TableItem selectedItem = table.getSelection()[0];
+					toStart = tableConfigMap.get(selectedItem);
+					if (toStart != null) {
+						System.out.println(toStart.getAppName());
+						startApp(toStart);
+					}
+				}
 			}
 		});
 
 		btnAddTest.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ILaunchManager m = DebugPlugin.getDefault().getLaunchManager();
-				System.out.println("launch manager: " + m);
-				Object o = null;
-				try {
-					for (ILaunchConfiguration lc : m.getLaunchConfigurations()) {
-						System.out.println("launch Configuration: " + lc.getName());
-						Map<String, Object> attr = lc.getAttributes();
-						o = attr.get("topologymodel");
-
-						Set<Entry<String, Object>> s = attr.entrySet();
-						System.out.println("Set: " + s);
-					}
-				} catch (CoreException e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				}
-				// for (ILaunchConfigurationType l :
-				// m.getLaunchConfigurationTypes()) {
-				//
-				//
-				// if (l.getName().equals("NetIDE Controller Deployment")) {
-				// System.out.println("Found: " +l.getName());
-				// try {
-				// ILaunchConfigurationWorkingCopy c = l.newInstance(null,
-				// "test");
-				// c.setAttribute("topologymodel", "123");
-				//
-				// ILaunchConfiguration saved = c.doSave();
-				// } catch (CoreException e1) {
-				// // TODO Auto-generated catch block
-				// e1.printStackTrace();
-				// }
-				// }
-				// }
 
 				tmpModel = new LaunchConfigurationModel();
 
@@ -280,19 +270,82 @@ public class WbConfigurationEditor extends EditorPart {
 				modelList.add(tmpModel);
 				addTableEntry(tmpModel);
 
-//				// String path = (String)o;
-//				String path = tmpModel.getTopology();
-//				System.out.println("topo Path: " + path);
-//
-//				IResource _iFile = getIFile(path);
-//				IProject _project = _iFile.getProject();
-//				IPath _location = _project.getLocation();
-//				IPath _append = _location.append(("/gen" + NetIDE.VAGRANTFILE_PATH));
-//				System.out.println("modified path: " + _append);
-//				File _file = _append.toFile();
 			}
 
 		});
+	}
+
+	private void startApp(LaunchConfigurationModel toStart) {
+		final ILaunchConfiguration lc = createLaunchConfiguration(toStart);
+
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
+
+					lc.launch("run", null);
+
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		t.start();
+
+		// TODO: wait for thread to finish. Delete launch configuration.
+		// lc.delete();
+
+	}
+
+	private ILaunchConfiguration createLaunchConfiguration(LaunchConfigurationModel toStart) {
+
+		// format
+		// launch Configuration: Network
+		// Set: [controller_data_c1_Network
+		// Engine=platform:/resource/UC1/app/simple_switch.py,
+		// controller_platform_c1=Network Engine,
+		// controller_platform_source_c1=Ryu, controller_platform_target_c1=Ryu,
+		// reprovision=false, shutdown=true,
+		// topologymodel=platform:/resource/UC2/UC2.topology]
+		//
+		// launch Configuration: New_configuration (1)
+		// Set:
+		// [controller_data_c1_Ryu=platform:/resource/UC1/app/simple_switch.py,
+		// controller_platform_c1=Ryu, reprovision=false, shutdown=true,
+		// topologymodel=platform:/resource/UC1/UC1.topology]
+
+		ILaunchManager m = DebugPlugin.getDefault().getLaunchManager();
+		ILaunchConfiguration lc = null;
+		for (ILaunchConfigurationType l : m.getLaunchConfigurationTypes()) {
+
+			if (l.getName().equals("NetIDE Controller Deployment")) {
+				try {
+					ILaunchConfigurationWorkingCopy c = l.newInstance(null, toStart.getAppName() + toStart.getID());
+					c.setAttribute("topologymodel", LaunchConfigurationModel.getTopology());
+					c.setAttribute("controller_platform_c1", toStart.getPlatform());
+
+					if (toStart.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
+						c.setAttribute("controller_platform_source_c1", toStart.getClientController());
+						c.setAttribute("controller_platform_target_c1", toStart.getServerController());
+					}
+
+					String appPath = "controller_data_c1_".concat(toStart.getPlatform());
+					c.setAttribute(appPath, toStart.getAppPath());
+
+					c.setAttribute("reprovision", false);
+					c.setAttribute("shutdown", true);
+
+					lc = c.doSave();
+
+					Set<Entry<String, Object>> s = lc.getAttributes().entrySet();
+					System.out.println("Set: " + s);
+				} catch (CoreException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
+
+		return lc;
 	}
 
 	public IResource getIFile(final String s) {
@@ -310,7 +363,7 @@ public class WbConfigurationEditor extends EditorPart {
 			IWorkspaceRoot _root = _workspace.getRoot();
 
 			return _root.findMember(platformString);
-		} 
+		}
 		return null;
 	}
 

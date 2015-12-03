@@ -62,7 +62,12 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 
 		if (!file.exists()) {
 			try {
-				System.out.println(file.createNewFile());
+				file.createNewFile();
+				// formate topo path to match the launch configuration
+				// requirements
+				topoName = topoName.split(":")[1];
+				topoName = topoName.replace("\\", "/");
+				topoName = "platform:/resource".concat(topoName);
 				writeContent(file, topoName);
 
 				try {
@@ -148,7 +153,7 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 
 		} else {
 			System.out.println("got here");
-			path = ResourcesPlugin.getWorkspace().getRoot().getFullPath().toString();
+			path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
 		}
 		return path;
 

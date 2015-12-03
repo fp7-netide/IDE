@@ -21,13 +21,21 @@ public class LaunchConfigurationModel {
 	private static String topology;
 	private String appName;
 
-	public LaunchConfigurationModel(String id, String appPath, String clientController, String serverController,
-			String topology) {
+	public LaunchConfigurationModel(String id, String appPath, String platform) {
 		this.appPath = appPath;
 		this.id = id;
+		this.platform = platform;
+
+	}
+
+	public LaunchConfigurationModel(String id, String appPath, String platform, String clientController,
+			String serverController) {
+		this.appPath = appPath;
+		this.id = id;
+		this.platform = platform;
 		this.clientController = clientController;
 		this.serverController = serverController;
-		LaunchConfigurationModel.topology = topology;
+
 	}
 
 	public String getPlatform() {
@@ -67,7 +75,7 @@ public class LaunchConfigurationModel {
 	}
 
 	public String getClientController() {
-		if(clientController == null)
+		if (clientController == null)
 			clientController = "";
 		return clientController;
 	}
@@ -77,7 +85,7 @@ public class LaunchConfigurationModel {
 	}
 
 	public String getServerController() {
-		if(serverController == null)
+		if (serverController == null)
 			serverController = "";
 		return serverController;
 	}
@@ -93,8 +101,6 @@ public class LaunchConfigurationModel {
 	public static void setTopology(String topology) {
 		LaunchConfigurationModel.topology = topology;
 	}
-
-
 
 	@Override
 	public boolean equals(Object obj) {
