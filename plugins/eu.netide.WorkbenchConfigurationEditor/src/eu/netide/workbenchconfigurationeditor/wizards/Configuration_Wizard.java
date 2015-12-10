@@ -10,6 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -55,9 +56,11 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 
 	private boolean createNewFile(final String fileName, String topoName) {
 
-		String filePath = checkSelection();
+		String filePath = getPathFromSelection();
 		filePath += "/" + fileName + ".wb";
-
+		System.out.println("file path: " + filePath);
+		filePath = new Path(filePath).toOSString();
+		System.out.println("file path: " + filePath);
 		File file = new File(filePath);
 
 		if (!file.exists()) {
@@ -71,6 +74,7 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 				writeContent(file, topoName);
 
 				try {
+					System.out.println("Refresh Workspace");
 					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 
 				} catch (CoreException e) {
@@ -118,17 +122,17 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
 
-		checkSelection();
+		getPathFromSelection();
 	}
 
-	private String checkSelection() {
+	private String getPathFromSelection() {
 
 		String path = "";
 		if (selection != null && selection.isEmpty() == false && selection instanceof IStructuredSelection) {
 
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			Object obj = ssel.getFirstElement();
-
+			System.out.println("selection class: " + obj.getClass());
 			if (obj instanceof IPackageFragment) {
 				IPackageFragment pf = (IPackageFragment) obj;
 				path = pf.getResource().getLocation().toOSString();
@@ -142,18 +146,19 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 						IJavaProject p = (IJavaProject) obj;
 
 						path = p.getResource().getLocation().toOSString();
+					} else if (obj instanceof IResource) {
+						IResource r = (IResource) obj;
+						path = r.getLocation().toOSString();
+
 					} else {
-
-						path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
-
+						path = ResourcesPlugin.getWorkspace().getRoot().getProjects()[0].getLocation().toOSString();
 					}
 				}
 
 			}
 
 		} else {
-			System.out.println("got here");
-			path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
+			path = ResourcesPlugin.getWorkspace().getRoot().getProjects()[0].getLocation().toOSString();
 		}
 		return path;
 

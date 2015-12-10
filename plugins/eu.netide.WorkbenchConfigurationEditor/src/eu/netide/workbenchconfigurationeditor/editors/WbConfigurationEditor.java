@@ -2,8 +2,6 @@ package eu.netide.workbenchconfigurationeditor.editors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
@@ -149,6 +147,7 @@ public class WbConfigurationEditor extends EditorPart {
 		tc2.setWidth(80);
 		tc3.setWidth(100);
 		tc4.setWidth(100);
+		tc5.setWidth(100);
 
 		table.setBounds(10, 50, 392, 243);
 		table.setHeaderVisible(true);
@@ -173,7 +172,7 @@ public class WbConfigurationEditor extends EditorPart {
 	 */
 	private void addTableEntry(LaunchConfigurationModel model) {
 		System.out.println("Adding Table Entry. ModelName:  " + model.getAppName());
-		String[] tmpS = new String[] { model.getAppName(), "offline" };
+		String[] tmpS = new String[] { model.getAppName(), "offline", model.getPlatform(), model.getClientController(), model.getServerController() };
 		TableItem tmp = new TableItem(table, SWT.NONE);
 		tableConfigMap.put(tmp, model);
 		tmp.setText(tmpS);
@@ -231,7 +230,7 @@ public class WbConfigurationEditor extends EditorPart {
 				String[] content = tempShell.getSelectedContent();
 				if (content != null) {
 					boolean complete = true;
-					if (content[1].equals("") || content[2].equals(""))
+					if (content[1].equals("") || content[4].equals(""))
 						complete = false;
 
 					if (complete) {
@@ -263,7 +262,7 @@ public class WbConfigurationEditor extends EditorPart {
 				try {
 
 					lc.launch("run", null);
-
+				
 				} catch (CoreException e) {
 					e.printStackTrace();
 				}
@@ -320,9 +319,7 @@ public class WbConfigurationEditor extends EditorPart {
 					c.setAttribute("shutdown", true);
 
 					lc = c.doSave();
-
-					Set<Entry<String, Object>> s = lc.getAttributes().entrySet();
-					System.out.println("Set: " + s);
+					
 				} catch (CoreException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
