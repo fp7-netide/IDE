@@ -35,6 +35,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			return
 		}
 
+		
+
 		var NetIDE_server = ""
 
 		var path = configuration.attributes.get("topologymodel") as String
@@ -54,7 +56,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		}
 
 		var factory = new StarterFactory
-		val vagrantManager = new VagrantManager(launch, monitor)
+		val vagrantManager = new VagrantManager(configuration, monitor)
 		val reg = IStarterRegistry.instance
 
 		if (monitor.isCanceled()) {
