@@ -7,7 +7,10 @@ import java.util.UUID;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -19,6 +22,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -256,16 +260,31 @@ public class WbConfigurationEditor extends EditorPart {
 
 	private void startApp(LaunchConfigurationModel toStart) {
 		final ILaunchConfiguration lc = createLaunchConfiguration(toStart);
-
+		
 		Thread t = new Thread(new Runnable() {
 			public void run() {
-				try {
+				final StarterStarter s = new StarterStarter(LaunchConfigurationModel.getTopology());
+				//TODO: add a job list to manage stoping and status requests on running jobs
+				Job job = new Job("Create") {
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						s.startVagrantFromConfig(lc, monitor);
+						s.registerControllerFromConfig(lc, monitor);
+						//if(blabla)
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
 
-					lc.launch("run", null);
-				
-				} catch (CoreException e) {
-					e.printStackTrace();
-				}
+
+//				try {
+					//new StarterFactory().createSingleControllerStarter(lc, null, null, null);
+					
+//					lc.launch("run", null);
+//				
+//				} catch (CoreException e) {
+//					e.printStackTrace();
+//				}
 			}
 		});
 		t.start();
@@ -276,7 +295,7 @@ public class WbConfigurationEditor extends EditorPart {
 	}
 
 	private ILaunchConfiguration createLaunchConfiguration(LaunchConfigurationModel toStart) {
-
+		
 		// format
 		// launch Configuration: Network
 		// Set: [controller_data_c1_Network

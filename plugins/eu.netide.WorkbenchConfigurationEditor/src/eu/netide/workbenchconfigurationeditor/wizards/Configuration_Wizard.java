@@ -108,9 +108,9 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 			Element topo = doc.createElement(XmlConstants.ELEMENT_TOPOLOGY_PATH);
 			topo.setTextContent(topoName);
 			rootElement.appendChild(topo);
-
+			
 			XmlHelper.saveContentToXml(doc, file);
-
+			
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
@@ -144,8 +144,8 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 				} else {
 					if (obj instanceof IJavaProject) {
 						IJavaProject p = (IJavaProject) obj;
-
 						path = p.getResource().getLocation().toOSString();
+
 					} else if (obj instanceof IResource) {
 						IResource r = (IResource) obj;
 						path = r.getLocation().toOSString();

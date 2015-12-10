@@ -15,5 +15,13 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.core;bundle-version="3.11.1",
  org.eclipse.swt,
  org.eclipse.debug.core,
- org.eclipse.emf.ecore
+ org.eclipse.emf.ecore,
+ eu.netide.configuration.launcher,
+ eu.netide.configuration,
+ eu.netide.configuration.generator,
+ com.google.guava,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtend.lib,
+ org.eclipse.xtend.lib.macro
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+
