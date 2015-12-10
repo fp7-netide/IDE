@@ -7,20 +7,14 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -34,9 +28,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.model.BaseWorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.EditorPart;
 import org.w3c.dom.Document;
 
@@ -148,14 +139,16 @@ public class WbConfigurationEditor extends EditorPart {
 		TableColumn tc2 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc3 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc4 = new TableColumn(table, SWT.CENTER);
+		TableColumn tc5 = new TableColumn(table, SWT.CENTER);
 		tc1.setText("App Name");
 		tc2.setText("Aktiv");
-		tc3.setText("test");
-		tc4.setText("test 2");
+		tc3.setText("Platform");
+		tc4.setText("Client");
+		tc5.setText("Server");
 		tc1.setWidth(120);
-		tc2.setWidth(90);
-		tc3.setWidth(90);
-		tc4.setWidth(90);
+		tc2.setWidth(80);
+		tc3.setWidth(100);
+		tc4.setWidth(100);
 
 		table.setBounds(10, 50, 392, 243);
 		table.setHeaderVisible(true);
@@ -190,27 +183,7 @@ public class WbConfigurationEditor extends EditorPart {
 	private LaunchConfigurationModel tmpModel;
 
 	private void addButtonListener() {
-		btnStatus.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IFile selectedFile = null;
-				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(container.getShell(),
-						new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
-				dialog.setTitle("Tree Selection");
-				dialog.setMessage("Select the elements from the tree:");
-				dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
-				if (dialog.open() == ElementTreeSelectionDialog.OK) {
-					Object[] result = dialog.getResult();
-					if (result.length == 1) {
-						if (result[0] instanceof IFile) {
-							System.out.println("is file");
-							selectedFile = (IFile) result[0];
-							System.out.println(selectedFile.getFullPath());
-						}
-					}
-				}
-			}
-		});
+
 		btnRemoveTest.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -240,7 +213,7 @@ public class WbConfigurationEditor extends EditorPart {
 					TableItem selectedItem = table.getSelection()[0];
 					toStart = tableConfigMap.get(selectedItem);
 					if (toStart != null) {
-						System.out.println(toStart.getAppName());
+						selectedItem.setText(1, "active");
 						startApp(toStart);
 					}
 				}
@@ -257,18 +230,25 @@ public class WbConfigurationEditor extends EditorPart {
 
 				String[] content = tempShell.getSelectedContent();
 				if (content != null) {
-					tmpModel.setPlatform(content[1]);
-					tmpModel.setClientController(content[2]);
-					tmpModel.setServerController(content[3]);
-					tmpModel.setAppPath(content[4]);
-					String[] tmp = content[4].split("/");
-					String appName = tmp[tmp.length - 1];
-					tmpModel.setAppName(appName);
-					tmpModel.setID(UUID.randomUUID().toString());
+					boolean complete = true;
+					if (content[1].equals("") || content[2].equals(""))
+						complete = false;
+
+					if (complete) {
+						tmpModel.setPlatform(content[1]);
+						tmpModel.setClientController(content[2]);
+						tmpModel.setServerController(content[3]);
+						tmpModel.setAppPath(content[4]);
+						String[] tmp = content[4].split("/");
+						String appName = tmp[tmp.length - 1];
+						tmpModel.setAppName(appName);
+						tmpModel.setID(UUID.randomUUID().toString());
+
+						XmlHelper.addModelToXmlFile(doc, tmpModel, file);
+						modelList.add(tmpModel);
+						addTableEntry(tmpModel);
+					}
 				}
-				XmlHelper.addModelToXmlFile(doc, tmpModel, file);
-				modelList.add(tmpModel);
-				addTableEntry(tmpModel);
 
 			}
 
@@ -319,8 +299,11 @@ public class WbConfigurationEditor extends EditorPart {
 
 			if (l.getName().equals("NetIDE Controller Deployment")) {
 				try {
+
+					String topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
+
 					ILaunchConfigurationWorkingCopy c = l.newInstance(null, toStart.getAppName() + toStart.getID());
-					c.setAttribute("topologymodel", LaunchConfigurationModel.getTopology());
+					c.setAttribute("topologymodel", topoPath);
 					c.setAttribute("controller_platform_c1", toStart.getPlatform());
 
 					if (toStart.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
@@ -329,7 +312,9 @@ public class WbConfigurationEditor extends EditorPart {
 					}
 
 					String appPath = "controller_data_c1_".concat(toStart.getPlatform());
-					c.setAttribute(appPath, toStart.getAppPath());
+					String appPathOS = new Path(toStart.getAppPath()).toOSString();
+
+					c.setAttribute(appPath, appPathOS);
 
 					c.setAttribute("reprovision", false);
 					c.setAttribute("shutdown", true);
@@ -346,25 +331,6 @@ public class WbConfigurationEditor extends EditorPart {
 		}
 
 		return lc;
-	}
-
-	public IResource getIFile(final String s) {
-		ResourceSetImpl resSet = new ResourceSetImpl();
-		URI _createURI = URI.createURI(s);
-		System.out.println("URI: " + _createURI);
-		Resource res = resSet.getResource(_createURI, true);
-		URI eUri = res.getURI();
-		System.out.println("resource: " + res + " uri: " + eUri);
-
-		boolean _isPlatformResource = eUri.isPlatformResource();
-		if (_isPlatformResource) {
-			String platformString = eUri.toPlatformString(true);
-			IWorkspace _workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceRoot _root = _workspace.getRoot();
-
-			return _root.findMember(platformString);
-		}
-		return null;
 	}
 
 	private void showMessage(String msg) {
