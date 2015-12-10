@@ -26,6 +26,8 @@ import java.util.HashMap
 import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.debug.core.RefreshUtil
+import eu.netide.configuration.launcher.starters.roles.Backend
+import eu.netide.configuration.launcher.starters.roles.VagrantBackend
 
 abstract class Starter implements IStarter {
 
@@ -49,6 +51,9 @@ abstract class Starter implements IStarter {
 
 	@Accessors(PROTECTED_GETTER)
 	private String id
+	
+	@Accessors(PROTECTED_SETTER)
+	private Backend backend
 
 	protected IProgressMonitor monitor
 
@@ -66,6 +71,8 @@ abstract class Starter implements IStarter {
 		this.workingDir = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
 
 		this.id = "" + (Math.random * 10000) as int
+		
+		this.backend = new VagrantBackend
 	}
 
 	override void setLaunchConfiguration(ILaunchConfiguration configuration) {
@@ -105,7 +112,7 @@ abstract class Starter implements IStarter {
 		var job = new Job("Stop" + name) {
 			override protected run(IProgressMonitor monitor) {
 				startProcess(
-					String.format("ssh -c \"sudo kill $(ps h --ppid $(screen -ls | grep %s | cut -d. -f1) -o pid)\"",
+					String.format("\"sudo kill $(ps h --ppid $(screen -ls | grep %s | cut -d. -f1) -o pid)\"",
 						safeName))
 				return Status.OK_STATUS
 			}
@@ -117,7 +124,7 @@ abstract class Starter implements IStarter {
 	override void reattach() {
 		var job = new Job(name) {
 			override protected run(IProgressMonitor monitor) {
-				startProcess(String.format("ssh -c \"screen -r %s\"", safeName))
+				startProcess(String.format("\"screen -r %s\"", safeName))
 				return Status.OK_STATUS
 			}
 		}
@@ -142,7 +149,7 @@ abstract class Starter implements IStarter {
 	}
 
 	private def getFullCommandLine() {
-		var cmdline = String.format("ssh -c \"%s screen -S %s %s\" -- -t", environmentVariables, safeName, commandLine)
+		var cmdline = String.format("\"%s screen -S %s %s\"", environmentVariables, safeName, commandLine)
 
 		return cmdline
 	}
@@ -156,9 +163,9 @@ abstract class Starter implements IStarter {
 			ITerminalsConnectorConstants.PROP_FORCE_NEW -> true as Object,
 			ITerminalsConnectorConstants.PROP_DELEGATE_ID ->
 				"org.eclipse.tm.terminal.connector.local.launcher.local" as Object,
-			ITerminalsConnectorConstants.PROP_PROCESS_PATH -> vagrantpath as Object,
+			ITerminalsConnectorConstants.PROP_PROCESS_PATH -> backend.cmdprefix as Object,
 			ITerminalsConnectorConstants.PROP_PROCESS_MERGE_ENVIRONMENT -> true as Object,
-			ITerminalsConnectorConstants.PROP_PROCESS_ARGS -> command as Object,
+			ITerminalsConnectorConstants.PROP_PROCESS_ARGS -> backend.args + " " + command as Object,
 			ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR -> workingDir.absolutePath as Object
 		)
 
