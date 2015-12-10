@@ -8,8 +8,8 @@ import org.eclipse.core.runtime.IProgressMonitor
 
 class PyreticStarter extends ControllerStarter {
 	
-	new(ILaunch launch, ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super("Pyretic", launch, configuration, controller, monitor)
+	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
+		super("Pyretic", configuration, controller, monitor)
 	}
 	
 	override getCommandLine() {

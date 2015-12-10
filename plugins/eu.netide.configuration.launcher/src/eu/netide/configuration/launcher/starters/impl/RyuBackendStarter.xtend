@@ -8,8 +8,8 @@ import org.eclipse.core.runtime.IProgressMonitor
 
 class RyuBackendStarter extends ControllerStarter {
 
-	new(ILaunch launch, ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super("Ryu Backend", launch, configuration, controller, monitor)
+	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
+		super("Ryu Backend", configuration, controller, monitor)
 		name = String.format("%s (%s)", name, appPath.lastSegment)
 	}
 

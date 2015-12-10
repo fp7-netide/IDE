@@ -7,8 +7,8 @@ import org.eclipse.debug.core.ILaunchConfiguration
 
 class RyuStarter extends ControllerStarter {
 
-	new(ILaunch launch, ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super("Ryu", launch, configuration, controller, monitor)
+	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
+		super("Ryu", configuration, controller, monitor)
 		name = String.format("%s (%s)", name, appPath.lastSegment)
 	}
 

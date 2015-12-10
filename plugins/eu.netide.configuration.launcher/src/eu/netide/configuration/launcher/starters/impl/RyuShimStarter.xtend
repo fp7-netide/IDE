@@ -8,8 +8,8 @@ import org.eclipse.core.runtime.IProgressMonitor
 
 class RyuShimStarter extends ControllerStarter {
 
-	new(ILaunch launch, ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super("Ryu Shim", launch, configuration, controller, monitor)
+	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
+		super("Ryu Shim", configuration, controller, monitor)
 	}
 
 	override getEnvironmentVariables() {

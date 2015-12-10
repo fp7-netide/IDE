@@ -6,8 +6,8 @@ import org.eclipse.core.runtime.IProgressMonitor
 
 class DebuggerStarter extends Starter {
 	
-	new(ILaunch launch, ILaunchConfiguration configuration, IProgressMonitor monitor) {
-		super("Debugger", launch, configuration, monitor)
+	new(ILaunchConfiguration configuration, IProgressMonitor monitor) {
+		super("Debugger", configuration, monitor)
 	}
 	
 	override getCommandLine() {

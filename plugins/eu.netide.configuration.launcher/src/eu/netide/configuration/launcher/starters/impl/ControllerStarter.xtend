@@ -19,9 +19,9 @@ abstract class ControllerStarter extends Starter {
 	@Accessors(PROTECTED_GETTER)
 	private String controllerplatform
 
-	new(String name, ILaunch launch, ILaunchConfiguration configuration, Controller controller,
+	new(String name, ILaunchConfiguration configuration, Controller controller,
 		IProgressMonitor monitor) {
-		super(name, launch, configuration, monitor)
+		super(name, configuration, monitor)
 
 		this.controller = controller
 

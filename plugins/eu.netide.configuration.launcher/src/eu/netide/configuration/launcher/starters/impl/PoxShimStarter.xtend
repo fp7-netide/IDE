@@ -8,8 +8,8 @@ import org.eclipse.core.runtime.IProgressMonitor
 
 class PoxShimStarter extends ControllerStarter {
 
-	new(ILaunch launch, ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super("POX Shim", launch, configuration, controller, monitor)
+	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
+		super("POX Shim", configuration, controller, monitor)
 	}
 	
 	override getEnvironmentVariables() {

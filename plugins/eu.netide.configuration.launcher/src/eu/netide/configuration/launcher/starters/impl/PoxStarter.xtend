@@ -8,8 +8,8 @@ import org.eclipse.debug.core.ILaunchConfiguration
 
 class PoxStarter extends ControllerStarter {
 
-	new(ILaunch launch, ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super("POX", launch, configuration, controller, monitor)
+	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
+		super("POX", configuration, controller, monitor)
 		name = String.format("%s (%s)", name, appPath.lastSegment)
 	}
 	

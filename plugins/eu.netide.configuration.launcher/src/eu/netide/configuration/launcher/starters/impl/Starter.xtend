@@ -1,7 +1,8 @@
 package eu.netide.configuration.launcher.starters.impl
 
-import Topology.Controller
 import eu.netide.configuration.launcher.starters.IStarter
+import eu.netide.configuration.launcher.starters.backends.Backend
+import eu.netide.configuration.launcher.starters.backends.VagrantBackend
 import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 import eu.netide.configuration.utils.NetIDE
 import java.io.File
@@ -10,7 +11,6 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Platform
 import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.Job
-import org.eclipse.debug.core.ILaunch
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.model.IProcess
 import org.eclipse.emf.common.util.URI
@@ -18,14 +18,6 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.tm.terminal.view.core.TerminalServiceFactory
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants
 import org.eclipse.xtend.lib.annotations.Accessors
-import java.util.ArrayList
-import org.eclipse.core.runtime.Path
-import org.eclipse.debug.core.DebugPlugin
-import java.util.Map
-import java.util.HashMap
-import org.eclipse.core.runtime.CoreException
-import org.eclipse.core.runtime.IStatus
-import org.eclipse.debug.core.RefreshUtil
 
 abstract class Starter implements IStarter {
 
@@ -34,9 +26,6 @@ abstract class Starter implements IStarter {
 
 	@Accessors(PROTECTED_GETTER)
 	private ILaunchConfiguration configuration
-
-	@Accessors(PROTECTED_GETTER)
-	private ILaunch launch
 
 	@Accessors(PROTECTED_GETTER)
 	private File workingDir
@@ -49,12 +38,14 @@ abstract class Starter implements IStarter {
 
 	@Accessors(PROTECTED_GETTER)
 	private String id
+	
+	@Accessors(PROTECTED_SETTER)
+	private Backend backend
 
 	protected IProgressMonitor monitor
 
-	new(String name, ILaunch launch, ILaunchConfiguration configuration, IProgressMonitor monitor) {
+	new(String name, ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		this.name = name
-		this.launch = launch
 		this.configuration = configuration
 		this.monitor = monitor
 
@@ -66,6 +57,8 @@ abstract class Starter implements IStarter {
 		this.workingDir = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
 
 		this.id = "" + (Math.random * 10000) as int
+		
+		this.backend = new VagrantBackend
 	}
 
 	override void setLaunchConfiguration(ILaunchConfiguration configuration) {
@@ -105,7 +98,7 @@ abstract class Starter implements IStarter {
 		var job = new Job("Stop" + name) {
 			override protected run(IProgressMonitor monitor) {
 				startProcess(
-					String.format("ssh -c \"sudo kill $(ps h --ppid $(screen -ls | grep %s | cut -d. -f1) -o pid)\"",
+					String.format("\"sudo kill $(ps h --ppid $(screen -ls | grep %s | cut -d. -f1) -o pid)\"",
 						safeName))
 				return Status.OK_STATUS
 			}
@@ -117,7 +110,7 @@ abstract class Starter implements IStarter {
 	override void reattach() {
 		var job = new Job(name) {
 			override protected run(IProgressMonitor monitor) {
-				startProcess(String.format("ssh -c \"screen -r %s\"", safeName))
+				startProcess(String.format("\"screen -r %s\"", safeName))
 				return Status.OK_STATUS
 			}
 		}
@@ -142,7 +135,7 @@ abstract class Starter implements IStarter {
 	}
 
 	private def getFullCommandLine() {
-		var cmdline = String.format("ssh -c \"%s screen -S %s %s\" -- -t", environmentVariables, safeName, commandLine)
+		var cmdline = String.format("\"%s screen -S %s %s\"", environmentVariables, safeName, commandLine)
 
 		return cmdline
 	}
@@ -156,9 +149,9 @@ abstract class Starter implements IStarter {
 			ITerminalsConnectorConstants.PROP_FORCE_NEW -> true as Object,
 			ITerminalsConnectorConstants.PROP_DELEGATE_ID ->
 				"org.eclipse.tm.terminal.connector.local.launcher.local" as Object,
-			ITerminalsConnectorConstants.PROP_PROCESS_PATH -> vagrantpath as Object,
+			ITerminalsConnectorConstants.PROP_PROCESS_PATH -> backend.cmdprefix as Object,
 			ITerminalsConnectorConstants.PROP_PROCESS_MERGE_ENVIRONMENT -> true as Object,
-			ITerminalsConnectorConstants.PROP_PROCESS_ARGS -> command as Object,
+			ITerminalsConnectorConstants.PROP_PROCESS_ARGS -> backend.args + " " + command as Object,
 			ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR -> workingDir.absolutePath as Object
 		)
 
@@ -169,83 +162,83 @@ abstract class Starter implements IStarter {
 		return ""
 	}
 	
-	def startProcess(ArrayList<String> cmdline) {
-
-		//var workingDir = this.workingDirectory
-		var location = new Path(vagrantpath)
-		var env = null
-
-		var p = DebugPlugin.exec(cmdline, workingDir, env)
-
-		var IProcess process = null;
-
-		// add process type to process attributes
-		var Map<String, String> processAttributes = new HashMap<String, String>();
-		var programName = location.lastSegment();
-		var ext = location.getFileExtension();
-		if (ext != null) {
-			programName = programName.substring(0, programName.length() - (ext.length() + 1));
-		}
-		programName = programName.toLowerCase();
-		processAttributes.put(IProcess.ATTR_PROCESS_TYPE, programName)
-		processAttributes.put(IProcess.ATTR_PROCESS_LABEL, "Vagrant " + cmdline.get(1))
-
-		if (p != null) {
-			monitor.beginTask("Vagrant up", 0);
-			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
-		}
-		if (p == null || process == null) {
-			if (p != null) {
-				p.destroy();
-			}
-			throw new CoreException(new Status(IStatus.ERROR, "Bla", "Blub"))
-		}
-
-		process.setAttribute(IProcess.ATTR_CMDLINE, generateCommandLine(cmdline))
-
-		while (!process.isTerminated()) {
-			try {
-				if (monitor.isCanceled()) {
-					process.launch.terminate();
-				}
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-			}
-
-			// refresh resources
-			RefreshUtil.refreshResources(launch.launchConfiguration, monitor)
-		}
-	}
-	def generateCommandLine(String[] commandLine) {
-		if (commandLine.length < 1) {
-			return ""
-		}
-
-		val buf = new StringBuffer()
-
-		commandLine.forEach [ a |
-			buf.append(' ')
-			var characters = a.toCharArray
-			val command = new StringBuffer()
-			var containsSpace = false
-			for (c : characters) {
-				if (c == '\"') {
-					command.append('\\');
-				} else if (c == ' ') {
-					containsSpace = true;
-				}
-				command.append(c)
-			}
-			if (containsSpace) {
-				buf.append('\"');
-				buf.append(command);
-				buf.append('\"');
-			} else {
-				buf.append(command);
-			}
-		]
-
-		return buf.toString
-	}
+//	def startProcess(ArrayList<String> cmdline) {
+//
+//		//var workingDir = this.workingDirectory
+//		var location = new Path(vagrantpath)
+//		var env = null
+//
+//		var p = DebugPlugin.exec(cmdline, workingDir, env)
+//
+//		var IProcess process = null;
+//
+//		// add process type to process attributes
+//		var Map<String, String> processAttributes = new HashMap<String, String>();
+//		var programName = location.lastSegment();
+//		var ext = location.getFileExtension();
+//		if (ext != null) {
+//			programName = programName.substring(0, programName.length() - (ext.length() + 1));
+//		}
+//		programName = programName.toLowerCase();
+//		processAttributes.put(IProcess.ATTR_PROCESS_TYPE, programName)
+//		processAttributes.put(IProcess.ATTR_PROCESS_LABEL, "Vagrant " + cmdline.get(1))
+//
+//		if (p != null) {
+//			monitor.beginTask("Vagrant up", 0);
+//			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
+//		}
+//		if (p == null || process == null) {
+//			if (p != null) {
+//				p.destroy();
+//			}
+//			throw new CoreException(new Status(IStatus.ERROR, "Bla", "Blub"))
+//		}
+//
+//		process.setAttribute(IProcess.ATTR_CMDLINE, generateCommandLine(cmdline))
+//
+//		while (!process.isTerminated()) {
+//			try {
+//				if (monitor.isCanceled()) {
+//					process.launch.terminate();
+//				}
+//				Thread.sleep(50);
+//			} catch (InterruptedException e) {
+//			}
+//
+//			// refresh resources
+//			RefreshUtil.refreshResources(launch.launchConfiguration, monitor)
+//		}
+//	}
+//	def generateCommandLine(String[] commandLine) {
+//		if (commandLine.length < 1) {
+//			return ""
+//		}
+//
+//		val buf = new StringBuffer()
+//
+//		commandLine.forEach [ a |
+//			buf.append(' ')
+//			var characters = a.toCharArray
+//			val command = new StringBuffer()
+//			var containsSpace = false
+//			for (c : characters) {
+//				if (c == '\"') {
+//					command.append('\\');
+//				} else if (c == ' ') {
+//					containsSpace = true;
+//				}
+//				command.append(c)
+//			}
+//			if (containsSpace) {
+//				buf.append('\"');
+//				buf.append(command);
+//				buf.append('\"');
+//			} else {
+//				buf.append(command);
+//			}
+//		]
+//
+//		return buf.toString
+//	}
 
 }
