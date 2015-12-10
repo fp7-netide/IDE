@@ -261,8 +261,7 @@ public class WbConfigurationEditor extends EditorPart {
 	private void startApp(LaunchConfigurationModel toStart) {
 		final ILaunchConfiguration lc = createLaunchConfiguration(toStart);
 		
-		Thread t = new Thread(new Runnable() {
-			public void run() {
+
 				final StarterStarter s = new StarterStarter(LaunchConfigurationModel.getTopology());
 				//TODO: add a job list to manage stoping and status requests on running jobs
 				Job job = new Job("Create") {
@@ -276,6 +275,7 @@ public class WbConfigurationEditor extends EditorPart {
 				};
 				job.schedule();
 
+				//TODO: Terminate app after finishing
 
 //				try {
 					//new StarterFactory().createSingleControllerStarter(lc, null, null, null);
@@ -285,9 +285,8 @@ public class WbConfigurationEditor extends EditorPart {
 //				} catch (CoreException e) {
 //					e.printStackTrace();
 //				}
-			}
-		});
-		t.start();
+			
+
 
 		// TODO: wait for thread to finish. Delete launch configuration.
 		// lc.delete();

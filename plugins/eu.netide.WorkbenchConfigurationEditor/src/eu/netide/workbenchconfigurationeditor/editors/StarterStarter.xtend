@@ -41,10 +41,9 @@ class StarterStarter {
 		var vgen = new VagrantfileGenerateAction(file, configuration)
 		vgen.run
 
-		var launch = new Launch(configuration, "run", null);
 
 		factory = new StarterFactory
-		val vagrantManager = new VagrantManager(launch, monitor)
+		val vagrantManager = new VagrantManager(configuration, monitor)
 		reg = IStarterRegistry.instance
 
 		vagrantManager.init
