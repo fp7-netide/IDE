@@ -23,6 +23,11 @@ import org.eclipse.core.runtime.jobs.Job
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.regex.Pattern
+import org.eclipse.debug.core.Launch
+import org.eclipse.debug.core.ILaunchConfiguration
+import java.util.Date
+import org.eclipse.ui.internal.console.ConsoleManager
+import org.eclipse.debug.internal.core.LaunchManager
 
 class VagrantManager {
 
@@ -34,8 +39,15 @@ class VagrantManager {
 
 	private IProgressMonitor monitor
 
-	new(ILaunch launch, IProgressMonitor monitor) {
-		this.launch = launch
+	new(ILaunchConfiguration launchConfiguration, IProgressMonitor monitor) {
+		
+		this.launch = new Launch(launchConfiguration, "debug", null)
+		this.launch.setAttribute("org.eclipse.debug.core.capture_output", "true")
+		this.launch.setAttribute("org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING", "UTF-8")
+		this.launch.setAttribute("org.eclipse.debug.core.launch.timestamp", new Date().time+"")
+		DebugPlugin.getDefault().getLaunchManager().addLaunch(this.launch)
+		
+
 		this.monitor = monitor
 
 		this.vagrantpath = new Path(
@@ -93,6 +105,7 @@ class VagrantManager {
 	}
 
 	def init() {
+		
 		var cmd = newArrayList(vagrantpath, "init", "ubuntu/trusty32")
 		startProcess(cmd)
 	}
@@ -148,7 +161,7 @@ class VagrantManager {
 		programName = programName.toLowerCase();
 		processAttributes.put(IProcess.ATTR_PROCESS_TYPE, programName)
 		processAttributes.put(IProcess.ATTR_PROCESS_LABEL, "Vagrant " + cmdline.get(1))
-
+		
 		if (p != null) {
 			monitor.beginTask("Vagrant up", 0);
 			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
