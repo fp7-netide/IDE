@@ -1,4 +1,4 @@
-package eu.netide.configuration.launcher.starters.roles
+package eu.netide.configuration.launcher.starters.backends
 
 class SshBackend extends Backend {
 	

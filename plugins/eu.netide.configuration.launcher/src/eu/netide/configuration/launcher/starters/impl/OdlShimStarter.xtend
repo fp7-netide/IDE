@@ -8,8 +8,8 @@ import org.eclipse.core.runtime.IProgressMonitor
 
 class OdlShimStarter extends ControllerStarter {
 	
-	new(ILaunch launch, ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super("OpenDaylight Shim", launch, configuration, controller, monitor)
+	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
+		super("OpenDaylight Shim",  configuration, controller, monitor)
 	}
 	
 	override getCommandLine() {

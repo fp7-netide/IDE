@@ -19,7 +19,7 @@ import org.eclipse.debug.core.ILaunchConfiguration
 
 class StarterFactory {
 
-	public def IStarter createSingleControllerStarter(ILaunchConfiguration configuration, ILaunch launch,
+	public def IStarter createSingleControllerStarter(ILaunchConfiguration configuration,
 		Controller controller, IProgressMonitor monitor) {
 		var controllerplatform = configuration.attributes.get("controller_platform_" + controller.name) as String
 
@@ -27,55 +27,55 @@ class StarterFactory {
 		} else {
 			switch controllerplatform {
 				case NetIDE.CONTROLLER_POX:
-					return new PoxStarter(launch, configuration, controller, monitor)
+					return new PoxStarter(configuration, controller, monitor)
 				case NetIDE.CONTROLLER_RYU:
-					return new RyuStarter(launch, configuration, controller, monitor)
+					return new RyuStarter(configuration, controller, monitor)
 				case NetIDE.CONTROLLER_PYRETIC:
-					return new PyreticStarter(launch, configuration, controller, monitor)
+					return new PyreticStarter(configuration, controller, monitor)
 			}
 		}
 	}
 
-	public def IStarter createShimStarter(ILaunchConfiguration configuration, ILaunch launch, Controller controller,
+	public def IStarter createShimStarter(ILaunchConfiguration configuration, Controller controller,
 		IProgressMonitor monitor) {
 
 		var serverplatform = configuration.attributes.get("controller_platform_target_" + controller.name) as String
 
 		switch serverplatform {
 			case NetIDE.CONTROLLER_POX:
-				return new PoxShimStarter(launch, configuration, controller, monitor)
+				return new PoxShimStarter(configuration, controller, monitor)
 			case NetIDE.CONTROLLER_RYU:
-				return new RyuShimStarter(launch, configuration, controller, monitor)
+				return new RyuShimStarter(configuration, controller, monitor)
 			case NetIDE.CONTROLLER_ODL:
-				return new OdlShimStarter(launch, configuration, controller, monitor)
+				return new OdlShimStarter(configuration, controller, monitor)
 		}
 
 	}
 
-	public def IStarter createBackendStarter(ILaunchConfiguration configuration, ILaunch launch, Controller controller,
+	public def IStarter createBackendStarter(ILaunchConfiguration configuration, Controller controller,
 		IProgressMonitor monitor) {
 
 		var clientplatform = configuration.attributes.get("controller_platform_source_" + controller.name) as String
 
 		switch clientplatform {
 			case NetIDE.CONTROLLER_FLOODLIGHT:
-				return new FloodlightBackendStarter(launch, configuration, controller, monitor)
+				return new FloodlightBackendStarter(configuration, controller, monitor)
 			case NetIDE.CONTROLLER_RYU:
-				return new RyuBackendStarter(launch, configuration, controller, monitor)
+				return new RyuBackendStarter(configuration, controller, monitor)
 			case NetIDE.CONTROLLER_PYRETIC:
-				return new PyreticBackendStarter(launch, configuration, controller, monitor)
+				return new PyreticBackendStarter(configuration, controller, monitor)
 		}
 
 	}
 
-	public def IStarter createMininetStarter(ILaunchConfiguration configuration, ILaunch launch,
+	public def IStarter createMininetStarter(ILaunchConfiguration configuration,
 		IProgressMonitor monitor) {
-		return new MininetStarter(launch, configuration, monitor)
+		return new MininetStarter(configuration, monitor)
 	}
 	
-	public def createDebuggerStarter(ILaunchConfiguration configuration, ILaunch launch,
+	public def createDebuggerStarter(ILaunchConfiguration configuration,
 		IProgressMonitor monitor) {
-		return new DebuggerStarter(launch, configuration, monitor)
+		return new DebuggerStarter(configuration, monitor)
 	}
 	
 }

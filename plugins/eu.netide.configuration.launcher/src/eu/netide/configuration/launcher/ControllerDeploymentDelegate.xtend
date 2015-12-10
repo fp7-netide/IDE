@@ -72,9 +72,9 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			var controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
 
 			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
-				var backendStarter = factory.createBackendStarter(configuration, launch, c, monitor)
+				var backendStarter = factory.createBackendStarter(configuration, c, monitor)
 				NetIDE_server = configuration.attributes.get("controller_platform_target_" + c.name) as String // to know if server_platform is ODL #AB
-				var shimStarter = factory.createShimStarter(configuration, launch, c, monitor)
+				var shimStarter = factory.createShimStarter(configuration, c, monitor)
 
 				reg.register(backendStarter.safeName, backendStarter)
 				backendStarter.asyncStart
@@ -86,7 +86,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 			} else {
 
-				var starter = factory.createSingleControllerStarter(configuration, launch, c, monitor)
+				var starter = factory.createSingleControllerStarter(configuration, c, monitor)
 				reg.register(starter.safeName, starter)
 				starter.asyncStart()
 
@@ -96,7 +96,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 		// Start the debugger if the Apps are started in Debug mode
 		if (launch.launchMode.equals("debug")) {
-			var debuggerStarter = factory.createDebuggerStarter(configuration, launch, monitor)
+			var debuggerStarter = factory.createDebuggerStarter(configuration, monitor)
 			reg.register(debuggerStarter.safeName, debuggerStarter)
 			debuggerStarter.asyncStart
 		}
@@ -110,7 +110,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		Thread.sleep(2000)
 
 		// Start Mininet. 
-		val mnstarter = factory.createMininetStarter(configuration, launch, monitor)
+		val mnstarter = factory.createMininetStarter(configuration, monitor)
 		reg.register(mnstarter.safeName, mnstarter)
 		mnstarter.syncStart
 

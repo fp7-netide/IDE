@@ -1,4 +1,4 @@
-package eu.netide.configuration.launcher.starters.roles
+package eu.netide.configuration.launcher.starters.backends
 
 import org.eclipse.core.runtime.Platform
 import eu.netide.configuration.preferences.NetIDEPreferenceConstants
