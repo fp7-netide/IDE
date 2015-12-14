@@ -3,27 +3,51 @@ package eu.netide.workbenchconfigurationeditor.editors
 import Topology.NetworkEnvironment
 import eu.netide.configuration.generator.GenerateActionDelegate
 import eu.netide.configuration.generator.vagrantfile.VagrantfileGenerateAction
+import eu.netide.configuration.launcher.starters.IStarter
 import eu.netide.configuration.launcher.starters.IStarterRegistry
 import eu.netide.configuration.launcher.starters.StarterFactory
 import eu.netide.configuration.launcher.starters.VagrantManager
 import eu.netide.configuration.utils.NetIDE
+import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel
+import java.util.HashMap
 import org.eclipse.core.resources.IResource
 import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.core.runtime.CoreException
+import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.core.runtime.Path
+import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunchConfiguration
-import org.eclipse.debug.core.Launch
+import org.eclipse.debug.core.ILaunchConfigurationType
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.core.runtime.IProgressMonitor
 
 class StarterStarter {
 
 	private NetworkEnvironment ne;
 	private IResource file;
 
-/**
- * maybe use singleton
- */
-	new(String topologyPath) {
+	private static StarterStarter instance = null;
+
+	/**
+	 * @param topologyPath may be empty if starter has been initiated 
+	 */
+	public def static StarterStarter getStarter(String topologyPath) {
+		if (instance == null) {
+			if (topologyPath != "") {
+				instance = new StarterStarter(topologyPath);
+			} else {
+				System.err.println("Starter has not been initiated with a topology.");
+			}
+		}
+
+		return instance;
+	}
+
+	/**
+	 * maybe use singleton
+	 */
+	private new(String topologyPath) {
+
 		generateConfiguration(topologyPath)
 
 		var resset = new ResourceSetImpl
@@ -31,30 +55,64 @@ class StarterStarter {
 		ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
 
 		file = topologyPath.IFile
+		vagrantIsRunning = false;
+		configToStarter = new HashMap
 
 	}
 
 	private StarterFactory factory
+
 	private IStarterRegistry reg
 
-	public def startVagrantFromConfig(ILaunchConfiguration configuration, IProgressMonitor monitor) {
-		var vgen = new VagrantfileGenerateAction(file, configuration)
-		vgen.run
+	private VagrantManager vagrantManager;
 
+	private boolean vagrantIsRunning;
 
-		factory = new StarterFactory
-		val vagrantManager = new VagrantManager(configuration, monitor)
-		reg = IStarterRegistry.instance
+	public def boolean startVagrantFromConfig(LaunchConfigurationModel launchConfigModel, IProgressMonitor monitor) {
 
-		vagrantManager.init
+		if (!vagrantIsRunning) {
+			var configuration = createLaunchConfiguration(launchConfigModel)
+			var vgen = new VagrantfileGenerateAction(file, configuration)
+			vgen.run
 
-		vagrantManager.up
+			factory = new StarterFactory
+			vagrantManager = new VagrantManager(configuration, monitor)
+			reg = IStarterRegistry.instance
 
-		if(configuration.attributes.get("reprovision") as Boolean) vagrantManager.provision
+			vagrantManager.init
+
+			vagrantManager.up
+			
+			vagrantIsRunning = true;
+		}
+		// if(configuration.attributes.get("reprovision") as Boolean) vagrantManager.provision
+		return vagrantIsRunning;
 
 	}
 
-	public def registerControllerFromConfig(ILaunchConfiguration configuration, IProgressMonitor monitor) {
+	public def haltVagrant() {
+		vagrantIsRunning = false;
+		vagrantManager.asyncHalt()
+
+	}
+	
+	def reattachStarter(LaunchConfigurationModel config){
+		var re = configToStarter.get(config)
+		re.reattach
+	}
+
+	public def stopStarter(LaunchConfigurationModel config) {
+		var toStop = configToStarter.get(config)
+		toStop.stop
+	}
+
+	private HashMap<LaunchConfigurationModel, IStarter> configToStarter;
+
+	public def registerControllerFromConfig(LaunchConfigurationModel launchConfigurationModel,
+		IProgressMonitor monitor) {
+
+		var configuration = createLaunchConfiguration(launchConfigurationModel)
+
 		// Iterate controllers in the network model and start apps for them 
 		for (c : ne.controllers) {
 			var controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
@@ -76,6 +134,7 @@ class StarterStarter {
 
 				var starter = factory.createSingleControllerStarter(configuration, c, monitor)
 				reg.register(starter.safeName, starter)
+				configToStarter.put(launchConfigurationModel, starter)
 				starter.asyncStart()
 
 			}
@@ -114,4 +173,59 @@ class StarterStarter {
 		}
 		return null
 	}
+
+	private def ILaunchConfiguration createLaunchConfiguration(LaunchConfigurationModel toStart) {
+
+		// format
+		// launch Configuration: Network
+		// Set: [controller_data_c1_Network
+		// Engine=platform:/resource/UC1/app/simple_switch.py,
+		// controller_platform_c1=Network Engine,
+		// controller_platform_source_c1=Ryu, controller_platform_target_c1=Ryu,
+		// reprovision=false, shutdown=true,
+		// topologymodel=platform:/resource/UC2/UC2.topology]
+		//
+		// launch Configuration: New_configuration (1)
+		// Set:
+		// [controller_data_c1_Ryu=platform:/resource/UC1/app/simple_switch.py,
+		// controller_platform_c1=Ryu, reprovision=false, shutdown=true,
+		// topologymodel=platform:/resource/UC1/UC1.topology]
+		var m = DebugPlugin.getDefault().getLaunchManager();
+
+		for (ILaunchConfigurationType l : m.getLaunchConfigurationTypes()) {
+
+			if (l.getName().equals("NetIDE Controller Deployment")) {
+				try {
+
+					var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
+
+					var c = l.newInstance(null, toStart.getAppName() + toStart.getID());
+					c.setAttribute("topologymodel", topoPath);
+					c.setAttribute("controller_platform_c1", toStart.getPlatform());
+
+					if (toStart.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
+						c.setAttribute("controller_platform_source_c1", toStart.getClientController());
+						c.setAttribute("controller_platform_target_c1", toStart.getServerController());
+					}
+
+					var appPath = "controller_data_c1_".concat(toStart.getPlatform());
+					var appPathOS = new Path(toStart.getAppPath()).toOSString();
+
+					c.setAttribute(appPath, appPathOS);
+
+					c.setAttribute("reprovision", false);
+					c.setAttribute("shutdown", true);
+
+					return c.doSave();
+
+				} catch (CoreException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
+
+		return null;
+	}
+
 }

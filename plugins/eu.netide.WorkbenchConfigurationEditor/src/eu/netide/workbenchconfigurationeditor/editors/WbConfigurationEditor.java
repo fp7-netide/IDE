@@ -5,24 +5,16 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -33,7 +25,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.w3c.dom.Document;
 
-import eu.netide.configuration.utils.NetIDE;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 
 /**
@@ -89,11 +80,12 @@ public class WbConfigurationEditor extends EditorPart {
 	}
 
 	private Button startBTN;
-	private Button btnTestBeenden;
+	private Button btnHaltTest;
 	private Button btnReload;
-	private Button btnStatus;
+	private Button btnReattach;
 	private Button btnAddTest;
 	private Button btnRemoveTest;
+	private Button btnStopTest;
 
 	public void createLayout(Composite parent) {
 		container = new Composite(parent, SWT.NONE);
@@ -106,7 +98,7 @@ public class WbConfigurationEditor extends EditorPart {
 
 		Composite buttonComposite = new Composite(startAppComposite, SWT.BORDER);
 
-		buttonComposite.setBounds(408, 50, 85, 277);
+		buttonComposite.setBounds(408, 50, 103, 277);
 		buttonComposite.setLayout(null);
 
 		startBTN = new Button(buttonComposite, SWT.NONE);
@@ -114,17 +106,17 @@ public class WbConfigurationEditor extends EditorPart {
 
 		startBTN.setText("Start");
 
-		btnTestBeenden = new Button(buttonComposite, SWT.NONE);
-		btnTestBeenden.setBounds(0, 36, 80, 30);
-		btnTestBeenden.setText("Stop");
-
 		btnReload = new Button(buttonComposite, SWT.NONE);
 		btnReload.setBounds(0, 72, 80, 30);
 		btnReload.setText("Reload");
 
-		btnStatus = new Button(buttonComposite, SWT.NONE);
-		btnStatus.setBounds(0, 108, 80, 30);
-		btnStatus.setText("Status");
+		btnReattach = new Button(buttonComposite, SWT.NONE);
+		btnReattach.setBounds(0, 106, 80, 30);
+		btnReattach.setText("Reattach");
+
+		btnStopTest = new Button(buttonComposite, SWT.NONE);
+		btnStopTest.setBounds(0, 36, 80, 30);
+		btnStopTest.setText("Stop");
 
 		btnAddTest = new Button(startAppComposite, SWT.NONE);
 
@@ -132,7 +124,7 @@ public class WbConfigurationEditor extends EditorPart {
 		btnAddTest.setText("Add Test");
 
 		btnRemoveTest = new Button(startAppComposite, SWT.NONE);
-		btnRemoveTest.setBounds(126, 297, 100, 30);
+		btnRemoveTest.setBounds(126, 299, 100, 30);
 		btnRemoveTest.setText("Remove Test");
 
 		table = new Table(startAppComposite, SWT.BORDER | SWT.FULL_SELECTION);
@@ -156,6 +148,10 @@ public class WbConfigurationEditor extends EditorPart {
 		table.setBounds(10, 50, 392, 243);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+
+		btnHaltTest = new Button(startAppComposite, SWT.NONE);
+		btnHaltTest.setBounds(302, 299, 100, 30);
+		btnHaltTest.setText("Vagrant Halt");
 	}
 
 	private void addContentToTable() {
@@ -175,8 +171,8 @@ public class WbConfigurationEditor extends EditorPart {
 	 *            with 4 entries data[0] = pathName
 	 */
 	private void addTableEntry(LaunchConfigurationModel model) {
-		System.out.println("Adding Table Entry. ModelName:  " + model.getAppName());
-		String[] tmpS = new String[] { model.getAppName(), "offline", model.getPlatform(), model.getClientController(), model.getServerController() };
+		String[] tmpS = new String[] { model.getAppName(), "offline", model.getPlatform(), model.getClientController(),
+				model.getServerController() };
 		TableItem tmp = new TableItem(table, SWT.NONE);
 		tableConfigMap.put(tmp, model);
 		tmp.setText(tmpS);
@@ -204,6 +200,37 @@ public class WbConfigurationEditor extends EditorPart {
 
 				} else {
 					showMessage("Select a test to remove from the table.");
+				}
+			}
+		});
+
+		btnStopTest.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (table.getSelectionCount() > 0) {
+					TableItem tmpItem = table.getSelection()[0];
+					StarterStarter.getStarter("").stopStarter(tableConfigMap.get(tmpItem));
+					tmpItem.setText(1, "offline");
+				}
+			}
+		});
+
+		btnReattach.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (table.getSelectionCount() > 0)
+					StarterStarter.getStarter("").reattachStarter(tableConfigMap.get(table.getSelection()[0]));
+			}
+		});
+
+		btnHaltTest.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (table.getSelectionCount() > 0) {
+					StarterStarter.getStarter("").haltVagrant();
+					for (int i = 0; i < table.getItemCount(); i++) {
+						table.getItem(i).setText(1, "offline");
+					}
 				}
 			}
 		});
@@ -258,94 +285,26 @@ public class WbConfigurationEditor extends EditorPart {
 		});
 	}
 
-	private void startApp(LaunchConfigurationModel toStart) {
-		final ILaunchConfiguration lc = createLaunchConfiguration(toStart);
-		
+	private void startApp(final LaunchConfigurationModel toStart) {
 
-				final StarterStarter s = new StarterStarter(LaunchConfigurationModel.getTopology());
-				//TODO: add a job list to manage stoping and status requests on running jobs
-				Job job = new Job("Create") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						s.startVagrantFromConfig(lc, monitor);
-						s.registerControllerFromConfig(lc, monitor);
-						//if(blabla)
-						return Status.OK_STATUS;
-					}
-				};
-				job.schedule();
+		final StarterStarter s = StarterStarter.getStarter(LaunchConfigurationModel.getTopology());
 
-				//TODO: Terminate app after finishing
+		Job job = new Job("Create") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				s.startVagrantFromConfig(toStart, monitor);
+				s.registerControllerFromConfig(toStart, monitor);
+				// if(blabla)
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 
-//				try {
-					//new StarterFactory().createSingleControllerStarter(lc, null, null, null);
-					
-//					lc.launch("run", null);
-//				
-//				} catch (CoreException e) {
-//					e.printStackTrace();
-//				}
-			
-
+		// TODO: Terminate app after finishing
 
 		// TODO: wait for thread to finish. Delete launch configuration.
 		// lc.delete();
 
-	}
-
-	private ILaunchConfiguration createLaunchConfiguration(LaunchConfigurationModel toStart) {
-		
-		// format
-		// launch Configuration: Network
-		// Set: [controller_data_c1_Network
-		// Engine=platform:/resource/UC1/app/simple_switch.py,
-		// controller_platform_c1=Network Engine,
-		// controller_platform_source_c1=Ryu, controller_platform_target_c1=Ryu,
-		// reprovision=false, shutdown=true,
-		// topologymodel=platform:/resource/UC2/UC2.topology]
-		//
-		// launch Configuration: New_configuration (1)
-		// Set:
-		// [controller_data_c1_Ryu=platform:/resource/UC1/app/simple_switch.py,
-		// controller_platform_c1=Ryu, reprovision=false, shutdown=true,
-		// topologymodel=platform:/resource/UC1/UC1.topology]
-
-		ILaunchManager m = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfiguration lc = null;
-		for (ILaunchConfigurationType l : m.getLaunchConfigurationTypes()) {
-
-			if (l.getName().equals("NetIDE Controller Deployment")) {
-				try {
-
-					String topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
-
-					ILaunchConfigurationWorkingCopy c = l.newInstance(null, toStart.getAppName() + toStart.getID());
-					c.setAttribute("topologymodel", topoPath);
-					c.setAttribute("controller_platform_c1", toStart.getPlatform());
-
-					if (toStart.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
-						c.setAttribute("controller_platform_source_c1", toStart.getClientController());
-						c.setAttribute("controller_platform_target_c1", toStart.getServerController());
-					}
-
-					String appPath = "controller_data_c1_".concat(toStart.getPlatform());
-					String appPathOS = new Path(toStart.getAppPath()).toOSString();
-
-					c.setAttribute(appPath, appPathOS);
-
-					c.setAttribute("reprovision", false);
-					c.setAttribute("shutdown", true);
-
-					lc = c.doSave();
-					
-				} catch (CoreException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		}
-
-		return lc;
 	}
 
 	private void showMessage(String msg) {
