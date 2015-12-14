@@ -15,6 +15,8 @@ import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
+import org.eclipse.core.runtime.Status
+import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunchConfigurationType
@@ -43,9 +45,6 @@ class StarterStarter {
 		return instance;
 	}
 
-	/**
-	 * maybe use singleton
-	 */
 	private new(String topologyPath) {
 
 		generateConfiguration(topologyPath)
@@ -68,24 +67,37 @@ class StarterStarter {
 
 	private boolean vagrantIsRunning;
 
-	public def boolean startVagrantFromConfig(LaunchConfigurationModel launchConfigModel, IProgressMonitor monitor) {
+	public def boolean startVagrantFromConfig(LaunchConfigurationModel launchConfigModel) {
 
 		if (!vagrantIsRunning) {
-			var configuration = createLaunchConfiguration(launchConfigModel)
+
+			val configuration = createLaunchConfiguration(launchConfigModel)
+
+			var job = new Job("VagrantManager") {
+
+				override protected run(IProgressMonitor monitor) {
+					vagrantManager = new VagrantManager(configuration, monitor)
+
+					return Status.OK_STATUS;
+				}
+
+			};
+			job.schedule();
+
+			job.join() // Thread.sleep(2000)
 			var vgen = new VagrantfileGenerateAction(file, configuration)
 			vgen.run
 
 			factory = new StarterFactory
-			vagrantManager = new VagrantManager(configuration, monitor)
 			reg = IStarterRegistry.instance
 
 			vagrantManager.init
 
 			vagrantManager.up
-			
+
 			vagrantIsRunning = true;
 		}
-		// if(configuration.attributes.get("reprovision") as Boolean) vagrantManager.provision
+// if(configuration.attributes.get("reprovision") as Boolean) vagrantManager.provision
 		return vagrantIsRunning;
 
 	}
@@ -95,8 +107,8 @@ class StarterStarter {
 		vagrantManager.asyncHalt()
 
 	}
-	
-	def reattachStarter(LaunchConfigurationModel config){
+
+	def reattachStarter(LaunchConfigurationModel config) {
 		var re = configToStarter.get(config)
 		re.reattach
 	}
@@ -108,20 +120,46 @@ class StarterStarter {
 
 	private HashMap<LaunchConfigurationModel, IStarter> configToStarter;
 
-	public def registerControllerFromConfig(LaunchConfigurationModel launchConfigurationModel,
-		IProgressMonitor monitor) {
+	private IStarter backendStarter;
+	private IStarter shimStarter;
+	private IStarter starter;
+	private IStarter mnstarter;
 
-		var configuration = createLaunchConfiguration(launchConfigurationModel)
+	public def registerControllerFromConfig(LaunchConfigurationModel launchConfigurationModel) {
+
+		val configuration = createLaunchConfiguration(launchConfigurationModel)
 
 		// Iterate controllers in the network model and start apps for them 
 		for (c : ne.controllers) {
 			var controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
 
 			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
-				var backendStarter = factory.createBackendStarter(configuration, c, monitor)
-				var NetIDE_server = configuration.attributes.get("controller_platform_target_" + c.name) as String // to know if server_platform is ODL #AB
-				var shimStarter = factory.createShimStarter(configuration, c, monitor)
 
+				var job = new Job("Backend Starter") {
+
+					override protected run(IProgressMonitor monitor) {
+						backendStarter = factory.createBackendStarter(configuration, c, monitor)
+
+						return Status.OK_STATUS
+					}
+
+				};
+				job.schedule();
+				job.join()
+
+				// var NetIDE_server = configuration.attributes.get("controller_platform_target_" + c.name) as String // to know if server_platform is ODL #AB
+				var jobShim = new Job("shim Starter") {
+
+					override protected run(IProgressMonitor monitor) {
+						shimStarter = factory.createShimStarter(configuration, c, monitor)
+
+						return Status.OK_STATUS
+					}
+
+				};
+				jobShim.schedule();
+				jobShim.join()
+				// Thread.sleep(2000)
 				reg.register(backendStarter.safeName, backendStarter)
 				backendStarter.asyncStart
 
@@ -129,22 +167,43 @@ class StarterStarter {
 
 				reg.register(shimStarter.safeName, shimStarter)
 				shimStarter.asyncStart
-
 			} else {
 
-				var starter = factory.createSingleControllerStarter(configuration, c, monitor)
+				var jobSingle = new Job("shim Starter") {
+
+					override protected run(IProgressMonitor monitor) {
+						starter = factory.createSingleControllerStarter(configuration, c, monitor)
+
+						return Status.OK_STATUS
+					}
+
+				};
+				jobSingle.schedule();
+				// Thread.sleep(2000)
+				jobSingle.join();
+
 				reg.register(starter.safeName, starter)
 				configToStarter.put(launchConfigurationModel, starter)
 				starter.asyncStart()
-
 			}
 
 		}
 
 		Thread.sleep(2000)
 
+		var jobMin = new Job("shim Starter") {
+
+			override protected run(IProgressMonitor monitor) {
+				mnstarter = factory.createMininetStarter(configuration, monitor)
+
+				return Status.OK_STATUS
+			}
+
+		};
+		jobMin.schedule();
+		jobMin.join()
+		// Thread.sleep(2000)
 		// Start Mininet. 
-		val mnstarter = factory.createMininetStarter(configuration, monitor)
 		reg.register(mnstarter.safeName, mnstarter)
 		mnstarter.syncStart
 	}

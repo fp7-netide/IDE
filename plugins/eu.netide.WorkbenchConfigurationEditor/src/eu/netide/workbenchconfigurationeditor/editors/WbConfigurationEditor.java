@@ -288,17 +288,16 @@ public class WbConfigurationEditor extends EditorPart {
 	private void startApp(final LaunchConfigurationModel toStart) {
 
 		final StarterStarter s = StarterStarter.getStarter(LaunchConfigurationModel.getTopology());
-
-		Job job = new Job("Create") {
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				s.startVagrantFromConfig(toStart, monitor);
-				s.registerControllerFromConfig(toStart, monitor);
+//		Job job = new Job("Create") {
+//			@Override
+//			protected IStatus run(IProgressMonitor monitor) {
+				s.startVagrantFromConfig(toStart);
+				s.registerControllerFromConfig(toStart);
 				// if(blabla)
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
+//				return Status.OK_STATUS;
+//			}
+//		};
+//		job.schedule();
 
 		// TODO: Terminate app after finishing
 
