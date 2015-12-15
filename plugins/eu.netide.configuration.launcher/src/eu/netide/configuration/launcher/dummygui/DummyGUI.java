@@ -20,7 +20,8 @@ import org.eclipse.ui.part.ViewPart;
 
 import eu.netide.configuration.launcher.starters.IStarter;
 import eu.netide.configuration.launcher.starters.IStarterRegistry;
-import eu.netide.configuration.launcher.starters.VagrantManager;
+import eu.netide.configuration.launcher.managers.SshManager;
+import eu.netide.configuration.launcher.managers.VagrantManager;
 
 public class DummyGUI extends ViewPart {
 
@@ -38,11 +39,17 @@ public class DummyGUI extends ViewPart {
 
 	private IStarterRegistry reg = IStarterRegistry.instance;
 
+	private SshManager sshm;
+
 	public DummyGUI() {
 	}
 
 	public void setVagrantManager(VagrantManager vm) {
 		this.vagrant = vm;
+	}
+	
+	public void setSshManager(SshManager sshm) {
+		this.sshm = sshm;
 	}
 
 	public void setMininet(IStarter mn) {
@@ -59,6 +66,11 @@ public class DummyGUI extends ViewPart {
 			for (String s : t)
 				list.add(s.substring(s.indexOf(".") + 1));
 		}
+		if (sshm != null) {
+			t = sshm.getRunningSessions();
+			for (String s : t)
+				list.add(s.substring(s.indexOf(".") + 1));
+		}
 	}
 
 	@Override
@@ -70,7 +82,7 @@ public class DummyGUI extends ViewPart {
 		Group grpVagrant = new Group(composite, SWT.NONE);
 		grpVagrant.setLayout(new GridLayout(4, false));
 		grpVagrant.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 2));
-		grpVagrant.setText("Vagrant");
+		grpVagrant.setText("Manager");
 
 		Button btnUp = new Button(grpVagrant, SWT.NONE);
 		btnUp.addMouseListener(new MouseAdapter() {

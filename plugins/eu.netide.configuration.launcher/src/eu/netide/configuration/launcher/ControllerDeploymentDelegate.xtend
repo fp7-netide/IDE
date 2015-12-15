@@ -4,9 +4,12 @@ import Topology.NetworkEnvironment
 import eu.netide.configuration.generator.GenerateActionDelegate
 import eu.netide.configuration.generator.vagrantfile.VagrantfileGenerateAction
 import eu.netide.configuration.launcher.dummygui.DummyGUI
+import eu.netide.configuration.launcher.starters.IStarterRegistry
+import eu.netide.configuration.launcher.managers.SshManager
 import eu.netide.configuration.launcher.starters.StarterFactory
-import eu.netide.configuration.launcher.starters.StarterRegistry
-import eu.netide.configuration.launcher.starters.VagrantManager
+import eu.netide.configuration.launcher.managers.VagrantManager
+import eu.netide.configuration.launcher.starters.backends.Backend
+import eu.netide.configuration.launcher.starters.backends.SshBackend
 import eu.netide.configuration.utils.NetIDE
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.CoreException
@@ -18,7 +21,6 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.swt.widgets.Display
 import org.eclipse.ui.PlatformUI
-import eu.netide.configuration.launcher.starters.IStarterRegistry
 
 /**
  * Triggers the automatic creation of virtual machines and execution of 
@@ -35,6 +37,17 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			return
 		}
 
+		val Boolean isVagrant = configuration.getAttribute("target.vagrant", true)
+		val Boolean isSsh = configuration.getAttribute("target.ssh", false)
+		val String sshHostname = configuration.getAttribute("target.hostname", "localhost")
+		val String sshPort = configuration.getAttribute("target.ssh.port", "22")
+		val String sshUsername = configuration.getAttribute("target.ssh.username", "")
+		val String sshIdFile = configuration.getAttribute("target.ssh.idfile", "")
+		
+		var Backend backend
+		
+		if (isSsh)
+			backend = new SshBackend(sshHostname, Integer.parseInt(sshPort), sshUsername, sshIdFile)
 		
 
 		var NetIDE_server = ""
@@ -55,19 +68,28 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			return
 		}
 
-		var factory = new StarterFactory
-		val vagrantManager = new VagrantManager(configuration, monitor)
+		var factory = if (isVagrant) new StarterFactory  else new StarterFactory(backend)
+		
 		val reg = IStarterRegistry.instance
 
 		if (monitor.isCanceled()) {
 			return;
 		}
+		
+		val vagrantManager = new VagrantManager(configuration, monitor)
+		val sshManager = new SshManager(configuration, monitor)
 
-		vagrantManager.init
+		if (isVagrant) {
+			vagrantManager.init
+			vagrantManager.up
+			if(configuration.attributes.get("reprovision") as Boolean) vagrantManager.provision
+		}
+		
+		if (isSsh) {
+			sshManager.provision
+		}
+		
 
-		vagrantManager.up
-
-		if(configuration.attributes.get("reprovision") as Boolean) vagrantManager.provision
 
 		// Iterate controllers in the network model and start apps for them 
 		for (c : ne.controllers) {
@@ -122,7 +144,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 				override run() {
 					var dummygui = PlatformUI.getWorkbench().activeWorkbenchWindow.activePage.showView(
 						DummyGUI.ID) as DummyGUI
-					dummygui.vagrantManager = vagrantManager
+					if (isVagrant) dummygui.vagrantManager = vagrantManager
+					if (isSsh) dummygui.sshManager = sshManager
 					dummygui.mininet = mnstarter
 				}
 			})

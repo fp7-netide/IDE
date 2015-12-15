@@ -30,8 +30,8 @@ abstract class Starter implements IStarter {
 	@Accessors(PROTECTED_GETTER)
 	private File workingDir
 
-	@Accessors(PROTECTED_GETTER)
-	private String vagrantpath
+//	@Accessors(PROTECTED_GETTER)
+//	private String vagrantpath
 
 	@Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
 	private String name
@@ -39,18 +39,22 @@ abstract class Starter implements IStarter {
 	@Accessors(PROTECTED_GETTER)
 	private String id
 	
-	@Accessors(PROTECTED_SETTER)
+	@Accessors(PUBLIC_SETTER)
 	private Backend backend
 
 	protected IProgressMonitor monitor
 
 	new(String name, ILaunchConfiguration configuration, IProgressMonitor monitor) {
+		this(name, configuration, new VagrantBackend, monitor)
+	}
+	
+	new(String name, ILaunchConfiguration configuration, Backend backend, IProgressMonitor monitor) {
 		this.name = name
 		this.configuration = configuration
 		this.monitor = monitor
 
-		this.vagrantpath = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
-			NetIDEPreferenceConstants.VAGRANT_PATH, "", null)
+//		this.vagrantpath = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
+//			NetIDEPreferenceConstants.VAGRANT_PATH, "", null)
 
 		var path = configuration.attributes.get("topologymodel") as String
 
@@ -58,7 +62,7 @@ abstract class Starter implements IStarter {
 
 		this.id = "" + (Math.random * 10000) as int
 		
-		this.backend = new VagrantBackend
+		this.backend = backend
 	}
 
 	override void setLaunchConfiguration(ILaunchConfiguration configuration) {
