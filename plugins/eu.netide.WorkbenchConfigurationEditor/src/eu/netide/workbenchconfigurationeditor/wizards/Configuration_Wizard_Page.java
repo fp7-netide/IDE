@@ -16,6 +16,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.GridData;
 
 public class Configuration_Wizard_Page extends WizardPage {
 	private Text topologyPathText;
@@ -47,13 +49,35 @@ public class Configuration_Wizard_Page extends WizardPage {
 		container = new Composite(parent, SWT.NULL);
 
 		setControl(container);
+		container.setLayout(new GridLayout(3, false));
+				
+						Label lblFileName = new Label(container, SWT.NONE);
+						GridData gd_lblFileName = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+						gd_lblFileName.widthHint = 114;
+						lblFileName.setLayoutData(gd_lblFileName);
+						lblFileName.setText("File Name");
+		
+				fileName = new Text(container, SWT.BORDER);
+				GridData gd_fileName = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+				gd_fileName.widthHint = 153;
+				fileName.setLayoutData(gd_fileName);
+				fileName.addModifyListener(new ModifyListener() {
+					public void modifyText(ModifyEvent e) {
+						if (!fileName.getText().equals(""))
+							nameSet = true;
+						else
+							nameSet = false;
+
+						checkForFinish();
+					}
+				});
+		new Label(container, SWT.NONE);
 
 		Label lblTopology = new Label(container, SWT.NONE);
-		lblTopology.setBounds(10, 158, 59, 14);
 		lblTopology.setText("Topology");
 
 		topologyPathText = new Text(container, SWT.BORDER);
-		topologyPathText.setBounds(116, 155, 291, 19);
+		topologyPathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		topologyPathText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (!topologyPathText.getText().equals(""))
@@ -101,25 +125,7 @@ public class Configuration_Wizard_Page extends WizardPage {
 				}
 			}
 		});
-		btnBrowse.setBounds(441, 151, 94, 28);
 		btnBrowse.setText("Browse");
-
-		Label lblFileName = new Label(container, SWT.NONE);
-		lblFileName.setBounds(10, 113, 59, 14);
-		lblFileName.setText("File Name");
-
-		fileName = new Text(container, SWT.BORDER);
-		fileName.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (!fileName.getText().equals(""))
-					nameSet = true;
-				else
-					nameSet = false;
-
-				checkForFinish();
-			}
-		});
-		fileName.setBounds(116, 110, 291, 19);
 
 	}
 

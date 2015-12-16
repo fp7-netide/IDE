@@ -3,10 +3,10 @@ package eu.netide.workbenchconfigurationeditor.editors
 import Topology.NetworkEnvironment
 import eu.netide.configuration.generator.GenerateActionDelegate
 import eu.netide.configuration.generator.vagrantfile.VagrantfileGenerateAction
+import eu.netide.configuration.launcher.managers.VagrantManager
 import eu.netide.configuration.launcher.starters.IStarter
 import eu.netide.configuration.launcher.starters.IStarterRegistry
 import eu.netide.configuration.launcher.starters.StarterFactory
-import eu.netide.configuration.launcher.starters.VagrantManager
 import eu.netide.configuration.utils.NetIDE
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel
 import java.util.HashMap

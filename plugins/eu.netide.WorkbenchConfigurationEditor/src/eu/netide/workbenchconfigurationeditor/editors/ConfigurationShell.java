@@ -20,6 +20,8 @@ import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import eu.netide.configuration.utils.NetIDE;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.GridData;
 
 /**
  * 
@@ -63,36 +65,81 @@ public class ConfigurationShell extends Shell {
 
 		super(display, SWT.SHELL_TRIM);
 		this.shell = this;
+		setLayout(new GridLayout(1, false));
+		
+				Group appGroup = new Group(this, SWT.NONE);
+				appGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+						appGroup.setLayout(new GridLayout(3, false));
+				
+						Label lblApp = new Label(appGroup, SWT.NONE);
+						lblApp.setText("App");
+								
+										appPathText = new Text(appGroup, SWT.BORDER);
+										GridData gd_appPathText = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+										gd_appPathText.widthHint = 192;
+										appPathText.setLayoutData(gd_appPathText);
+										appPathText.addModifyListener(new ModifyListener() {
 
-		client_server = new Group(this, SWT.NONE);
-		client_server.setBounds(10, 113, 430, 82);
+											@Override
+											public void modifyText(ModifyEvent e) {
+												if (!appPathText.getText().equals("")) {
+													appPathSet = true;
+												} else {
+													appPathSet = false;
+												}
+												checkForFinish();
 
-		Label lblNewLabel = new Label(client_server, SWT.NONE);
-		lblNewLabel.setLocation(10, 44);
-		lblNewLabel.setSize(131, 14);
-		lblNewLabel.setText("Server Controller");
+											}
+										});
+						
+								Button btnBrowseApp = new Button(appGroup, SWT.NONE);
+								btnBrowseApp.addSelectionListener(new SelectionAdapter() {
+									@Override
+									public void widgetSelected(SelectionEvent e) {
+										IFile selectedFile = null;
+										String path = null;
+										ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, new WorkbenchLabelProvider(),
+												new BaseWorkbenchContentProvider());
+										dialog.setTitle("Tree Selection");
+										dialog.setMessage("Select the elements from the tree:");
+										dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+										if (dialog.open() == ElementTreeSelectionDialog.OK) {
+											Object[] result = dialog.getResult();
+											if (result.length == 1) {
+												if (result[0] instanceof IFile) {
+													System.out.println("is file");
+													selectedFile = (IFile) result[0];
+													System.out.println(selectedFile.getFullPath());
+													path = selectedFile.getFullPath().toString();
+													System.out.println("to os string: " + path);
+												} else {
+													showMessage("Please select an app.");
+												}
+											}
+										}
 
-		Label clientController = new Label(client_server, SWT.NONE);
-		clientController.setLocation(10, 10);
-		clientController.setSize(131, 14);
-		clientController.setText("Client Controller");
+										if (path != null) {
+											path = "platform:/resource".concat(path);
+											appPathText.setText(path);
+										}
+									}
 
-		serverControllerCombo = new CCombo(client_server, SWT.BORDER);
-		serverControllerCombo.setLocation(177, 38);
-		serverControllerCombo.setSize(140, 20);
-		setComboboxContent(serverControllerCombo);
-
-		clientControllerCombo = new CCombo(client_server, SWT.BORDER);
-		clientControllerCombo.setLocation(177, 10);
-		clientControllerCombo.setSize(140, 20);
-		setComboboxContent(clientControllerCombo);
-
-		client_server.setVisible(false);
+								});
+								
+										btnBrowseApp.setText("Browse");
 
 		Group platform = new Group(this, SWT.NONE);
-		platform.setBounds(10, 63, 430, 44);
+		platform.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		platform.setLayout(new GridLayout(2, false));
+		
+				Label lblAppController = new Label(platform, SWT.NONE);
+				lblAppController.setText("Platform");
 
 		platformCombo = new CCombo(platform, SWT.BORDER);
+		GridData gd_platformCombo = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_platformCombo.heightHint = 23;
+		gd_platformCombo.widthHint = 175;
+		platformCombo.setLayoutData(gd_platformCombo);
 		platformCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -112,16 +159,37 @@ public class ConfigurationShell extends Shell {
 				checkForFinish();
 			}
 		});
-		platformCombo.setLocation(177, 10);
-		platformCombo.setSize(140, 20);
 		setComboboxContent(platformCombo);
-
-		Label lblAppController = new Label(platform, SWT.NONE);
-		lblAppController.setLocation(10, 10);
-		lblAppController.setSize(81, 14);
-		lblAppController.setText("Platform");
+		
+				client_server = new Group(this, SWT.NONE);
+				GridData gd_client_server = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+				gd_client_server.heightHint = 71;
+				client_server.setLayoutData(gd_client_server);
+						client_server.setLayout(new GridLayout(2, false));
+						
+								Label clientController = new Label(client_server, SWT.NONE);
+								clientController.setText("Client Controller");
+												
+														clientControllerCombo = new CCombo(client_server, SWT.BORDER);
+														GridData gd_clientControllerCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+														gd_clientControllerCombo.heightHint = 20;
+														gd_clientControllerCombo.widthHint = 131;
+														clientControllerCombo.setLayoutData(gd_clientControllerCombo);
+														setComboboxContent(clientControllerCombo);
+										
+												Label lblNewLabel = new Label(client_server, SWT.NONE);
+												lblNewLabel.setText("Server Controller");
+								
+										serverControllerCombo = new CCombo(client_server, SWT.BORDER);
+										GridData gd_serverControllerCombo = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+										gd_serverControllerCombo.heightHint = 20;
+										serverControllerCombo.setLayoutData(gd_serverControllerCombo);
+										setComboboxContent(serverControllerCombo);
+												
+														client_server.setVisible(false);
 
 		btnSaveConfig = new Button(this, SWT.NONE);
+		btnSaveConfig.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		btnSaveConfig.setEnabled(false);
 		btnSaveConfig.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -155,68 +223,7 @@ public class ConfigurationShell extends Shell {
 
 			}
 		});
-		btnSaveConfig.setBounds(188, 201, 95, 28);
 		btnSaveConfig.setText("Save Config");
-
-		Group appGroup = new Group(this, SWT.NONE);
-		appGroup.setBounds(10, 13, 430, 44);
-
-		Label lblApp = new Label(appGroup, SWT.NONE);
-		lblApp.setText("App");
-		lblApp.setBounds(10, 10, 81, 14);
-
-		Button btnBrowseApp = new Button(appGroup, SWT.NONE);
-		btnBrowseApp.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IFile selectedFile = null;
-				String path = null;
-				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, new WorkbenchLabelProvider(),
-						new BaseWorkbenchContentProvider());
-				dialog.setTitle("Tree Selection");
-				dialog.setMessage("Select the elements from the tree:");
-				dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
-				if (dialog.open() == ElementTreeSelectionDialog.OK) {
-					Object[] result = dialog.getResult();
-					if (result.length == 1) {
-						if (result[0] instanceof IFile) {
-							System.out.println("is file");
-							selectedFile = (IFile) result[0];
-							System.out.println(selectedFile.getFullPath());
-							path = selectedFile.getFullPath().toString();
-							System.out.println("to os string: " + path);
-						} else {
-							showMessage("Please select an app.");
-						}
-					}
-				}
-
-				if (path != null) {
-					path = "platform:/resource".concat(path);
-					appPathText.setText(path);
-				}
-			}
-
-		});
-
-		btnBrowseApp.setText("Browse");
-		btnBrowseApp.setBounds(322, 3, 94, 28);
-
-		appPathText = new Text(appGroup, SWT.BORDER);
-		appPathText.setBounds(177, 7, 137, 19);
-		appPathText.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
-				if (!appPathText.getText().equals("")) {
-					appPathSet = true;
-				} else {
-					appPathSet = false;
-				}
-				checkForFinish();
-
-			}
-		});
 		createContents();
 
 		openShell(display);
@@ -261,7 +268,7 @@ public class ConfigurationShell extends Shell {
 	 */
 	protected void createContents() {
 		setText("Choose App Run Configuration");
-		setSize(450, 275);
+		setSize(338, 275);
 
 	}
 

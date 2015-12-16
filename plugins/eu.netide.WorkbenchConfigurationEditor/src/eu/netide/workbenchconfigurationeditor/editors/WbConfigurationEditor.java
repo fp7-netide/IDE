@@ -8,10 +8,14 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -71,6 +75,8 @@ public class WbConfigurationEditor extends EditorPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		createLayout(parent);
+		
+
 		addContentToTable();
 		addButtonListener();
 
@@ -83,72 +89,92 @@ public class WbConfigurationEditor extends EditorPart {
 	private Button btnAddTest;
 	private Button btnRemoveTest;
 	private Button btnStopTest;
+	private CCombo selectServerCombo;
+	private Button startServerController;
 
 	public void createLayout(Composite parent) {
 		container = new Composite(parent, SWT.NONE);
+		container.setLayout(new GridLayout(1, false));
 
 		Composite startAppComposite = new Composite(container, SWT.BORDER);
-		startAppComposite.setLocation(10, 10);
-
-		startAppComposite.setSize(523, 361);
-		startAppComposite.setLayout(null);
-
-		Composite buttonComposite = new Composite(startAppComposite, SWT.BORDER);
-
-		buttonComposite.setBounds(408, 50, 103, 277);
-		buttonComposite.setLayout(null);
-
-		startBTN = new Button(buttonComposite, SWT.NONE);
-		startBTN.setBounds(0, 0, 80, 30);
-
-		startBTN.setText("Start");
-
-		btnReload = new Button(buttonComposite, SWT.NONE);
-		btnReload.setBounds(0, 72, 80, 30);
-		btnReload.setText("Reload");
-
-		btnReattach = new Button(buttonComposite, SWT.NONE);
-		btnReattach.setBounds(0, 106, 80, 30);
-		btnReattach.setText("Reattach");
-
-		btnStopTest = new Button(buttonComposite, SWT.NONE);
-		btnStopTest.setBounds(0, 36, 80, 30);
-		btnStopTest.setText("Stop");
-
-		btnAddTest = new Button(startAppComposite, SWT.NONE);
-
-		btnAddTest.setBounds(20, 299, 100, 30);
-		btnAddTest.setText("Add Test");
-
-		btnRemoveTest = new Button(startAppComposite, SWT.NONE);
-		btnRemoveTest.setBounds(126, 299, 100, 30);
-		btnRemoveTest.setText("Remove Test");
-
-		table = new Table(startAppComposite, SWT.BORDER | SWT.FULL_SELECTION);
-
-		TableColumn tc1 = new TableColumn(table, SWT.CENTER);
-		TableColumn tc2 = new TableColumn(table, SWT.CENTER);
-		TableColumn tc3 = new TableColumn(table, SWT.CENTER);
-		TableColumn tc4 = new TableColumn(table, SWT.CENTER);
-		TableColumn tc5 = new TableColumn(table, SWT.CENTER);
-		tc1.setText("App Name");
-		tc2.setText("Aktiv");
-		tc3.setText("Platform");
-		tc4.setText("Client");
-		tc5.setText("Server");
-		tc1.setWidth(120);
-		tc2.setWidth(80);
-		tc3.setWidth(100);
-		tc4.setWidth(100);
-		tc5.setWidth(100);
-
-		table.setBounds(10, 50, 392, 243);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-
-		btnHaltTest = new Button(startAppComposite, SWT.NONE);
-		btnHaltTest.setBounds(302, 299, 100, 30);
-		btnHaltTest.setText("Vagrant Halt");
+		startAppComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		startAppComposite.setLayout(new GridLayout(2, false));
+										
+				Composite selectServerController = new Composite(startAppComposite, SWT.BORDER);
+				selectServerController.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+				selectServerController.setLayout(new GridLayout(2, false));
+				selectServerCombo = new CCombo(selectServerController, SWT.BORDER);
+				GridData gd_selectServerCombo = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+				gd_selectServerCombo.heightHint = 22;
+				gd_selectServerCombo.widthHint = 166;
+				selectServerCombo.setLayoutData(gd_selectServerCombo);
+				startServerController = new Button(selectServerController, SWT.BORDER);
+				startServerController.setText("Start Server Controller");
+				GridData gd_startServerController = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+				gd_startServerController.widthHint = 166;
+				startServerController.setLayoutData(gd_startServerController);
+				
+						new Label(startAppComposite, SWT.NONE);
+				
+						table = new Table(startAppComposite, SWT.BORDER | SWT.FULL_SELECTION);
+						table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+						
+								TableColumn tc1 = new TableColumn(table, SWT.CENTER);
+								TableColumn tc2 = new TableColumn(table, SWT.CENTER);
+								TableColumn tc3 = new TableColumn(table, SWT.CENTER);
+								TableColumn tc4 = new TableColumn(table, SWT.CENTER);
+								TableColumn tc5 = new TableColumn(table, SWT.CENTER);
+								tc1.setText("App Name");
+								tc2.setText("Aktiv");
+								tc3.setText("Platform");
+								tc4.setText("Client");
+								tc5.setText("Server");
+								tc1.setWidth(120);
+								tc2.setWidth(80);
+								tc3.setWidth(100);
+								tc4.setWidth(100);
+								tc5.setWidth(100);
+								table.setHeaderVisible(true);
+								table.setLinesVisible(true);
+				
+				Composite buttonComposite = new Composite(startAppComposite, SWT.BORDER);
+				buttonComposite.setLayout(new GridLayout(1, false));
+				GridData gd_buttonComposite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+				gd_buttonComposite.widthHint = 101;
+				buttonComposite.setLayoutData(gd_buttonComposite);
+				
+						startBTN = new Button(buttonComposite, SWT.NONE);
+						startBTN.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+						
+								startBTN.setText("Start");
+								
+										btnStopTest = new Button(buttonComposite, SWT.NONE);
+										btnStopTest.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+										btnStopTest.setText("Stop");
+										
+												btnReload = new Button(buttonComposite, SWT.NONE);
+												btnReload.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+												btnReload.setText("Reload");
+												
+														btnReattach = new Button(buttonComposite, SWT.NONE);
+														btnReattach.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+														btnReattach.setText("Reattach");
+						
+								vagrantButtons = new Composite(startAppComposite, SWT.NONE);
+								GridData gd_vagrantButtons = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+								gd_vagrantButtons.widthHint = 518;
+								vagrantButtons.setLayoutData(gd_vagrantButtons);
+								vagrantButtons.setLayout(new GridLayout(3, false));
+								
+										btnHaltTest = new Button(vagrantButtons, SWT.NONE);
+										btnHaltTest.setText("Vagrant Halt");
+										
+												btnAddTest = new Button(vagrantButtons, SWT.NONE);
+												btnAddTest.setText("Add Test");
+												
+														btnRemoveTest = new Button(vagrantButtons, SWT.NONE);
+														btnRemoveTest.setText("Remove Test");
+														new Label(startAppComposite, SWT.NONE);
 	}
 
 	private void addContentToTable() {
@@ -177,6 +203,7 @@ public class WbConfigurationEditor extends EditorPart {
 
 	private ConfigurationShell tempShell;
 	private LaunchConfigurationModel tmpModel;
+	private Composite vagrantButtons;
 
 	private void addButtonListener() {
 
