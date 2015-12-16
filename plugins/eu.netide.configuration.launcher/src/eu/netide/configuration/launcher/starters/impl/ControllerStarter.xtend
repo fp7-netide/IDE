@@ -1,12 +1,12 @@
 package eu.netide.configuration.launcher.starters.impl
 
-import org.eclipse.xtend.lib.annotations.Accessors
-import org.eclipse.core.runtime.IPath
-import org.eclipse.debug.core.ILaunch
-import org.eclipse.debug.core.ILaunchConfiguration
 import Topology.Controller
-import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
+import org.eclipse.core.runtime.IPath
 import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.debug.core.ILaunchConfiguration
+import org.eclipse.xtend.lib.annotations.Accessors
+
+import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
 
 abstract class ControllerStarter extends Starter {
 
@@ -19,8 +19,7 @@ abstract class ControllerStarter extends Starter {
 	@Accessors(PROTECTED_GETTER)
 	private String controllerplatform
 
-	new(String name, ILaunchConfiguration configuration, Controller controller,
-		IProgressMonitor monitor) {
+	new(String name, ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
 		super(name, configuration, monitor)
 
 		this.controller = controller

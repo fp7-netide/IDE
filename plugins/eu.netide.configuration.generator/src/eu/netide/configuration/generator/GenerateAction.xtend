@@ -17,8 +17,6 @@ import org.eclipse.core.runtime.NullProgressMonitor
  */
 class GenerateAction {
 
-	private FSAProvider fsaprovider
-
 	def run(NetworkEnvironment ne) { 
 		
 		var file = getIFile(ne.eResource)

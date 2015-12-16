@@ -23,6 +23,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				case Platform.OS_WIN32: "C:\\Hashicorp\\Vagrant\\bin\\vagrant.exe"
 			}
 		)
+		store.setDefault(NetIDEPreferenceConstants.SSH_PATH,
+			switch Platform.getOS {
+				case Platform.OS_LINUX: "/usr/bin/ssh"
+			}
+		)
 	}
 
 }

@@ -40,9 +40,15 @@ class VagrantfileGenerator {
 		var ne = input.allContents.filter(typeof(NetworkEnvironment)).next
 
 		var projectName = res.fullPath.segment(0)
+		
+		
 
 		var bundle = Platform.getBundle(NetIDE.LAUNCHER_PLUGIN)
-		var url = bundle.getEntry("scripts/install_mininet.sh")
+		
+		var url = bundle.getEntry("scripts/install_prereq.sh")
+		var prereqpath = scriptpath(url)
+		
+		url = bundle.getEntry("scripts/install_mininet.sh")
 		var mininetscriptpath = scriptpath(url)
 
 		url = bundle.getEntry("scripts/install_ryu.sh")
@@ -121,6 +127,8 @@ class VagrantfileGenerator {
 				end
 				
 				«IF !customBox»
+					# Installing prerequistes
+					config.vm.provision "shell", path: "«prereqpath»", privileged: false
 					# Configuring mininet
 					«IF proxyOn»
 						config.vm.provision "shell", path: "proxyconf.sh", privileged: false
@@ -236,7 +244,6 @@ class VagrantfileGenerator {
 			FileLocator.resolve(url).path
 		else if (Platform.getOS == Platform.OS_WIN32)
 			FileLocator.resolve(url).path.substring(1)
-
 	}
 
 	def mavenProxyConfig() {

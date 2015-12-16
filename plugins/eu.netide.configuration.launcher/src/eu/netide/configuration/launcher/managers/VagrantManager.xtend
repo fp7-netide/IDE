@@ -1,4 +1,4 @@
-package eu.netide.configuration.launcher.starters
+package eu.netide.configuration.launcher.managers
 
 import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 import eu.netide.configuration.utils.NetIDE
@@ -29,7 +29,7 @@ import java.util.Date
 import org.eclipse.ui.internal.console.ConsoleManager
 import org.eclipse.debug.internal.core.LaunchManager
 
-class VagrantManager {
+class VagrantManager implements IManager {
 
 	private ILaunch launch
 
@@ -79,7 +79,7 @@ class VagrantManager {
 		startProcess(cmd)
 	}
 
-	def asyncHalt() {
+	override asyncHalt() {
 		var command = new Job("Vagrant Halt") {
 			override run(IProgressMonitor monitor) {
 				halt()
@@ -120,7 +120,7 @@ class VagrantManager {
 		command.schedule
 	}
 
-	def getRunningSessions() {
+	override getRunningSessions() {
 
 		var p = DebugPlugin.exec(newArrayList(vagrantpath, "ssh", "-c", "screen -list"), workingDirectory, null)
 		var br = new BufferedReader(new InputStreamReader(p.getInputStream()))
