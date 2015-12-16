@@ -6,9 +6,6 @@ import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -226,12 +223,12 @@ public class WbConfigurationEditor extends EditorPart {
 		btnHaltTest.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (table.getSelectionCount() > 0) {
-					StarterStarter.getStarter("").haltVagrant();
-					for (int i = 0; i < table.getItemCount(); i++) {
-						table.getItem(i).setText(1, "offline");
-					}
+
+				StarterStarter.getStarter("").haltVagrant();
+				for (int i = 0; i < table.getItemCount(); i++) {
+					table.getItem(i).setText(1, "offline");
 				}
+
 			}
 		});
 
@@ -288,21 +285,9 @@ public class WbConfigurationEditor extends EditorPart {
 	private void startApp(final LaunchConfigurationModel toStart) {
 
 		final StarterStarter s = StarterStarter.getStarter(LaunchConfigurationModel.getTopology());
-//		Job job = new Job("Create") {
-//			@Override
-//			protected IStatus run(IProgressMonitor monitor) {
-				s.startVagrantFromConfig(toStart);
-				s.registerControllerFromConfig(toStart);
-				// if(blabla)
-//				return Status.OK_STATUS;
-//			}
-//		};
-//		job.schedule();
 
-		// TODO: Terminate app after finishing
-
-		// TODO: wait for thread to finish. Delete launch configuration.
-		// lc.delete();
+		s.startVagrantFromConfig(toStart);
+		s.registerControllerFromConfig(toStart);
 
 	}
 

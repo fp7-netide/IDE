@@ -56,6 +56,7 @@ class StarterStarter {
 		file = topologyPath.IFile
 		vagrantIsRunning = false;
 		configToStarter = new HashMap
+		min = false;
 
 	}
 
@@ -84,7 +85,7 @@ class StarterStarter {
 			};
 			job.schedule();
 
-			job.join() // Thread.sleep(2000)
+			Thread.sleep(2000)
 			var vgen = new VagrantfileGenerateAction(file, configuration)
 			vgen.run
 
@@ -124,6 +125,7 @@ class StarterStarter {
 	private IStarter shimStarter;
 	private IStarter starter;
 	private IStarter mnstarter;
+	private boolean min;
 
 	public def registerControllerFromConfig(LaunchConfigurationModel launchConfigurationModel) {
 
@@ -145,7 +147,7 @@ class StarterStarter {
 
 				};
 				job.schedule();
-				job.join()
+				Thread.sleep(2000)
 
 				// var NetIDE_server = configuration.attributes.get("controller_platform_target_" + c.name) as String // to know if server_platform is ODL #AB
 				var jobShim = new Job("shim Starter") {
@@ -158,8 +160,8 @@ class StarterStarter {
 
 				};
 				jobShim.schedule();
-				jobShim.join()
-				// Thread.sleep(2000)
+
+				Thread.sleep(2000)
 				reg.register(backendStarter.safeName, backendStarter)
 				backendStarter.asyncStart
 
@@ -179,8 +181,7 @@ class StarterStarter {
 
 				};
 				jobSingle.schedule();
-				// Thread.sleep(2000)
-				jobSingle.join();
+				Thread.sleep(2000)
 
 				reg.register(starter.safeName, starter)
 				configToStarter.put(launchConfigurationModel, starter)
@@ -191,21 +192,25 @@ class StarterStarter {
 
 		Thread.sleep(2000)
 
-		var jobMin = new Job("shim Starter") {
+		if (!min) {
+			min = true
+			var jobMin = new Job("shim Starter") {
 
-			override protected run(IProgressMonitor monitor) {
-				mnstarter = factory.createMininetStarter(configuration, monitor)
+				override protected run(IProgressMonitor monitor) {
+					mnstarter = factory.createMininetStarter(configuration, monitor)
 
-				return Status.OK_STATUS
-			}
+					return Status.OK_STATUS
+				}
 
-		};
-		jobMin.schedule();
-		jobMin.join()
-		// Thread.sleep(2000)
-		// Start Mininet. 
-		reg.register(mnstarter.safeName, mnstarter)
-		mnstarter.syncStart
+			};
+			jobMin.schedule();
+
+			Thread.sleep(2000)
+			// Start Mininet. 
+			reg.register(mnstarter.safeName, mnstarter)
+			mnstarter.syncStart
+		}
+
 	}
 
 	private def generateConfiguration(String path) {
