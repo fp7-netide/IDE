@@ -105,6 +105,7 @@ class StarterStarter {
 
 	public def haltVagrant() {
 		vagrantIsRunning = false;
+		min = false;
 		vagrantManager.asyncHalt()
 
 	}
@@ -141,7 +142,8 @@ class StarterStarter {
 
 					override protected run(IProgressMonitor monitor) {
 						backendStarter = factory.createBackendStarter(configuration, c, monitor)
-
+						reg.register(backendStarter.safeName, backendStarter)
+						backendStarter.syncStart
 						return Status.OK_STATUS
 					}
 
@@ -155,6 +157,9 @@ class StarterStarter {
 					override protected run(IProgressMonitor monitor) {
 						shimStarter = factory.createShimStarter(configuration, c, monitor)
 
+						reg.register(shimStarter.safeName, shimStarter)
+						shimStarter.syncStart
+
 						return Status.OK_STATUS
 					}
 
@@ -162,20 +167,16 @@ class StarterStarter {
 				jobShim.schedule();
 
 				Thread.sleep(2000)
-				reg.register(backendStarter.safeName, backendStarter)
-				backendStarter.asyncStart
 
-				Thread.sleep(2000)
-
-				reg.register(shimStarter.safeName, shimStarter)
-				shimStarter.asyncStart
 			} else {
 
-				var jobSingle = new Job("shim Starter") {
+				var jobSingle = new Job("single Starter") {
 
 					override protected run(IProgressMonitor monitor) {
 						starter = factory.createSingleControllerStarter(configuration, c, monitor)
-
+						reg.register(starter.safeName, starter)
+						configToStarter.put(launchConfigurationModel, starter)
+						starter.syncStart
 						return Status.OK_STATUS
 					}
 
@@ -183,9 +184,6 @@ class StarterStarter {
 				jobSingle.schedule();
 				Thread.sleep(2000)
 
-				reg.register(starter.safeName, starter)
-				configToStarter.put(launchConfigurationModel, starter)
-				starter.asyncStart()
 			}
 
 		}
@@ -194,11 +192,14 @@ class StarterStarter {
 
 		if (!min) {
 			min = true
-			var jobMin = new Job("shim Starter") {
+			var jobMin = new Job("minn Starter") {
 
 				override protected run(IProgressMonitor monitor) {
 					mnstarter = factory.createMininetStarter(configuration, monitor)
 
+					// Start Mininet. 
+					reg.register(mnstarter.safeName, mnstarter)
+					mnstarter.syncStart
 					return Status.OK_STATUS
 				}
 
@@ -206,9 +207,7 @@ class StarterStarter {
 			jobMin.schedule();
 
 			Thread.sleep(2000)
-			// Start Mininet. 
-			reg.register(mnstarter.safeName, mnstarter)
-			mnstarter.syncStart
+
 		}
 
 	}
