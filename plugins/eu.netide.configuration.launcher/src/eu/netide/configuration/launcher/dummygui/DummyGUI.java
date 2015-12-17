@@ -109,6 +109,7 @@ public class DummyGUI extends ViewPart {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				vagrant.asyncHalt();
+				sshm.asyncHalt();
 				list.removeAll();
 			}
 		});

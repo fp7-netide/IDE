@@ -86,7 +86,10 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		}
 		
 		if (isSsh) {
+			sshManager.copyApps
+			sshManager.copyTopo
 			sshManager.provision
+			
 		}
 		
 
@@ -136,7 +139,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		// Start Mininet. 
 		val mnstarter = factory.createMininetStarter(configuration, monitor)
 		reg.register(mnstarter.safeName, mnstarter)
-		mnstarter.syncStart
+//		mnstarter.syncStart
 
 		Display.getDefault().asyncExec(
 			new Runnable() {

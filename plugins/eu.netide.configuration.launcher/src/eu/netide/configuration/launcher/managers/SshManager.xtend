@@ -32,17 +32,25 @@ import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnecto
 import java.net.URL
 import org.eclipse.core.runtime.FileLocator
 import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done
+import Topology.NetworkEnvironment
+import eu.netide.configuration.utils.NetIDEUtil
+import org.eclipse.core.runtime.IPath
+import java.util.List
+import org.eclipse.core.resources.IProject
 
 class SshManager implements IManager {
 
 	File workingDirectory
 	String sshPath
+	String scpPath
 	ILaunch launch
 	IProgressMonitor monitor
 	String sshHostname
 	String sshPort
 	String sshUsername
 	String sshIdFile
+	Iterable<IPath> appPaths
+	IProject project
 
 	new(ILaunchConfiguration launchConfiguration, IProgressMonitor monitor) {
 
@@ -57,11 +65,29 @@ class SshManager implements IManager {
 		this.sshUsername = launchConfiguration.getAttribute("target.ssh.username", "")
 		this.sshIdFile = launchConfiguration.getAttribute("target.ssh.idfile", "").absolutePath.toOSString
 
+		var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
+
+		var resset = new ResourceSetImpl
+		var res = resset.getResource(URI.createURI(topofile.fullPath.toString), true)
+		
+		this.project = topofile.project
+
+		var ne = res.allContents.filter(typeof(NetworkEnvironment)).next
+
+		this.appPaths = ne.controllers.map [
+			var platform = launchConfiguration.attributes.get("controller_platform_" + name)
+			launchConfiguration.attributes.get(String.format("controller_data_%s_%s", name, platform)) as String
+		].toSet.map[e|NetIDEUtil.absolutePath(e)]
+
 		this.monitor = monitor
 
 		this.sshPath = new Path(
 			Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
 				NetIDEPreferenceConstants.SSH_PATH, "", null)).toOSString
+
+		this.scpPath = new Path(
+			Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
+				NetIDEPreferenceConstants.SCP_PATH, "", null)).toOSString
 
 		var path = launch.launchConfiguration.attributes.get("topologymodel") as String
 
@@ -104,48 +130,32 @@ class SshManager implements IManager {
 
 	def provision() {
 		val bundle = Platform.getBundle(NetIDE.LAUNCHER_PLUGIN)
-		
+
 		val scriptsfolder = bundle.getEntry("scripts/").scriptpath
 
 		val localScripts = newArrayList(
 			"scripts/install_prereq.sh",
+			"scripts/install_engine.sh",
 			"scripts/install_mininet.sh",
 			"scripts/install_ryu.sh",
 			"scripts/install_pyretic.sh",
 			"scripts/install_pox.sh",
 			"scripts/install_odl.sh",
-			"scripts/install_engine.sh",
 			"scripts/install_logger_debugger.sh",
 			"scripts/install_floodlight.sh"
 		)
 
 		val fullScripts = newArrayList()
 
-//		var url = bundle.getEntry("scripts/install_prereq.sh")
-//		scripts.add(url.scriptpath)
-//		url = bundle.getEntry("scripts/install_mininet.sh")
-//		val mininetscriptpath = scriptpath(url)
-//		url = bundle.getEntry("scripts/install_ryu.sh")
-//		val ryuscriptpath = scriptpath(url)
-//		url = bundle.getEntry("scripts/install_pyretic.sh")
-//		val pyreticscriptpath = scriptpath(url)
-//		url = bundle.getEntry("scripts/install_pox.sh")
-//		val poxscriptpath = scriptpath(url)
-//		url = bundle.getEntry("scripts/install_odl.sh")
-//		val odlscriptpath = scriptpath(url)
-//		url = bundle.getEntry("scripts/install_engine.sh")
-//		val netideenginescriptpath = scriptpath(url)
-//		url = bundle.getEntry("scripts/install_logger_debugger.sh")
-//		val logger_debuggerscriptpath = scriptpath(url)
-//		url = bundle.getEntry("scripts/install_floodlight.sh")
-//		val floodlightscriptpath = scriptpath(url)
-
 		startProcess(newArrayList(
 			"/usr/bin/scp",
-			"-i", sshIdFile,
-			"-P", sshPort,
-			"-r", scriptsfolder,
-			sshUsername+"@"+sshHostname+":"+"."
+			"-i",
+			sshIdFile,
+			"-P",
+			sshPort,
+			"-r",
+			scriptsfolder,
+			sshUsername + "@" + sshHostname + ":" + "."
 		))
 
 		localScripts.forEach [ e |
@@ -153,13 +163,66 @@ class SshManager implements IManager {
 			startProcess(newArrayList(
 				sshPath,
 				"-tt",
-				"-i", sshIdFile,
-				"-p", sshPort,
-				sshUsername+"@"+sshHostname,
-				"sh ./"+e 
+				"-i",
+				sshIdFile,
+				"-p",
+				sshPort,
+				sshUsername + "@" + sshHostname,
+				"bash ./" + e
 			))
 		]
 
+	}
+
+	def exec(String cmd) {
+		startProcess(newArrayList(
+			sshPath,
+			"-tt",
+			"-i",
+			sshIdFile,
+			"-p",
+			sshPort,
+			String.format("%s@%s", sshUsername, sshHostname),
+			cmd
+		))
+	}
+
+	def copyApps() {
+		exec("rm -rf controllers")
+		exec("mkdir controllers")
+
+		appPaths.forEach [ p |
+			scp(
+				'''«p.removeLastSegments(1)»''',
+				'''controllers/«p.removeFileExtension.lastSegment»'''
+			)
+		]
+	}
+	
+	def copyTopo() {
+		exec("rm -rf mn-configs")
+		
+		scp(
+			this.project.location+"/gen/mininet",
+			"mn-configs"
+		)
+	}
+	
+	def execTM(String cmd) {
+		startTmProcess(cmd, null)
+	}
+
+	private def scp(String source, String target) {
+		startProcess(newArrayList(
+			scpPath,
+			"-i",
+			sshIdFile,
+			"-P",
+			sshPort,
+			"-r",
+			source,
+			String.format("%s@%s:%s", sshUsername, sshHostname, target)
+		))
 	}
 
 	def startProcess(ArrayList<String> cmdline) {
