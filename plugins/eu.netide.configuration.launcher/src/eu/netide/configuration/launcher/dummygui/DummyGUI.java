@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -14,20 +15,25 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.part.ViewPart;
 
 import eu.netide.configuration.launcher.starters.IStarter;
 import eu.netide.configuration.launcher.starters.IStarterRegistry;
+import eu.netide.deployment.topologyimport.TopologyImport;
+import eu.netide.deployment.topologyimport.TopologyImportFactory;
+import eu.netide.configuration.launcher.managers.IManager;
 import eu.netide.configuration.launcher.managers.SshManager;
 import eu.netide.configuration.launcher.managers.VagrantManager;
+import org.eclipse.swt.widgets.Label;
 
 public class DummyGUI extends ViewPart {
 
 	public static String ID = "eu.netide.configuration.launcher.dummygui";
 
-	private VagrantManager vagrant;
+	private IManager manager;
 
 	private IStarter mininet;
 
@@ -39,17 +45,13 @@ public class DummyGUI extends ViewPart {
 
 	private IStarterRegistry reg = IStarterRegistry.instance;
 
-	private SshManager sshm;
+	private Composite parent;
 
 	public DummyGUI() {
 	}
 
-	public void setVagrantManager(VagrantManager vm) {
-		this.vagrant = vm;
-	}
-	
-	public void setSshManager(SshManager sshm) {
-		this.sshm = sshm;
+	public void setManager(IManager manager) {
+		this.manager = manager;
 	}
 
 	public void setMininet(IStarter mn) {
@@ -61,26 +63,23 @@ public class DummyGUI extends ViewPart {
 
 		java.util.List<String> t = null;
 
-		if (vagrant != null) {
-			t = vagrant.getRunningSessions();
+		if (manager != null) {
+			t = manager.getRunningSessions();
 			for (String s : t)
 				list.add(s.substring(s.indexOf(".") + 1));
 		}
-		if (sshm != null) {
-			t = sshm.getRunningSessions();
-			for (String s : t)
-				list.add(s.substring(s.indexOf(".") + 1));
-		}
+
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 
+		this.parent = parent;
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
 
 		Group grpVagrant = new Group(composite, SWT.NONE);
-		grpVagrant.setLayout(new GridLayout(4, false));
+		grpVagrant.setLayout(new GridLayout(5, false));
 		grpVagrant.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 2));
 		grpVagrant.setText("Manager");
 
@@ -88,7 +87,7 @@ public class DummyGUI extends ViewPart {
 		btnUp.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				vagrant.asyncUp();
+				manager.asyncUp();
 			}
 		});
 		btnUp.setBounds(0, 0, 70, 25);
@@ -98,7 +97,7 @@ public class DummyGUI extends ViewPart {
 		btnProvision.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				vagrant.asyncProvision();
+				manager.asyncProvision();
 			}
 		});
 		btnProvision.setBounds(0, 0, 70, 25);
@@ -108,8 +107,7 @@ public class DummyGUI extends ViewPart {
 		btnHalt.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				vagrant.asyncHalt();
-				sshm.asyncHalt();
+				manager.asyncHalt();
 				list.removeAll();
 			}
 		});
@@ -137,6 +135,19 @@ public class DummyGUI extends ViewPart {
 		});
 
 		btnGetSessions.setText("Get Sessions");
+
+		Button btnGetTopology = new Button(grpVagrant, SWT.NONE);
+		btnGetTopology.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				String topo = manager.execWithReturn(
+						"curl -s -u admin:admin http://localhost:8181/restconf/operational/network-topology:network-topology/");
+				TopologyImport topoImport = TopologyImportFactory.instance.createTopologyImport();
+				
+				topoImport.createTopologyModelFromString(topo, manager.getProject().getFile("import.topology").getFullPath().toPortableString());
+			}
+		});
+		btnGetTopology.setText("Get Topology");
 
 		Group grpMininet = new Group(composite, SWT.NONE);
 		grpMininet.setText("Mininet");

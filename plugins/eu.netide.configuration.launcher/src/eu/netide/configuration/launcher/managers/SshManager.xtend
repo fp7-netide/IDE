@@ -37,6 +37,7 @@ import eu.netide.configuration.utils.NetIDEUtil
 import org.eclipse.core.runtime.IPath
 import java.util.List
 import org.eclipse.core.resources.IProject
+import org.eclipse.xtend.lib.annotations.Accessors
 
 class SshManager implements IManager {
 
@@ -50,6 +51,7 @@ class SshManager implements IManager {
 	String sshUsername
 	String sshIdFile
 	Iterable<IPath> appPaths
+	@Accessors(PUBLIC_GETTER)
 	IProject project
 
 	new(ILaunchConfiguration launchConfiguration, IProgressMonitor monitor) {
@@ -69,7 +71,7 @@ class SshManager implements IManager {
 
 		var resset = new ResourceSetImpl
 		var res = resset.getResource(URI.createURI(topofile.fullPath.toString), true)
-		
+
 		this.project = topofile.project
 
 		var ne = res.allContents.filter(typeof(NetworkEnvironment)).next
@@ -116,6 +118,23 @@ class SshManager implements IManager {
 
 	}
 
+	override execWithReturn(String cmd) {
+		var cmdline = newArrayList(sshPath, "-i", sshIdFile, "-p", sshPort, sshUsername + "@" + sshHostname,
+			cmd)
+		var p = DebugPlugin.exec(cmdline, workingDirectory, null)
+		var br = new BufferedReader(new InputStreamReader(p.getInputStream()))
+		p.waitFor
+		var output = ""
+
+		var l = br.readLine
+		while (l != null) {
+			output = output + l + "\n"
+			l = br.readLine
+		}
+		
+		return output
+	}
+
 	override asyncHalt() {
 		val cmdline = newArrayList(sshPath, "-i", sshIdFile, "-p", sshPort, sshUsername + "@" + sshHostname,
 			"sudo poweroff")
@@ -128,7 +147,7 @@ class SshManager implements IManager {
 		job.schedule
 	}
 
-	def provision() {
+	override provision() {
 		val bundle = Platform.getBundle(NetIDE.LAUNCHER_PLUGIN)
 
 		val scriptsfolder = bundle.getEntry("scripts/").scriptpath
@@ -174,7 +193,7 @@ class SshManager implements IManager {
 
 	}
 
-	def exec(String cmd) {
+	override exec(String cmd) {
 		startProcess(newArrayList(
 			sshPath,
 			"-tt",
@@ -198,16 +217,16 @@ class SshManager implements IManager {
 			)
 		]
 	}
-	
+
 	def copyTopo() {
 		exec("rm -rf mn-configs")
-		
+
 		scp(
-			this.project.location+"/gen/mininet",
+			this.project.location + "/gen/mininet",
 			"mn-configs"
 		)
 	}
-	
+
 	def execTM(String cmd) {
 		startTmProcess(cmd, null)
 	}
@@ -347,6 +366,13 @@ class SshManager implements IManager {
 			FileLocator.resolve(url).path
 		else if (Platform.getOS == Platform.OS_WIN32)
 			FileLocator.resolve(url).path.substring(1)
+	}
+
+	override asyncProvision() {
+		provision()
+	}
+
+	override asyncUp() {
 	}
 
 }

@@ -147,8 +147,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 				override run() {
 					var dummygui = PlatformUI.getWorkbench().activeWorkbenchWindow.activePage.showView(
 						DummyGUI.ID) as DummyGUI
-					if (isVagrant) dummygui.vagrantManager = vagrantManager
-					if (isSsh) dummygui.sshManager = sshManager
+					if (isVagrant) dummygui.manager = vagrantManager
+					if (isSsh) dummygui.manager = sshManager
 					dummygui.mininet = mnstarter
 				}
 			})
