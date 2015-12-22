@@ -118,6 +118,12 @@ class StarterStarter {
 		var toStop = configToStarter.get(config)
 		toStop.stop
 	}
+	
+	public def stopServerController(){
+		if(serverControllerStarter != null){
+			serverControllerStarter.stop
+		}
+	}
 
 	private IStarter serverControllerStarter;
 

@@ -247,6 +247,7 @@ public class WbConfigurationEditor extends EditorPart {
 			public void widgetSelected(SelectionEvent e) {
 				if (serverControllerIsRunning) {
 					// Stop starter
+					StarterStarter.getStarter("").stopServerController();
 					lblServerControllerStatus.setText("Status: offline");
 					serverControllerIsRunning = false;
 					selectServerCombo.setEnabled(true);
