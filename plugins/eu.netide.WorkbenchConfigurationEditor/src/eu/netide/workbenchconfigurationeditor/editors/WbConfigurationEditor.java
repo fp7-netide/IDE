@@ -26,7 +26,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 import org.w3c.dom.Document;
 
+import eu.netide.configuration.utils.NetIDE;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
+import org.eclipse.swt.custom.CLabel;
 
 /**
  * 
@@ -47,7 +49,7 @@ public class WbConfigurationEditor extends EditorPart {
 		IFileEditorInput fileInput = (IFileEditorInput) input;
 		this.tableConfigMap = new HashMap<TableItem, LaunchConfigurationModel>();
 		// fills the modelList with the data from the xml file
-
+		this.serverControllerIsRunning = false;
 		file = fileInput.getFile();
 		doc = XmlHelper.getDocFromFile(file);
 		modelList = XmlHelper.parseFileToModel(file, doc);
@@ -75,7 +77,6 @@ public class WbConfigurationEditor extends EditorPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		createLayout(parent);
-		
 
 		addContentToTable();
 		addButtonListener();
@@ -99,44 +100,64 @@ public class WbConfigurationEditor extends EditorPart {
 		Composite startAppComposite = new Composite(container, SWT.BORDER);
 		startAppComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		startAppComposite.setLayout(new GridLayout(2, false));
-										
-				Composite selectServerController = new Composite(startAppComposite, SWT.BORDER);
-				selectServerController.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-				selectServerController.setLayout(new GridLayout(2, false));
-				selectServerCombo = new CCombo(selectServerController, SWT.BORDER);
-				GridData gd_selectServerCombo = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-				gd_selectServerCombo.heightHint = 22;
-				gd_selectServerCombo.widthHint = 166;
-				selectServerCombo.setLayoutData(gd_selectServerCombo);
-				startServerController = new Button(selectServerController, SWT.BORDER);
-				startServerController.setText("Start Server Controller");
-				GridData gd_startServerController = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-				gd_startServerController.widthHint = 166;
-				startServerController.setLayoutData(gd_startServerController);
-				
-						new Label(startAppComposite, SWT.NONE);
-				
-						table = new Table(startAppComposite, SWT.BORDER | SWT.FULL_SELECTION);
-						table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+
+		Composite selectServerController = new Composite(startAppComposite, SWT.BORDER);
+		selectServerController.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		selectServerController.setLayout(new GridLayout(5, false));
+		selectServerCombo = new CCombo(selectServerController, SWT.BORDER);
+
+		selectServerCombo.add(NetIDE.CONTROLLER_POX);
+		selectServerCombo.add(NetIDE.CONTROLLER_ODL);
+		
+		GridData gd_selectServerCombo = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_selectServerCombo.heightHint = 22;
+		gd_selectServerCombo.widthHint = 166;
+		selectServerCombo.setLayoutData(gd_selectServerCombo);
+		startServerController = new Button(selectServerController, SWT.BORDER);
+
+		startServerController.setText("Start Server Controller");
+		GridData gd_startServerController = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_startServerController.widthHint = 166;
+		startServerController.setLayoutData(gd_startServerController);
+
+		btnStopServerController = new Button(selectServerController, SWT.NONE);
+
+		btnStopServerController.setText("Stop Server Controller");
+		new Label(selectServerController, SWT.NONE);
+
+		lblServerControllerStatus = new CLabel(selectServerController, SWT.NONE);
+		GridData gd_lblServerControllerStatus = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblServerControllerStatus.widthHint = 109;
+		lblServerControllerStatus.setLayoutData(gd_lblServerControllerStatus);
+		lblServerControllerStatus.setText("Status: Offline");
+		
+				Composite vagrantButtons = new Composite(startAppComposite, SWT.BORDER);
+				vagrantButtons.setLayout(new GridLayout(1, false));
 						
-								TableColumn tc1 = new TableColumn(table, SWT.CENTER);
-								TableColumn tc2 = new TableColumn(table, SWT.CENTER);
-								TableColumn tc3 = new TableColumn(table, SWT.CENTER);
-								TableColumn tc4 = new TableColumn(table, SWT.CENTER);
-								TableColumn tc5 = new TableColumn(table, SWT.CENTER);
-								tc1.setText("App Name");
-								tc2.setText("Aktiv");
-								tc3.setText("Platform");
-								tc4.setText("Client");
-								tc5.setText("Server");
-								tc1.setWidth(120);
-								tc2.setWidth(80);
-								tc3.setWidth(100);
-								tc4.setWidth(100);
-								tc5.setWidth(100);
-								table.setHeaderVisible(true);
-								table.setLinesVisible(true);
+								btnHaltTest = new Button(vagrantButtons, SWT.NONE);
+								btnHaltTest.setText("Vagrant Halt");
+		
+				table = new Table(startAppComposite, SWT.BORDER | SWT.FULL_SELECTION);
+				table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 				
+						TableColumn tc1 = new TableColumn(table, SWT.CENTER);
+						TableColumn tc2 = new TableColumn(table, SWT.CENTER);
+						TableColumn tc3 = new TableColumn(table, SWT.CENTER);
+						TableColumn tc4 = new TableColumn(table, SWT.CENTER);
+						TableColumn tc5 = new TableColumn(table, SWT.CENTER);
+						tc1.setText("App Name");
+						tc2.setText("Aktiv");
+						tc3.setText("Platform");
+						tc4.setText("Client");
+						tc5.setText("Server");
+						tc1.setWidth(120);
+						tc2.setWidth(80);
+						tc3.setWidth(100);
+						tc4.setWidth(100);
+						tc5.setWidth(100);
+						table.setHeaderVisible(true);
+						table.setLinesVisible(true);
+		
 				Composite buttonComposite = new Composite(startAppComposite, SWT.BORDER);
 				buttonComposite.setLayout(new GridLayout(1, false));
 				GridData gd_buttonComposite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -159,22 +180,19 @@ public class WbConfigurationEditor extends EditorPart {
 														btnReattach = new Button(buttonComposite, SWT.NONE);
 														btnReattach.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 														btnReattach.setText("Reattach");
+		
+				testButtons = new Composite(startAppComposite, SWT.NONE);
+				GridData gd_testButtons = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+				gd_testButtons.widthHint = 518;
+				testButtons.setLayoutData(gd_testButtons);
+				testButtons.setLayout(new GridLayout(2, false));
 						
-								vagrantButtons = new Composite(startAppComposite, SWT.NONE);
-								GridData gd_vagrantButtons = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-								gd_vagrantButtons.widthHint = 518;
-								vagrantButtons.setLayoutData(gd_vagrantButtons);
-								vagrantButtons.setLayout(new GridLayout(3, false));
+								btnAddTest = new Button(testButtons, SWT.NONE);
+								btnAddTest.setText("Add Test");
 								
-										btnHaltTest = new Button(vagrantButtons, SWT.NONE);
-										btnHaltTest.setText("Vagrant Halt");
-										
-												btnAddTest = new Button(vagrantButtons, SWT.NONE);
-												btnAddTest.setText("Add Test");
-												
-														btnRemoveTest = new Button(vagrantButtons, SWT.NONE);
-														btnRemoveTest.setText("Remove Test");
-														new Label(startAppComposite, SWT.NONE);
+										btnRemoveTest = new Button(testButtons, SWT.NONE);
+										btnRemoveTest.setText("Remove Test");
+		new Label(startAppComposite, SWT.NONE);
 	}
 
 	private void addContentToTable() {
@@ -203,9 +221,38 @@ public class WbConfigurationEditor extends EditorPart {
 
 	private ConfigurationShell tempShell;
 	private LaunchConfigurationModel tmpModel;
-	private Composite vagrantButtons;
+	private Composite testButtons;
+	private CLabel lblServerControllerStatus;
+	private Button btnStopServerController;
+	private boolean serverControllerIsRunning;
 
 	private void addButtonListener() {
+		
+		startServerController.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String selection = selectServerCombo.getText();
+				if (!serverControllerIsRunning && !selection.equals("")) {
+					// Create starter for selected server controller
+					StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startServerController(selection);
+					lblServerControllerStatus.setText("Status: running");
+					serverControllerIsRunning = true;
+					selectServerCombo.setEnabled(false);
+				}
+			}
+		});
+
+		btnStopServerController.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (serverControllerIsRunning) {
+					// Stop starter
+					lblServerControllerStatus.setText("Status: offline");
+					serverControllerIsRunning = false;
+					selectServerCombo.setEnabled(true);
+				}
+			}
+		});
 
 		btnRemoveTest.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -313,7 +360,6 @@ public class WbConfigurationEditor extends EditorPart {
 
 		final StarterStarter s = StarterStarter.getStarter(LaunchConfigurationModel.getTopology());
 
-		s.startVagrantFromConfig(toStart);
 		s.registerControllerFromConfig(toStart);
 
 	}

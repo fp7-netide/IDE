@@ -22,6 +22,7 @@ import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunchConfigurationType
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import java.util.UUID
 
 class StarterStarter {
 
@@ -49,6 +50,9 @@ class StarterStarter {
 
 		generateConfiguration(topologyPath)
 
+		factory = new StarterFactory
+		reg = IStarterRegistry.instance
+
 		var resset = new ResourceSetImpl
 		var res = resset.getResource(URI.createURI(topologyPath), true)
 		ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
@@ -68,11 +72,9 @@ class StarterStarter {
 
 	private boolean vagrantIsRunning;
 
-	public def boolean startVagrantFromConfig(LaunchConfigurationModel launchConfigModel) {
+	public def boolean startVagrantFromConfig(ILaunchConfiguration configuration) {
 
 		if (!vagrantIsRunning) {
-
-			val configuration = createLaunchConfiguration(launchConfigModel)
 
 			var job = new Job("VagrantManager") {
 
@@ -88,9 +90,6 @@ class StarterStarter {
 			Thread.sleep(2000)
 			var vgen = new VagrantfileGenerateAction(file, configuration)
 			vgen.run
-
-			factory = new StarterFactory
-			reg = IStarterRegistry.instance
 
 			vagrantManager.init
 
@@ -120,6 +119,32 @@ class StarterStarter {
 		toStop.stop
 	}
 
+	private IStarter serverControllerStarter;
+
+	public def startServerController(String serverController) {
+		val config = createServerControllerConfiguration(serverController)
+
+		if (!vagrantIsRunning) {
+			// start vagrant
+			startVagrantFromConfig(config)
+		}
+
+		// create shim starter		
+		for (c : ne.controllers) {
+			System.out.println(c.name)
+			var job = new Job("Shim Server") {
+				override protected run(IProgressMonitor monitor) {
+					serverControllerStarter = factory.createShimStarter(config, c, monitor) // config controller monitor
+					serverControllerStarter.syncStart
+
+					return Status.OK_STATUS
+				}
+			}
+			job.schedule
+			Thread.sleep(2000)
+		}
+	}
+
 	private HashMap<LaunchConfigurationModel, IStarter> configToStarter;
 
 	private IStarter backendStarter;
@@ -131,6 +156,11 @@ class StarterStarter {
 	public def registerControllerFromConfig(LaunchConfigurationModel launchConfigurationModel) {
 
 		val configuration = createLaunchConfiguration(launchConfigurationModel)
+
+		if (!vagrantIsRunning) {
+			// start vagrant
+			startVagrantFromConfig(configuration)
+		}
 
 		// Iterate controllers in the network model and start apps for them 
 		for (c : ne.controllers) {
@@ -237,6 +267,43 @@ class StarterStarter {
 		return null
 	}
 
+	private def ILaunchConfiguration createServerControllerConfiguration(String serverController) {
+		var m = DebugPlugin.getDefault().getLaunchManager();
+
+		for (ILaunchConfigurationType l : m.getLaunchConfigurationTypes()) {
+
+			if (l.getName().equals("NetIDE Controller Deployment")) {
+				try {
+
+					var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
+
+					var c = l.newInstance(null, serverController + UUID);
+					c.setAttribute("topologymodel", topoPath);
+
+					// used by shim starter
+					
+					c.setAttribute("controller_platform_target_c1", serverController);
+
+					c.setAttribute("controller_platform_c1", serverController);
+					
+					var appPath = "controller_data_c1_".concat(serverController)
+					var appPathOS = "";
+					c.setAttribute(appPath, appPathOS);
+
+					c.setAttribute("reprovision", false);
+					c.setAttribute("shutdown", true);
+
+					return c.doSave();
+
+				} catch (CoreException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
+		return null;
+	}
+
 	private def ILaunchConfiguration createLaunchConfiguration(LaunchConfigurationModel toStart) {
 
 		// format
@@ -259,27 +326,28 @@ class StarterStarter {
 
 			if (l.getName().equals("NetIDE Controller Deployment")) {
 				try {
+					if (toStart != null) {
+						var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
 
-					var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
+						var c = l.newInstance(null, toStart.getAppName() + toStart.getID());
+						c.setAttribute("topologymodel", topoPath);
+						c.setAttribute("controller_platform_c1", toStart.getPlatform());
 
-					var c = l.newInstance(null, toStart.getAppName() + toStart.getID());
-					c.setAttribute("topologymodel", topoPath);
-					c.setAttribute("controller_platform_c1", toStart.getPlatform());
+						if (toStart.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
+							c.setAttribute("controller_platform_source_c1", toStart.getClientController());
+							c.setAttribute("controller_platform_target_c1", toStart.getServerController());
+						}
 
-					if (toStart.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
-						c.setAttribute("controller_platform_source_c1", toStart.getClientController());
-						c.setAttribute("controller_platform_target_c1", toStart.getServerController());
+						var appPath = "controller_data_c1_".concat(toStart.getPlatform());
+						var appPathOS = new Path(toStart.getAppPath()).toOSString();
+
+						c.setAttribute(appPath, appPathOS);
+
+						c.setAttribute("reprovision", false);
+						c.setAttribute("shutdown", true);
+
+						return c.doSave();
 					}
-
-					var appPath = "controller_data_c1_".concat(toStart.getPlatform());
-					var appPathOS = new Path(toStart.getAppPath()).toOSString();
-
-					c.setAttribute(appPath, appPathOS);
-
-					c.setAttribute("reprovision", false);
-					c.setAttribute("shutdown", true);
-
-					return c.doSave();
 
 				} catch (CoreException e1) {
 					// TODO Auto-generated catch block
