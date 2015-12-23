@@ -2,7 +2,7 @@
 <feature
       id="eu.netide.feature"
       label="NetIDE"
-      version="0.2.0.qualifier"
+      version="0.3.0.qualifier"
       provider-name="NetIDE Project">
 
    <description>
@@ -224,9 +224,6 @@ any resulting litigation.
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.emf.ecore"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.sirius"/>
-      <import plugin="org.eclipse.sirius.common.acceleo.mtl"/>
-      <import plugin="org.eclipse.sirius.common.ui"/>
       <import plugin="org.eclipse.sirius.diagram.ui"/>
       <import plugin="org.eclipse.emf.edit"/>
       <import plugin="org.eclipse.core.resources"/>
@@ -256,6 +253,10 @@ any resulting litigation.
       <import plugin="eu.netide.newproject" version="0.2.0" match="greaterOrEqual"/>
       <import plugin="eu.netide.debug" version="0.2.0" match="greaterOrEqual"/>
       <import plugin="eu.netide.profile" version="0.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.tm.terminal.view.ui" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.tm.terminal.connector.local" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.tm.terminal.view.core" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.log4j"/>
    </requires>
 
    <plugin
@@ -337,6 +338,13 @@ any resulting litigation.
 
    <plugin
          id="eu.netide.profile"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.deployment.topologyimport"
          download-size="0"
          install-size="0"
          version="0.0.0"
