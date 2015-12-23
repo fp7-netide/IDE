@@ -40,6 +40,8 @@ public class NetIDEPreferences extends FieldEditorPreferencePage implements IWor
 	 */
 	override createFieldEditors() {
 		addField(new FileFieldEditor(NetIDEPreferenceConstants.VAGRANT_PATH, "&Vagrant path:", fieldEditorParent))
+		addField(new FileFieldEditor(NetIDEPreferenceConstants.SSH_PATH, "&SSH Path:", fieldEditorParent))
+		addField(new FileFieldEditor(NetIDEPreferenceConstants.SCP_PATH, "&SCP Path:", fieldEditorParent))
 		addField(new BooleanFieldEditor(NetIDEPreferenceConstants.PROXY_ON, "&Use Proxy:", fieldEditorParent))
 		addField(new StringFieldEditor(NetIDEPreferenceConstants.PROXY_ADDRESS, "Proxy Address:", fieldEditorParent))
 		addField(new BooleanFieldEditor(NetIDEPreferenceConstants.CUSTOM_BOX, "Use Custom Box:", fieldEditorParent))

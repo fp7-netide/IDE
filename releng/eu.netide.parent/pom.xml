@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.netide.parent</groupId>
 	<artifactId>eu.netide.parent</artifactId>
-	<version>0.2.0-SNAPSHOT</version>
+	<version>0.3.0-SNAPSHOT</version>
 	<name>eu.netide.parent</name>
 	<packaging>pom</packaging>
 
@@ -35,6 +35,7 @@
 		<module>../../plugins/eu.netide.configuration.utils</module>
 		<module>../../plugins/eu.netide.configuration.generator</module>
 		<module>../../plugins/eu.netide.configuration.launcher</module>
+		<module>../../plugins/eu.netide.deployment.topologyimport</module>
 		<module>
 			../../plugins/eu.netide.configuration.preferences
 		</module>

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Launcher
 Bundle-SymbolicName: eu.netide.configuration.launcher;singleton:=true
-Bundle-Version: 0.2.0.qualifier
+Bundle-Version: 0.3.0.qualifier
 Eclipse-BundleShape: dir
 Bundle-Activator: eu.netide.configuration.launcher.Activator
 Require-Bundle: org.eclipse.core.runtime,
@@ -18,7 +18,11 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.xtext.ui,
  org.eclipse.xtext.builder,
  eu.netide.configuration.utils;bundle-version="0.2.0",
- eu.netide.configuration.preferences;bundle-version="0.2.0"
+ eu.netide.configuration.preferences;bundle-version="0.2.0",
+ org.eclipse.tm.terminal.view.ui;bundle-version="4.0.0",
+ org.eclipse.tm.terminal.connector.local;bundle-version="4.0.0",
+ org.eclipse.tm.terminal.view.core;bundle-version="4.0.0",
+ eu.netide.deployment.topologyimport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: NetIDE

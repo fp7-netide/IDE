@@ -28,12 +28,14 @@
       </launchConfigurationTypeImage>
    </extension>
    <extension
-         point="org.eclipse.ui.console.consoleFactories">
-      <consoleFactory
-            class="eu.netide.configuration.launcher.console.NetIDEConsoleFactory"
-            icon="icons/netide.png"
-            label="NetIDE Console">
-      </consoleFactory>
+         point="org.eclipse.ui.views">
+      <view
+            category="eu.netide.views"
+            class="eu.netide.configuration.launcher.dummygui.DummyGUI"
+            id="eu.netide.configuration.launcher.dummygui"
+            name="Runtime Management GUI"
+            restorable="true">
+      </view>
    </extension>
 
 </plugin>

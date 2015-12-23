@@ -17,12 +17,26 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	override initializeDefaultPreferences() {
 		var store = Activator.getDefault().getPreferenceStore()
-		store.setDefault(NetIDEPreferenceConstants.VAGRANT_PATH, 
+		store.setDefault(
+			NetIDEPreferenceConstants.VAGRANT_PATH,
 			switch Platform.getOS {
 				case Platform.OS_LINUX: "/usr/bin/vagrant"
 				case Platform.OS_WIN32: "C:\\Hashicorp\\Vagrant\\bin\\vagrant.exe"
 			}
 		)
+		store.setDefault(
+			NetIDEPreferenceConstants.SSH_PATH,
+			switch Platform.getOS {
+				case Platform.OS_LINUX: "/usr/bin/ssh"
+				case Platform.OS_MACOSX: "/usr/bin/ssh"
+			}
+		)
+		store.setDefault(
+			NetIDEPreferenceConstants.SCP_PATH,
+			switch Platform.getOS {
+				case Platform.OS_LINUX: "/usr/bin/scp"
+				case Platform.OS_MACOSX: "/usr/bin/scp"
+			}
+		)
 	}
-
 }
