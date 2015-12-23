@@ -30,6 +30,7 @@ if [ ! -d ~/openflowplugin ]; then
    ./client "bundle:install -s mvn:com.googlecode.json-simple/json-simple/1.1.1"
    ./client "bundle:install -s mvn:org.apache.commons/commons-lang3/3.3.2"
    ./client "bundle:install -s mvn:org.opendaylight.openflowplugin/pyretic-odl/0.0.4-Helium-SR1.1"
+   ./client "feature:install odl-restconf"
    sleep 10
    ./stop
 

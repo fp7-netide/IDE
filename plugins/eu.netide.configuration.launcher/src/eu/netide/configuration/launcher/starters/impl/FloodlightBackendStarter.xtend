@@ -8,12 +8,12 @@ import org.eclipse.core.runtime.IProgressMonitor
 
 class FloodlightBackendStarter extends ControllerStarter {
 
-	new(ILaunch launch, ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super("Floodlight Backend", launch, configuration, controller, monitor)
+	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
+		super("Floodlight Backend", configuration, controller, monitor)
 		name = String.format("%s (%s)", name, appPath.lastSegment)
 	}
 
 	override getCommandLine() {
-		return String.format("java -jar $HOME/floodlight/target/floodlight.jar").cmdLineArray
+		return String.format("java -jar $HOME/floodlight/target/floodlight.jar")
 	}
 }

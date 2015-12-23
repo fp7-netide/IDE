@@ -17,15 +17,16 @@ You'll also need at least Java 7.
 1. Download Eclipse Mars or Luna Modeling Tools at www.eclipse.org.
 2. Start Eclipse and open the Git Perspective.
 3. From the window menu, select `Help -> Install Modeling Components`. Select and install Sirius and Xtext.
-4. Clone or add this repository and import all projects from the "plugins"-folder into your workspace. To do so, enter to the folder "Working Directory", right-click on the folder "plugins" and select "Import Projects". Follow the steps in the wizard.
-5. Open the Plug-In Development perspective and open eu.netide.configuration/model/Topology.genmodel
-6. Right-click the root element in the tree view and select `Generate All`
-7. For both projects "eu.netide.parameters.language" and "eu.netide.sysreq", do the following:
-  1. Find the \*.mwe2 file in the source folder.
-  2. Right-click on the mwe2 file and select "Run As -> MWE2 Workflow". A dialog box should pop up informing you about errors in the project. Click "Proceed".
-  3. A console view in the bottom region will appear and ask you to install the Antlr parser. Type "y" into the console and hit Return.
-7. Right-click the project eu.netide.configuration and select `Run As -> Eclipse Application`
-8. If you want to develop your Python-based controllers in Eclipse as well, you can install the [PyDev](http://www.pydev.org/) plug-in for Eclipse from the Eclipse Marketplace.
+4. Go to `Help -> Eclipse Marketplace...`, search for and install TM Terminal.
+5. Clone or add this repository and import all projects from the "plugins"-folder into your workspace. To do so, enter to the folder "Working Directory", right-click on the folder "plugins" and select "Import Projects". Follow the steps in the wizard.
+6. Open the Plug-In Development perspective and open eu.netide.configuration/model/Topology.genmodel
+7. Right-click the root element in the tree view and select `Generate All`
+8. For both projects "eu.netide.parameters.language" and "eu.netide.sysreq", do the following:
+    1. Find the \*.mwe2 file in the source folder.
+    2. Right-click on the mwe2 file and select "Run As -> MWE2 Workflow". A dialog box should pop up informing you about errors in the project. Click "Proceed".
+    3. A console view in the bottom region will appear and ask you to install the Antlr parser. Type "y" into the console and hit Return.
+9. Right-click the project eu.netide.configuration and select `Run As -> Eclipse Application`
+10. If you want to develop your Python-based controllers in Eclipse as well, you can install the [PyDev](http://www.pydev.org/) plug-in for Eclipse from the Eclipse Marketplace.
 
 
 

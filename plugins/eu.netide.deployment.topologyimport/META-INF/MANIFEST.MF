@@ -2,14 +2,18 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Topologyimport
 Bundle-SymbolicName: eu.netide.deployment.topologyimport
-Bundle-Version: 0.2
+Bundle-Version: 0.2.0.qualifier
 Bundle-Activator: eu.netide.deployment.topologyimport.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  eu.netide.configuration,
  org.eclipse.emf.edit,
  org.eclipse.emf.ecore.xmi,
- org.apache.log4j
+ org.apache.log4j,
+ com.google.guava,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtend.lib,
+ org.eclipse.xtend.lib.macro
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: eu.netide.deployment.topologyimport

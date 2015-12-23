@@ -11,8 +11,8 @@ class MininetStarter extends Starter {
 
 	private NetworkEnvironment ne
 
-	new(ILaunch launch, ILaunchConfiguration configuration, IProgressMonitor monitor) {
-		super("Mininet", launch, configuration, monitor)
+	new(ILaunchConfiguration configuration, IProgressMonitor monitor) {
+		super("Mininet", configuration, monitor)
 
 		var path = configuration.attributes.get("topologymodel") as String
 		var resset = new ResourceSetImpl
@@ -25,7 +25,7 @@ class MininetStarter extends Starter {
 		var mnpath = "sudo python ~/mn-configs/" +
 			if(ne.name != null && ne.name != "") ne.name + "_run.py" else "NetworkEnvironment" + "_run.py"
 
-		return mnpath.cmdLineArray
+		return mnpath
 	}
 
 }
