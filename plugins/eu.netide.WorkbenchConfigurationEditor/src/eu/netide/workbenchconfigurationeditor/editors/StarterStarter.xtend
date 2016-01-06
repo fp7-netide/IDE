@@ -137,7 +137,7 @@ class StarterStarter {
 
 		// create shim starter		
 		for (c : ne.controllers) {
-			System.out.println(c.name)
+
 			var job = new Job("Shim Server") {
 				override protected run(IProgressMonitor monitor) {
 					serverControllerStarter = factory.createShimStarter(config, c, monitor) // config controller monitor
@@ -218,7 +218,7 @@ class StarterStarter {
 
 				};
 				jobSingle.schedule();
-				Thread.sleep(2000)
+				//Thread.sleep(2000)
 
 			}
 
@@ -242,7 +242,7 @@ class StarterStarter {
 			};
 			jobMin.schedule();
 
-			Thread.sleep(2000)
+			//Thread.sleep(2000)
 
 		}
 
