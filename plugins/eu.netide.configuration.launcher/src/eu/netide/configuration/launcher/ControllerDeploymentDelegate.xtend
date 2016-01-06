@@ -86,7 +86,10 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		}
 		
 		if (isSsh) {
+			sshManager.copyApps
+			sshManager.copyTopo
 			sshManager.provision
+			
 		}
 		
 
@@ -136,7 +139,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		// Start Mininet. 
 		val mnstarter = factory.createMininetStarter(configuration, monitor)
 		reg.register(mnstarter.safeName, mnstarter)
-		mnstarter.syncStart
+//		mnstarter.syncStart
 
 		Display.getDefault().asyncExec(
 			new Runnable() {
@@ -144,8 +147,8 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 				override run() {
 					var dummygui = PlatformUI.getWorkbench().activeWorkbenchWindow.activePage.showView(
 						DummyGUI.ID) as DummyGUI
-					if (isVagrant) dummygui.vagrantManager = vagrantManager
-					if (isSsh) dummygui.sshManager = sshManager
+					if (isVagrant) dummygui.manager = vagrantManager
+					if (isSsh) dummygui.manager = sshManager
 					dummygui.mininet = mnstarter
 				}
 			})

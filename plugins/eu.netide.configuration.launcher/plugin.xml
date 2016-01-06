@@ -33,7 +33,7 @@
             category="eu.netide.views"
             class="eu.netide.configuration.launcher.dummygui.DummyGUI"
             id="eu.netide.configuration.launcher.dummygui"
-            name="Dummy Control GUI"
+            name="Runtime Management GUI"
             restorable="true">
       </view>
    </extension>

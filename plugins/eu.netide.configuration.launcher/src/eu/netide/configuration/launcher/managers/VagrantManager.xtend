@@ -28,6 +28,8 @@ import org.eclipse.debug.core.ILaunchConfiguration
 import java.util.Date
 import org.eclipse.ui.internal.console.ConsoleManager
 import org.eclipse.debug.internal.core.LaunchManager
+import org.eclipse.core.resources.IProject
+import org.eclipse.xtend.lib.annotations.Accessors
 
 class VagrantManager implements IManager {
 
@@ -38,15 +40,17 @@ class VagrantManager implements IManager {
 	private File workingDirectory
 
 	private IProgressMonitor monitor
+	
+	@Accessors(PUBLIC_GETTER)
+	private IProject project
 
 	new(ILaunchConfiguration launchConfiguration, IProgressMonitor monitor) {
-		
+
 		this.launch = new Launch(launchConfiguration, "debug", null)
 		this.launch.setAttribute("org.eclipse.debug.core.capture_output", "true")
 		this.launch.setAttribute("org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING", "UTF-8")
-		this.launch.setAttribute("org.eclipse.debug.core.launch.timestamp", new Date().time+"")
+		this.launch.setAttribute("org.eclipse.debug.core.launch.timestamp", new Date().time + "")
 		DebugPlugin.getDefault().getLaunchManager().addLaunch(this.launch)
-		
 
 		this.monitor = monitor
 
@@ -57,6 +61,9 @@ class VagrantManager implements IManager {
 		var path = launch.launchConfiguration.attributes.get("topologymodel") as String
 
 		this.workingDirectory = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
+		
+		var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
+		this.project = topofile.project
 	}
 
 	def up() {
@@ -64,7 +71,7 @@ class VagrantManager implements IManager {
 		startProcess(cmd)
 	}
 
-	def asyncUp() {
+	override asyncUp() {
 		var job = new Job("Vagrant Up") {
 			override run(IProgressMonitor monitor) {
 				up()
@@ -89,12 +96,12 @@ class VagrantManager implements IManager {
 		command.schedule
 	}
 
-	def provision() {
+	override provision() {
 		var cmd = newArrayList(vagrantpath, "provision")
 		startProcess(cmd)
 	}
 
-	def asyncProvision() {
+	override asyncProvision() {
 		var command = new Job("Vagrant Provision") {
 			override run(IProgressMonitor monitor) {
 				provision()
@@ -105,7 +112,7 @@ class VagrantManager implements IManager {
 	}
 
 	def init() {
-		
+
 		var cmd = newArrayList(vagrantpath, "init", "ubuntu/trusty32")
 		startProcess(cmd)
 	}
@@ -121,7 +128,6 @@ class VagrantManager implements IManager {
 	}
 
 	override getRunningSessions() {
-
 		var p = DebugPlugin.exec(newArrayList(vagrantpath, "ssh", "-c", "screen -list"), workingDirectory, null)
 		var br = new BufferedReader(new InputStreamReader(p.getInputStream()))
 		p.waitFor
@@ -138,8 +144,22 @@ class VagrantManager implements IManager {
 		}
 		p.waitFor
 		return output
-
 	}
+	
+	override execWithReturn(String cmd) {
+		var p = DebugPlugin.exec(newArrayList(vagrantpath, "ssh", "-c", cmd), workingDirectory, null)
+		var br = new BufferedReader(new InputStreamReader(p.getInputStream()))
+		p.waitFor
+		var output = ""
+
+		var l = br.readLine
+		while (l != null) {
+			output = l + "\n"
+		}
+		p.waitFor
+		return output
+	}
+
 
 	def startProcess(ArrayList<String> cmdline) {
 
@@ -161,7 +181,7 @@ class VagrantManager implements IManager {
 		programName = programName.toLowerCase();
 		processAttributes.put(IProcess.ATTR_PROCESS_TYPE, programName)
 		processAttributes.put(IProcess.ATTR_PROCESS_LABEL, "Vagrant " + cmdline.get(1))
-		
+
 		if (p != null) {
 			monitor.beginTask("Vagrant up", 0);
 			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
@@ -232,6 +252,18 @@ class VagrantManager implements IManager {
 		]
 
 		return buf.toString
+	}
+
+	override exec(String cmd) {
+		startProcess(newArrayList(
+			vagrantpath,
+			"ssh",
+			"-c",
+			cmd,
+			"--",
+			"-tt"
+			
+		))
 	}
 
 }
