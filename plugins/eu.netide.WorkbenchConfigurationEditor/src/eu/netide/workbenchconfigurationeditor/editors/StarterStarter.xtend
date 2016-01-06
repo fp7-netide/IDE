@@ -121,11 +121,15 @@ class StarterStarter {
 
 	public def haltVagrant() {
 		vagrantIsRunning = false;
+		stopMininet
+		vagrantManager.asyncHalt()
+
+	}
+
+	public def stopMininet() {
 		min = false;
 		if (mnstarter != null)
 			mnstarter.stop
-		vagrantManager.asyncHalt()
-
 	}
 
 	def reattachStarter(LaunchConfigurationModel config) {
@@ -143,6 +147,32 @@ class StarterStarter {
 	public def stopServerController() {
 		if (serverControllerStarter != null) {
 			serverControllerStarter.stop
+		}
+	}
+
+	public def startMininet() {
+		if (!min) {
+			min = true
+
+			var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
+
+			var c = configType.newInstance(null, "mininet" + UUID);
+			c.setAttribute("topologymodel", topoPath);
+			val configuration = c.doSave
+
+			var jobMin = new Job("min Starter") {
+
+				override protected run(IProgressMonitor monitor) {
+					mnstarter = factory.createMininetStarter(configuration, monitor)
+
+					// Start Mininet. 
+					reg.register(mnstarter.safeName, mnstarter)
+					mnstarter.syncStart
+					return Status.OK_STATUS
+				}
+
+			};
+			jobMin.schedule();
 		}
 	}
 
