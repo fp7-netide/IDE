@@ -9,7 +9,9 @@ import eu.netide.configuration.launcher.starters.IStarterRegistry
 import eu.netide.configuration.launcher.starters.StarterFactory
 import eu.netide.configuration.utils.NetIDE
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel
+import java.util.ArrayList
 import java.util.HashMap
+import java.util.UUID
 import org.eclipse.core.resources.IResource
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.CoreException
@@ -22,7 +24,6 @@ import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunchConfigurationType
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import java.util.UUID
 
 class StarterStarter {
 
@@ -46,9 +47,19 @@ class StarterStarter {
 		return instance;
 	}
 
+	public def createVagrantFile(ArrayList<LaunchConfigurationModel> modelList) {
+		val configuration = createVagrantConfiguration(modelList)
+		var vgen = new VagrantfileGenerateAction(file, configuration)
+		vgen.run
+	}
+
+	ILaunchConfigurationType configType;
+	ArrayList<String> controllerName;
+
 	private new(String topologyPath) {
 
 		generateConfiguration(topologyPath)
+		configType = getLaunchConfigType
 
 		factory = new StarterFactory
 		reg = IStarterRegistry.instance
@@ -56,6 +67,10 @@ class StarterStarter {
 		var resset = new ResourceSetImpl
 		var res = resset.getResource(URI.createURI(topologyPath), true)
 		ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
+		controllerName = new ArrayList<String>
+
+		for (c : ne.controllers)
+			controllerName.add(c.name)
 
 		file = topologyPath.IFile
 		vagrantIsRunning = false;
@@ -88,8 +103,6 @@ class StarterStarter {
 			job.schedule();
 
 			Thread.sleep(2000)
-			var vgen = new VagrantfileGenerateAction(file, configuration)
-			vgen.run
 
 			vagrantManager.init
 
@@ -102,25 +115,33 @@ class StarterStarter {
 
 	}
 
+	public def boolean startVagrant() {
+		return startVagrantFromConfig(createServerControllerConfiguration(NetIDE.CONTROLLER_ENGINE))
+	}
+
 	public def haltVagrant() {
 		vagrantIsRunning = false;
 		min = false;
+		if (mnstarter != null)
+			mnstarter.stop
 		vagrantManager.asyncHalt()
 
 	}
 
 	def reattachStarter(LaunchConfigurationModel config) {
 		var re = configToStarter.get(config)
-		re.reattach
+		for (r : re)
+			r.reattach
 	}
 
 	public def stopStarter(LaunchConfigurationModel config) {
-		var toStop = configToStarter.get(config)
-		toStop.stop
+		var toStopList = configToStarter.get(config)
+		for (toStop : toStopList)
+			toStop.stop
 	}
-	
-	public def stopServerController(){
-		if(serverControllerStarter != null){
+
+	public def stopServerController() {
+		if (serverControllerStarter != null) {
 			serverControllerStarter.stop
 		}
 	}
@@ -151,7 +172,7 @@ class StarterStarter {
 		}
 	}
 
-	private HashMap<LaunchConfigurationModel, IStarter> configToStarter;
+	private HashMap<LaunchConfigurationModel, ArrayList<IStarter>> configToStarter;
 
 	private IStarter backendStarter;
 	private IStarter shimStarter;
@@ -162,6 +183,12 @@ class StarterStarter {
 	public def registerControllerFromConfig(LaunchConfigurationModel launchConfigurationModel) {
 
 		val configuration = createLaunchConfiguration(launchConfigurationModel)
+		var tmpstarterList = configToStarter.get(configuration)
+
+		if (tmpstarterList == null) {
+			tmpstarterList = new ArrayList<IStarter>
+		}
+		val starterList = tmpstarterList
 
 		if (!vagrantIsRunning) {
 			// start vagrant
@@ -178,6 +205,8 @@ class StarterStarter {
 
 					override protected run(IProgressMonitor monitor) {
 						backendStarter = factory.createBackendStarter(configuration, c, monitor)
+						starterList.add(backendStarter)
+						configToStarter.put(launchConfigurationModel, starterList)
 						reg.register(backendStarter.safeName, backendStarter)
 						backendStarter.syncStart
 						return Status.OK_STATUS
@@ -192,7 +221,8 @@ class StarterStarter {
 
 					override protected run(IProgressMonitor monitor) {
 						shimStarter = factory.createShimStarter(configuration, c, monitor)
-
+						starterList.add(shimStarter)
+						configToStarter.put(launchConfigurationModel, starterList)
 						reg.register(shimStarter.safeName, shimStarter)
 						shimStarter.syncStart
 
@@ -211,15 +241,15 @@ class StarterStarter {
 					override protected run(IProgressMonitor monitor) {
 						starter = factory.createSingleControllerStarter(configuration, c, monitor)
 						reg.register(starter.safeName, starter)
-						configToStarter.put(launchConfigurationModel, starter)
+						starterList.add(starter)
+						configToStarter.put(launchConfigurationModel, starterList)
 						starter.syncStart
 						return Status.OK_STATUS
 					}
 
 				};
 				jobSingle.schedule();
-				//Thread.sleep(2000)
-
+			// Thread.sleep(2000)
 			}
 
 		}
@@ -228,7 +258,7 @@ class StarterStarter {
 
 		if (!min) {
 			min = true
-			var jobMin = new Job("minn Starter") {
+			var jobMin = new Job("min Starter") {
 
 				override protected run(IProgressMonitor monitor) {
 					mnstarter = factory.createMininetStarter(configuration, monitor)
@@ -242,8 +272,7 @@ class StarterStarter {
 			};
 			jobMin.schedule();
 
-			//Thread.sleep(2000)
-
+		// Thread.sleep(2000)
 		}
 
 	}
@@ -274,38 +303,71 @@ class StarterStarter {
 	}
 
 	private def ILaunchConfiguration createServerControllerConfiguration(String serverController) {
+
+		try {
+
+			var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
+
+			var c = configType.newInstance(null, serverController + UUID);
+			c.setAttribute("topologymodel", topoPath);
+
+			for (name : controllerName) {
+				// used by shim starter
+				c.setAttribute("controller_platform_target_".concat(name), serverController);
+
+				c.setAttribute("controller_platform_".concat(name), serverController);
+
+				var appPath = "controller_data_".concat(name).concat("_".concat(serverController))
+				var appPathOS = "";
+				c.setAttribute(appPath, appPathOS);
+			}
+			c.setAttribute("reprovision", false);
+			c.setAttribute("shutdown", true);
+
+			return c.doSave();
+
+		} catch (CoreException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+
+		}
+		return null;
+	}
+
+	private def ILaunchConfiguration createVagrantConfiguration(ArrayList<LaunchConfigurationModel> modelList) {
+		var c = configType.newInstance(null, "vagrant" + UUID)
+		var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString()
+		c.setAttribute("topologymodel", topoPath)
+		for (model : modelList) {
+			for (name : controllerName) {
+				c.setAttribute("controller_platform_".concat(name), model.getPlatform());
+
+				if (model.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
+
+					c.setAttribute("controller_platform_source_".concat(name), model.getClientController());
+					c.setAttribute("controller_platform_target_".concat(name), model.getServerController());
+
+				}
+
+				var appPath = "controller_data_".concat(name).concat("_".concat(model.getPlatform()));
+				var appPathOS = new Path(model.getAppPath()).toOSString();
+
+				c.setAttribute(appPath, appPathOS);
+			}
+		}
+		return c.doSave
+	}
+
+	private def ILaunchConfigurationType getLaunchConfigType() {
 		var m = DebugPlugin.getDefault().getLaunchManager();
 
 		for (ILaunchConfigurationType l : m.getLaunchConfigurationTypes()) {
 
 			if (l.getName().equals("NetIDE Controller Deployment")) {
-				try {
 
-					var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
-
-					var c = l.newInstance(null, serverController + UUID);
-					c.setAttribute("topologymodel", topoPath);
-
-					// used by shim starter
-					
-					c.setAttribute("controller_platform_target_c1", serverController);
-
-					c.setAttribute("controller_platform_c1", serverController);
-					
-					var appPath = "controller_data_c1_".concat(serverController)
-					var appPathOS = "";
-					c.setAttribute(appPath, appPathOS);
-
-					c.setAttribute("reprovision", false);
-					c.setAttribute("shutdown", true);
-
-					return c.doSave();
-
-				} catch (CoreException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				return l;
 			}
+
 		}
 		return null;
 	}
@@ -326,40 +388,38 @@ class StarterStarter {
 		// [controller_data_c1_Ryu=platform:/resource/UC1/app/simple_switch.py,
 		// controller_platform_c1=Ryu, reprovision=false, shutdown=true,
 		// topologymodel=platform:/resource/UC1/UC1.topology]
-		var m = DebugPlugin.getDefault().getLaunchManager();
+		try {
+			if (toStart != null) {
+				var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
 
-		for (ILaunchConfigurationType l : m.getLaunchConfigurationTypes()) {
+				var c = configType.newInstance(null, toStart.getAppName() + toStart.getID());
+				c.setAttribute("topologymodel", topoPath);
 
-			if (l.getName().equals("NetIDE Controller Deployment")) {
-				try {
-					if (toStart != null) {
-						var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
+				for (name : controllerName) {
+					c.setAttribute("controller_platform_".concat(name), toStart.getPlatform());
 
-						var c = l.newInstance(null, toStart.getAppName() + toStart.getID());
-						c.setAttribute("topologymodel", topoPath);
-						c.setAttribute("controller_platform_c1", toStart.getPlatform());
+					if (toStart.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
 
-						if (toStart.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
-							c.setAttribute("controller_platform_source_c1", toStart.getClientController());
-							c.setAttribute("controller_platform_target_c1", toStart.getServerController());
-						}
+						c.setAttribute("controller_platform_source_".concat(name), toStart.getClientController());
+						c.setAttribute("controller_platform_target_".concat(name), toStart.getServerController());
 
-						var appPath = "controller_data_c1_".concat(toStart.getPlatform());
-						var appPathOS = new Path(toStart.getAppPath()).toOSString();
-
-						c.setAttribute(appPath, appPathOS);
-
-						c.setAttribute("reprovision", false);
-						c.setAttribute("shutdown", true);
-
-						return c.doSave();
 					}
 
-				} catch (CoreException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					var appPath = "controller_data_".concat(name).concat("_".concat(toStart.getPlatform()));
+					var appPathOS = new Path(toStart.getAppPath()).toOSString();
+
+					c.setAttribute(appPath, appPathOS);
 				}
+
+				c.setAttribute("reprovision", false);
+				c.setAttribute("shutdown", true);
+
+				return c.doSave();
 			}
+
+		} catch (CoreException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 
 		return null;

@@ -53,7 +53,7 @@ public class WbConfigurationEditor extends EditorPart {
 		file = fileInput.getFile();
 		doc = XmlHelper.getDocFromFile(file);
 		modelList = XmlHelper.parseFileToModel(file, doc);
-
+		StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).createVagrantFile(modelList);
 		setSite(site);
 		setInput(input);
 
@@ -132,7 +132,11 @@ public class WbConfigurationEditor extends EditorPart {
 		lblServerControllerStatus.setText("Status: Offline");
 		
 				Composite vagrantButtons = new Composite(startAppComposite, SWT.BORDER);
-				vagrantButtons.setLayout(new GridLayout(1, false));
+				vagrantButtons.setLayout(new GridLayout(2, false));
+								
+								btnVagrantUp = new Button(vagrantButtons, SWT.NONE);
+
+								btnVagrantUp.setText("Vagrant Up");
 						
 								btnHaltTest = new Button(vagrantButtons, SWT.NONE);
 								btnHaltTest.setText("Vagrant Halt");
@@ -225,6 +229,7 @@ public class WbConfigurationEditor extends EditorPart {
 	private CLabel lblServerControllerStatus;
 	private Button btnStopServerController;
 	private boolean serverControllerIsRunning;
+	private Button btnVagrantUp;
 
 	private void addButtonListener() {
 		
@@ -239,6 +244,13 @@ public class WbConfigurationEditor extends EditorPart {
 					serverControllerIsRunning = true;
 					selectServerCombo.setEnabled(false);
 				}
+			}
+		});
+		
+		btnVagrantUp.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startVagrant();
 			}
 		});
 
