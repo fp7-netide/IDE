@@ -200,7 +200,7 @@ class StarterStarter {
 			var job = new Job("Shim Server") {
 				override protected run(IProgressMonitor monitor) {
 					serverControllerStarter = factory.createShimStarter(config, c, monitor) // config controller monitor
-					serverControllerStarter.syncStart
+					serverControllerStarter.asyncStart
 
 					return Status.OK_STATUS
 				}
