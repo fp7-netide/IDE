@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -15,6 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -35,9 +38,10 @@ import org.eclipse.swt.custom.CLabel;
  * @author Jan-Niclas Struewer
  *
  */
-public class WbConfigurationEditor extends EditorPart {
+public class WbConfigurationEditor extends EditorPart implements IJobChangeListener {
 
 	public static final String ID = "workbenchconfigurationeditor.editors.WbConfigurationEditor"; //$NON-NLS-1$
+	private WbConfigurationEditor instanceWb = this;
 
 	public WbConfigurationEditor() {
 
@@ -260,7 +264,7 @@ public class WbConfigurationEditor extends EditorPart {
 	private Button btnVagrantUp;
 	private Composite composite;
 	private Button btnMininetOff;
-	private Label vagrantStatusLabel;
+	protected Label vagrantStatusLabel;
 	private Label mininetStatusLable;
 
 	private void addButtonListener() {
@@ -298,7 +302,9 @@ public class WbConfigurationEditor extends EditorPart {
 		btnVagrantUp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startVagrant();
+				vagrantStatusLabel.setText("starting");
+				StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startVagrant(instanceWb);
+
 			}
 		});
 
@@ -358,11 +364,13 @@ public class WbConfigurationEditor extends EditorPart {
 		btnHaltTest.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
+				
 				StarterStarter.getStarter("").haltVagrant();
+				vagrantStatusLabel.setText("Status: offline");
 				for (int i = 0; i < table.getItemCount(); i++) {
 					table.getItem(i).setText(1, "offline");
-					//TODO: check for unknown side effects StarterStarter.getStarter("").stopStarter(tableConfigMap.get(table.getItem(i)));
+					// TODO: check for unknown side effects
+					// StarterStarter.getStarter("").stopStarter(tableConfigMap.get(table.getItem(i)));
 				}
 
 			}
@@ -380,6 +388,7 @@ public class WbConfigurationEditor extends EditorPart {
 						startApp(toStart);
 					}
 				}
+				setVagrantLableReady();
 			}
 		});
 
@@ -418,6 +427,10 @@ public class WbConfigurationEditor extends EditorPart {
 		});
 	}
 
+	private void setVagrantLableReady() {
+		vagrantStatusLabel.setText("Status: running");
+	}
+
 	private void startApp(final LaunchConfigurationModel toStart) {
 
 		final StarterStarter s = StarterStarter.getStarter(LaunchConfigurationModel.getTopology());
@@ -453,5 +466,44 @@ public class WbConfigurationEditor extends EditorPart {
 	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
+	}
+
+	@Override
+	public void aboutToRun(IJobChangeEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void awake(IJobChangeEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void done(IJobChangeEvent event) {
+		Display.getDefault().syncExec(new Runnable() {
+		    public void run() {
+		        setVagrantLableReady();
+		    }
+		});
+	}
+
+	@Override
+	public void running(IJobChangeEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void scheduled(IJobChangeEvent event) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void sleeping(IJobChangeEvent event) {
+		// TODO Auto-generated method stub
+
 	}
 }

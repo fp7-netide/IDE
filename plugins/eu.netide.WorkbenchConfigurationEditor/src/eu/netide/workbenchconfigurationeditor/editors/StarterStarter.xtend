@@ -24,6 +24,7 @@ import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunchConfigurationType
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.core.runtime.jobs.IJobChangeListener
 
 class StarterStarter {
 
@@ -86,27 +87,30 @@ class StarterStarter {
 	private VagrantManager vagrantManager;
 
 	private boolean vagrantIsRunning;
+	private Job vagrantJob
 
-	public def boolean startVagrantFromConfig(ILaunchConfiguration configuration) {
+	/**
+	 * listener may be null
+	 */
+	private def boolean startVagrantFromConfig(ILaunchConfiguration configuration, IJobChangeListener listener) {
 
 		if (!vagrantIsRunning) {
 
-			var job = new Job("VagrantManager") {
+			vagrantJob = new Job("VagrantManager") {
 
 				override protected run(IProgressMonitor monitor) {
 					vagrantManager = new VagrantManager(configuration, monitor)
+					vagrantManager.init
 
+					vagrantManager.up
 					return Status.OK_STATUS;
 				}
 
 			};
-			job.schedule();
+			vagrantJob.addJobChangeListener(listener);
+			vagrantJob.schedule
 
 			Thread.sleep(2000)
-
-			vagrantManager.init
-
-			vagrantManager.up
 
 			vagrantIsRunning = true;
 		}
@@ -116,7 +120,11 @@ class StarterStarter {
 	}
 
 	public def boolean startVagrant() {
-		return startVagrantFromConfig(createServerControllerConfiguration(NetIDE.CONTROLLER_ENGINE))
+		return startVagrantFromConfig(createServerControllerConfiguration(NetIDE.CONTROLLER_ENGINE), null)
+	}
+
+	public def boolean startVagrant(IJobChangeListener listener) {
+		return startVagrantFromConfig(createServerControllerConfiguration(NetIDE.CONTROLLER_ENGINE), listener)
 	}
 
 	public def haltVagrant() {
@@ -183,7 +191,7 @@ class StarterStarter {
 
 		if (!vagrantIsRunning) {
 			// start vagrant
-			startVagrantFromConfig(config)
+			startVagrantFromConfig(config, null)
 		}
 
 		// create shim starter		
@@ -222,7 +230,7 @@ class StarterStarter {
 
 		if (!vagrantIsRunning) {
 			// start vagrant
-			startVagrantFromConfig(configuration)
+			startVagrantFromConfig(configuration, null)
 		}
 
 		// Iterate controllers in the network model and start apps for them 
