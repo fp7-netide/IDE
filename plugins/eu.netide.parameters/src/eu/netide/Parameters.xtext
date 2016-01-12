@@ -1,0 +1,111 @@
+grammar eu.netide.Parameters with org.eclipse.xtext.common.Terminals
+
+generate parameters "http://www.netide.eu/Parameters"
+import "http://www.eclipse.org/xtext/common/JavaVMTypes" as types
+
+Model:
+	(parameters += Parameters)*;
+	
+Parameters:
+	'NetIDEproject' (name = STRING)?
+	'{'
+		(topology += Topology)
+		(app += App)*
+		(hardware += Hardware)?
+	'}'
+;
+
+Topology:
+	{Topology}
+	'topologyParam'
+	'{'
+		(hosts += Hosts)*
+		(switches += Switches)*
+		(links += Links)*
+	'}'
+;
+
+Hosts:
+	{Hosts}
+	'hostsParam'
+	'{'
+		'num' STRING
+		('ARP_config' STRING)?
+		('CPU_limited_host' STRING)?
+		'IP' STRING
+		'MAC' STRING
+	'}'
+;
+
+Switches:
+	{Switches}
+	'switchesParam'
+	'{'
+		'num' STRING
+		'switchType' STRING
+		'protocol' STRING
+		'protocol-version' STRING
+		('table-cache-time' STRING)?
+		('table-cache-size' STRING)?
+		'MAC' STRING
+	'}'
+;
+
+Links:
+	{Links}
+	'linksParam'
+	'{'
+		('sdevice' STRING)
+		('ddevice' STRING)
+		('bw' STRING)?
+		('delay' STRING)?
+		('loss' STRING)?
+		('max_queue_size' STRING)?
+	'}'
+;
+
+App:
+	{App}
+	'appParam' (name = STRING)?
+	'{'
+		'name' STRING
+		'parameters' STRING
+		(controller += Controller)?
+		(software += SoftwareList)*
+
+	'}'
+;
+
+ListAddresses:
+	{ListAddresses}
+	'address' STRING
+;
+
+Hardware:
+	{Hardware}
+	'hardwareParam' (name = STRING)?
+	'{'
+		('CPU' STRING)?
+		('RAM' STRING)?
+		('OS' STRING)?
+	'}'
+;
+
+SoftwareList:
+	{SoftwareList}
+	'software' (name = STRING)?
+	'{'
+		'name' STRING
+		'version' STRING
+	'}'
+;
+
+Controller:
+	{Controller}
+	'controller' (name = STRING)?
+	'{'
+		'name' STRING
+		'version' STRING
+	'}'
+;
+

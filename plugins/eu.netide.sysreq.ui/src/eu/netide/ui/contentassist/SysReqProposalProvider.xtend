@@ -6,8 +6,7 @@ package eu.netide.ui.contentassist
 import eu.netide.ui.contentassist.AbstractSysReqProposalProvider
 
 /**
- * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#content-assist
- * on how to customize the content assistant.
+ * see http://www.eclipse.org/Xtext/documentation.html#contentAssist on how to customize content assistant
  */
 class SysReqProposalProvider extends AbstractSysReqProposalProvider {
 }

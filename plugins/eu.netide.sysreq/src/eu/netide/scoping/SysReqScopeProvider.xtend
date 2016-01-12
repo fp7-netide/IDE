@@ -6,8 +6,8 @@ package eu.netide.scoping
 /**
  * This class contains custom scoping description.
  * 
- * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping
- * on how and when to use it.
+ * see : http://www.eclipse.org/Xtext/documentation.html#scoping
+ * on how and when to use it 
  *
  */
 class SysReqScopeProvider extends org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider {

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/eu.netide.parameters/src-gen" editDirectory="/eu.netide.parameters.edit/src"
+    editorDirectory="/eu.netide.parameters.editor/src" modelPluginID="eu.netide.parameters"
+    forceOverwrite="true" modelName="Parameters" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="eu.netide.parameters.edit"
+    editorPluginID="eu.netide.parameters.editor" runtimeVersion="2.10">
+  <genPackages prefix="Parameters" basePackage="eu.netide" disposableProviderFactory="true"
+      fileExtensions="param" ecorePackage="Parameters.ecore#/">
+    <genClasses ecoreClass="Parameters.ecore#//Model">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Parameters.ecore#//Model/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="Parameters.ecore#//Parameters">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Parameters.ecore#//Parameters/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Parameters.ecore#//Parameters/topology"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Parameters.ecore#//Parameters/app"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Parameters.ecore#//Parameters/hardware"/>
+    </genClasses>
+    <genClasses ecoreClass="Parameters.ecore#//Topology">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Parameters.ecore#//Topology/hosts"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Parameters.ecore#//Topology/switches"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Parameters.ecore#//Topology/links"/>
+    </genClasses>
+    <genClasses ecoreClass="Parameters.ecore#//Hosts"/>
+    <genClasses ecoreClass="Parameters.ecore#//Switches"/>
+    <genClasses ecoreClass="Parameters.ecore#//Links"/>
+    <genClasses ecoreClass="Parameters.ecore#//App">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Parameters.ecore#//App/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Parameters.ecore#//App/controller"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Parameters.ecore#//App/software"/>
+    </genClasses>
+    <genClasses ecoreClass="Parameters.ecore#//ListAddresses"/>
+    <genClasses ecoreClass="Parameters.ecore#//Hardware">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Parameters.ecore#//Hardware/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Parameters.ecore#//SoftwareList">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Parameters.ecore#//SoftwareList/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Parameters.ecore#//Controller">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Parameters.ecore#//Controller/name"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
