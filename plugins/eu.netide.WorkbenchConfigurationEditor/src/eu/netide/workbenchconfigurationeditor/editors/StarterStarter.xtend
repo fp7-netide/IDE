@@ -3,6 +3,7 @@ package eu.netide.workbenchconfigurationeditor.editors
 import Topology.NetworkEnvironment
 import eu.netide.configuration.generator.GenerateActionDelegate
 import eu.netide.configuration.generator.vagrantfile.VagrantfileGenerateAction
+import eu.netide.configuration.launcher.managers.SshManager
 import eu.netide.configuration.launcher.managers.VagrantManager
 import eu.netide.configuration.launcher.starters.IStarter
 import eu.netide.configuration.launcher.starters.IStarterRegistry
@@ -18,13 +19,13 @@ import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Status
+import org.eclipse.core.runtime.jobs.IJobChangeListener
 import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunchConfigurationType
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.core.runtime.jobs.IJobChangeListener
 
 class StarterStarter {
 
@@ -89,6 +90,10 @@ class StarterStarter {
 	private boolean vagrantIsRunning;
 	private Job vagrantJob
 
+	private SshManager sshManager
+	private Job sshJob
+	private boolean sshIsRunning
+
 	/**
 	 * listener may be null
 	 */
@@ -110,13 +115,50 @@ class StarterStarter {
 			vagrantJob.addJobChangeListener(listener);
 			vagrantJob.schedule
 
-			Thread.sleep(2000)
-
+			// Thread.sleep(2000)
 			vagrantIsRunning = true;
 		}
 // if(configuration.attributes.get("reprovision") as Boolean) vagrantManager.provision
 		return vagrantIsRunning;
 
+	}
+
+	public def startSSH(ArrayList<LaunchConfigurationModel> modelList) {
+		startSshWithConfig(createSshConfiguration(modelList), null)
+	}
+
+	public def startSSH(ArrayList<LaunchConfigurationModel> modelList, IJobChangeListener listener) {
+		startSshWithConfig(createSshConfiguration(modelList), listener)
+	}
+
+	private def startSshWithConfig(ILaunchConfiguration configuration, IJobChangeListener listener) {
+		if (!sshIsRunning) {
+			sshJob = new Job("SshManager") {
+				override protected run(IProgressMonitor monitor) {
+
+					sshManager = new SshManager(configuration, monitor)
+					sshManager.copyApps
+					sshManager.copyTopo
+					sshManager.provision
+					
+					//sshManager.asyncUp
+
+					return Status.OK_STATUS
+				}
+			}
+			sshJob.addJobChangeListener(listener)
+			sshJob.schedule
+
+			sshIsRunning = true
+
+		}
+
+	}
+	
+	public def stopSSH(){
+		if(sshIsRunning){
+			sshManager.asyncHalt
+		}
 	}
 
 	public def boolean startVagrant() {
@@ -189,7 +231,7 @@ class StarterStarter {
 	public def startServerController(String serverController) {
 		val config = createServerControllerConfiguration(serverController)
 
-		if (!vagrantIsRunning) {
+		if (!vagrantIsRunning && !sshIsRunning) {
 			// start vagrant
 			startVagrantFromConfig(config, null)
 		}
@@ -228,7 +270,7 @@ class StarterStarter {
 		}
 		val starterList = tmpstarterList
 
-		if (!vagrantIsRunning) {
+		if (!vagrantIsRunning && !sshIsRunning) {
 			// start vagrant
 			startVagrantFromConfig(configuration, null)
 		}
@@ -370,6 +412,38 @@ class StarterStarter {
 
 		}
 		return null;
+	}
+
+	private def ILaunchConfiguration createSshConfiguration(ArrayList<LaunchConfigurationModel> modelList) {
+
+//				this.sshHostname = launchConfiguration.getAttribute("target.hostname", "localhost")
+//		this.sshPort = launchConfiguration.getAttribute("target.ssh.port", "22")
+//		this.sshUsername = launchConfiguration.getAttribute("target.ssh.username", "")
+//		this.sshIdFile = launchConfiguration.getAttribute("target.ssh.idfile", "").absolutePath.toOSString
+//
+//		var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
+		var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
+
+		var c = configType.newInstance(null, "sshConfig" + UUID);
+		c.setAttribute("topologymodel", topoPath);
+		c.setAttribute("target.ssh.port", "22");
+
+		for (model : modelList) {
+
+			for (name : controllerName) {
+				c.setAttribute("controller_platform_".concat(name), model.getPlatform());
+				// used by shim starter
+				var appPath = "controller_data_".concat(name).concat("_".concat(model.getPlatform()));
+				var appPathOS = new Path(model.getAppPath()).toOSString();
+
+				c.setAttribute(appPath, appPathOS);
+			}
+		}
+		c.setAttribute("reprovision", false);
+		c.setAttribute("shutdown", true);
+
+		return c.doSave();
+
 	}
 
 	private def ILaunchConfiguration createVagrantConfiguration(ArrayList<LaunchConfigurationModel> modelList) {
