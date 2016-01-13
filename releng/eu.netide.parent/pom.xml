@@ -43,6 +43,10 @@
 		<module>../../plugins/eu.netide.profile</module>
 		<module>../../plugins/eu.netide.debug</module>
 		<module>../../plugins/eu.netide.perspective</module>
+		<module>../../plugins/eu.netide.sysreq</module>
+		<module>../../plugins/eu.netide.sysreq.sdk</module>
+		<module>../../plugins/eu.netide.sysreq.ui</module>
+		<module>../../plugins/eu.netide.sysreq.tests</module>
 		<module>../eu.netide.feature</module>
 		<module>../eu.netide.product</module>
 
@@ -123,6 +127,7 @@
 				</executions>
 			</plugin>
 		</plugins>
+
 		<pluginManagement>
 			<plugins>
 				<!-- TYCHO -->
@@ -140,6 +145,7 @@
 				<!-- enable source bundle generation -->
 				<!-- <plugin> <groupId>org.eclipse.tycho</groupId> <artifactId>tycho-surefire-plugin</artifactId> 
 					<version>${tycho-version}</version> </plugin> -->
+
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-p2-repository</artifactId>

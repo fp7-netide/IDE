@@ -350,4 +350,18 @@ any resulting litigation.
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="eu.netide.sysreq"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.sysreq.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
