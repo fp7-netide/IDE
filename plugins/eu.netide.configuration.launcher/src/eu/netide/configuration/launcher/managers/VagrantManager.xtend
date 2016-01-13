@@ -155,8 +155,8 @@ class VagrantManager implements IManager {
 		var l = br.readLine
 		while (l != null) {
 			output = l + "\n"
+			l = br.readLine
 		}
-		p.waitFor
 		return output
 	}
 
