@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
@@ -118,7 +119,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				lblSShStatus.setText("Status: waiting");
+				noSwitch = true;
 				StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startSSH(modelList, instanceWb);
+
 			}
 		});
 
@@ -127,6 +130,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			public void widgetSelected(SelectionEvent e) {
 				lblSShStatus.setText("Status: offline");
 				StarterStarter.getStarter("").stopSSH();
+				noSwitch = false;
+				for (Control c : tabFolder.getTabList()) {
+					c.setEnabled(true);
+
+				}
 			}
 		});
 
@@ -164,6 +172,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				vagrantStatusLabel.setText("starting");
+				noSwitch = true;
+				for (Control c : tabFolder.getTabList()) {
+					c.setEnabled(false);
+
+				}
 				StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startVagrant(instanceWb);
 
 			}
@@ -222,12 +235,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 
-		btnHaltTest.addSelectionListener(new SelectionAdapter() {
+		btnVagrantHalt.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
+				noSwitch = false;
 				StarterStarter.getStarter("").haltVagrant();
 				vagrantStatusLabel.setText("Status: offline");
+
 				for (int i = 0; i < table.getItemCount(); i++) {
 					table.getItem(i).setText(1, "offline");
 					// TODO: check for unknown side effects
@@ -286,7 +300,24 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 
 		});
+
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (noSwitch) {
+					tabFolder.setSelection(currentPageIndex);
+				} else {
+					int newIndex = tabFolder.indexOf((TabItem) e.item);
+					tabFolder.setSelection(newIndex);
+					currentPageIndex = newIndex;
+				}
+			}
+		});
+
 	}
+
+	private boolean noSwitch = false;
+	private int currentPageIndex;
 
 	private void setVagrantLableReady() {
 		vagrantStatusLabel.setText("Status: running");
@@ -346,44 +377,44 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnStopServerController = new Button(selectServerController, SWT.NONE);
 
 		btnStopServerController.setText("Stop Server Controller");
-		
+
 		tabFolder = new TabFolder(startAppComposite, SWT.NONE);
-		
+
 		sshTabItem = new TabItem(tabFolder, SWT.NONE);
 		sshTabItem.setText("SSH");
-		
-				sshComposite = new Composite(tabFolder, SWT.NONE);
-				sshTabItem.setControl(sshComposite);
-				sshComposite.setLayout(new GridLayout(1, false));
-				
-						lblSShStatus = new Label(sshComposite, SWT.NONE);
-						lblSShStatus.setBounds(0, 0, 59, 14);
-						lblSShStatus.setText("Status: Offline");
-						
-								btnSSH_Up = new Button(sshComposite, SWT.NONE);
-								
-										btnSSH_Up.setBounds(0, 0, 94, 28);
-										btnSSH_Up.setText("ssh Up");
-										
-												btnCloseSSH = new Button(sshComposite, SWT.NONE);
-												btnCloseSSH.setText("ssh Close");
-												
-												vagrantTabItem = new TabItem(tabFolder, SWT.NONE);
-												vagrantTabItem.setText("Vagrant");
-												
-														Composite vagrantButtons = new Composite(tabFolder, SWT.BORDER);
-														vagrantTabItem.setControl(vagrantButtons);
-														vagrantButtons.setLayout(new GridLayout(1, false));
-														
-																vagrantStatusLabel = new Label(vagrantButtons, SWT.NONE);
-																vagrantStatusLabel.setText("Status: Offline");
-																
-																		btnVagrantUp = new Button(vagrantButtons, SWT.NONE);
-																		
-																				btnVagrantUp.setText("Vagrant Up");
-																				
-																						btnHaltTest = new Button(vagrantButtons, SWT.NONE);
-																						btnHaltTest.setText("Vagrant Halt");
+
+		sshComposite = new Composite(tabFolder, SWT.NONE);
+		sshTabItem.setControl(sshComposite);
+		sshComposite.setLayout(new GridLayout(1, false));
+
+		lblSShStatus = new Label(sshComposite, SWT.NONE);
+		lblSShStatus.setBounds(0, 0, 59, 14);
+		lblSShStatus.setText("Status: Offline");
+
+		btnSSH_Up = new Button(sshComposite, SWT.NONE);
+
+		btnSSH_Up.setBounds(0, 0, 94, 28);
+		btnSSH_Up.setText("ssh Up");
+
+		btnCloseSSH = new Button(sshComposite, SWT.NONE);
+		btnCloseSSH.setText("ssh Close");
+
+		vagrantTabItem = new TabItem(tabFolder, SWT.NONE);
+		vagrantTabItem.setText("Vagrant");
+
+		Composite vagrantButtons = new Composite(tabFolder, SWT.BORDER);
+		vagrantTabItem.setControl(vagrantButtons);
+		vagrantButtons.setLayout(new GridLayout(1, false));
+
+		vagrantStatusLabel = new Label(vagrantButtons, SWT.NONE);
+		vagrantStatusLabel.setText("Status: Offline");
+
+		btnVagrantUp = new Button(vagrantButtons, SWT.NONE);
+
+		btnVagrantUp.setText("Vagrant Up");
+
+		btnVagrantHalt = new Button(vagrantButtons, SWT.NONE);
+		btnVagrantHalt.setText("Vagrant Halt");
 		new Label(startAppComposite, SWT.NONE);
 
 		table = new Table(startAppComposite, SWT.BORDER | SWT.FULL_SELECTION);
@@ -460,6 +491,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnRemoveTest.setText("Remove Test");
 		new Label(startAppComposite, SWT.NONE);
 		new Label(startAppComposite, SWT.NONE);
+		
+		currentPageIndex = tabFolder.getSelectionIndex();
 	}
 
 	@Override
@@ -507,8 +540,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					setVagrantLableReady();
 				}
 			});
-		}
-		else if(event.getJob().getName().equals("SshManager")){
+		} else if (event.getJob().getName().equals("SshManager")) {
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
 					lblSShStatus.setText("Status: running");
@@ -545,7 +577,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Label mininetStatusLable;
 	private Composite sshComposite;
 	private Button startBTN;
-	private Button btnHaltTest;
+	private Button btnVagrantHalt;
 	private Button btnReload;
 	private Button btnReattach;
 	private Button btnAddTest;
