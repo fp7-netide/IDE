@@ -26,6 +26,9 @@ import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunchConfigurationType
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import eu.netide.configuration.launcher.starters.backends.SshBackend
+import eu.netide.configuration.launcher.starters.backends.Backend
+import eu.netide.configuration.launcher.starters.backends.VagrantBackend
 
 class StarterStarter {
 
@@ -63,7 +66,7 @@ class StarterStarter {
 		generateConfiguration(topologyPath)
 		configType = getLaunchConfigType
 
-		factory = new StarterFactory
+		factory = new StarterFactory()
 		reg = IStarterRegistry.instance
 
 		var resset = new ResourceSetImpl
@@ -94,12 +97,15 @@ class StarterStarter {
 	private Job sshJob
 	private boolean sshIsRunning
 
+	private Backend backend;
+
 	/**
 	 * listener may be null
 	 */
 	private def boolean startVagrantFromConfig(ILaunchConfiguration configuration, IJobChangeListener listener) {
 
 		if (!vagrantIsRunning) {
+			backend = new VagrantBackend
 
 			vagrantJob = new Job("VagrantManager") {
 
@@ -133,16 +139,17 @@ class StarterStarter {
 
 	private def startSshWithConfig(ILaunchConfiguration configuration, IJobChangeListener listener) {
 		if (!sshIsRunning) {
+
 			sshJob = new Job("SshManager") {
 				override protected run(IProgressMonitor monitor) {
-
+					backend = new SshBackend("localhost", 2222, "vagrant", "/Users/janniclas/.ssh/id_rsa")
 					sshManager = new SshManager(configuration, monitor)
 					sshManager.copyApps
 					sshManager.copyTopo
-					sshManager.provision
-					
-					//sshManager.asyncUp
 
+					// TODO: extra button 
+					// sshManager.provision
+					// TODO: add are u sure option
 					return Status.OK_STATUS
 				}
 			}
@@ -154,9 +161,9 @@ class StarterStarter {
 		}
 
 	}
-	
-	public def stopSSH(){
-		if(sshIsRunning){
+
+	public def stopSSH() {
+		if (sshIsRunning) {
 			sshManager.asyncHalt
 		}
 	}
@@ -203,26 +210,30 @@ class StarterStarter {
 	public def startMininet() {
 		if (!min) {
 			min = true
+			if (mnstarter != null) {
+				mnstarter.setBackend(backend)
+				mnstarter.asyncStart
+			} else {
+				var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
 
-			var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
+				var c = configType.newInstance(null, "mininet" + UUID);
+				c.setAttribute("topologymodel", topoPath);
+				val configuration = c.doSave
 
-			var c = configType.newInstance(null, "mininet" + UUID);
-			c.setAttribute("topologymodel", topoPath);
-			val configuration = c.doSave
+				var jobMin = new Job("min Starter") {
 
-			var jobMin = new Job("min Starter") {
+					override protected run(IProgressMonitor monitor) {
+						mnstarter = factory.createMininetStarter(configuration, monitor)
+						mnstarter.setBackend(backend)
+						// Start Mininet. 
+						reg.register(mnstarter.safeName, mnstarter)
+						mnstarter.syncStart
+						return Status.OK_STATUS
+					}
 
-				override protected run(IProgressMonitor monitor) {
-					mnstarter = factory.createMininetStarter(configuration, monitor)
-
-					// Start Mininet. 
-					reg.register(mnstarter.safeName, mnstarter)
-					mnstarter.syncStart
-					return Status.OK_STATUS
-				}
-
-			};
-			jobMin.schedule();
+				};
+				jobMin.schedule();
+			}
 		}
 	}
 
@@ -263,10 +274,18 @@ class StarterStarter {
 	public def registerControllerFromConfig(LaunchConfigurationModel launchConfigurationModel) {
 
 		val configuration = createLaunchConfiguration(launchConfigurationModel)
-		var tmpstarterList = configToStarter.get(configuration)
+		var tmpstarterList = configToStarter.get(launchConfigurationModel)
 
 		if (tmpstarterList == null) {
 			tmpstarterList = new ArrayList<IStarter>
+		} else {
+
+			for (starter : tmpstarterList) {
+
+				starter.setBackend(backend)
+				starter.asyncStart;
+			}
+			return;
 		}
 		val starterList = tmpstarterList
 
@@ -286,6 +305,7 @@ class StarterStarter {
 					override protected run(IProgressMonitor monitor) {
 						backendStarter = factory.createBackendStarter(configuration, c, monitor)
 						starterList.add(backendStarter)
+						backendStarter.setBackend(backend)
 						configToStarter.put(launchConfigurationModel, starterList)
 						reg.register(backendStarter.safeName, backendStarter)
 						backendStarter.syncStart
@@ -302,6 +322,7 @@ class StarterStarter {
 					override protected run(IProgressMonitor monitor) {
 						shimStarter = factory.createShimStarter(configuration, c, monitor)
 						starterList.add(shimStarter)
+						shimStarter.setBackend(backend)
 						configToStarter.put(launchConfigurationModel, starterList)
 						reg.register(shimStarter.safeName, shimStarter)
 						shimStarter.syncStart
@@ -320,6 +341,7 @@ class StarterStarter {
 
 					override protected run(IProgressMonitor monitor) {
 						starter = factory.createSingleControllerStarter(configuration, c, monitor)
+						starter.setBackend(backend)
 						reg.register(starter.safeName, starter)
 						starterList.add(starter)
 						configToStarter.put(launchConfigurationModel, starterList)
