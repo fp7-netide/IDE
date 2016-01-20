@@ -32,7 +32,8 @@ Hosts:
 		'num' STRING
 		('ARP_config' STRING)?
 		('CPU_limited_host' STRING)?
-		'IP' STRING
+		('IPv4')? STRING
+		('IPv6')? STRING
 		'MAC' STRING
 	'}'
 ;
