@@ -22,6 +22,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
+import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 import eu.netide.workbenchconfigurationeditor.model.XmlConstants;
 
 public class XmlHelper {
@@ -82,6 +83,35 @@ public class XmlHelper {
 		}
 	}
 
+	public static void addSshProfileToXmlFile(Document doc, SshProfileModel model, IFile file) {
+		Node wb = doc.getFirstChild();
+		if (wb.getNodeName().equals(XmlConstants.WORKBENCH)) {
+
+			Element profile = doc.createElement(XmlConstants.NODE_SSH);
+			profile.setAttribute(XmlConstants.SSH_PROFILE_NAME, model.getProfileName());
+
+			Element host = doc.createElement(XmlConstants.SSH_HOST);
+			host.setTextContent(model.getHost());
+			profile.appendChild(host);
+
+			Element port = doc.createElement(XmlConstants.SSH_PORT);
+			port.setTextContent(model.getPort());
+			profile.appendChild(port);
+
+			Element userName = doc.createElement(XmlConstants.SSH_USERNAME);
+			doc.setTextContent(model.getUsername());
+			profile.appendChild(userName);
+
+			Element sshId = doc.createElement(XmlConstants.SSH_ID_FILE);
+			doc.setTextContent(model.getSshIdFile());
+			profile.appendChild(sshId);
+
+			wb.appendChild(profile);
+
+			XmlHelper.saveContentToXml(doc, file);
+		}
+	}
+
 	public static void removeFromXml(Document doc, LaunchConfigurationModel model, IFile file) {
 
 		Node workbenchNode = doc.getFirstChild();
@@ -125,7 +155,14 @@ public class XmlHelper {
 		return doc;
 	}
 
-	public static ArrayList<LaunchConfigurationModel> parseFileToModel(IFile file, Document doc) {
+	/**
+	 * 
+	 * @param file
+	 * @param doc
+	 * @return modelList, profileList
+	 */
+	@SuppressWarnings("rawtypes")
+	public static ArrayList[] parseFileToModel(IFile file, Document doc) {
 		try {
 			File xmlFile = new File(file.getRawLocationURI());
 			modelList = new ArrayList<LaunchConfigurationModel>();
@@ -137,11 +174,12 @@ public class XmlHelper {
 
 			if (doc.hasChildNodes()) {
 
-				printNote(doc.getChildNodes(), null);
+				parseModelNode(doc.getChildNodes(), null);
+				parseProfileNode(doc.getChildNodes(), null);
 
 			}
 
-			return modelList;
+			return new ArrayList [] {modelList, profileList};
 		} catch (Exception e) {
 
 		}
@@ -149,9 +187,65 @@ public class XmlHelper {
 
 	}
 
+	private static ArrayList<SshProfileModel> profileList;
+
+	private static void parseProfileNode(NodeList nodeList, SshProfileModel model) {
+		for (int count = 0; count < nodeList.getLength(); count++) {
+
+			Node tempNode = nodeList.item(count);
+			// make sure it's element node.
+			if (tempNode.getNodeType() == Node.ELEMENT_NODE) {
+
+				switch (tempNode.getNodeName()) {
+				case XmlConstants.SSH_HOST:
+					model.setHost(tempNode.getTextContent());
+					break;
+				case XmlConstants.SSH_ID_FILE:
+					model.setSshIdFile(tempNode.getTextContent());
+					break;
+					
+				case XmlConstants.SSH_PORT:
+					model.setPort(tempNode.getTextContent());
+					break;
+				
+				case XmlConstants.SSH_USERNAME:
+					model.setUsername(tempNode.getTextContent());
+					break;
+					
+				case XmlConstants.NODE_SSH:
+					model = new SshProfileModel();
+					profileList.add(model);
+
+					if (tempNode.hasAttributes()) {
+						NamedNodeMap nodeMap = tempNode.getAttributes();
+
+						for (int i = 0; i < nodeMap.getLength(); i++) {
+
+							Node node = nodeMap.item(i);
+							if (node.getNodeName().equals(XmlConstants.SSH_PROFILE_NAME)) {
+								model.setProfileName(node.getNodeValue());
+							}
+						}
+					}
+
+					break;
+
+				default:
+					System.err.println("No match for node: " + tempNode.getNodeName());
+				}
+			}
+
+			if (tempNode.hasChildNodes()) {
+				// loop again if has child nodes
+				parseProfileNode(tempNode.getChildNodes(), model);
+			}
+		}
+
+	}
+
 	private static ArrayList<LaunchConfigurationModel> modelList;
 
-	public static void printNote(NodeList nodeList, LaunchConfigurationModel model) {
+	private static void parseModelNode(NodeList nodeList, LaunchConfigurationModel model) {
 
 		for (int count = 0; count < nodeList.getLength(); count++) {
 
@@ -203,7 +297,7 @@ public class XmlHelper {
 
 				if (tempNode.hasChildNodes()) {
 					// loop again if has child nodes
-					printNote(tempNode.getChildNodes(), model);
+					parseModelNode(tempNode.getChildNodes(), model);
 				}
 			}
 

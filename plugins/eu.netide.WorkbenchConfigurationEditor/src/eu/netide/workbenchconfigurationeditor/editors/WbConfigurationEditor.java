@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -20,6 +21,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -32,9 +35,7 @@ import org.w3c.dom.Document;
 
 import eu.netide.configuration.utils.NetIDE;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
+import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 
 /**
  * 
@@ -50,6 +51,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Document doc;
 	private IFile file;
 	private ArrayList<LaunchConfigurationModel> modelList;
+	private ArrayList<SshProfileModel> profileList;
 	private boolean serverControllerIsRunning;
 	private ConfigurationShell tempShell;
 	private LaunchConfigurationModel tmpModel;
@@ -62,6 +64,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 
@@ -71,7 +74,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		this.serverControllerIsRunning = false;
 		file = fileInput.getFile();
 		doc = XmlHelper.getDocFromFile(file);
-		modelList = XmlHelper.parseFileToModel(file, doc);
+
+		ArrayList[] parsed = XmlHelper.parseFileToModel(file, doc);
+
+		modelList = parsed[0];
+		profileList = parsed[1];
+
 		// StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).createVagrantFile(modelList);
 		setSite(site);
 		setInput(input);
@@ -90,6 +98,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		createLayout(parent);
 
 		addContentToTable();
+		if (profileList != null)
+			addContentToComboBox();
+
 		addButtonListener();
 
 	}
@@ -97,6 +108,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private void addContentToTable() {
 		for (LaunchConfigurationModel c : modelList) {
 			addTableEntry(c);
+		}
+	}
+
+	private void addContentToComboBox() {
+		for (SshProfileModel p : profileList) {
+			sshProfileCombo.add(p.getProfileName());
 		}
 	}
 
@@ -314,6 +331,24 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 
+		btnCreateProfile.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				SShConfigurationDialog dialog = new SShConfigurationDialog(container.getShell());
+				dialog.open();
+				if (dialog.exitWithOk) {
+					
+					SshProfileModel model = new SshProfileModel(dialog.result[0], dialog.result[1], dialog.result[2], dialog.result[3], dialog.result[4]);
+					XmlHelper.addSshProfileToXmlFile(doc, model, file);
+					profileList.add(model);
+					sshProfileCombo.add(model.getProfileName());
+					// TODO: add sshConfig to combobox
+					// TODO: add sshConfig to xml file
+				}
+
+			}
+		});
+
 	}
 
 	private boolean noSwitch = false;
@@ -343,7 +378,72 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		GridData gd_startAppComposite = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_startAppComposite.widthHint = 888;
 		startAppComposite.setLayoutData(gd_startAppComposite);
-		startAppComposite.setLayout(new GridLayout(3, false));
+		startAppComposite.setLayout(new GridLayout(2, false));
+
+		tabFolder = new TabFolder(startAppComposite, SWT.NONE);
+		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_tabFolder.widthHint = 515;
+		tabFolder.setLayoutData(gd_tabFolder);
+
+		sshTabItem = new TabItem(tabFolder, SWT.NONE);
+		sshTabItem.setText("SSH");
+
+		sshComposite = new Composite(tabFolder, SWT.NONE);
+		sshTabItem.setControl(sshComposite);
+		sshComposite.setLayout(new GridLayout(2, false));
+
+		lblSShStatus = new Label(sshComposite, SWT.NONE);
+		lblSShStatus.setBounds(0, 0, 59, 14);
+		lblSShStatus.setText("Status: Offline");
+		new Label(sshComposite, SWT.NONE);
+
+		btnSSH_Up = new Button(sshComposite, SWT.NONE);
+
+		btnSSH_Up.setBounds(0, 0, 94, 28);
+		btnSSH_Up.setText("ssh Up");
+
+		composite = new Composite(sshComposite, SWT.NONE);
+		GridData gd_composite = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_composite.widthHint = 400;
+		composite.setLayoutData(gd_composite);
+		composite.setLayout(new GridLayout(3, false));
+
+		sshProfileCombo = new CCombo(composite, SWT.BORDER);
+		GridData gd_sshProfileCombo = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_sshProfileCombo.widthHint = 185;
+		sshProfileCombo.setLayoutData(gd_sshProfileCombo);
+
+		btnCreateProfile = new Button(composite, SWT.NONE);
+
+		btnCreateProfile.setText("Create Profile");
+
+		Button btnEditProfile = new Button(composite, SWT.NONE);
+		btnEditProfile.setBounds(0, 0, 94, 28);
+		btnEditProfile.setText("Edit Profile");
+
+		btnCloseSSH = new Button(sshComposite, SWT.NONE);
+		btnCloseSSH.setText("ssh Close");
+		new Label(sshComposite, SWT.NONE);
+
+		vagrantTabItem = new TabItem(tabFolder, SWT.NONE);
+		vagrantTabItem.setText("Vagrant");
+
+		Composite vagrantButtons = new Composite(tabFolder, SWT.BORDER);
+		vagrantTabItem.setControl(vagrantButtons);
+		vagrantButtons.setLayout(new GridLayout(1, false));
+
+		vagrantStatusLabel = new Label(vagrantButtons, SWT.NONE);
+		vagrantStatusLabel.setText("Status: Offline");
+
+		btnVagrantUp = new Button(vagrantButtons, SWT.NONE);
+
+		btnVagrantUp.setText("Vagrant Up");
+
+		btnVagrantHalt = new Button(vagrantButtons, SWT.NONE);
+		btnVagrantHalt.setText("Vagrant Halt");
+
+		currentPageIndex = tabFolder.getSelectionIndex();
+		new Label(startAppComposite, SWT.NONE);
 
 		Composite selectServerController = new Composite(startAppComposite, SWT.BORDER);
 		GridData gd_selectServerController = new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1);
@@ -378,44 +478,22 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		btnStopServerController.setText("Stop Server Controller");
 
-		tabFolder = new TabFolder(startAppComposite, SWT.NONE);
+		mininetComposite = new Composite(startAppComposite, SWT.NONE);
+		mininetComposite.setLayout(new GridLayout(1, false));
+		GridData gd_mininetComposite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_mininetComposite.widthHint = 115;
+		mininetComposite.setLayoutData(gd_mininetComposite);
 
-		sshTabItem = new TabItem(tabFolder, SWT.NONE);
-		sshTabItem.setText("SSH");
+		mininetStatusLable = new Label(mininetComposite, SWT.NONE);
+		mininetStatusLable.setText("Status: Offline");
 
-		sshComposite = new Composite(tabFolder, SWT.NONE);
-		sshTabItem.setControl(sshComposite);
-		sshComposite.setLayout(new GridLayout(1, false));
+		btnMininetOn = new Button(mininetComposite, SWT.NONE);
 
-		lblSShStatus = new Label(sshComposite, SWT.NONE);
-		lblSShStatus.setBounds(0, 0, 59, 14);
-		lblSShStatus.setText("Status: Offline");
+		btnMininetOn.setText("Mininet On");
 
-		btnSSH_Up = new Button(sshComposite, SWT.NONE);
+		btnMininetOff = new Button(mininetComposite, SWT.NONE);
 
-		btnSSH_Up.setBounds(0, 0, 94, 28);
-		btnSSH_Up.setText("ssh Up");
-
-		btnCloseSSH = new Button(sshComposite, SWT.NONE);
-		btnCloseSSH.setText("ssh Close");
-
-		vagrantTabItem = new TabItem(tabFolder, SWT.NONE);
-		vagrantTabItem.setText("Vagrant");
-
-		Composite vagrantButtons = new Composite(tabFolder, SWT.BORDER);
-		vagrantTabItem.setControl(vagrantButtons);
-		vagrantButtons.setLayout(new GridLayout(1, false));
-
-		vagrantStatusLabel = new Label(vagrantButtons, SWT.NONE);
-		vagrantStatusLabel.setText("Status: Offline");
-
-		btnVagrantUp = new Button(vagrantButtons, SWT.NONE);
-
-		btnVagrantUp.setText("Vagrant Up");
-
-		btnVagrantHalt = new Button(vagrantButtons, SWT.NONE);
-		btnVagrantHalt.setText("Vagrant Halt");
-		new Label(startAppComposite, SWT.NONE);
+		btnMininetOff.setText("Mininet Off");
 
 		table = new Table(startAppComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
@@ -461,23 +539,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnReattach.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		btnReattach.setText("Reattach");
 
-		mininetComposite = new Composite(startAppComposite, SWT.NONE);
-		mininetComposite.setLayout(new GridLayout(1, false));
-		GridData gd_mininetComposite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_mininetComposite.widthHint = 115;
-		mininetComposite.setLayoutData(gd_mininetComposite);
-
-		mininetStatusLable = new Label(mininetComposite, SWT.NONE);
-		mininetStatusLable.setText("Status: Offline");
-
-		btnMininetOn = new Button(mininetComposite, SWT.NONE);
-
-		btnMininetOn.setText("Mininet On");
-
-		btnMininetOff = new Button(mininetComposite, SWT.NONE);
-
-		btnMininetOff.setText("Mininet Off");
-
 		testButtons = new Composite(startAppComposite, SWT.NONE);
 		GridData gd_testButtons = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_testButtons.widthHint = 518;
@@ -490,9 +551,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnRemoveTest = new Button(testButtons, SWT.NONE);
 		btnRemoveTest.setText("Remove Test");
 		new Label(startAppComposite, SWT.NONE);
-		new Label(startAppComposite, SWT.NONE);
-		
-		currentPageIndex = tabFolder.getSelectionIndex();
 	}
 
 	@Override
@@ -594,4 +652,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private TabFolder tabFolder;
 	private TabItem vagrantTabItem;
 	private TabItem sshTabItem;
+	private Button btnCreateProfile;
+	private Composite composite;
+	private CCombo sshProfileCombo;
 }
