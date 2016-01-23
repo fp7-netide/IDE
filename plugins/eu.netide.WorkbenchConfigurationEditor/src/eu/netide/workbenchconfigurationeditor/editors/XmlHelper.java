@@ -99,11 +99,11 @@ public class XmlHelper {
 			profile.appendChild(port);
 
 			Element userName = doc.createElement(XmlConstants.SSH_USERNAME);
-			doc.setTextContent(model.getUsername());
+			userName.setTextContent(model.getUsername());
 			profile.appendChild(userName);
 
 			Element sshId = doc.createElement(XmlConstants.SSH_ID_FILE);
-			doc.setTextContent(model.getSshIdFile());
+			sshId.setTextContent(model.getSshIdFile());
 			profile.appendChild(sshId);
 
 			wb.appendChild(profile);
@@ -166,6 +166,7 @@ public class XmlHelper {
 		try {
 			File xmlFile = new File(file.getRawLocationURI());
 			modelList = new ArrayList<LaunchConfigurationModel>();
+			profileList = new ArrayList<SshProfileModel>();
 
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

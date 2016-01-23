@@ -135,9 +135,21 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnSSH_Up.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				lblSShStatus.setText("Status: waiting");
-				noSwitch = true;
-				StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startSSH(modelList, instanceWb);
+				if (sshProfileCombo.getSelectionIndex() != -1) {
+					lblSShStatus.setText("Status: waiting");
+					noSwitch = true;
+
+					String modelName = sshProfileCombo.getItem(sshProfileCombo.getSelectionIndex());
+					SshProfileModel model = getModelFromName(modelName);
+
+					if (model != null) {
+						StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startSSH(modelList,
+								instanceWb, model);
+					}
+				}
+				else{
+					showMessage("Please select / create a ssh Profile.");
+				}
 
 			}
 		});
@@ -334,11 +346,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnCreateProfile.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				SShConfigurationDialog dialog = new SShConfigurationDialog(container.getShell());
-				dialog.open();
-				if (dialog.exitWithOk) {
-					
-					SshProfileModel model = new SshProfileModel(dialog.result[0], dialog.result[1], dialog.result[2], dialog.result[3], dialog.result[4]);
+				SShShell sshShell = new SShShell(container.getDisplay());
+				String[] result = sshShell.getResult();
+				if (result != null) {
+
+					SshProfileModel model = new SshProfileModel(result[0], result[1], result[2], result[3], result[4]);
 					XmlHelper.addSshProfileToXmlFile(doc, model, file);
 					profileList.add(model);
 					sshProfileCombo.add(model.getProfileName());
@@ -349,6 +361,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 
+	}
+
+	private SshProfileModel getModelFromName(String name) {
+		for (SshProfileModel m : profileList) {
+			if (m.getProfileName().equals(name))
+				return m;
+		}
+		return null;
 	}
 
 	private boolean noSwitch = false;
@@ -390,27 +410,29 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		sshComposite = new Composite(tabFolder, SWT.NONE);
 		sshTabItem.setControl(sshComposite);
-		sshComposite.setLayout(new GridLayout(2, false));
+		sshComposite.setLayout(new GridLayout(1, false));
 
 		lblSShStatus = new Label(sshComposite, SWT.NONE);
 		lblSShStatus.setBounds(0, 0, 59, 14);
 		lblSShStatus.setText("Status: Offline");
-		new Label(sshComposite, SWT.NONE);
 
 		btnSSH_Up = new Button(sshComposite, SWT.NONE);
 
 		btnSSH_Up.setBounds(0, 0, 94, 28);
 		btnSSH_Up.setText("ssh Up");
 
+		btnCloseSSH = new Button(sshComposite, SWT.NONE);
+		btnCloseSSH.setText("ssh Close");
+
 		composite = new Composite(sshComposite, SWT.NONE);
 		GridData gd_composite = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd_composite.widthHint = 400;
 		composite.setLayoutData(gd_composite);
-		composite.setLayout(new GridLayout(3, false));
+		composite.setLayout(new GridLayout(4, false));
 
 		sshProfileCombo = new CCombo(composite, SWT.BORDER);
-		GridData gd_sshProfileCombo = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_sshProfileCombo.widthHint = 185;
+		GridData gd_sshProfileCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_sshProfileCombo.widthHint = 161;
 		sshProfileCombo.setLayoutData(gd_sshProfileCombo);
 
 		btnCreateProfile = new Button(composite, SWT.NONE);
@@ -420,10 +442,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		Button btnEditProfile = new Button(composite, SWT.NONE);
 		btnEditProfile.setBounds(0, 0, 94, 28);
 		btnEditProfile.setText("Edit Profile");
-
-		btnCloseSSH = new Button(sshComposite, SWT.NONE);
-		btnCloseSSH.setText("ssh Close");
-		new Label(sshComposite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 
 		vagrantTabItem = new TabItem(tabFolder, SWT.NONE);
 		vagrantTabItem.setText("Vagrant");

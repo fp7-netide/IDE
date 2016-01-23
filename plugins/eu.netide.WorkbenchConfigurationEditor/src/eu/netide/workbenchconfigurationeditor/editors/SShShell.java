@@ -174,6 +174,8 @@ public class SShShell extends Shell {
 		saveBTN.setText("Save Profile");
 		saveBTN.setEnabled(false);
 		createContents();
+		
+		openShell(display);
 	}
 
 	/**
@@ -195,9 +197,26 @@ public class SShShell extends Shell {
 	private void checkForFinish() {
 		if (hostSet && portSet && usernameSet && sshFileSet && profileNameSet) {
 			saveBTN.setEnabled(true);
+
+			String[] tmpResult = { txt_host.getText(), txt_port.getText(), txt_sshidfile.getText(),
+					txt_username.getText(), txt_profileName.getText() };
+			result = tmpResult;
 		} else {
 			saveBTN.setEnabled(false);
+			result = null;
 		}
+
+	}
+
+	private String[] result;
+
+	/**
+	 * 
+	 * @return host, port, sshidfile, username, profilename null if action
+	 *         canceled by user
+	 */
+	public String[] getResult() {
+		return result;
 	}
 
 	@Override

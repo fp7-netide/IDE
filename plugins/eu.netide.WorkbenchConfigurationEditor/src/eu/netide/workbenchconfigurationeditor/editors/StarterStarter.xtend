@@ -8,8 +8,12 @@ import eu.netide.configuration.launcher.managers.VagrantManager
 import eu.netide.configuration.launcher.starters.IStarter
 import eu.netide.configuration.launcher.starters.IStarterRegistry
 import eu.netide.configuration.launcher.starters.StarterFactory
+import eu.netide.configuration.launcher.starters.backends.Backend
+import eu.netide.configuration.launcher.starters.backends.SshBackend
+import eu.netide.configuration.launcher.starters.backends.VagrantBackend
 import eu.netide.configuration.utils.NetIDE
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel
+import eu.netide.workbenchconfigurationeditor.model.SshProfileModel
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.UUID
@@ -26,9 +30,6 @@ import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunchConfigurationType
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import eu.netide.configuration.launcher.starters.backends.SshBackend
-import eu.netide.configuration.launcher.starters.backends.Backend
-import eu.netide.configuration.launcher.starters.backends.VagrantBackend
 
 class StarterStarter {
 
@@ -129,20 +130,20 @@ class StarterStarter {
 
 	}
 
-	public def startSSH(ArrayList<LaunchConfigurationModel> modelList) {
-		startSshWithConfig(createSshConfiguration(modelList), null)
+	public def startSSH(ArrayList<LaunchConfigurationModel> modelList, SshProfileModel model) {
+		startSshWithConfig(createSshConfiguration(modelList), null, model)
 	}
 
-	public def startSSH(ArrayList<LaunchConfigurationModel> modelList, IJobChangeListener listener) {
-		startSshWithConfig(createSshConfiguration(modelList), listener)
+	public def startSSH(ArrayList<LaunchConfigurationModel> modelList, IJobChangeListener listener, SshProfileModel model) {
+		startSshWithConfig(createSshConfiguration(modelList), listener, model)
 	}
 
-	private def startSshWithConfig(ILaunchConfiguration configuration, IJobChangeListener listener) {
+	private def startSshWithConfig(ILaunchConfiguration configuration, IJobChangeListener listener, SshProfileModel model) {
 		if (!sshIsRunning) {
 
 			sshJob = new Job("SshManager") {
 				override protected run(IProgressMonitor monitor) {
-					backend = new SshBackend("localhost", 2222, "vagrant", "/Users/janniclas/.ssh/id_rsa")
+					backend = new SshBackend(model.host, Integer.parseInt(model.port), model.username, model.sshIdFile)
 					sshManager = new SshManager(configuration, monitor)
 					sshManager.copyApps
 					sshManager.copyTopo
