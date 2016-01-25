@@ -1,18 +1,20 @@
 package eu.netide.workbenchconfigurationeditor.editors;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+
+import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 
 public class SShShell extends Shell {
 	private Text txt_profileName;
@@ -22,10 +24,39 @@ public class SShShell extends Shell {
 	private Text txt_host;
 	private SShShell shell;
 
-	public void openShell(Display display) {
+	private boolean edit;
+	private boolean delete;
+	private SshProfileModel profile;
+
+	/**
+	 * 
+	 * @param profile
+	 *            may be null. if profile != null use edit view
+	 */
+	public void openShell(SshProfileModel profile) {
+		delete = false;
+		if (profile != null) {
+			edit = true;
+			this.profile = profile;
+			btnDeleteProfile.setVisible(true);
+		} else {
+			edit = false;
+			this.profile = null;
+		}
+		openShell(display);
+	}
+
+	private void openShell(Display display) {
 		try {
 			this.open();
 			this.layout();
+			if (edit) {
+				txt_profileName.setText(profile.getProfileName());
+				txt_username.setText(profile.getUsername());
+				txt_port.setText(profile.getPort());
+				txt_sshidfile.setText(profile.getSshIdFile());
+				txt_host.setText(profile.getHost());
+			}
 			while (!this.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
@@ -36,6 +67,8 @@ public class SShShell extends Shell {
 		}
 	}
 
+	private Display display;
+
 	/**
 	 * Create the shell.
 	 * 
@@ -44,6 +77,7 @@ public class SShShell extends Shell {
 	public SShShell(Display display) {
 		super(display, SWT.SHELL_TRIM);
 		shell = this;
+		this.display = display;
 		setLayout(new GridLayout(1, false));
 
 		Composite composite = new Composite(this, SWT.NONE);
@@ -155,9 +189,9 @@ public class SShShell extends Shell {
 
 		Composite composite_1 = new Composite(this, SWT.NONE);
 		GridData gd_composite_1 = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
-		gd_composite_1.widthHint = 205;
+		gd_composite_1.widthHint = 316;
 		composite_1.setLayoutData(gd_composite_1);
-		composite_1.setLayout(new GridLayout(2, false));
+		composite_1.setLayout(new GridLayout(3, false));
 
 		Button cancleButton = new Button(composite_1, SWT.NONE);
 		cancleButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
@@ -173,9 +207,26 @@ public class SShShell extends Shell {
 		saveBTN.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		saveBTN.setText("Save Profile");
 		saveBTN.setEnabled(false);
+
+		btnDeleteProfile = new Button(composite_1, SWT.NONE);
+		btnDeleteProfile.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				delete = true;
+				shell.dispose();
+			}
+		});
+		btnDeleteProfile.setVisible(false);
+		btnDeleteProfile.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		btnDeleteProfile.setText("Delete Profile");
 		createContents();
-		
-		openShell(display);
+
+	}
+
+	private Button btnDeleteProfile;
+
+	public boolean deleteEntry() {
+		return delete;
 	}
 
 	/**

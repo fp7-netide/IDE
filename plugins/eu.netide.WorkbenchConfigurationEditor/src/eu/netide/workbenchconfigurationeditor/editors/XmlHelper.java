@@ -89,6 +89,7 @@ public class XmlHelper {
 
 			Element profile = doc.createElement(XmlConstants.NODE_SSH);
 			profile.setAttribute(XmlConstants.SSH_PROFILE_NAME, model.getProfileName());
+			profile.setAttribute(XmlConstants.ATTRIBUTE_SSH_ID, "" + model.getID());
 
 			Element host = doc.createElement(XmlConstants.SSH_HOST);
 			host.setTextContent(model.getHost());
@@ -127,6 +128,30 @@ public class XmlHelper {
 
 					Node node = nodeMap.item(i);
 					if (node.getNodeName().equals(XmlConstants.ATTRIBUTE_APP_ID)) {
+						workbenchNode.removeChild(tempNode);
+						XmlHelper.saveContentToXml(doc, file);
+					}
+				}
+			}
+
+		}
+	}
+	
+	public static void removeFromXml(Document doc, SshProfileModel profile, IFile file) {
+
+		Node workbenchNode = doc.getFirstChild();
+		NodeList childs = workbenchNode.getChildNodes();
+
+		for (int count = 0; count < childs.getLength(); count++) {
+			Node tempNode = childs.item(count);
+
+			if (tempNode.getNodeName().equals(XmlConstants.NODE_SSH)) {
+				NamedNodeMap nodeMap = tempNode.getAttributes();
+
+				for (int i = 0; i < nodeMap.getLength(); i++) {
+
+					Node node = nodeMap.item(i);
+					if (node.getNodeName().equals(XmlConstants.ATTRIBUTE_SSH_ID)) {
 						workbenchNode.removeChild(tempNode);
 						XmlHelper.saveContentToXml(doc, file);
 					}

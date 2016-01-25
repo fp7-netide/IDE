@@ -7,6 +7,7 @@ public class XmlConstants {
 	public static final String SSH_PORT = "port";
 	public static final String SSH_ID_FILE = "idFile";
 	public static final String SSH_PROFILE_NAME = "name";
+	public static final String ATTRIBUTE_SSH_ID = "id";
 	
 	public static final String NODE_APP = "app";
 	public static final String ATTRIBUTE_APP_NAME = "name";

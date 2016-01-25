@@ -130,43 +130,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		tmp.setText(tmpS);
 	}
 
-	private void addButtonListener() {
-
-		btnSSH_Up.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (sshProfileCombo.getSelectionIndex() != -1) {
-					lblSShStatus.setText("Status: waiting");
-					noSwitch = true;
-
-					String modelName = sshProfileCombo.getItem(sshProfileCombo.getSelectionIndex());
-					SshProfileModel model = getModelFromName(modelName);
-
-					if (model != null) {
-						StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startSSH(modelList,
-								instanceWb, model);
-					}
-				}
-				else{
-					showMessage("Please select / create a ssh Profile.");
-				}
-
-			}
-		});
-
-		btnCloseSSH.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				lblSShStatus.setText("Status: offline");
-				StarterStarter.getStarter("").stopSSH();
-				noSwitch = false;
-				for (Control c : tabFolder.getTabList()) {
-					c.setEnabled(true);
-
-				}
-			}
-		});
-
+	private void addMininetButtonListener() {
 		btnMininetOn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -182,21 +146,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).stopMininet();
 			}
 		});
+	}
 
-		startServerController.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String selection = selectServerCombo.getText();
-				if (!serverControllerIsRunning && !selection.equals("")) {
-					// Create starter for selected server controller
-					StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startServerController(selection);
-					lblServerControllerStatus.setText("Status: running");
-					serverControllerIsRunning = true;
-					selectServerCombo.setEnabled(false);
-				}
-			}
-		});
-
+	private void addVagrantButtonListener() {
 		btnVagrantUp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -211,19 +163,32 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 
-		btnStopServerController.addSelectionListener(new SelectionAdapter() {
+		btnReattach.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (serverControllerIsRunning) {
-					// Stop starter
-					StarterStarter.getStarter("").stopServerController();
-					lblServerControllerStatus.setText("Status: offline");
-					serverControllerIsRunning = false;
-					selectServerCombo.setEnabled(true);
-				}
+				if (table.getSelectionCount() > 0)
+					StarterStarter.getStarter("").reattachStarter(tableConfigMap.get(table.getSelection()[0]));
 			}
 		});
 
+		btnVagrantHalt.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				noSwitch = false;
+				StarterStarter.getStarter("").haltVagrant();
+				vagrantStatusLabel.setText("Status: offline");
+
+				for (int i = 0; i < table.getItemCount(); i++) {
+					table.getItem(i).setText(1, "offline");
+					// TODO: check for unknown side effects
+					// StarterStarter.getStarter("").stopStarter(tableConfigMap.get(table.getItem(i)));
+				}
+
+			}
+		});
+	}
+
+	private void addTestButtonListener() {
 		btnRemoveTest.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -253,30 +218,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					StarterStarter.getStarter("").stopStarter(tableConfigMap.get(tmpItem));
 					tmpItem.setText(1, "offline");
 				}
-			}
-		});
-
-		btnReattach.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (table.getSelectionCount() > 0)
-					StarterStarter.getStarter("").reattachStarter(tableConfigMap.get(table.getSelection()[0]));
-			}
-		});
-
-		btnVagrantHalt.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				noSwitch = false;
-				StarterStarter.getStarter("").haltVagrant();
-				vagrantStatusLabel.setText("Status: offline");
-
-				for (int i = 0; i < table.getItemCount(); i++) {
-					table.getItem(i).setText(1, "offline");
-					// TODO: check for unknown side effects
-					// StarterStarter.getStarter("").stopStarter(tableConfigMap.get(table.getItem(i)));
-				}
-
 			}
 		});
 
@@ -329,7 +270,15 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 
 		});
+		
+		btnEditTest.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+	}
 
+	private void addSshButtonListener() {
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -343,10 +292,45 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 
+		btnSSH_Up.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (sshProfileCombo.getSelectionIndex() != -1) {
+					lblSShStatus.setText("Status: waiting");
+					noSwitch = true;
+
+					String modelName = sshProfileCombo.getItem(sshProfileCombo.getSelectionIndex());
+					SshProfileModel model = getModelFromName(modelName);
+
+					if (model != null) {
+						StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startSSH(modelList,
+								instanceWb, model);
+					}
+				} else {
+					showMessage("Please select / create a ssh Profile.");
+				}
+
+			}
+		});
+
+		btnCloseSSH.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				lblSShStatus.setText("Status: offline");
+				StarterStarter.getStarter("").stopSSH();
+				noSwitch = false;
+				for (Control c : tabFolder.getTabList()) {
+					c.setEnabled(true);
+
+				}
+			}
+		});
+
 		btnCreateProfile.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				SShShell sshShell = new SShShell(container.getDisplay());
+				sshShell.openShell(null);
 				String[] result = sshShell.getResult();
 				if (result != null) {
 
@@ -354,12 +338,86 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					XmlHelper.addSshProfileToXmlFile(doc, model, file);
 					profileList.add(model);
 					sshProfileCombo.add(model.getProfileName());
-					// TODO: add sshConfig to combobox
-					// TODO: add sshConfig to xml file
+
 				}
 
 			}
 		});
+
+		btnEditProfile.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (sshProfileCombo.getSelectionIndex() != -1) {
+					String modelName = sshProfileCombo.getItem(sshProfileCombo.getSelectionIndex());
+					SshProfileModel profile = getModelFromName(modelName);
+
+					if (profile != null) {
+						SShShell sshShell = new SShShell(container.getDisplay());
+						sshShell.openShell(profile);
+
+						sshProfileCombo.remove(sshProfileCombo.getSelectionIndex());
+						sshProfileCombo.clearSelection();
+						profileList.remove(profile);
+
+						if (!sshShell.deleteEntry()) {
+
+							String[] result = sshShell.getResult();
+							if (result != null) {
+								XmlHelper.removeFromXml(doc, profile, file);
+
+								SshProfileModel model = new SshProfileModel(result[0], result[1], result[2], result[3],
+										result[4]);
+								XmlHelper.addSshProfileToXmlFile(doc, model, file);
+								profileList.add(model);
+								sshProfileCombo.add(model.getProfileName());
+
+							}
+						}
+					}
+
+				} else {
+					showMessage("Please select a profile to edit");
+				}
+			}
+		});
+	}
+
+	private void addServerControllerButtonListener() {
+		startServerController.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String selection = selectServerCombo.getText();
+				if (!serverControllerIsRunning && !selection.equals("")) {
+					// Create starter for selected server controller
+					StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startServerController(selection);
+					lblServerControllerStatus.setText("Status: running");
+					serverControllerIsRunning = true;
+					selectServerCombo.setEnabled(false);
+				}
+			}
+		});
+
+		btnStopServerController.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (serverControllerIsRunning) {
+					// Stop starter
+					StarterStarter.getStarter("").stopServerController();
+					lblServerControllerStatus.setText("Status: offline");
+					serverControllerIsRunning = false;
+					selectServerCombo.setEnabled(true);
+				}
+			}
+		});
+
+	}
+
+	private void addButtonListener() {
+		addMininetButtonListener();
+		addVagrantButtonListener();
+		addTestButtonListener();
+		addSshButtonListener();
+		addServerControllerButtonListener();
 
 	}
 
@@ -439,7 +497,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		btnCreateProfile.setText("Create Profile");
 
-		Button btnEditProfile = new Button(composite, SWT.NONE);
+		btnEditProfile = new Button(composite, SWT.NONE);
+
 		btnEditProfile.setBounds(0, 0, 94, 28);
 		btnEditProfile.setText("Edit Profile");
 		new Label(composite, SWT.NONE);
@@ -562,13 +621,16 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		GridData gd_testButtons = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_testButtons.widthHint = 518;
 		testButtons.setLayoutData(gd_testButtons);
-		testButtons.setLayout(new GridLayout(2, false));
+		testButtons.setLayout(new GridLayout(3, false));
 
 		btnAddTest = new Button(testButtons, SWT.NONE);
 		btnAddTest.setText("Add Test");
 
 		btnRemoveTest = new Button(testButtons, SWT.NONE);
 		btnRemoveTest.setText("Remove Test");
+
+		btnEditTest = new Button(testButtons, SWT.NONE);
+		btnEditTest.setText("Edit Test");
 		new Label(startAppComposite, SWT.NONE);
 	}
 
@@ -660,6 +722,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Button btnAddTest;
 	private Button btnRemoveTest;
 	private Button btnStopTest;
+	private Button btnEditProfile;
 	private CCombo selectServerCombo;
 	private Button startServerController;
 	private Button btnMininetOn;
@@ -674,4 +737,5 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Button btnCreateProfile;
 	private Composite composite;
 	private CCombo sshProfileCombo;
+	private Button btnEditTest;
 }

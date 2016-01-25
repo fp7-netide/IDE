@@ -1,5 +1,7 @@
 package eu.netide.workbenchconfigurationeditor.model;
 
+import java.util.UUID;
+
 public class SshProfileModel {
 	
 	private String host;
@@ -7,6 +9,7 @@ public class SshProfileModel {
 	private String sshIdFile;
 	private String username;
 	private String profileName;
+	private String id;
 	
 	public SshProfileModel(String host, String port, String sshIdFile, String username, String profileName){
 		this.host = host;
@@ -14,6 +17,7 @@ public class SshProfileModel {
 		this.profileName = profileName;
 		this.sshIdFile = sshIdFile;
 		this.username = username;
+		this.id = "" + UUID.randomUUID();
 	}
 	
 	public SshProfileModel(){
@@ -22,8 +26,13 @@ public class SshProfileModel {
 		sshIdFile = "";
 		username = "";
 		profileName = "";
+		this.id = "" +UUID.randomUUID();
 	}
 
+	public String getID(){
+		return this.id;
+	}
+	
 	public void setHost(String host) {
 		this.host = host;
 	}
