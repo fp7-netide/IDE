@@ -244,6 +244,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				tmpModel = new LaunchConfigurationModel();
 
 				tempShell = new ConfigurationShell(container.getDisplay());
+				tempShell.openShell(null);
 
 				String[] content = tempShell.getSelectedContent();
 				if (content != null) {
@@ -270,10 +271,61 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 
 		});
-		
+
 		btnEditTest.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+
+				LaunchConfigurationModel toStart = null;
+
+				if (table.getSelectionCount() > 0) {
+
+					TableItem[] toRemove = table.getSelection();
+
+					toStart = tableConfigMap.get(toRemove[0]);
+
+					if (toStart != null) {
+
+						tempShell = new ConfigurationShell(container.getDisplay());
+						tempShell.openShell(toStart);
+
+						String[] content = tempShell.getSelectedContent();
+						if (content != null) {
+							boolean complete = true;
+							if (content[1].equals("") || content[4].equals(""))
+								complete = false;
+
+							if (complete) {
+								for (TableItem i : toRemove) {
+									LaunchConfigurationModel tmp = tableConfigMap.get(i);
+									modelList.remove(tmp);
+									XmlHelper.removeFromXml(doc, tmp, file);
+								}
+
+								int[] toRemoveIndex = table.getSelectionIndices();
+								for (int i : toRemoveIndex) {
+									table.remove(i);
+								}
+								tmpModel = new LaunchConfigurationModel();
+								
+								tmpModel.setPlatform(content[1]);
+								tmpModel.setClientController(content[2]);
+								tmpModel.setServerController(content[3]);
+								tmpModel.setAppPath(content[4]);
+								String[] tmp = content[4].split("/");
+								String appName = tmp[tmp.length - 1];
+								tmpModel.setAppName(appName);
+								tmpModel.setID(UUID.randomUUID().toString());
+
+								XmlHelper.addModelToXmlFile(doc, tmpModel, file);
+								modelList.add(tmpModel);
+								addTableEntry(tmpModel);
+
+							}
+						}
+					}
+
+				}
 			}
 		});
 	}
@@ -681,9 +733,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			});
 		} else if (event.getJob().getName().equals("SshManager")) {
 			Display.getDefault().syncExec(new Runnable() {
+
 				public void run() {
 					lblSShStatus.setText("Status: running");
 				}
+
 			});
 		}
 	}
