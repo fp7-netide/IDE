@@ -197,6 +197,15 @@ class StarterStarter {
 		for (r : re)
 			r.reattach
 	}
+	
+	public def reprovision(){
+		if(vagrantManager != null){
+			vagrantManager.asyncProvision
+		}
+		else if(sshManager != null){
+			sshManager.asyncProvision
+		}
+	}
 
 	public def stopStarter(LaunchConfigurationModel config) {
 		var toStopList = configToStarter.get(config)

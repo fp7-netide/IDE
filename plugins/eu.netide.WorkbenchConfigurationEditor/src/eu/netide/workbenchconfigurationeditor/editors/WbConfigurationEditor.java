@@ -130,8 +130,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		tmp.setText(tmpS);
 	}
 
-
-
 	private void addMininetButtonListener() {
 		btnMininetOn.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -158,7 +156,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			public void widgetSelected(SelectionEvent e) {
 				vagrantStatusLabel.setText("starting");
 				noSwitch = true;
-				
+
 				StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startVagrant(instanceWb);
 
 			}
@@ -227,7 +225,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				LaunchConfigurationModel toStart = null;
-				if ((sshRunning ||vagrantRunning)) {
+				if ((sshRunning || vagrantRunning)) {
 					if (table.getSelectionCount() > 0) {
 						TableItem selectedItem = table.getSelection()[0];
 						toStart = tableConfigMap.get(selectedItem);
@@ -332,6 +330,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					}
 
 				}
+			}
+		});
+		
+		btnProvision.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				StarterStarter.getStarter("").reprovision();
 			}
 		});
 	}
@@ -513,6 +518,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		container.setLayout(new GridLayout(1, false));
 
 		Composite startAppComposite = new Composite(container, SWT.BORDER);
+
 		GridData gd_startAppComposite = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_startAppComposite.widthHint = 888;
 		startAppComposite.setLayoutData(gd_startAppComposite);
@@ -677,6 +683,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnReattach = new Button(buttonComposite, SWT.NONE);
 		btnReattach.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		btnReattach.setText("Reattach");
+		
+		btnProvision = new Button(buttonComposite, SWT.NONE);
+
+		btnProvision.setText("Provision");
 
 		testButtons = new Composite(startAppComposite, SWT.NONE);
 		GridData gd_testButtons = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -805,4 +815,5 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Composite composite;
 	private CCombo sshProfileCombo;
 	private Button btnEditTest;
+	private Button btnProvision;
 }
