@@ -1,8 +1,7 @@
 package eu.netide.configuration.launcher.starters.impl
 
-import org.eclipse.debug.core.ILaunch
-import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.debug.core.ILaunchConfiguration
 
 class DebuggerStarter extends Starter {
 	

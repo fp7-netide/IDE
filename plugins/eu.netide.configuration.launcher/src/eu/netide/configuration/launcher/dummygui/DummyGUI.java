@@ -6,7 +6,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -15,7 +14,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.part.ViewPart;
@@ -25,9 +23,6 @@ import eu.netide.configuration.launcher.starters.IStarterRegistry;
 import eu.netide.deployment.topologyimport.TopologyImport;
 import eu.netide.deployment.topologyimport.TopologyImportFactory;
 import eu.netide.configuration.launcher.managers.IManager;
-import eu.netide.configuration.launcher.managers.SshManager;
-import eu.netide.configuration.launcher.managers.VagrantManager;
-import org.eclipse.swt.widgets.Label;
 
 public class DummyGUI extends ViewPart {
 

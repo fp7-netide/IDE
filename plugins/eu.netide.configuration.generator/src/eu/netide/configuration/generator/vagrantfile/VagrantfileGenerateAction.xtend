@@ -37,23 +37,4 @@ class VagrantfileGenerateAction {
 
 		generator.doGenerate(resource, res, configuration, fsa)
 	}
-
-
-
-//	def Map<String, OutputConfiguration> defaultConfig() {
-//
-//		val OutputConfiguration defaultOutput = new OutputConfiguration("DEFAULT_OUTPUT")
-//		defaultOutput.setDescription("Output Folder")
-//
-//		//defaultOutput.setOutputDirectory("./src")
-//		defaultOutput.setOutputDirectory("./gen")
-//		defaultOutput.setOverrideExistingResources(true)
-//		defaultOutput.setCreateOutputDirectory(true)
-//		defaultOutput.setCleanUpDerivedResources(true)
-//		defaultOutput.setSetDerivedProperty(true)
-//
-//		val Map<String, OutputConfiguration> map = new HashMap<String, OutputConfiguration>()
-//		map.put("DEFAULT_OUTPUT", defaultOutput)
-//		map
-//	}
 }

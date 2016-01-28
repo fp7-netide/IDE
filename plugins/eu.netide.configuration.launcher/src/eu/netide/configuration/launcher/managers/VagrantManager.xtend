@@ -2,10 +2,15 @@ package eu.netide.configuration.launcher.managers
 
 import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 import eu.netide.configuration.utils.NetIDE
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.util.ArrayList
+import java.util.Date
 import java.util.HashMap
 import java.util.Map
+import java.util.regex.Pattern
+import org.eclipse.core.resources.IProject
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.IProgressMonitor
@@ -13,22 +18,15 @@ import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Platform
 import org.eclipse.core.runtime.Status
+import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunch
+import org.eclipse.debug.core.ILaunchConfiguration
+import org.eclipse.debug.core.Launch
 import org.eclipse.debug.core.RefreshUtil
 import org.eclipse.debug.core.model.IProcess
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.core.runtime.jobs.Job
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.util.regex.Pattern
-import org.eclipse.debug.core.Launch
-import org.eclipse.debug.core.ILaunchConfiguration
-import java.util.Date
-import org.eclipse.ui.internal.console.ConsoleManager
-import org.eclipse.debug.internal.core.LaunchManager
-import org.eclipse.core.resources.IProject
 import org.eclipse.xtend.lib.annotations.Accessors
 
 class VagrantManager implements IManager {
