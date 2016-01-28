@@ -130,6 +130,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		tmp.setText(tmpS);
 	}
 
+
+
 	private void addMininetButtonListener() {
 		btnMininetOn.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -148,16 +150,15 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		});
 	}
 
+	private boolean vagrantRunning = false;
+
 	private void addVagrantButtonListener() {
 		btnVagrantUp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				vagrantStatusLabel.setText("starting");
 				noSwitch = true;
-				for (Control c : tabFolder.getTabList()) {
-					c.setEnabled(false);
-
-				}
+				
 				StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).startVagrant(instanceWb);
 
 			}
@@ -175,6 +176,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				noSwitch = false;
+				vagrantRunning = false;
 				StarterStarter.getStarter("").haltVagrant();
 				vagrantStatusLabel.setText("Status: offline");
 
@@ -225,15 +227,19 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				LaunchConfigurationModel toStart = null;
-				if (table.getSelectionCount() > 0) {
-					TableItem selectedItem = table.getSelection()[0];
-					toStart = tableConfigMap.get(selectedItem);
-					if (toStart != null) {
-						selectedItem.setText(1, "active");
-						startApp(toStart);
+				if ((sshRunning ||vagrantRunning)) {
+					if (table.getSelectionCount() > 0) {
+						TableItem selectedItem = table.getSelection()[0];
+						toStart = tableConfigMap.get(selectedItem);
+						if (toStart != null) {
+							selectedItem.setText(1, "active");
+							startApp(toStart);
+						}
 					}
+					setVagrantLableReady();
+				} else {
+					showMessage("Make sure vagrant is running.");
 				}
-				setVagrantLableReady();
 			}
 		});
 
@@ -307,7 +313,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 									table.remove(i);
 								}
 								tmpModel = new LaunchConfigurationModel();
-								
+
 								tmpModel.setPlatform(content[1]);
 								tmpModel.setClientController(content[2]);
 								tmpModel.setServerController(content[3]);
@@ -412,7 +418,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 						XmlHelper.removeFromXml(doc, profile, file);
 						sshProfileCombo.clearSelection();
 						sshProfileCombo.deselectAll();
-						
+
 						if (!sshShell.deleteEntry()) {
 
 							String[] result = sshShell.getResult();
@@ -494,7 +500,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		final StarterStarter s = StarterStarter.getStarter(LaunchConfigurationModel.getTopology());
 
-		s.registerControllerFromConfig(toStart);
+		s.startApp(toStart);
 
 	}
 
@@ -726,12 +732,15 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	}
 
+	private boolean sshRunning = false;
+
 	@Override
 	public void done(IJobChangeEvent event) {
 		if (event.getJob().getName().equals("VagrantManager")) {
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
 					setVagrantLableReady();
+					vagrantRunning = true;
 				}
 			});
 		} else if (event.getJob().getName().equals("SshManager")) {
@@ -739,6 +748,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 				public void run() {
 					lblSShStatus.setText("Status: running");
+					sshRunning = true;
 				}
 
 			});

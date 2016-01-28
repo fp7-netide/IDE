@@ -272,7 +272,7 @@ class StarterStarter {
 	private IStarter mnstarter;
 	private boolean min;
 
-	public def registerControllerFromConfig(LaunchConfigurationModel launchConfigurationModel) {
+	public def startApp(LaunchConfigurationModel launchConfigurationModel) {
 
 		val configuration = createLaunchConfiguration(launchConfigurationModel)
 		var tmpstarterList = configToStarter.get(launchConfigurationModel)
@@ -290,10 +290,6 @@ class StarterStarter {
 		}
 		val starterList = tmpstarterList
 
-		if (!vagrantIsRunning && !sshIsRunning) {
-			// start vagrant
-			startVagrantFromConfig(configuration, null)
-		}
 
 		// Iterate controllers in the network model and start apps for them 
 		for (c : ne.controllers) {
@@ -359,24 +355,6 @@ class StarterStarter {
 
 		Thread.sleep(2000)
 
-		if (!min) {
-			min = true
-			var jobMin = new Job("min Starter") {
-
-				override protected run(IProgressMonitor monitor) {
-					mnstarter = factory.createMininetStarter(configuration, monitor)
-
-					// Start Mininet. 
-					reg.register(mnstarter.safeName, mnstarter)
-					mnstarter.syncStart
-					return Status.OK_STATUS
-				}
-
-			};
-			jobMin.schedule();
-
-		// Thread.sleep(2000)
-		}
 
 	}
 

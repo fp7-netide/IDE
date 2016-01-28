@@ -7,7 +7,7 @@
       <editor
             class="eu.netide.workbenchconfigurationeditor.editors.WbConfigurationEditor"
             extensions="wb"
-            icon="icons/sample.gif"
+            icon="icons/netide.png"
             id="workbenchconfigurationeditor.editors.WbConfigurationEditor"
             name="Workbench Configuration Editor">
       </editor>
@@ -21,7 +21,7 @@
       <wizard
             category="workbenchConfigurationEditor"
             class="eu.netide.workbenchconfigurationeditor.wizards.Configuration_Wizard"
-            icon="icons/sample.gif"
+            icon="icons/netide.png"
             id="workbenchconfigurationeditor.wizards.Configuration_Wizard"
             name="Workbench Configuration">
       </wizard>
