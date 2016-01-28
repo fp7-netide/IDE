@@ -8,34 +8,35 @@ public class LaunchConfigurationModel {
 	private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 	public static final String APP_PATH = "appPath";
 	public static final String CLIENT_CONTROLLER = "clientController";
-	public static final String SERVER_CONTROLLER = "serverController";
 	public static final String TOPOLOGY = "topology";
 	public static final String ID = "id";
 	public static final String PLATFORM = "platform";
+	public static final String PORT = "appPort";
 
 	private String appPath;
 	private String platform;
 	private String id;
 	private String clientController;
-	private String serverController;
 	private static String topology;
 	private String appName;
+	private String appPort;
 
-	public LaunchConfigurationModel(String id, String appPath, String platform) {
+	public LaunchConfigurationModel(String id, String appPath, String platform, String appPort) {
 		this.appPath = appPath;
 		this.id = id;
 		this.platform = platform;
+		this.appPort = appPort;
 
 	}
 
 	public LaunchConfigurationModel(String id, String appPath, String platform, String clientController,
-			String serverController) {
+			 String appPort) {
 		this.appPath = appPath;
 		this.id = id;
 		this.platform = platform;
 		this.clientController = clientController;
-		this.serverController = serverController;
 
+		this.appPort = appPort;
 	}
 
 	public String getPlatform() {
@@ -44,6 +45,14 @@ public class LaunchConfigurationModel {
 
 	public void setPlatform(String platform) {
 		this.platform = platform;
+	}
+	
+	public String getAppPort(){
+		return this.appPort;
+	}
+	
+	public void setAppPort(String appPort){
+		this.appPort = appPort;
 	}
 
 	public LaunchConfigurationModel() {
@@ -84,16 +93,6 @@ public class LaunchConfigurationModel {
 		changes.firePropertyChange(CLIENT_CONTROLLER, this.clientController, this.clientController = clientController);
 	}
 
-	public String getServerController() {
-		if (serverController == null)
-			serverController = "";
-		return serverController;
-	}
-
-	public void setServerController(String serverController) {
-		changes.firePropertyChange(SERVER_CONTROLLER, this.serverController, this.serverController = serverController);
-	}
-
 	public static String getTopology() {
 		return topology;
 	}
@@ -122,7 +121,7 @@ public class LaunchConfigurationModel {
 	}
 
 	public LaunchConfigurationModel copy() {
-		return new LaunchConfigurationModel(id, appPath, clientController, serverController, topology);
+		return new LaunchConfigurationModel(id, appPath, clientController, topology, appPort);
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener l) {

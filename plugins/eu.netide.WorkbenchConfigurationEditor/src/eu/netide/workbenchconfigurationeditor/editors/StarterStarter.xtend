@@ -134,11 +134,13 @@ class StarterStarter {
 		startSshWithConfig(createSshConfiguration(modelList), null, model)
 	}
 
-	public def startSSH(ArrayList<LaunchConfigurationModel> modelList, IJobChangeListener listener, SshProfileModel model) {
+	public def startSSH(ArrayList<LaunchConfigurationModel> modelList, IJobChangeListener listener,
+		SshProfileModel model) {
 		startSshWithConfig(createSshConfiguration(modelList), listener, model)
 	}
 
-	private def startSshWithConfig(ILaunchConfiguration configuration, IJobChangeListener listener, SshProfileModel model) {
+	private def startSshWithConfig(ILaunchConfiguration configuration, IJobChangeListener listener,
+		SshProfileModel model) {
 		if (!sshIsRunning) {
 
 			sshJob = new Job("SshManager") {
@@ -290,7 +292,6 @@ class StarterStarter {
 		}
 		val starterList = tmpstarterList
 
-
 		// Iterate controllers in the network model and start apps for them 
 		for (c : ne.controllers) {
 			var controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
@@ -354,7 +355,6 @@ class StarterStarter {
 		}
 
 		Thread.sleep(2000)
-
 
 	}
 
@@ -458,7 +458,6 @@ class StarterStarter {
 				if (model.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
 
 					c.setAttribute("controller_platform_source_".concat(name), model.getClientController());
-					c.setAttribute("controller_platform_target_".concat(name), model.getServerController());
 
 				}
 
@@ -514,7 +513,6 @@ class StarterStarter {
 					if (toStart.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
 
 						c.setAttribute("controller_platform_source_".concat(name), toStart.getClientController());
-						c.setAttribute("controller_platform_target_".concat(name), toStart.getServerController());
 
 					}
 

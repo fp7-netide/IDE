@@ -124,7 +124,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	 */
 	private void addTableEntry(LaunchConfigurationModel model) {
 		String[] tmpS = new String[] { model.getAppName(), "offline", model.getPlatform(), model.getClientController(),
-				model.getServerController() };
+				model.getAppPort() };
 		TableItem tmp = new TableItem(table, SWT.NONE);
 		tableConfigMap.put(tmp, model);
 		tmp.setText(tmpS);
@@ -261,7 +261,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					if (complete) {
 						tmpModel.setPlatform(content[1]);
 						tmpModel.setClientController(content[2]);
-						tmpModel.setServerController(content[3]);
+						tmpModel.setAppPort(content[3]);
 						tmpModel.setAppPath(content[4]);
 						String[] tmp = content[4].split("/");
 						String appName = tmp[tmp.length - 1];
@@ -316,7 +316,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 								tmpModel.setPlatform(content[1]);
 								tmpModel.setClientController(content[2]);
-								tmpModel.setServerController(content[3]);
+								tmpModel.setAppPort(content[3]);
 								tmpModel.setAppPath(content[4]);
 								String[] tmp = content[4].split("/");
 								String appName = tmp[tmp.length - 1];
@@ -646,7 +646,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		tc2.setText("Aktiv");
 		tc3.setText("Platform");
 		tc4.setText("Client");
-		tc5.setText("Server");
+		tc5.setText("Port");
 		tc1.setWidth(120);
 		tc2.setWidth(80);
 		tc3.setWidth(100);

@@ -49,14 +49,12 @@ public class ConfigurationShell extends Shell {
 				this.platformCombo.select(platformIndex);
 				this.platformSet = true;
 				
-				if (!model.getServerController().equals("") && !model.getClientController().equals("")) {
+				if (!model.getClientController().equals("")) {
 					int clientIndex = this.clientControllerCombo.indexOf(model.getClientController());
 					this.clientControllerCombo.select(clientIndex);
-					
-					
-					int serverIndex = this.serverControllerCombo.indexOf(model.getServerController());
-					this.serverControllerCombo.select(serverIndex);
-				}
+				}	
+				this.portText.setText(model.getAppPort());
+				
 				checkForFinish();
 			}
 			while (!this.isDisposed()) {
@@ -92,7 +90,6 @@ public class ConfigurationShell extends Shell {
 	private ConfigurationShell shell;
 	private CCombo platformCombo;
 	private Group client_server;
-	private CCombo serverControllerCombo;
 	private CCombo clientControllerCombo;
 	private Button btnSaveConfig;
 
@@ -109,7 +106,9 @@ public class ConfigurationShell extends Shell {
 		setLayout(new GridLayout(1, false));
 
 		Group appGroup = new Group(this, SWT.NONE);
-		appGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		GridData gd_appGroup = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_appGroup.heightHint = 81;
+		appGroup.setLayoutData(gd_appGroup);
 		appGroup.setLayout(new GridLayout(3, false));
 
 		Label lblApp = new Label(appGroup, SWT.NONE);
@@ -168,18 +167,29 @@ public class ConfigurationShell extends Shell {
 		});
 
 		btnBrowseApp.setText("Browse");
+		
+		Label lblPort = new Label(appGroup, SWT.NONE);
+		lblPort.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblPort.setText("Open Flow Port");
+		
+		portText = new Text(appGroup, SWT.BORDER);
+		portText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(appGroup, SWT.NONE);
 
 		Group platform = new Group(this, SWT.NONE);
 		platform.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		platform.setLayout(new GridLayout(2, false));
 
 		Label lblAppController = new Label(platform, SWT.NONE);
+		GridData gd_lblAppController = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblAppController.widthHint = 91;
+		lblAppController.setLayoutData(gd_lblAppController);
 		lblAppController.setText("Platform");
 
 		platformCombo = new CCombo(platform, SWT.BORDER);
 		GridData gd_platformCombo = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
 		gd_platformCombo.heightHint = 23;
-		gd_platformCombo.widthHint = 175;
+		gd_platformCombo.widthHint = 191;
 		platformCombo.setLayoutData(gd_platformCombo);
 		platformCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -217,15 +227,6 @@ public class ConfigurationShell extends Shell {
 		gd_clientControllerCombo.widthHint = 131;
 		clientControllerCombo.setLayoutData(gd_clientControllerCombo);
 		setComboboxContent(clientControllerCombo);
-
-		Label lblNewLabel = new Label(client_server, SWT.NONE);
-		lblNewLabel.setText("Server Controller");
-
-		serverControllerCombo = new CCombo(client_server, SWT.BORDER);
-		GridData gd_serverControllerCombo = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_serverControllerCombo.heightHint = 20;
-		serverControllerCombo.setLayoutData(gd_serverControllerCombo);
-		setComboboxContent(serverControllerCombo);
 
 		client_server.setVisible(false);
 
@@ -266,16 +267,13 @@ public class ConfigurationShell extends Shell {
 
 								content[2] = clientControllerCombo.getItem(clientControllerCombo.getSelectionIndex());
 							}
-							if (serverControllerCombo.getSelectionIndex() != -1) {
-
-								content[3] = serverControllerCombo.getItem(serverControllerCombo.getSelectionIndex());
-							}
+							
 						} else {
 							content[2] = "";
-							content[3] = "";
 						}
 
 					}
+					content[3] = portText.getText();
 				}
 				shell.dispose();
 
@@ -298,11 +296,12 @@ public class ConfigurationShell extends Shell {
 
 	private String[] content;
 	private Text appPathText;
+	private Text portText;
 
 	/**
 	 * 
 	 * @return 0 = topology, 1 = platform, 2 = clientController, 3 =
-	 *         serverController, 4 = appPath, null if content wasn't set or an
+	 *         appPort, 4 = appPath, null if content wasn't set or an
 	 *         error occurred
 	 */
 	public String[] getSelectedContent() {
@@ -311,10 +310,10 @@ public class ConfigurationShell extends Shell {
 
 	private void setComboboxContent(CCombo combo) {
 
-		combo.add(NetIDE.CONTROLLER_POX);
+
 		combo.add(NetIDE.CONTROLLER_ENGINE);
 		combo.add(NetIDE.CONTROLLER_FLOODLIGHT);
-		combo.add(NetIDE.CONTROLLER_ODL);
+
 		combo.add(NetIDE.CONTROLLER_PYRETIC);
 		combo.add(NetIDE.CONTROLLER_RYU);
 
@@ -325,7 +324,7 @@ public class ConfigurationShell extends Shell {
 	 */
 	protected void createContents() {
 		setText("Choose App Run Configuration");
-		setSize(338, 275);
+		setSize(396, 321);
 
 	}
 

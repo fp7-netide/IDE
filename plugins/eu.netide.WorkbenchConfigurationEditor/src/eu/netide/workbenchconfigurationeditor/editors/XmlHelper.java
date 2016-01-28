@@ -60,6 +60,10 @@ public class XmlHelper {
 			app.setAttribute(XmlConstants.ATTRIBUTE_APP_NAME, model.getAppName());
 			app.setAttribute(XmlConstants.ATTRIBUTE_APP_ID, "" + model.getID());
 
+			Element appPort = doc.createElement(XmlConstants.ELEMENT_APP_PORT);
+			appPort.setTextContent(model.getAppPort());
+			app.appendChild(appPort);
+
 			Element appPath = doc.createElement(XmlConstants.ELEMENT_APP_PATH);
 			appPath.setTextContent(model.getAppPath());
 			app.appendChild(appPath);
@@ -71,10 +75,6 @@ public class XmlHelper {
 			Element clientController = doc.createElement(XmlConstants.ELEMENT_CLIENT_CONTROLLER);
 			clientController.setTextContent(model.getClientController());
 			app.appendChild(clientController);
-
-			Element serverController = doc.createElement(XmlConstants.ELEMENT_SERVER_CONTROLLER);
-			serverController.setTextContent(model.getServerController());
-			app.appendChild(serverController);
 
 			wb.appendChild(app);
 
@@ -136,7 +136,7 @@ public class XmlHelper {
 
 		}
 	}
-	
+
 	public static void removeFromXml(Document doc, SshProfileModel profile, IFile file) {
 
 		Node workbenchNode = doc.getFirstChild();
@@ -205,7 +205,7 @@ public class XmlHelper {
 
 			}
 
-			return new ArrayList [] {modelList, profileList};
+			return new ArrayList[] { modelList, profileList };
 		} catch (Exception e) {
 
 		}
@@ -229,15 +229,15 @@ public class XmlHelper {
 				case XmlConstants.SSH_ID_FILE:
 					model.setSshIdFile(tempNode.getTextContent());
 					break;
-					
+
 				case XmlConstants.SSH_PORT:
 					model.setPort(tempNode.getTextContent());
 					break;
-				
+
 				case XmlConstants.SSH_USERNAME:
 					model.setUsername(tempNode.getTextContent());
 					break;
-					
+
 				case XmlConstants.NODE_SSH:
 					model = new SshProfileModel();
 					profileList.add(model);
@@ -257,7 +257,8 @@ public class XmlHelper {
 					break;
 
 				default:
-					System.err.println("No match for node: " + tempNode.getNodeName());
+					// System.err.println("No match for node: " +
+					// tempNode.getNodeName());
 				}
 			}
 
@@ -287,6 +288,9 @@ public class XmlHelper {
 					LaunchConfigurationModel.setTopology(tempNode.getTextContent());
 
 					break;
+				case XmlConstants.ELEMENT_APP_PORT:
+					model.setAppPort(tempNode.getTextContent());
+					break;
 				case XmlConstants.NODE_APP:
 					model = new LaunchConfigurationModel();
 					modelList.add(model);
@@ -310,14 +314,13 @@ public class XmlHelper {
 				case XmlConstants.ELEMENT_CLIENT_CONTROLLER:
 					model.setClientController(tempNode.getTextContent());
 					break;
-				case XmlConstants.ELEMENT_SERVER_CONTROLLER:
-					model.setServerController(tempNode.getTextContent());
-					break;
+
 				case XmlConstants.ELEMENT_PLATFORM:
 					model.setPlatform(tempNode.getTextContent());
 					break;
 				default:
-					System.err.println("No match for node: " + tempNode.getNodeName());
+					// System.err.println("No match for node: " +
+					// tempNode.getNodeName());
 
 				}
 
