@@ -408,9 +408,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 						sshShell.openShell(profile);
 
 						sshProfileCombo.remove(sshProfileCombo.getSelectionIndex());
-						sshProfileCombo.clearSelection();
 						profileList.remove(profile);
-
+						XmlHelper.removeFromXml(doc, profile, file);
+						sshProfileCombo.clearSelection();
+						sshProfileCombo.deselectAll();
+						
 						if (!sshShell.deleteEntry()) {
 
 							String[] result = sshShell.getResult();
@@ -541,6 +543,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		composite.setLayout(new GridLayout(4, false));
 
 		sshProfileCombo = new CCombo(composite, SWT.BORDER);
+		sshProfileCombo.setEditable(false);
 		GridData gd_sshProfileCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_sshProfileCombo.widthHint = 161;
 		sshProfileCombo.setLayoutData(gd_sshProfileCombo);
