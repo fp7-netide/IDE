@@ -1,18 +1,10 @@
 package eu.netide.configuration.generator.vagrantfile
 
-import com.google.inject.Guice
-import eu.netide.configuration.generator.CommonConfigurationModule
-import java.util.HashMap
-import java.util.Map
+import eu.netide.configuration.generator.fsa.FSAProvider
 import org.eclipse.core.resources.IResource
-import org.eclipse.core.runtime.NullProgressMonitor
+import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2
-import org.eclipse.xtext.generator.OutputConfiguration
-import java.util.List
-import org.eclipse.debug.core.ILaunchConfiguration
-import eu.netide.configuration.generator.fsa.FSAProvider
 
 /**
  * Sets up the necessary tools to generate a Vagrantfile
