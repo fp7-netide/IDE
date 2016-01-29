@@ -3,12 +3,10 @@ package eu.netide.configuration.launcher.starters.impl
 import eu.netide.configuration.launcher.starters.IStarter
 import eu.netide.configuration.launcher.starters.backends.Backend
 import eu.netide.configuration.launcher.starters.backends.VagrantBackend
-import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 import eu.netide.configuration.utils.NetIDE
 import java.io.File
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.core.runtime.Platform
 import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.debug.core.ILaunchConfiguration

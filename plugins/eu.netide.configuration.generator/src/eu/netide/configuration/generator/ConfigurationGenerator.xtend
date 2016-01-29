@@ -1,16 +1,13 @@
 package eu.netide.configuration.generator
 
 import Topology.Connector
+import Topology.Controller
 import Topology.Host
+import Topology.NetworkElement
 import Topology.NetworkEnvironment
 import Topology.Switch
-import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.generator.IFileSystemAccess
-import org.eclipse.xtext.generator.IGenerator
-import Topology.NetworkElement
-import Topology.Controller
-import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2
 import eu.netide.configuration.generator.fsa.FileSystemAccess
+import org.eclipse.emf.ecore.resource.Resource
 
 /**
  * Generates a Mininet configuration based on the specified topology model

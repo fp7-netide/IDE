@@ -1,5 +1,12 @@
 package eu.netide.deployment.topologyimport
 
+import Topology.Connector
+import Topology.Network
+import Topology.NetworkEnvironment
+import Topology.Port
+import Topology.Switch
+import Topology.TopologyFactory
+import eu.netide.deployment.topologyimport.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileNotFoundException
@@ -13,28 +20,6 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import Topology.Connector
-import Topology.Host
-import Topology.Network
-import Topology.NetworkEnvironment
-import Topology.Port
-import Topology.Switch
-/*import java.lang.reflect.InvocationTargetException;
- * import org.eclipse.emf.common.notify.Adapter;
- * import org.eclipse.emf.common.notify.Notification;
- * import org.eclipse.emf.common.util.EList;
- * import org.eclipse.emf.common.util.TreeIterator;
- * import org.eclipse.emf.ecore.EAnnotation;
- * import org.eclipse.emf.ecore.EClass;
- * import org.eclipse.emf.ecore.EDataType;
- * import org.eclipse.emf.ecore.EObject;
- * import org.eclipse.emf.ecore.EOperation;
- * import org.eclipse.emf.ecore.EPackage;
- * import org.eclipse.emf.ecore.EReference;
- * import org.eclipse.emf.ecore.EStructuralFeature;
- import org.eclipse.emf.ecore.resource.Resource; */
-import Topology.TopologyFactory
-import eu.netide.deployment.topologyimport.json.JSONObject
 
 class TopologyImport {
 

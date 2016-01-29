@@ -2,7 +2,6 @@ package eu.netide.configuration.launcher.starters.impl
 
 import Topology.Controller
 import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.debug.core.ILaunch
 import org.eclipse.debug.core.ILaunchConfiguration
 
 class RyuStarter extends ControllerStarter {

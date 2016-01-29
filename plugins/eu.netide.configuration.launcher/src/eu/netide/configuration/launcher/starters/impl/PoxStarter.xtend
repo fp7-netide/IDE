@@ -1,7 +1,6 @@
 package eu.netide.configuration.launcher.starters.impl
 
 import Topology.Controller
-import eu.netide.configuration.launcher.starters.backends.Backend
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
 
