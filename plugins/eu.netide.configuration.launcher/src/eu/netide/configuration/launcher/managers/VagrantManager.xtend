@@ -44,12 +44,11 @@ class VagrantManager implements IManager {
 
 	new(ILaunchConfiguration launchConfiguration, IProgressMonitor monitor) {
 
-		this.launch = new Launch(launchConfiguration, "debug", null)
+		this.launch = new Launch(launchConfiguration, "run", null)
 		this.launch.setAttribute("org.eclipse.debug.core.capture_output", "true")
 		this.launch.setAttribute("org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING", "UTF-8")
 		this.launch.setAttribute("org.eclipse.debug.core.launch.timestamp", new Date().time + "")
 		DebugPlugin.getDefault().getLaunchManager().addLaunch(this.launch)
-
 		this.monitor = monitor
 
 		this.vagrantpath = new Path(
