@@ -1,21 +1,18 @@
 package eu.netide.configuration.generator.vagrantfile
 
+import Topology.Controller
 import Topology.NetworkElement
 import Topology.NetworkEnvironment
+import eu.netide.configuration.generator.fsa.FileSystemAccess
+import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 import eu.netide.configuration.utils.NetIDE
+import eu.netide.configuration.utils.NetIDEUtil
+import java.net.URL
 import org.eclipse.core.resources.IResource
-import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.FileLocator
-import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Platform
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.generator.IFileSystemAccess
-import eu.netide.configuration.utils.NetIDEUtil
-import Topology.Controller
-import java.net.URL
-import eu.netide.configuration.preferences.NetIDEPreferenceConstants
-import eu.netide.configuration.generator.fsa.FileSystemAccess
 
 /**
  * Generates and writes a Vagrantfile depending on required controller platforms and network applications.

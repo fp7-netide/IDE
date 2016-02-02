@@ -1,13 +1,12 @@
 package eu.netide.newproject
 
-import org.eclipse.jface.wizard.WizardPage
-import org.eclipse.swt.widgets.Composite
-import org.eclipse.swt.SWT
 import org.eclipse.debug.internal.ui.SWTFactory
-import org.eclipse.swt.widgets.Text
+import org.eclipse.jface.wizard.WizardPage
+import org.eclipse.swt.SWT
 import org.eclipse.swt.events.ModifyEvent
 import org.eclipse.swt.events.ModifyListener
-import org.eclipse.swt.widgets.Button
+import org.eclipse.swt.widgets.Composite
+import org.eclipse.swt.widgets.Text
 
 class NewNetIDEProjectWizardPage1 extends WizardPage {
 	
