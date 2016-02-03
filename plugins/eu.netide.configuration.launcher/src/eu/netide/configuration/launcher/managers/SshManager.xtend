@@ -1,18 +1,29 @@
 package eu.netide.configuration.launcher.managers
 
+import Topology.NetworkEnvironment
 import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 import eu.netide.configuration.utils.NetIDE
+import eu.netide.configuration.utils.NetIDEUtil
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
+import java.net.URL
 import java.util.ArrayList
 import java.util.Date
 import java.util.HashMap
 import java.util.Map
+import java.util.regex.Pattern
+import org.eclipse.core.resources.IProject
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.CoreException
+import org.eclipse.core.runtime.FileLocator
+import org.eclipse.core.runtime.IPath
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Platform
 import org.eclipse.core.runtime.Status
+import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunch
 import org.eclipse.debug.core.ILaunchConfiguration
@@ -21,23 +32,12 @@ import org.eclipse.debug.core.RefreshUtil
 import org.eclipse.debug.core.model.IProcess
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import java.io.File
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.util.regex.Pattern
-import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
-import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.tm.terminal.view.core.TerminalServiceFactory
-import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants
-import java.net.URL
-import org.eclipse.core.runtime.FileLocator
 import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done
-import Topology.NetworkEnvironment
-import eu.netide.configuration.utils.NetIDEUtil
-import org.eclipse.core.runtime.IPath
-import java.util.List
-import org.eclipse.core.resources.IProject
+import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants
 import org.eclipse.xtend.lib.annotations.Accessors
+
+import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
 
 class SshManager implements IManager {
 

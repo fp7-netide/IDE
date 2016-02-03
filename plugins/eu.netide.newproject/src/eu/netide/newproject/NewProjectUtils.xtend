@@ -2,11 +2,10 @@ package eu.netide.newproject
 
 import Topology.TopologyFactory
 import Topology.TopologyPackage
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.emf.common.util.URI
-import org.eclipse.core.runtime.IPath
 import java.io.IOException
-import Topology.NetworkEnvironment
+import org.eclipse.core.runtime.IPath
+import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
 class NewProjectUtils {
 	

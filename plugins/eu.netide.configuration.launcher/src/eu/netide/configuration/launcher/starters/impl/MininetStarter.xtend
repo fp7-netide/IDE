@@ -2,7 +2,6 @@ package eu.netide.configuration.launcher.starters.impl
 
 import Topology.NetworkEnvironment
 import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.debug.core.ILaunch
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
