@@ -12,8 +12,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -514,10 +518,31 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	}
 
 	public void createLayout(Composite parent) {
-		container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout(1, false));
 
-		Composite startAppComposite = new Composite(container, SWT.BORDER);
+		// final ScrolledComposite sc2 = new ScrolledComposite(shell,
+		// SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		// sc2.setExpandHorizontal(true);
+		// sc2.setExpandVertical(true);
+		// final Composite c2 = new Composite(sc2, SWT.NONE);
+		// sc2.setContent(c2);
+		// c2.setBackground(blue);
+		// layout = new GridLayout();
+		// layout.numColumns = 4;
+		// c2.setLayout(layout);
+		// Button b2 = new Button (c2, SWT.PUSH);
+		// b2.setText("first button");
+		// sc2.setMinSize(c2.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
+		container = new Composite(parent, SWT.NONE);
+		container.setLayout(new FillLayout());
+
+		final ScrolledComposite sc2 = new ScrolledComposite(container, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		sc2.setExpandHorizontal(true);
+		sc2.setExpandVertical(true);
+
+		final Composite startAppComposite = new Composite(sc2, SWT.BORDER);
+
+		sc2.setContent(startAppComposite);
 
 		GridData gd_startAppComposite = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_startAppComposite.widthHint = 888;
@@ -703,6 +728,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnEditTest = new Button(testButtons, SWT.NONE);
 		btnEditTest.setText("Edit Test");
 		new Label(startAppComposite, SWT.NONE);
+
+		sc2.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				sc2.setMinSize(startAppComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			}
+		});
+
+		// sc2.setMinSize(null);
 	}
 
 	@Override
