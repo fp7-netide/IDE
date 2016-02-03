@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
@@ -65,7 +68,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private HashMap<TableItem, LaunchConfigurationModel> tableConfigMap;
 
 	public WbConfigurationEditor() {
-
+		try {
+			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -84,7 +91,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		modelList = parsed[0];
 		profileList = parsed[1];
 
-		StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).createVagrantFile(modelList);
+		//StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).createVagrantFile(modelList);
 		setSite(site);
 		setInput(input);
 
@@ -337,7 +344,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 
-		btnProvision.addSelectionListener(new SelectionAdapter() {
+		btnProvision_1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				StarterStarter.getStarter("").reprovision();
+			}
+		});
+		btnProvision_2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StarterStarter.getStarter("").reprovision();
@@ -560,18 +573,24 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		sshComposite = new Composite(tabFolder, SWT.NONE);
 		sshTabItem.setControl(sshComposite);
 		sshComposite.setLayout(new GridLayout(1, false));
+		
+		composite_1 = new Composite(sshComposite, SWT.NONE);
+		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+				composite_1.setLayout(new GridLayout(2, false));
+		
+				lblSShStatus = new Label(composite_1, SWT.NONE);
+				lblSShStatus.setText("Status: Offline");
+		new Label(composite_1, SWT.NONE);
 
-		lblSShStatus = new Label(sshComposite, SWT.NONE);
-		lblSShStatus.setBounds(0, 0, 59, 14);
-		lblSShStatus.setText("Status: Offline");
+		btnSSH_Up = new Button(composite_1, SWT.NONE);
+		btnSSH_Up.setText("Start ssh Manager");
+		new Label(composite_1, SWT.NONE);
 
-		btnSSH_Up = new Button(sshComposite, SWT.NONE);
-
-		btnSSH_Up.setBounds(0, 0, 94, 28);
-		btnSSH_Up.setText("ssh Up");
-
-		btnCloseSSH = new Button(sshComposite, SWT.NONE);
+		btnCloseSSH = new Button(composite_1, SWT.NONE);
 		btnCloseSSH.setText("ssh Close");
+		
+		btnProvision_1 = new Button(composite_1, SWT.NONE);
+		btnProvision_1.setText("Provision");
 
 		composite = new Composite(sshComposite, SWT.NONE);
 		GridData gd_composite = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
@@ -600,17 +619,22 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		Composite vagrantButtons = new Composite(tabFolder, SWT.BORDER);
 		vagrantTabItem.setControl(vagrantButtons);
-		vagrantButtons.setLayout(new GridLayout(1, false));
+		vagrantButtons.setLayout(new GridLayout(2, false));
 
 		vagrantStatusLabel = new Label(vagrantButtons, SWT.NONE);
 		vagrantStatusLabel.setText("Status: Offline");
+		new Label(vagrantButtons, SWT.NONE);
 
 		btnVagrantUp = new Button(vagrantButtons, SWT.NONE);
 
 		btnVagrantUp.setText("Vagrant Up");
+		new Label(vagrantButtons, SWT.NONE);
 
 		btnVagrantHalt = new Button(vagrantButtons, SWT.NONE);
 		btnVagrantHalt.setText("Vagrant Halt");
+		
+		btnProvision_2 = new Button(vagrantButtons, SWT.NONE);
+		btnProvision_2.setText("Provision");
 
 		currentPageIndex = tabFolder.getSelectionIndex();
 		new Label(startAppComposite, SWT.NONE);
@@ -709,9 +733,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnReattach.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		btnReattach.setText("Reattach");
 
-		btnProvision = new Button(buttonComposite, SWT.NONE);
-
-		btnProvision.setText("Provision");
 
 		testButtons = new Composite(startAppComposite, SWT.NONE);
 		GridData gd_testButtons = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -735,7 +756,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 
-		// sc2.setMinSize(null);
 	}
 
 	@Override
@@ -848,5 +868,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Composite composite;
 	private CCombo sshProfileCombo;
 	private Button btnEditTest;
-	private Button btnProvision;
+	private Composite composite_1;
+	private Button btnProvision_1;
+	private Button btnProvision_2;
 }

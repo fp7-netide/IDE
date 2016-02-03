@@ -106,9 +106,9 @@ public class Configuration_Wizard_Page extends WizardPage {
 					Object[] result = dialog.getResult();
 					if (result.length == 1) {
 						if (result[0] instanceof IFile) {
-							System.out.println("is file");
+						
 							selectedFile = (IFile) result[0];
-							System.out.println(selectedFile.getFullPath());
+							
 							path = selectedFile.getFullPath().toOSString();
 						} else {
 							showMessage("Please select a topology.");

@@ -58,9 +58,9 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 
 		String filePath = getPathFromSelection();
 		filePath += "/" + fileName + ".wb";
-		System.out.println("file path: " + filePath);
+
 		filePath = new Path(filePath).toOSString();
-		System.out.println("file path: " + filePath);
+
 		File file = new File(filePath);
 
 		if (!file.exists()) {
@@ -74,7 +74,7 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 				writeContent(file, topoName);
 
 				try {
-					System.out.println("Refresh Workspace");
+					
 					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 
 				} catch (CoreException e) {
@@ -132,7 +132,7 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			Object obj = ssel.getFirstElement();
-			System.out.println("selection class: " + obj.getClass());
+		
 			if (obj instanceof IPackageFragment) {
 				IPackageFragment pf = (IPackageFragment) obj;
 				path = pf.getResource().getLocation().toOSString();
