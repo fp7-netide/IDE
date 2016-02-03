@@ -197,12 +197,11 @@ class StarterStarter {
 		for (r : re)
 			r.reattach
 	}
-	
-	public def reprovision(){
-		if(vagrantManager != null){
+
+	public def reprovision() {
+		if (vagrantManager != null) {
 			vagrantManager.asyncProvision
-		}
-		else if(sshManager != null){
+		} else if (sshManager != null) {
 			sshManager.asyncProvision
 		}
 	}
@@ -460,22 +459,28 @@ class StarterStarter {
 		var c = configType.newInstance(null, "vagrant" + UUID)
 		var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString()
 		c.setAttribute("topologymodel", topoPath)
-		for (model : modelList) {
-			for (name : controllerName) {
-				c.setAttribute("controller_platform_".concat(name), model.getPlatform());
+		c.setAttribute("controller_platform_source_".concat(NetIDE.CONTROLLER_ENGINE), NetIDE.CONTROLLER_ENGINE);
+		c.setAttribute("controller_platform_".concat("c1"), NetIDE.CONTROLLER_ODL);
+		var appPath = "controller_data_".concat("c1").concat("_".concat(NetIDE.CONTROLLER_ODL))
+		var appPathOS = "";
+		c.setAttribute(appPath, appPathOS);
 
-				if (model.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
-
-					c.setAttribute("controller_platform_source_".concat(name), model.getClientController());
-
-				}
-
-				var appPath = "controller_data_".concat(name).concat("_".concat(model.getPlatform()));
-				var appPathOS = new Path(model.getAppPath()).toOSString();
-
-				c.setAttribute(appPath, appPathOS);
-			}
-		}
+//		for (model : modelList) {
+//			for (name : controllerName) {
+//				c.setAttribute("controller_platform_".concat(name), model.getPlatform());
+//
+//				if (model.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
+//
+//					c.setAttribute("controller_platform_source_".concat(name), model.getClientController());
+//
+//				}
+//
+//				var appPath = "controller_data_".concat(name).concat("_".concat(model.getPlatform()));
+//				var appPathOS = new Path(model.getAppPath()).toOSString();
+//
+//				c.setAttribute(appPath, appPathOS);
+//			}
+//		}
 		return c.doSave
 	}
 

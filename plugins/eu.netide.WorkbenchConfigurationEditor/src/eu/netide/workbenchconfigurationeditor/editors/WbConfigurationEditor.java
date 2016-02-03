@@ -80,7 +80,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		modelList = parsed[0];
 		profileList = parsed[1];
 
-		// StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).createVagrantFile(modelList);
+		StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).createVagrantFile(modelList);
 		setSite(site);
 		setInput(input);
 
@@ -332,7 +332,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				}
 			}
 		});
-		
+
 		btnProvision.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -683,7 +683,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnReattach = new Button(buttonComposite, SWT.NONE);
 		btnReattach.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		btnReattach.setText("Reattach");
-		
+
 		btnProvision = new Button(buttonComposite, SWT.NONE);
 
 		btnProvision.setText("Provision");
