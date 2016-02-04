@@ -92,7 +92,17 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			
 		}
 		
+		var coreStarter = factory.createCoreStarter(configuration, monitor)
+		reg.register(coreStarter.safeName, coreStarter)
+		coreStarter.asyncStart
 
+		Thread.sleep(2000)
+
+		var emulatorStarter = factory.createEmulatorStarter(configuration, monitor)
+		reg.register(emulatorStarter.safeName, emulatorStarter)
+		emulatorStarter.asyncStart
+		
+		Thread.sleep(2000)
 
 		// Iterate controllers in the network model and start apps for them 
 		for (c : ne.controllers) {
