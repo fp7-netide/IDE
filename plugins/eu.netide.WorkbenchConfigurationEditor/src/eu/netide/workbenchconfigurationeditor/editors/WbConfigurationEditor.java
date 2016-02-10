@@ -70,6 +70,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	public WbConfigurationEditor() {
 		try {
 			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
+			//XmlHelper.modifyVagrantFileSSH("");
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -835,6 +836,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		// TODO Auto-generated method stub
 
 	}
+	
 
 	private Composite testButtons;
 	private CLabel lblServerControllerStatus;
