@@ -31,20 +31,20 @@ import org.eclipse.debug.core.ILaunchConfigurationType
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
-class StarterStarter {
+class ControllerManager {
 
 	private NetworkEnvironment ne;
 	private IResource file;
 
-	private static StarterStarter instance = null;
+	private static ControllerManager instance = null;
 
 	/**
 	 * @param topologyPath may be empty if starter has been initiated 
 	 */
-	public def static StarterStarter getStarter(String topologyPath) {
+	public def static ControllerManager getStarter(String topologyPath) {
 		if (instance == null) {
 			if (topologyPath != "") {
-				instance = new StarterStarter(topologyPath);
+				instance = new ControllerManager(topologyPath);
 			} else {
 				System.err.println("Starter has not been initiated with a topology.");
 			}
