@@ -1,4 +1,4 @@
-package dataBinding;
+package eu.netide.workbenchconfigurationeditor.dataBinding;
 
 import org.eclipse.core.databinding.conversion.Converter;
 

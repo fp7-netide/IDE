@@ -1,4 +1,4 @@
-package eu.netide.workbenchconfigurationeditor.editors;
+package eu.netide.workbenchconfigurationeditor.view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +42,11 @@ import org.eclipse.ui.part.EditorPart;
 import org.w3c.dom.Document;
 
 import eu.netide.configuration.utils.NetIDE;
+import eu.netide.workbenchconfigurationeditor.controller.ControllerManager;
 import eu.netide.workbenchconfigurationeditor.controller.WorkbenchConfigurationEditorEngine;
+import eu.netide.workbenchconfigurationeditor.controller.XmlHelper;
+import eu.netide.workbenchconfigurationeditor.dialogs.ConfigurationShell;
+import eu.netide.workbenchconfigurationeditor.dialogs.SShShell;
 import eu.netide.workbenchconfigurationeditor.model.Constants;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;

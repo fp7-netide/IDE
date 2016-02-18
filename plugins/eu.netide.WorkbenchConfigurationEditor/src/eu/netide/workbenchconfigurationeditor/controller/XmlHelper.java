@@ -1,4 +1,4 @@
-package eu.netide.workbenchconfigurationeditor.editors;
+package eu.netide.workbenchconfigurationeditor.controller;
 
 import java.io.File;
 import java.io.IOException;

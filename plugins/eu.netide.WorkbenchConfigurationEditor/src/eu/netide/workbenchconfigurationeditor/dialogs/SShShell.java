@@ -1,4 +1,4 @@
-package eu.netide.workbenchconfigurationeditor.editors;
+package eu.netide.workbenchconfigurationeditor.dialogs;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;

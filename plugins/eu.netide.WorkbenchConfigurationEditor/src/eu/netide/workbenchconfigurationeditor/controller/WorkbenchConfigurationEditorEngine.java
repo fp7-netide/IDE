@@ -14,15 +14,13 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.widgets.Label;
 import org.w3c.dom.Document;
 
-import dataBinding.RunningBoolToStringConverter;
-import dataBinding.RunningStringToBoolConverter;
-import eu.netide.workbenchconfigurationeditor.editors.ControllerManager;
-import eu.netide.workbenchconfigurationeditor.editors.WbConfigurationEditor;
-import eu.netide.workbenchconfigurationeditor.editors.XmlHelper;
+import eu.netide.workbenchconfigurationeditor.dataBinding.RunningBoolToStringConverter;
+import eu.netide.workbenchconfigurationeditor.dataBinding.RunningStringToBoolConverter;
 import eu.netide.workbenchconfigurationeditor.model.Constants;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 import eu.netide.workbenchconfigurationeditor.model.UiStatusModel;
+import eu.netide.workbenchconfigurationeditor.view.WbConfigurationEditor;
 
 public class WorkbenchConfigurationEditorEngine {
 

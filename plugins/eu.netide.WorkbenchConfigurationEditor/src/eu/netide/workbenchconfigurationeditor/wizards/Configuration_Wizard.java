@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkbench;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import eu.netide.workbenchconfigurationeditor.editors.XmlHelper;
+import eu.netide.workbenchconfigurationeditor.controller.XmlHelper;
 import eu.netide.workbenchconfigurationeditor.model.XmlConstants;
 
 public class Configuration_Wizard extends Wizard implements INewWizard {

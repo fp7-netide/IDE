@@ -1,4 +1,4 @@
-package eu.netide.workbenchconfigurationeditor.editors;
+package eu.netide.workbenchconfigurationeditor.dialogs;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;

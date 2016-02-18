@@ -1,4 +1,4 @@
-package eu.netide.workbenchconfigurationeditor.editors
+package eu.netide.workbenchconfigurationeditor.controller
 
 import Topology.NetworkEnvironment
 import eu.netide.configuration.generator.GenerateActionDelegate
@@ -78,7 +78,7 @@ class ControllerManager {
 		for (c : ne.controllers)
 			controllerName.add(c.name)
 
-		file = topologyPath.IFile
+		file = topologyPath.getIFile
 		vagrantIsRunning = false;
 		configToStarter = new HashMap
 		min = false;
