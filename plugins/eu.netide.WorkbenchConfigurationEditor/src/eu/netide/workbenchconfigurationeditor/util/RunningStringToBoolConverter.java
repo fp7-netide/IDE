@@ -1,8 +1,6 @@
-package eu.netide.workbenchconfigurationeditor.dataBinding;
+package eu.netide.workbenchconfigurationeditor.util;
 
 import org.eclipse.core.databinding.conversion.Converter;
-
-import eu.netide.workbenchconfigurationeditor.model.Constants;
 
 public class RunningStringToBoolConverter extends Converter {
 

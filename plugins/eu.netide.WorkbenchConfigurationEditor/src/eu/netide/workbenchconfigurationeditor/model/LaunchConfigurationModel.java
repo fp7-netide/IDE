@@ -3,6 +3,8 @@ package eu.netide.workbenchconfigurationeditor.model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import eu.netide.workbenchconfigurationeditor.util.Constants;
+
 public class LaunchConfigurationModel {
 
 	private PropertyChangeSupport changes;

@@ -14,6 +14,7 @@ import eu.netide.configuration.launcher.starters.backends.VagrantBackend
 import eu.netide.configuration.utils.NetIDE
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel
+import eu.netide.workbenchconfigurationeditor.model.UiStatusModel
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.UUID
@@ -35,26 +36,29 @@ class ControllerManager {
 
 	private NetworkEnvironment ne;
 	private IResource file;
+	private UiStatusModel statusModel;
 
 	private static ControllerManager instance = null;
 
 	/**
 	 * @param topologyPath may be empty if starter has been initiated 
 	 */
-	public def static ControllerManager getStarter(String topologyPath) {
+	public def static ControllerManager getStarter() {
 		if (instance == null) {
-			if (topologyPath != "") {
-				instance = new ControllerManager(topologyPath);
-			} else {
-				System.err.println("Starter has not been initiated with a topology.");
-			}
+			System.err.println("Starter has not been initiated with a topology.");
 		}
 
 		return instance;
 	}
 
-	public def createVagrantFile(ArrayList<LaunchConfigurationModel> modelList) {
-		val configuration = createVagrantConfiguration(modelList)
+	public def static void initControllerManager(String topologyPath, UiStatusModel statusModel) {
+		if (instance == null) {
+			instance = new ControllerManager(topologyPath, statusModel);
+		}
+	}
+
+	public def createVagrantFile() {
+		val configuration = createVagrantConfiguration()
 		var vgen = new VagrantfileGenerateAction(file, configuration)
 		vgen.run
 	}
@@ -62,8 +66,8 @@ class ControllerManager {
 	ILaunchConfigurationType configType;
 	ArrayList<String> controllerName;
 
-	private new(String topologyPath) {
-
+	private new(String topologyPath, UiStatusModel statusModel) {
+		this.statusModel = statusModel
 		generateConfiguration(topologyPath)
 		configType = getLaunchConfigType
 
@@ -79,9 +83,11 @@ class ControllerManager {
 			controllerName.add(c.name)
 
 		file = topologyPath.getIFile
-		vagrantIsRunning = false;
 		configToStarter = new HashMap
-		min = false;
+	
+		
+		this.statusModel.setSshRunning(new Boolean(false));
+		this.statusModel.setVagrantRunning(new Boolean(false));
 
 	}
 
@@ -91,12 +97,10 @@ class ControllerManager {
 
 	private VagrantManager vagrantManager;
 
-	private boolean vagrantIsRunning;
 	private Job vagrantJob
 
 	private SshManager sshManager
 	private Job sshJob
-	private boolean sshIsRunning
 
 	private Backend backend;
 
@@ -105,7 +109,7 @@ class ControllerManager {
 	 */
 	private def boolean startVagrantFromConfig(ILaunchConfiguration configuration, IJobChangeListener listener) {
 
-		if (!vagrantIsRunning) {
+		if (!this.statusModel.vagrantRunning) {
 			backend = new VagrantBackend
 
 			vagrantJob = new Job("VagrantManager") {
@@ -123,25 +127,24 @@ class ControllerManager {
 			vagrantJob.schedule
 
 			// Thread.sleep(2000)
-			vagrantIsRunning = true;
+			this.statusModel.vagrantRunning = true;
 		}
-// if(configuration.attributes.get("reprovision") as Boolean) vagrantManager.provision
-		return vagrantIsRunning;
 
+		return this.statusModel.vagrantRunning
 	}
 
 	public def startSSH(ArrayList<LaunchConfigurationModel> modelList, SshProfileModel model) {
-		startSshWithConfig(createSshConfiguration(modelList), null, model)
+		startSshWithConfig(createSshConfiguration(), null, model)
 	}
 
 	public def startSSH(ArrayList<LaunchConfigurationModel> modelList, IJobChangeListener listener,
 		SshProfileModel model) {
-		startSshWithConfig(createSshConfiguration(modelList), listener, model)
+		startSshWithConfig(createSshConfiguration(), listener, model)
 	}
 
 	private def startSshWithConfig(ILaunchConfiguration configuration, IJobChangeListener listener,
 		SshProfileModel model) {
-		if (!sshIsRunning) {
+		if (!this.statusModel.sshRunning) {
 
 			sshJob = new Job("SshManager") {
 				override protected run(IProgressMonitor monitor) {
@@ -159,15 +162,16 @@ class ControllerManager {
 			sshJob.addJobChangeListener(listener)
 			sshJob.schedule
 
-			sshIsRunning = true
+			this.statusModel.sshRunning = true
 
 		}
 
 	}
 
 	public def stopSSH() {
-		if (sshIsRunning) {
+		if (this.statusModel.sshRunning) {
 			sshManager.asyncHalt
+			this.statusModel.sshRunning = false
 		}
 	}
 
@@ -180,19 +184,22 @@ class ControllerManager {
 	}
 
 	public def haltVagrant() {
-		vagrantIsRunning = false;
+		this.statusModel.vagrantRunning = false;
 		stopMininet
 		vagrantManager.asyncHalt()
+		this.statusModel.vagrantRunning = false;
+		this.statusModel.mininetRunning = false;
 
 	}
 
 	public def stopMininet() {
-		min = false;
+		this.statusModel.mininetRunning = false
 		if (mnstarter != null)
 			mnstarter.stop
 	}
 
-	def reattachStarter(LaunchConfigurationModel config) {
+	def reattachStarter() {
+		val config = this.statusModel.getModelAtIndex();
 		var re = configToStarter.get(config)
 		for (r : re)
 			r.reattach
@@ -206,7 +213,9 @@ class ControllerManager {
 		}
 	}
 
-	public def stopStarter(LaunchConfigurationModel config) {
+	public def stopStarter() {
+		val config = this.statusModel.getModelAtIndex();
+		config.running = false
 		var toStopList = configToStarter.get(config)
 		for (toStop : toStopList)
 			toStop.stop
@@ -219,8 +228,8 @@ class ControllerManager {
 	}
 
 	public def startMininet() {
-		if (!min) {
-			min = true
+		if (!this.statusModel.mininetRunning) {
+			this.statusModel.mininetRunning = true
 			if (mnstarter != null) {
 				mnstarter.setBackend(backend)
 				mnstarter.asyncStart
@@ -253,7 +262,7 @@ class ControllerManager {
 	public def startServerController(String serverController) {
 		val config = createServerControllerConfiguration(serverController)
 
-		if (!vagrantIsRunning && !sshIsRunning) {
+		if (!this.statusModel.vagrantRunning && !this.statusModel.sshRunning) {
 			// start vagrant
 			startVagrantFromConfig(config, null)
 		}
@@ -280,11 +289,13 @@ class ControllerManager {
 	private IStarter shimStarter;
 	private IStarter starter;
 	private IStarter mnstarter;
-	private boolean min;
 
-	public def startApp(LaunchConfigurationModel launchConfigurationModel) {
+	public def startApp() {
 
-		val configuration = createLaunchConfiguration(launchConfigurationModel)
+		val launchConfigurationModel = this.statusModel.modelAtIndex;
+		launchConfigurationModel.running = true
+
+		val configuration = createLaunchConfiguration()
 		var tmpstarterList = configToStarter.get(launchConfigurationModel)
 
 		if (tmpstarterList == null) {
@@ -394,7 +405,6 @@ class ControllerManager {
 	private def ILaunchConfiguration createServerControllerConfiguration(String serverController) {
 
 		try {
-
 			var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
 
 			var c = configType.newInstance(null, serverController + UUID);
@@ -423,8 +433,8 @@ class ControllerManager {
 		return null;
 	}
 
-	private def ILaunchConfiguration createSshConfiguration(ArrayList<LaunchConfigurationModel> modelList) {
-
+	private def ILaunchConfiguration createSshConfiguration() {
+		val modelList = statusModel.modelList
 //				this.sshHostname = launchConfiguration.getAttribute("target.hostname", "localhost")
 //		this.sshPort = launchConfiguration.getAttribute("target.ssh.port", "22")
 //		this.sshUsername = launchConfiguration.getAttribute("target.ssh.username", "")
@@ -455,7 +465,8 @@ class ControllerManager {
 
 	}
 
-	private def ILaunchConfiguration createVagrantConfiguration(ArrayList<LaunchConfigurationModel> modelList) {
+	private def ILaunchConfiguration createVagrantConfiguration() {
+
 		var c = configType.newInstance(null, "vagrant" + UUID)
 		var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString()
 		c.setAttribute("topologymodel", topoPath)
@@ -498,8 +509,8 @@ class ControllerManager {
 		return null;
 	}
 
-	private def ILaunchConfiguration createLaunchConfiguration(LaunchConfigurationModel toStart) {
-
+	private def ILaunchConfiguration createLaunchConfiguration() {
+		val toStart = statusModel.modelAtIndex
 		// format
 		// launch Configuration: Network
 		// Set: [controller_data_c1_Network

@@ -14,12 +14,13 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.widgets.Label;
 import org.w3c.dom.Document;
 
-import eu.netide.workbenchconfigurationeditor.dataBinding.RunningBoolToStringConverter;
-import eu.netide.workbenchconfigurationeditor.dataBinding.RunningStringToBoolConverter;
-import eu.netide.workbenchconfigurationeditor.model.Constants;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 import eu.netide.workbenchconfigurationeditor.model.UiStatusModel;
+import eu.netide.workbenchconfigurationeditor.util.Constants;
+import eu.netide.workbenchconfigurationeditor.util.RunningBoolToStringConverter;
+import eu.netide.workbenchconfigurationeditor.util.RunningStringToBoolConverter;
+import eu.netide.workbenchconfigurationeditor.util.XmlHelper;
 import eu.netide.workbenchconfigurationeditor.view.WbConfigurationEditor;
 
 public class WorkbenchConfigurationEditorEngine {
@@ -29,12 +30,6 @@ public class WorkbenchConfigurationEditorEngine {
 	private IFile inputFile;
 	// xml representation of input file
 	private Document doc;
-	// list corresponding to doc
-	private ArrayList<LaunchConfigurationModel> modelList;
-	// list corresponding to doc
-	private ArrayList<SshProfileModel> profileList;
-	// object used for the starting process of the controller
-	private ControllerManager controllerManager;
 	// representation of the ui status
 	private UiStatusModel statusModel;
 	// instance to link model and view
@@ -61,9 +56,10 @@ public class WorkbenchConfigurationEditorEngine {
 		this.statusModel.setVagrantRunning(new Boolean(false));
 
 		ArrayList[] parsed = XmlHelper.parseFileToModel(inputFile, doc);
-
-		modelList = parsed[0];
-		profileList = parsed[1];
+		this.statusModel.setModelList(parsed[0]);
+		this.statusModel.setProfileList(parsed[1]);
+		
+		ControllerManager.initControllerManager(LaunchConfigurationModel.getTopology(), this.statusModel);
 	}
 
 	private void initDataBinding() {
@@ -74,8 +70,9 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addStatusLabelDataBinding(this.editor.getSSHStautsLabel(), Constants.SSH_RUNNING_MODEL);
 		this.addStatusLabelDataBinding(this.editor.getVagrantStatusLabel(), Constants.VAGRANT_RUNNING_MODEL);
 
-		this.addTableDataBinding(modelList);
-		this.addComboDataBinding(profileList);
+		this.addTableDataBinding(this.statusModel.getModelList());
+		this.addComboDataBinding(this.statusModel.getProfileList());
+		this.addServerControllerComboDataBinding();
 	}
 
 	private void addComboDataBinding(ArrayList<SshProfileModel> profileList) {
@@ -94,7 +91,19 @@ public class WorkbenchConfigurationEditorEngine {
 				.observe(this.statusModel);
 
 		this.ctx.bindValue(modelValue, selection);
+	}
 
+	private void addServerControllerComboDataBinding() {
+
+		ComboViewer cv = this.editor.getServerComboViewer();
+
+		IObservableValue selection = WidgetProperties.text().observe(cv.getCombo());
+		IObservableValue modelValue = BeanProperties
+				.value(UiStatusModel.class, Constants.SERVER_CONTROLLER_SELECTION).observe(this.statusModel);
+
+		this.ctx.bindValue(modelValue, selection);
+		
+		
 	}
 
 	private void addTableDataBinding(ArrayList<LaunchConfigurationModel> modelList) {
@@ -103,6 +112,16 @@ public class WorkbenchConfigurationEditorEngine {
 		ViewerSupport.bind(this.editor.getTableViewer(), input,
 				BeanProperties.values(new String[] { Constants.APP_NAME_MODEL, Constants.APP_RUNNING_MODEL,
 						Constants.PLATFORM_MODEL, Constants.CLIENT_CONTROLLER_MODEL, Constants.PORT_MODEL }));
+
+		// bind selectionIndex to model
+		// selectionIndex == profileListIndex, use it to match selection to
+		// actual model
+		IObservableValue selection = WidgetProperties.singleSelectionIndex()
+				.observe(this.editor.getTableViewer().getTable());
+		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, Constants.LAUNCH_TABLE_INDEX)
+				.observe(this.statusModel);
+
+		this.ctx.bindValue(modelValue, selection);
 
 	}
 
@@ -119,9 +138,7 @@ public class WorkbenchConfigurationEditorEngine {
 
 		this.ctx.bindValue(widgetValue, modelValue, viewToModel, modelToView);
 	}
-
-	private void initButtonListener() {
-		// TODO: get corresponding ui buttons
-		// TODO: add Button listeners
+	public UiStatusModel getStatusModel(){
+		return this.statusModel;
 	}
 }

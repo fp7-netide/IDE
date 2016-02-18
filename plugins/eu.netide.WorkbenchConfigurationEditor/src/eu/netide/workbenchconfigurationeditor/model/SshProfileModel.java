@@ -4,26 +4,28 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.UUID;
 
+import eu.netide.workbenchconfigurationeditor.util.Constants;
+
 public class SshProfileModel {
-	
+
 	private String host;
 	private String port;
 	private String sshIdFile;
 	private String username;
 	private String profileName;
 	private String id;
-	
+
 	private PropertyChangeSupport changes;
-	
-	public SshProfileModel(){
+
+	public SshProfileModel() {
 		changes = new PropertyChangeSupport(this);
-		this.id = "" +UUID.randomUUID();
+		this.id = "" + UUID.randomUUID();
 	}
-	
-	public String getID(){
+
+	public String getID() {
 		return this.id;
 	}
-	
+
 	public void setHost(String host) {
 		this.changes.firePropertyChange(Constants.HOST_MODEL, this.host, this.host = host);
 	}
@@ -60,16 +62,30 @@ public class SshProfileModel {
 		return this.username;
 	}
 
-	public String getProfileName(){
+	public String getProfileName() {
 		return this.profileName;
 	}
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SshProfileModel other = (SshProfileModel) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+
 	@Override
 	public String toString() {
-		//TODO: parse to xml format here
+		// TODO: parse to xml format here
 		return "Configuration [id=" + id + ", for App =" + "" + "]";
 	}
-	
+
 	public void addPropertyChangeListener(PropertyChangeListener l) {
 		changes.addPropertyChangeListener(l);
 	}
@@ -81,5 +97,5 @@ public class SshProfileModel {
 	public void removePropertyChangeListener(PropertyChangeListener l) {
 		changes.removePropertyChangeListener(l);
 	}
-	
+
 }

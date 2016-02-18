@@ -1,4 +1,4 @@
-package eu.netide.workbenchconfigurationeditor.model;
+package eu.netide.workbenchconfigurationeditor.util;
 
 public class Constants {
 	// Launch Configuration Model Constants
@@ -17,6 +17,8 @@ public class Constants {
 	public static final String SSH_RUNNING_MODEL = "sshRunning";
 	public static final String SERVER_CONTROLLER_RUNNING_MODEL = "serverControllerRunning";
 	public static final String SSH_COMBO_SELECTION_INDEX = "sshComboSelectionIndex";
+	public static final String LAUNCH_TABLE_INDEX = "launchTableIndex";
+	public static final String SERVER_CONTROLLER_SELECTION = "serverControllerSelection";
 
 	// SSH Profile Model Constants
 	public static final String HOST_MODEL = "host";

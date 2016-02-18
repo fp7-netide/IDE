@@ -1,4 +1,4 @@
-package eu.netide.workbenchconfigurationeditor.model;
+package eu.netide.workbenchconfigurationeditor.util;
 
 public class XmlConstants {
 	public static final String NODE_SSH = "ssh";

@@ -1,4 +1,4 @@
-package eu.netide.workbenchconfigurationeditor.controller;
+package eu.netide.workbenchconfigurationeditor.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +29,6 @@ import org.xml.sax.SAXException;
 import eu.netide.configuration.utils.NetIDE;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
-import eu.netide.workbenchconfigurationeditor.model.XmlConstants;
 
 public class XmlHelper {
 

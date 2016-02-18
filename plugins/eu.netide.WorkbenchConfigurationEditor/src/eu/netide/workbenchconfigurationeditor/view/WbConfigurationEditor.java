@@ -1,7 +1,5 @@
 package eu.netide.workbenchconfigurationeditor.view;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
@@ -33,23 +31,20 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
-import org.w3c.dom.Document;
 
 import eu.netide.configuration.utils.NetIDE;
 import eu.netide.workbenchconfigurationeditor.controller.ControllerManager;
 import eu.netide.workbenchconfigurationeditor.controller.WorkbenchConfigurationEditorEngine;
-import eu.netide.workbenchconfigurationeditor.controller.XmlHelper;
 import eu.netide.workbenchconfigurationeditor.dialogs.ConfigurationShell;
 import eu.netide.workbenchconfigurationeditor.dialogs.SShShell;
-import eu.netide.workbenchconfigurationeditor.model.Constants;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
+import eu.netide.workbenchconfigurationeditor.util.Constants;
 
 /**
  * 
@@ -60,45 +55,26 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	public static final String ID = "workbenchconfigurationeditor.editors.WbConfigurationEditor"; //$NON-NLS-1$
 	private WbConfigurationEditor instanceWb = this;
+	private WorkbenchConfigurationEditorEngine engine;
 
-	// parsed xml document
-	private Document doc;
 	private IFile file;
-	private ArrayList<LaunchConfigurationModel> modelList;
-	private ArrayList<SshProfileModel> profileList;
-	private boolean serverControllerIsRunning;
+
 	private ConfigurationShell tempShell;
 	private LaunchConfigurationModel tmpModel;
-	/**
-	 * used to find the corresponding model to the selected table row
-	 */
-	private HashMap<TableItem, LaunchConfigurationModel> tableConfigMap;
 
 	public WbConfigurationEditor() {
 		try {
 			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-			// XmlHelper.modifyVagrantFileSSH("");
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-
+		
 		IFileEditorInput fileInput = (IFileEditorInput) input;
-		this.tableConfigMap = new HashMap<TableItem, LaunchConfigurationModel>();
-		// fills the modelList with the data from the xml file
-		this.serverControllerIsRunning = false;
 		file = fileInput.getFile();
-		doc = XmlHelper.getDocFromFile(file);
-
-		ArrayList[] parsed = XmlHelper.parseFileToModel(file, doc);
-
-		modelList = parsed[0];
-		profileList = parsed[1];
-
 		// StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).createVagrantFile(modelList);
 		setSite(site);
 		setInput(input);
@@ -119,31 +95,26 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	@Override
 	public void createPartControl(Composite parent) {
 		createLayout(parent);
+		engine = new WorkbenchConfigurationEditorEngine(this);
 		addButtonListener();
-		
-		new WorkbenchConfigurationEditorEngine(this);
-	}
 
+	}
 
 	private void addMininetButtonListener() {
 		btnMininetOn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				mininetStatusLable.setText("Status: aktiv");
-				ControllerManager.getStarter(LaunchConfigurationModel.getTopology()).startMininet();
+				ControllerManager.getStarter().startMininet();
 			}
 		});
 
 		btnMininetOff.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				mininetStatusLable.setText("Status: offline");
-				ControllerManager.getStarter(LaunchConfigurationModel.getTopology()).stopMininet();
+				ControllerManager.getStarter().stopMininet();
 			}
 		});
 	}
-
-	private boolean vagrantRunning = false;
 
 	private void addVagrantButtonListener() {
 		btnVagrantUp.addSelectionListener(new SelectionAdapter() {
@@ -152,7 +123,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 				noSwitch = true;
 
-				ControllerManager.getStarter(LaunchConfigurationModel.getTopology()).startVagrant(instanceWb);
+				ControllerManager.getStarter().startVagrant(instanceWb);
 
 			}
 		});
@@ -161,7 +132,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (table.getSelectionCount() > 0)
-					ControllerManager.getStarter("").reattachStarter(tableConfigMap.get(table.getSelection()[0]));
+					ControllerManager.getStarter().reattachStarter();
 			}
 		});
 
@@ -169,16 +140,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				noSwitch = false;
-				vagrantRunning = false;
-				ControllerManager.getStarter("").haltVagrant();
-				vagrantStatusLabel.setText("Status: offline");
-
-				for (int i = 0; i < table.getItemCount(); i++) {
-					table.getItem(i).setText(1, "offline");
-					// TODO: check for unknown side effects
-					// StarterStarter.getStarter("").stopStarter(tableConfigMap.get(table.getItem(i)));
-				}
-
+				engine.getStatusModel().setVagrantRunning(false);
+				ControllerManager.getStarter().haltVagrant();
 			}
 		});
 	}
@@ -188,16 +151,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (table.getSelectionCount() > 0) {
-					TableItem[] toRemove = table.getSelection();
-					for (TableItem i : toRemove) {
-						LaunchConfigurationModel tmp = tableConfigMap.get(i);
-						modelList.remove(tmp);
-						XmlHelper.removeFromXml(doc, tmp, file);
-					}
-					int[] toRemoveIndex = table.getSelectionIndices();
-					for (int i : toRemoveIndex) {
-						table.remove(i);
-					}
+					engine.getStatusModel().removeEntryFromModelList();
+					// TODO: XmlHelper.removeFromXml(doc, tmp, file);
 
 				} else {
 					showMessage("Select a test to remove from the table.");
@@ -206,12 +161,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		});
 
 		btnStopTest.addSelectionListener(new SelectionAdapter() {
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (table.getSelectionCount() > 0) {
-					TableItem tmpItem = table.getSelection()[0];
-					ControllerManager.getStarter("").stopStarter(tableConfigMap.get(tmpItem));
-					tmpItem.setText(1, "offline");
+					ControllerManager.getStarter().stopStarter();
 				}
 			}
 		});
@@ -219,19 +173,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		startBTN.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				LaunchConfigurationModel toStart = null;
-				if ((sshRunning || vagrantRunning)) {
+				if ((engine.getStatusModel().getSshRunning() || engine.getStatusModel().getVagrantRunning())) {
 					if (table.getSelectionCount() > 0) {
-						TableItem selectedItem = table.getSelection()[0];
-						toStart = tableConfigMap.get(selectedItem);
-						if (toStart != null) {
-							selectedItem.setText(1, "active");
-							startApp(toStart);
-						}
+						ControllerManager.getStarter().startApp();
+					} else {
+						showMessage("Make sure vagrant is running.");
 					}
-					setVagrantLableReady();
-				} else {
-					showMessage("Make sure vagrant is running.");
 				}
 			}
 		});
@@ -261,8 +208,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 						tmpModel.setAppName(appName);
 						tmpModel.setID(UUID.randomUUID().toString());
 
-						XmlHelper.addModelToXmlFile(doc, tmpModel, file);
-						modelList.add(tmpModel);
+						// TODO: XmlHelper.addModelToXmlFile(doc, tmpModel,
+						// file);
+						engine.getStatusModel().addEntryToModelList(tmpModel);
 					}
 				}
 
@@ -274,52 +222,40 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				LaunchConfigurationModel toStart = null;
-
 				if (table.getSelectionCount() > 0) {
 
-					TableItem[] toRemove = table.getSelection();
+					tempShell = new ConfigurationShell(container.getDisplay());
+					tempShell.openShell(engine.getStatusModel().getModelAtIndex());
 
-					toStart = tableConfigMap.get(toRemove[0]);
+					String[] content = tempShell.getSelectedContent();
+					if (content != null) {
+						boolean complete = true;
+						if (content[1].equals("") || content[4].equals(""))
+							complete = false;
 
-					if (toStart != null) {
+						if (complete) {
 
-						tempShell = new ConfigurationShell(container.getDisplay());
-						tempShell.openShell(toStart);
+							engine.getStatusModel().removeEntryFromModelList();
+							// TODO: XmlHelper.removeFromXml(doc, tmp,
+							// file);
 
-						String[] content = tempShell.getSelectedContent();
-						if (content != null) {
-							boolean complete = true;
-							if (content[1].equals("") || content[4].equals(""))
-								complete = false;
+							tmpModel = new LaunchConfigurationModel();
 
-							if (complete) {
-								for (TableItem i : toRemove) {
-									LaunchConfigurationModel tmp = tableConfigMap.get(i);
-									modelList.remove(tmp);
-									XmlHelper.removeFromXml(doc, tmp, file);
-								}
+							tmpModel.setPlatform(content[1]);
+							tmpModel.setClientController(content[2]);
+							tmpModel.setAppPort(content[3]);
+							tmpModel.setAppPath(content[4]);
+							String[] tmp = content[4].split("/");
+							String appName = tmp[tmp.length - 1];
+							tmpModel.setAppName(appName);
+							tmpModel.setID(UUID.randomUUID().toString());
 
-								int[] toRemoveIndex = table.getSelectionIndices();
-								for (int i : toRemoveIndex) {
-									table.remove(i);
-								}
-								tmpModel = new LaunchConfigurationModel();
+							// TODO: XmlHelper.addModelToXmlFile(doc,
+							// tmpModel, file);
+							engine.getStatusModel().addEntryToModelList(tmpModel);
 
-								tmpModel.setPlatform(content[1]);
-								tmpModel.setClientController(content[2]);
-								tmpModel.setAppPort(content[3]);
-								tmpModel.setAppPath(content[4]);
-								String[] tmp = content[4].split("/");
-								String appName = tmp[tmp.length - 1];
-								tmpModel.setAppName(appName);
-								tmpModel.setID(UUID.randomUUID().toString());
-
-								XmlHelper.addModelToXmlFile(doc, tmpModel, file);
-								modelList.add(tmpModel);
-
-							}
 						}
+
 					}
 
 				}
@@ -329,13 +265,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnProvision_1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter("").reprovision();
+				ControllerManager.getStarter().reprovision();
 			}
 		});
 		btnProvision_2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter("").reprovision();
+				ControllerManager.getStarter().reprovision();
 			}
 		});
 	}
@@ -361,12 +297,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					lblSShStatus.setText("Status: waiting");
 					noSwitch = true;
 
-					String modelName = sshProfileCombo.getItem(sshProfileCombo.getSelectionIndex());
-					SshProfileModel model = getModelFromName(modelName);
+					SshProfileModel model = engine.getStatusModel().getSshModelAtIndex();
 
 					if (model != null) {
-						ControllerManager.getStarter(LaunchConfigurationModel.getTopology()).startSSH(modelList,
-								instanceWb, model);
+						ControllerManager.getStarter().startSSH(engine.getStatusModel().getModelList(), instanceWb,
+								model);
 					}
 				} else {
 					showMessage("Please select / create a ssh Profile.");
@@ -379,7 +314,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				lblSShStatus.setText("Status: offline");
-				ControllerManager.getStarter("").stopSSH();
+				ControllerManager.getStarter().stopSSH();
 				noSwitch = false;
 				for (Control c : tabFolder.getTabList()) {
 					c.setEnabled(true);
@@ -402,8 +337,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					model.setUsername(result[2]);
 					model.setProfileName(result[3]);
 					model.setProfileName(result[4]);
-					XmlHelper.addSshProfileToXmlFile(doc, model, file);
-					profileList.add(model);
+					// TODO: XmlHelper.addSshProfileToXmlFile(doc, model, file);
+					engine.getStatusModel().addEntryToSSHList(model);
 					sshProfileCombo.add(model.getProfileName());
 
 				}
@@ -415,16 +350,16 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (sshProfileCombo.getSelectionIndex() != -1) {
-					String modelName = sshProfileCombo.getItem(sshProfileCombo.getSelectionIndex());
-					SshProfileModel profile = getModelFromName(modelName);
+
+					SshProfileModel profile = engine.getStatusModel().getSshModelAtIndex();
 
 					if (profile != null) {
 						SShShell sshShell = new SShShell(container.getDisplay());
 						sshShell.openShell(profile);
 
 						sshProfileCombo.remove(sshProfileCombo.getSelectionIndex());
-						profileList.remove(profile);
-						XmlHelper.removeFromXml(doc, profile, file);
+						engine.getStatusModel().removeEntryFromSSHList(profile);
+						// TODO: XmlHelper.removeFromXml(doc, profile, file);
 						sshProfileCombo.clearSelection();
 						sshProfileCombo.deselectAll();
 
@@ -432,7 +367,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 							String[] result = sshShell.getResult();
 							if (result != null) {
-								XmlHelper.removeFromXml(doc, profile, file);
+								// TODO: XmlHelper.removeFromXml(doc, profile,
+								// file);
 
 								SshProfileModel model = new SshProfileModel();
 								model.setHost(result[0]);
@@ -441,8 +377,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 								model.setProfileName(result[3]);
 								model.setProfileName(result[4]);
 
-								XmlHelper.addSshProfileToXmlFile(doc, model, file);
-								profileList.add(model);
+								// TODO: XmlHelper.addSshProfileToXmlFile(doc,
+								// model, file);
+								engine.getStatusModel().addEntryToSSHList(model);
 								sshProfileCombo.add(model.getProfileName());
 
 							}
@@ -460,15 +397,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		startServerController.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				lblServerControllerStatus.setText(Constants.LABEL_RUNNING);
-				String selection = selectServerCombo.getText();
-				if (!serverControllerIsRunning && !selection.equals("")) {
-					// Create starter for selected server controller
-					ControllerManager.getStarter(LaunchConfigurationModel.getTopology())
-							.startServerController(selection);
-					lblServerControllerStatus.setText(Constants.LABEL_RUNNING);
+				engine.getStatusModel().setServerControllerRunning(true);
 
-					serverControllerIsRunning = true;
+				String selection = engine.getStatusModel().getServerControllerSelection();
+				if (!engine.getStatusModel().getServerControllerRunning() && !selection.equals("")) {
+					// Create starter for selected server controller
+					ControllerManager.getStarter().startServerController(selection);
+
+					engine.getStatusModel().setServerControllerRunning(true);
 					selectServerCombo.setEnabled(false);
 				}
 			}
@@ -477,11 +413,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnStopServerController.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (serverControllerIsRunning) {
+				if (!engine.getStatusModel().getServerControllerRunning()) {
 					// Stop starter
-					ControllerManager.getStarter("").stopServerController();
-					lblServerControllerStatus.setText(Constants.LABEL_OFFLINE);
-					serverControllerIsRunning = false;
+					ControllerManager.getStarter().stopServerController();
+					engine.getStatusModel().setServerControllerRunning(false);
 					selectServerCombo.setEnabled(true);
 				}
 			}
@@ -489,7 +424,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	}
 
-	private void addButtonListener() {
+	public void addButtonListener() {
 		addMininetButtonListener();
 		addVagrantButtonListener();
 		addTestButtonListener();
@@ -498,27 +433,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	}
 
-	private SshProfileModel getModelFromName(String name) {
-		for (SshProfileModel m : profileList) {
-			if (m.getProfileName().equals(name))
-				return m;
-		}
-		return null;
-	}
-
 	private boolean noSwitch = false;
 	private int currentPageIndex;
 
 	private void setVagrantLableReady() {
 		vagrantStatusLabel.setText("Status: running");
-	}
-
-	private void startApp(final LaunchConfigurationModel toStart) {
-
-		final ControllerManager s = ControllerManager.getStarter(LaunchConfigurationModel.getTopology());
-
-		s.startApp(toStart);
-
 	}
 
 	private void showMessage(String msg) {
@@ -636,7 +555,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		new Label(selectServerController, SWT.NONE);
 
 		selectServerCombo = new Combo(selectServerController, SWT.BORDER);
-
 		selectServerCombo.add(NetIDE.CONTROLLER_POX);
 		selectServerCombo.add(NetIDE.CONTROLLER_ODL);
 
@@ -644,6 +562,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		gd_selectServerCombo.heightHint = 22;
 		gd_selectServerCombo.widthHint = 166;
 		selectServerCombo.setLayoutData(gd_selectServerCombo);
+
+		serverComboViewer = new ComboViewer(selectServerCombo);
+
 		startServerController = new Button(selectServerController, SWT.BORDER);
 
 		startServerController.setText("Start Server Controller");
@@ -780,27 +701,24 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	}
 
-	private boolean sshRunning = false;
-
 	@Override
 	public void done(IJobChangeEvent event) {
 		if (event.getJob().getName().equals("VagrantManager")) {
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					setVagrantLableReady();
-					vagrantRunning = true;
+					engine.getStatusModel().setVagrantRunning(true);
 				}
 			});
 		} else if (event.getJob().getName().equals("SshManager")) {
 			Display.getDefault().syncExec(new Runnable() {
 
 				public void run() {
-					lblSShStatus.setText("Status: running");
-					sshRunning = true;
+					engine.getStatusModel().setSshRunning(true);
 				}
 
 			});
 		}
+
 	}
 
 	@Override
@@ -858,6 +776,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Button btnProvision_2;
 	private TableViewer tableViewer;
 	private ComboViewer sshComboViewer;
+	private ComboViewer serverComboViewer;
 
 	public Label getServerControllerLabel() {
 		return this.lblServerControllerStatus;
@@ -881,5 +800,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	public ComboViewer getSshComboViewer() {
 		return this.sshComboViewer;
+	}
+
+	public ComboViewer getServerComboViewer() {
+		return this.serverComboViewer;
 	}
 }
