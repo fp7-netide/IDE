@@ -10,6 +10,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.widgets.Label;
 import org.w3c.dom.Document;
 
@@ -68,7 +69,6 @@ public class WorkbenchConfigurationEditorEngine {
 	}
 
 	private void initDataBinding() {
-		// TODO: get corresponding ui widgets
 
 		this.addStatusLabelDataBinding(this.editor.getServerControllerLabel(),
 				Constants.SERVER_CONTROLLER_RUNNING_MODEL);
@@ -77,9 +77,26 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addStatusLabelDataBinding(this.editor.getVagrantStatusLabel(), Constants.VAGRANT_RUNNING_MODEL);
 
 		this.addTableDataBinding(modelList);
-		// TODO: create dataBindingContext
-		// TODO: link ui to context
-		// TODO: display model info in ui
+		this.addComboDataBinding(profileList);
+	}
+
+	private void addComboDataBinding(ArrayList<SshProfileModel> profileList) {
+
+		// bind sshmodellist to combobox content
+		WritableList input = new WritableList(profileList, SshProfileModel.class);
+
+		ComboViewer cv = this.editor.getSshComboViewer();
+		ViewerSupport.bind(cv, input, BeanProperties.values(new String[] { Constants.PROFILE_NAME_MODEL }));
+
+		// bind selectionIndex to model
+		// selectionIndex == profileListIndex, use it to match selection to
+		// actual model
+		IObservableValue selection = WidgetProperties.singleSelectionIndex().observe(cv.getCombo());
+		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, Constants.SSH_COMBO_SELECTION_INDEX)
+				.observe(this.statusModel);
+
+		this.ctx.bindValue(modelValue, selection);
+
 	}
 
 	private void addTableDataBinding(ArrayList<LaunchConfigurationModel> modelList) {
@@ -88,6 +105,7 @@ public class WorkbenchConfigurationEditorEngine {
 		ViewerSupport.bind(this.editor.getTableViewer(), input,
 				BeanProperties.values(new String[] { Constants.APP_NAME_MODEL, Constants.APP_RUNNING_MODEL,
 						Constants.PLATFORM_MODEL, Constants.CLIENT_CONTROLLER_MODEL, Constants.PORT_MODEL }));
+
 	}
 
 	private void addStatusLabelDataBinding(Label label, String property) {

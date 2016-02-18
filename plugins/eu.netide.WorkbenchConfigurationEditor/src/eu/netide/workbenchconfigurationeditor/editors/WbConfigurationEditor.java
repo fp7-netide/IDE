@@ -12,9 +12,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -24,6 +24,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -114,39 +115,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	@Override
 	public void createPartControl(Composite parent) {
 		createLayout(parent);
-
-		//addContentToTable();
-		if (profileList != null)
-			addContentToComboBox();
-
 		addButtonListener();
+		
 		new WorkbenchConfigurationEditorEngine(this);
 	}
 
-	private void addContentToTable() {
-		for (LaunchConfigurationModel c : modelList) {
-			addTableEntry(c);
-		}
-	}
-
-	private void addContentToComboBox() {
-		for (SshProfileModel p : profileList) {
-			sshProfileCombo.add(p.getProfileName());
-		}
-	}
-
-	/**
-	 * 
-	 * @param data
-	 *            with 4 entries data[0] = pathName
-	 */
-	private void addTableEntry(LaunchConfigurationModel model) {
-//		String[] tmpS = new String[] { model.getAppName(), "offline", model.getPlatform(), model.getClientController(),
-//				model.getAppPort() };
-//		TableItem tmp = new TableItem(table, SWT.NONE);
-//		tableConfigMap.put(tmp, model);
-//		tmp.setText(tmpS);
-	}
 
 	private void addMininetButtonListener() {
 		btnMininetOn.addSelectionListener(new SelectionAdapter() {
@@ -172,7 +145,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnVagrantUp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				vagrantStatusLabel.setText("starting");
+
 				noSwitch = true;
 
 				ControllerManager.getStarter(LaunchConfigurationModel.getTopology()).startVagrant(instanceWb);
@@ -286,7 +259,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 						XmlHelper.addModelToXmlFile(doc, tmpModel, file);
 						modelList.add(tmpModel);
-						addTableEntry(tmpModel);
 					}
 				}
 
@@ -341,7 +313,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 								XmlHelper.addModelToXmlFile(doc, tmpModel, file);
 								modelList.add(tmpModel);
-								addTableEntry(tmpModel);
 
 							}
 						}
@@ -604,11 +575,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		composite.setLayoutData(gd_composite);
 		composite.setLayout(new GridLayout(4, false));
 
-		sshProfileCombo = new CCombo(composite, SWT.BORDER);
-		sshProfileCombo.setEditable(false);
+		sshProfileCombo = new Combo(composite, SWT.BORDER);
+
 		GridData gd_sshProfileCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_sshProfileCombo.widthHint = 161;
 		sshProfileCombo.setLayoutData(gd_sshProfileCombo);
+		sshComboViewer = new ComboViewer(sshProfileCombo);
 
 		btnCreateProfile = new Button(composite, SWT.NONE);
 
@@ -646,8 +618,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		new Label(startAppComposite, SWT.NONE);
 
 		Composite selectServerController = new Composite(startAppComposite, SWT.BORDER);
-		GridData gd_selectServerController = new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1);
-		gd_selectServerController.heightHint = 60;
+		GridData gd_selectServerController = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_selectServerController.heightHint = 84;
 		selectServerController.setLayoutData(gd_selectServerController);
 		selectServerController.setLayout(new GridLayout(3, false));
 
@@ -659,7 +631,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		new Label(selectServerController, SWT.NONE);
 		new Label(selectServerController, SWT.NONE);
 
-		selectServerCombo = new CCombo(selectServerController, SWT.BORDER);
+		selectServerCombo = new Combo(selectServerController, SWT.BORDER);
 
 		selectServerCombo.add(NetIDE.CONTROLLER_POX);
 		selectServerCombo.add(NetIDE.CONTROLLER_ODL);
@@ -695,10 +667,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnMininetOff = new Button(mininetComposite, SWT.NONE);
 
 		btnMininetOff.setText("Mininet Off");
-		
-		tableViewer = new TableViewer(startAppComposite, SWT.SINGLE | SWT.H_SCROLL
-		        | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		
+
+		tableViewer = new TableViewer(startAppComposite,
+				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+
 		table = tableViewer.getTable();
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 
@@ -862,7 +834,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Button btnRemoveTest;
 	private Button btnStopTest;
 	private Button btnEditProfile;
-	private CCombo selectServerCombo;
+	private Combo selectServerCombo;
 	private Button startServerController;
 	private Button btnMininetOn;
 	private Button btnSSH_Up;
@@ -875,12 +847,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private TabItem sshTabItem;
 	private Button btnCreateProfile;
 	private Composite composite;
-	private CCombo sshProfileCombo;
+	private Combo sshProfileCombo;
 	private Button btnEditTest;
 	private Composite composite_1;
 	private Button btnProvision_1;
 	private Button btnProvision_2;
 	private TableViewer tableViewer;
+	private ComboViewer sshComboViewer;
 
 	public Label getServerControllerLabel() {
 		return this.lblServerControllerStatus;
@@ -898,7 +871,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		return mininetStatusLable;
 	}
 
-	public TableViewer getTableViewer(){
+	public TableViewer getTableViewer() {
 		return this.tableViewer;
+	}
+
+	public ComboViewer getSshComboViewer() {
+		return this.sshComboViewer;
 	}
 }

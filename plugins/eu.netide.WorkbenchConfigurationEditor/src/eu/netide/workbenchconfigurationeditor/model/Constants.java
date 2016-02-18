@@ -16,6 +16,7 @@ public class Constants {
 	public static final String MININET_RUNNING_MODEL = "mininetRunning";
 	public static final String SSH_RUNNING_MODEL = "sshRunning";
 	public static final String SERVER_CONTROLLER_RUNNING_MODEL = "serverControllerRunning";
+	public static final String SSH_COMBO_SELECTION_INDEX = "sshComboSelectionIndex";
 
 	// SSH Profile Model Constants
 	public static final String HOST_MODEL = "host";

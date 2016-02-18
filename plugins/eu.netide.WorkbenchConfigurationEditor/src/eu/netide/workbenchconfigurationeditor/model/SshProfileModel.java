@@ -1,5 +1,6 @@
 package eu.netide.workbenchconfigurationeditor.model;
 
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.UUID;
 
@@ -16,11 +17,6 @@ public class SshProfileModel {
 	
 	public SshProfileModel(){
 		changes = new PropertyChangeSupport(this);
-		host = "";
-		port = "";
-		sshIdFile = "";
-		username = "";
-		profileName = "";
 		this.id = "" +UUID.randomUUID();
 	}
 	
@@ -49,29 +45,41 @@ public class SshProfileModel {
 	}
 
 	public String getHost() {
-		return host;
+		return this.host;
 	}
 
 	public String getPort() {
-		return port;
+		return this.port;
 	}
 
 	public String getSshIdFile() {
-		return sshIdFile;
+		return this.sshIdFile;
 	}
 
 	public String getUsername() {
-		return username;
+		return this.username;
 	}
 
 	public String getProfileName(){
-		return profileName;
+		return this.profileName;
 	}
 	
 	@Override
 	public String toString() {
 		//TODO: parse to xml format here
 		return "Configuration [id=" + id + ", for App =" + "" + "]";
+	}
+	
+	public void addPropertyChangeListener(PropertyChangeListener l) {
+		changes.addPropertyChangeListener(l);
+	}
+
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		changes.addPropertyChangeListener(propertyName, listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener l) {
+		changes.removePropertyChangeListener(l);
 	}
 	
 }
