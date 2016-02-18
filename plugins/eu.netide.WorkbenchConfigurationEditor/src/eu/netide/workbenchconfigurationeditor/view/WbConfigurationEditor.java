@@ -397,7 +397,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		startServerController.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				engine.getStatusModel().setServerControllerRunning(true);
 
 				String selection = engine.getStatusModel().getServerControllerSelection();
 				if (!engine.getStatusModel().getServerControllerRunning() && !selection.equals("")) {
@@ -413,7 +412,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnStopServerController.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (!engine.getStatusModel().getServerControllerRunning()) {
+				if (engine.getStatusModel().getServerControllerRunning()) {
 					// Stop starter
 					ControllerManager.getStarter().stopServerController();
 					engine.getStatusModel().setServerControllerRunning(false);
@@ -435,10 +434,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	private boolean noSwitch = false;
 	private int currentPageIndex;
-
-	private void setVagrantLableReady() {
-		vagrantStatusLabel.setText("Status: running");
-	}
 
 	private void showMessage(String msg) {
 		MessageDialog.openInformation(container.getShell(), "NetIDE Workbench View", msg);

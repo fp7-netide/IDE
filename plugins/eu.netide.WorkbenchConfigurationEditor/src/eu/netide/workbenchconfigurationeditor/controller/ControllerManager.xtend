@@ -127,7 +127,6 @@ class ControllerManager {
 			vagrantJob.schedule
 
 			// Thread.sleep(2000)
-			this.statusModel.vagrantRunning = true;
 		}
 
 		return this.statusModel.vagrantRunning
