@@ -8,11 +8,9 @@ if [ "$(which pip)" == "" ] || [ "$(pip list | grep ryu)" == "" ]; then
    echo "Engine seems to be already installed. Skipping..."
   fi
   
-  sudo apt-get --yes install python-pip python-dev python-repoze.lru libxml2-dev libxslt1-dev zlib1g-dev python-zmq
-  sudo -E pip install ecdsa
-  sudo -E pip install stevedore
-  sudo -E pip install greenlet
+  sudo apt-get --yes install python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev python-zmq python3-zmq
   sudo -E pip install ryu
+  sudo -E pip install oslo.config
   
   mkdir -p ryu/ryu
   cp -r Engine/libraries/netip/python ryu/ryu

@@ -14,7 +14,7 @@ if [ ! -d ~/core_engine ]; then
   git clone -b CoreImplementation https://github.com/fp7-netide/Engine
   
   cd Engine/libraries/netip/java
-  mvn clean install
+  mvn clean install -Dgpg.skip=true
   
   cd
   cd core_engine/Engine/core
@@ -23,19 +23,14 @@ if [ ! -d ~/core_engine ]; then
   mvn clean install
   cd target
   cp emulator-1.0-jar-with-dependencies.jar /home/vagrant/composition/
-  
-  cd
-  git clone https://git-wip-us.apache.org/repos/asf/karaf.git karaf
-  cd karaf/
-  git checkout remotes/origin/karaf-3.0.x
-  mvn clean install -DskipTests
-  cd assemblies/apache-karaf/target
-  tar xvf apache-karaf-3.0.6-SNAPSHOT.tar.gz
-  
-  cd ./apache-karaf-3.0.6-SNAPSHOT/bin
 
+
+  cd
+  wget http://ftp.fau.de/apache/karaf/3.0.6/apache-karaf-3.0.6.tar.gz
+  tar xzf apache-karaf-3.0.6.tar.gz
+  cd apache-karaf-3.0.6/bin
   chmod +x ./client ./start ./stop
-  echo "Installing karaf dependencies for O core"
+  echo "Installing karaf dependencies for core"
   ./start
    
   while [ $(./client test 2>&1 | grep "Failed to get the session." | wc -l) -eq 1 ]; do
