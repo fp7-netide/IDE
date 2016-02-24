@@ -82,7 +82,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		setInput(input);
 
 		setPartName("Workbench");
-
 	}
 
 	public IFile getFile() {
@@ -635,7 +634,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		
 		// do saving
 		engine.saveAllChanges();
 		setIsDirty(false);

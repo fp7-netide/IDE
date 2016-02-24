@@ -45,29 +45,7 @@ public class WorkbenchConfigurationEditorEngine {
 		initModel();
 		initDataBinding();
 	}
-	
-	public Document getDoc(){
-		return this.doc;
-	}
-	public void saveAllChanges(){
-		
-		for(LaunchConfigurationModel m : this.statusModel.getModelList()){
-			XmlHelper.removeFromXml(doc, m, inputFile);
-		}
-		
-		for(SshProfileModel s : this.statusModel.getProfileList()){
-			XmlHelper.removeFromXml(doc, s, inputFile);
-		}
-		
-		for(LaunchConfigurationModel m : this.statusModel.getModelList()){
-			XmlHelper.addModelToXmlFile(doc, m, inputFile);
-		}
-		for(SshProfileModel s : this.statusModel.getProfileList()){
-			XmlHelper.addSshProfileToXmlFile(doc, s, inputFile);
-		}
-	}
 
-	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initModel() {
 		this.statusModel = new UiStatusModel();
@@ -129,6 +107,7 @@ public class WorkbenchConfigurationEditorEngine {
 
 	private void addTableDataBinding(ArrayList<LaunchConfigurationModel> modelList) {
 		WritableList input = new WritableList(modelList, LaunchConfigurationModel.class);
+		
 		this.statusModel.setWritableModelList(input);
 		ViewerSupport.bind(this.editor.getTableViewer(), input,
 				BeanProperties.values(new String[] { Constants.APP_NAME_MODEL, Constants.APP_RUNNING_MODEL,
@@ -159,7 +138,30 @@ public class WorkbenchConfigurationEditorEngine {
 
 		this.ctx.bindValue(widgetValue, modelValue, viewToModel, modelToView);
 	}
+	
 	public UiStatusModel getStatusModel(){
 		return this.statusModel;
+	}
+	
+	public Document getDoc(){
+		return this.doc;
+	}
+	
+	public void saveAllChanges(){
+		
+		for(LaunchConfigurationModel m : this.statusModel.getModelList()){
+			XmlHelper.removeFromXml(doc, m, inputFile);
+		}
+		
+		for(SshProfileModel s : this.statusModel.getProfileList()){
+			XmlHelper.removeFromXml(doc, s, inputFile);
+		}
+		
+		for(LaunchConfigurationModel m : this.statusModel.getModelList()){
+			XmlHelper.addModelToXmlFile(doc, m, inputFile);
+		}
+		for(SshProfileModel s : this.statusModel.getProfileList()){
+			XmlHelper.addSshProfileToXmlFile(doc, s, inputFile);
+		}
 	}
 }
