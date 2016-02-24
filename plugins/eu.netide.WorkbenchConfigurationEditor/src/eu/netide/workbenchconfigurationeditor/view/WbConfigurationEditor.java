@@ -59,6 +59,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	private IFile file;
 
+	private boolean isDirty;
+
 	private ConfigurationShell tempShell;
 	private LaunchConfigurationModel tmpModel;
 
@@ -72,7 +74,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-		
+		this.isDirty = false;
 		IFileEditorInput fileInput = (IFileEditorInput) input;
 		file = fileInput.getFile();
 		// StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).createVagrantFile(modelList);
@@ -120,11 +122,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnVagrantUp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
 				noSwitch = true;
-
 				ControllerManager.getStarter().startVagrant(instanceWb);
-
 			}
 		});
 
@@ -152,8 +151,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			public void widgetSelected(SelectionEvent e) {
 				if (table.getSelectionCount() > 0) {
 					engine.getStatusModel().removeEntryFromModelList();
+					setIsDirty(true);
 					// TODO: XmlHelper.removeFromXml(doc, tmp, file);
-
 				} else {
 					showMessage("Select a test to remove from the table.");
 				}
@@ -203,13 +202,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 						tmpModel.setClientController(content[2]);
 						tmpModel.setAppPort(content[3]);
 						tmpModel.setAppPath(content[4]);
+						tmpModel.setRunning(false);
 						String[] tmp = content[4].split("/");
 						String appName = tmp[tmp.length - 1];
 						tmpModel.setAppName(appName);
 						tmpModel.setID(UUID.randomUUID().toString());
+						setIsDirty(true);
 
-						// TODO: XmlHelper.addModelToXmlFile(doc, tmpModel,
-						// file);
 						engine.getStatusModel().addEntryToModelList(tmpModel);
 					}
 				}
@@ -223,9 +222,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			public void widgetSelected(SelectionEvent e) {
 
 				if (table.getSelectionCount() > 0) {
-
+					LaunchConfigurationModel model = engine.getStatusModel().getModelAtIndex();
 					tempShell = new ConfigurationShell(container.getDisplay());
-					tempShell.openShell(engine.getStatusModel().getModelAtIndex());
+					tempShell.openShell(model);
 
 					String[] content = tempShell.getSelectedContent();
 					if (content != null) {
@@ -235,25 +234,16 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 						if (complete) {
 
-							engine.getStatusModel().removeEntryFromModelList();
-							// TODO: XmlHelper.removeFromXml(doc, tmp,
-							// file);
-
-							tmpModel = new LaunchConfigurationModel();
-
-							tmpModel.setPlatform(content[1]);
-							tmpModel.setClientController(content[2]);
-							tmpModel.setAppPort(content[3]);
-							tmpModel.setAppPath(content[4]);
+							model.setPlatform(content[1]);
+							model.setClientController(content[2]);
+							model.setAppPort(content[3]);
+							model.setAppPath(content[4]);
 							String[] tmp = content[4].split("/");
 							String appName = tmp[tmp.length - 1];
-							tmpModel.setAppName(appName);
-							tmpModel.setID(UUID.randomUUID().toString());
+							model.setAppName(appName);
+							model.setID(UUID.randomUUID().toString());
 
-							// TODO: XmlHelper.addModelToXmlFile(doc,
-							// tmpModel, file);
-							engine.getStatusModel().addEntryToModelList(tmpModel);
-
+							setIsDirty(true);
 						}
 
 					}
@@ -337,10 +327,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					model.setUsername(result[2]);
 					model.setProfileName(result[3]);
 					model.setProfileName(result[4]);
-					// TODO: XmlHelper.addSshProfileToXmlFile(doc, model, file);
-					engine.getStatusModel().addEntryToSSHList(model);
-					sshProfileCombo.add(model.getProfileName());
 
+					engine.getStatusModel().addEntryToSSHList(model);
+					setIsDirty(true);
 				}
 
 			}
@@ -357,33 +346,24 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 						SShShell sshShell = new SShShell(container.getDisplay());
 						sshShell.openShell(profile);
 
-						sshProfileCombo.remove(sshProfileCombo.getSelectionIndex());
-						engine.getStatusModel().removeEntryFromSSHList(profile);
-						// TODO: XmlHelper.removeFromXml(doc, profile, file);
-						sshProfileCombo.clearSelection();
-						sshProfileCombo.deselectAll();
-
+						setIsDirty(true);
 						if (!sshShell.deleteEntry()) {
 
 							String[] result = sshShell.getResult();
 							if (result != null) {
-								// TODO: XmlHelper.removeFromXml(doc, profile,
-								// file);
 
-								SshProfileModel model = new SshProfileModel();
-								model.setHost(result[0]);
-								model.setPort(result[1]);
-								model.setUsername(result[2]);
-								model.setProfileName(result[3]);
-								model.setProfileName(result[4]);
-
-								// TODO: XmlHelper.addSshProfileToXmlFile(doc,
-								// model, file);
-								engine.getStatusModel().addEntryToSSHList(model);
-								sshProfileCombo.add(model.getProfileName());
+								profile.setHost(result[0]);
+								profile.setPort(result[1]);
+								profile.setUsername(result[2]);
+								profile.setProfileName(result[3]);
+								profile.setProfileName(result[4]);
 
 							}
+						} else {
+							engine.getStatusModel().removeEntryFromSSHList(profile);
 						}
+						sshProfileCombo.clearSelection();
+						sshProfileCombo.deselectAll();
 					}
 
 				} else {
@@ -666,7 +646,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// Do the Save operation
+		System.out.println("want to save!!!!!!!!!");
+		// do saving
+		setIsDirty(false);
 	}
 
 	@Override
@@ -676,7 +658,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	@Override
 	public boolean isDirty() {
-		return false;
+		return this.isDirty;
+	}
+
+	private void setIsDirty(boolean dirty) {
+		if (dirty != this.isDirty) {
+			this.isDirty = dirty;
+			this.firePropertyChange(PROP_DIRTY);
+		}
 	}
 
 	@Override

@@ -15,10 +15,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -26,20 +22,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import eu.netide.configuration.utils.NetIDE;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 
 public class XmlHelper {
 
-	public static void modifyVagrantFileSSH(String sshPath){
-		
-		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IPath vagrantPath = Path.fromOSString(NetIDE.VAGRANTFILE_PATH);
-		IFile vagrantFile = workspace.getRoot().getFileForLocation(vagrantPath);
-		System.out.println(vagrantFile.exists());
-	}
-	
 	public static void saveContentToXml(Document doc, IFile file) {
 		saveContentToXml(doc, new File(file.getLocation().toOSString()));
 	}
@@ -49,10 +36,10 @@ public class XmlHelper {
 		Transformer transformer;
 		try {
 			transformer = transformerFactory.newTransformer();
-			
+
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			
+
 			DOMSource source = new DOMSource(doc);
 
 			StreamResult result = new StreamResult(file);

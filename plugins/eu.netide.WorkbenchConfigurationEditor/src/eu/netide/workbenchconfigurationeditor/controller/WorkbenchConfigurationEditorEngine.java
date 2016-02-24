@@ -47,6 +47,8 @@ public class WorkbenchConfigurationEditorEngine {
 		initDataBinding();
 	}
 
+	//TODO: write data back to xml on a central point
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initModel() {
 		this.statusModel = new UiStatusModel();
@@ -79,7 +81,7 @@ public class WorkbenchConfigurationEditorEngine {
 
 		// bind sshmodellist to combobox content
 		WritableList input = new WritableList(profileList, SshProfileModel.class);
-
+		
 		ComboViewer cv = this.editor.getSshComboViewer();
 		ViewerSupport.bind(cv, input, BeanProperties.values(new String[] { Constants.PROFILE_NAME_MODEL }));
 
@@ -108,7 +110,7 @@ public class WorkbenchConfigurationEditorEngine {
 
 	private void addTableDataBinding(ArrayList<LaunchConfigurationModel> modelList) {
 		WritableList input = new WritableList(modelList, LaunchConfigurationModel.class);
-
+		this.statusModel.setWritableModelList(input);
 		ViewerSupport.bind(this.editor.getTableViewer(), input,
 				BeanProperties.values(new String[] { Constants.APP_NAME_MODEL, Constants.APP_RUNNING_MODEL,
 						Constants.PLATFORM_MODEL, Constants.CLIENT_CONTROLLER_MODEL, Constants.PORT_MODEL }));

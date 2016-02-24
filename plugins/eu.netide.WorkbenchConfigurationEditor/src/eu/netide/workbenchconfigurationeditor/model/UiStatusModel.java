@@ -4,6 +4,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
+import org.eclipse.core.databinding.observable.list.WritableList;
+
 import eu.netide.workbenchconfigurationeditor.util.Constants;
 
 public class UiStatusModel {
@@ -17,6 +19,8 @@ public class UiStatusModel {
 
 	private String serverControllerSelection;
 
+	private WritableList profileWritableList;
+	private WritableList modelWritableList;
 	// list corresponding to doc
 	private ArrayList<LaunchConfigurationModel> modelList;
 	// list corresponding to doc
@@ -29,6 +33,22 @@ public class UiStatusModel {
 
 	}
 
+	public void setWritableModelList(WritableList input) {
+		this.modelWritableList = input;
+	}
+
+	public WritableList getWritableModelList() {
+		return this.modelWritableList;
+	}
+
+	public void setWritableProfileList(WritableList input) {
+		this.profileWritableList = input;
+	}
+
+	public WritableList getWritableProfileList() {
+		return this.profileWritableList;
+	}
+
 	public int getLaunchTableIndex() {
 		return this.launchTableIndex;
 	}
@@ -37,7 +57,7 @@ public class UiStatusModel {
 		changes.firePropertyChange(Constants.SERVER_CONTROLLER_SELECTION, this.serverControllerSelection,
 				this.serverControllerSelection = serverControllerSelection);
 	}
-	
+
 	public String getServerControllerSelection() {
 		return this.serverControllerSelection;
 	}
@@ -92,27 +112,56 @@ public class UiStatusModel {
 	}
 
 	public void addEntryToModelList(LaunchConfigurationModel model) {
-		this.modelList.add(model);
+		if (this.modelWritableList != null) {
+			this.modelWritableList.add(model);
+		} else {
+			this.modelList.add(model);
+		}
 	}
 
 	public void addEntryToSSHList(SshProfileModel model) {
-		this.profileList.add(model);
+		if (this.profileWritableList != null) {
+			this.profileWritableList.add(model);
+		} else {
+			this.profileList.add(model);
+		}
+
 	}
 
 	public void removeEntryFromModelList(LaunchConfigurationModel model) {
-		this.modelList.remove(model);
+
+		if (this.modelWritableList != null) {
+			this.modelWritableList.remove(model);
+		} else {
+			this.modelList.remove(model);
+		}
 	}
 
 	public void removeEntryFromSSHList(SshProfileModel model) {
-		this.profileList.remove(model);
+
+		if (this.profileWritableList != null) {
+			this.profileWritableList.remove(model);
+		} else {
+			this.profileList.remove(model);
+		}
 	}
-	
-	public void removeEntryFromSSHList(){
-		this.profileList.remove(sshComboSelectionIndex);
+
+	public void removeEntryFromSSHList() {
+
+		if (this.profileWritableList != null) {
+			this.profileWritableList.remove(sshComboSelectionIndex);
+		} else {
+			this.profileList.remove(sshComboSelectionIndex);
+		}
 	}
-	
-	public void removeEntryFromModelList(){
-		this.modelList.remove(launchTableIndex);
+
+	public void removeEntryFromModelList() {
+
+		if (this.modelWritableList != null) {
+			this.modelWritableList.remove(launchTableIndex);
+		} else {
+			this.modelList.remove(launchTableIndex);
+		}
 	}
 
 	public void setModelList(ArrayList<LaunchConfigurationModel> modelList) {

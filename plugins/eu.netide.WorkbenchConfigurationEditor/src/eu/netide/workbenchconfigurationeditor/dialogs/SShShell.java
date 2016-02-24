@@ -56,6 +56,7 @@ public class SShShell extends Shell {
 				txt_port.setText(profile.getPort());
 				txt_sshidfile.setText(profile.getSshIdFile());
 				txt_host.setText(profile.getHost());
+				txt_sshidfile.setText(profile.getSshIdFile());
 			}
 			while (!this.isDisposed()) {
 				if (!display.readAndDispatch()) {
