@@ -84,8 +84,7 @@ class ControllerManager {
 
 		file = topologyPath.getIFile
 		configToStarter = new HashMap
-	
-		
+
 		this.statusModel.setSshRunning(new Boolean(false));
 		this.statusModel.setVagrantRunning(new Boolean(false));
 
@@ -126,7 +125,7 @@ class ControllerManager {
 			vagrantJob.addJobChangeListener(listener);
 			vagrantJob.schedule
 
-			// Thread.sleep(2000)
+		// Thread.sleep(2000)
 		}
 
 		return this.statusModel.vagrantRunning
@@ -558,6 +557,48 @@ class ControllerManager {
 		}
 
 		return null;
+	}
+
+	private IStarter coreStarter;
+	private Job startCoreJob;
+
+	public def startCore() {
+
+		val coreJob = new Job("CoreManager") {
+
+			override protected run(IProgressMonitor monitor) {
+
+				coreStarter = factory.createCoreStarter(null, monitor)
+				statusModel.coreRunning = true
+				startCoreJob.schedule
+
+				return Status.OK_STATUS;
+			}
+
+		};
+
+		startCoreJob = new Job("StartCoreManager") {
+
+			override protected run(IProgressMonitor monitor) {
+
+				coreStarter.syncStart
+
+				return Status.OK_STATUS;
+			}
+
+		};
+
+		coreJob.schedule
+
+	}
+
+	public def stopCore() {
+		// TODO: stop core
+		// TODO: this.statusModel.coreRunning = false
+	}
+
+	public def loadComposition() {
+		// TODO: loadComposite(this.statusModel.compositionPath)
 	}
 
 }

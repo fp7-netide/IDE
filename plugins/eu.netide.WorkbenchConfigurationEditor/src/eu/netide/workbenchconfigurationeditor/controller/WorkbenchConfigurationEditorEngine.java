@@ -12,6 +12,7 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.w3c.dom.Document;
 
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
@@ -68,6 +69,9 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addStatusLabelDataBinding(this.editor.getMininetStatusLable(), Constants.MININET_RUNNING_MODEL);
 		this.addStatusLabelDataBinding(this.editor.getSSHStautsLabel(), Constants.SSH_RUNNING_MODEL);
 		this.addStatusLabelDataBinding(this.editor.getVagrantStatusLabel(), Constants.VAGRANT_RUNNING_MODEL);
+		this.addStatusLabelDataBinding(this.editor.getCoreStatusLabel(), Constants.CORE_RUNNING);
+		
+		this.addTextDataBinding(this.editor.getCompositionText(), Constants.COMPOSITION_PATH);
 
 		this.addTableDataBinding(this.statusModel.getModelList());
 		this.addComboDataBinding(this.statusModel.getProfileList());
@@ -100,9 +104,7 @@ public class WorkbenchConfigurationEditorEngine {
 		IObservableValue modelValue = BeanProperties
 				.value(UiStatusModel.class, Constants.SERVER_CONTROLLER_SELECTION).observe(this.statusModel);
 
-		this.ctx.bindValue(modelValue, selection);
-		
-		
+		this.ctx.bindValue(modelValue, selection);		
 	}
 
 	private void addTableDataBinding(ArrayList<LaunchConfigurationModel> modelList) {
@@ -137,6 +139,13 @@ public class WorkbenchConfigurationEditorEngine {
 		viewToModel.setConverter(new RunningStringToBoolConverter());
 
 		this.ctx.bindValue(widgetValue, modelValue, viewToModel, modelToView);
+	}
+	
+	private void addTextDataBinding(Text text, String property) {
+		IObservableValue widgetValue = WidgetProperties.text().observe(text);
+		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, property).observe(this.statusModel);
+
+		this.ctx.bindValue(widgetValue, modelValue);
 	}
 	
 	public UiStatusModel getStatusModel(){

@@ -13,6 +13,7 @@ public class SshProfileModel {
 	private String sshIdFile;
 	private String username;
 	private String profileName;
+	private String secondHop;
 	private String id;
 
 	private PropertyChangeSupport changes;
@@ -24,6 +25,14 @@ public class SshProfileModel {
 
 	public String getID() {
 		return this.id;
+	}
+	
+	public void setSecondHop(String hop){
+		this.changes.firePropertyChange(Constants.SECOND_HOP, this.secondHop, this.secondHop = hop);
+	}
+	
+	public String getSecondHop(){
+		return this.secondHop;
 	}
 
 	public void setHost(String host) {

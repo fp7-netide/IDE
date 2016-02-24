@@ -13,6 +13,7 @@ public class UiStatusModel {
 	private Boolean mininetRunning;
 	private Boolean sshRunning;
 	private Boolean serverControllerRunning;
+	private Boolean coreRunning;
 
 	private int sshComboSelectionIndex;
 	private int launchTableIndex;
@@ -26,11 +27,29 @@ public class UiStatusModel {
 	// list corresponding to doc
 	private ArrayList<SshProfileModel> profileList;
 
+	private String compositionPath;
+
 	private PropertyChangeSupport changes;
 
 	public UiStatusModel() {
 		this.changes = new PropertyChangeSupport(this);
 
+	}
+
+	public void setCompositionPath(String path) {
+		changes.firePropertyChange(Constants.COMPOSITION_PATH, this.compositionPath, this.compositionPath = path);
+	}
+
+	public String getCompositionPath() {
+		return this.compositionPath;
+	}
+
+	public void setCoreRunning(boolean running) {
+		changes.firePropertyChange(Constants.CORE_RUNNING, this.coreRunning, this.coreRunning = running);
+	}
+
+	public boolean getCoreRunning() {
+		return this.coreRunning;
 	}
 
 	public void setWritableModelList(WritableList input) {

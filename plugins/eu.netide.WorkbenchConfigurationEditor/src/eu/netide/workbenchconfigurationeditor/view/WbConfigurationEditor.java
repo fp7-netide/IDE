@@ -31,10 +31,14 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.EditorPart;
 
 import eu.netide.configuration.utils.NetIDE;
@@ -77,7 +81,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		this.isDirty = false;
 		IFileEditorInput fileInput = (IFileEditorInput) input;
 		file = fileInput.getFile();
-		//TODO: StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).createVagrantFile(modelList);
+		// TODO:
+		// StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).createVagrantFile(modelList);
 		setSite(site);
 		setInput(input);
 
@@ -99,6 +104,58 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		engine = new WorkbenchConfigurationEditorEngine(this);
 		addButtonListener();
 
+	}
+
+	private void addCoreButtonListener() {
+		this.startCoreBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ControllerManager.getStarter().startCore();
+			}
+		});
+
+		this.stopCoreBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ControllerManager.getStarter().stopCore();
+			}
+		});
+
+		this.browseCompositionBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String path = null;
+
+				IFile selectedFile = null;
+				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(container.getShell(),
+						new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
+				dialog.setTitle("Tree Selection");
+				dialog.setMessage("Select the elements from the tree:");
+				dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+				if (dialog.open() == ElementTreeSelectionDialog.OK) {
+					Object[] result = dialog.getResult();
+					if (result.length == 1) {
+						if (result[0] instanceof IFile) {
+
+							selectedFile = (IFile) result[0];
+
+							path = selectedFile.getFullPath().toOSString();
+							engine.getStatusModel().setCompositionPath(path);
+						} else {
+							showMessage("Please select a Composition.");
+						}
+
+					}
+				}
+			}
+		});
+
+		this.loadCompositionBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ControllerManager.getStarter().loadComposition();
+			}
+		});
 	}
 
 	private void addMininetButtonListener() {
@@ -325,6 +382,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					model.setUsername(result[2]);
 					model.setProfileName(result[3]);
 					model.setProfileName(result[4]);
+					model.setSecondHop(result[5]);
 
 					engine.getStatusModel().addEntryToSSHList(model);
 					setIsDirty(true);
@@ -397,6 +455,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		addTestButtonListener();
 		addSshButtonListener();
 		addServerControllerButtonListener();
+		addCoreButtonListener();
 
 	}
 
@@ -501,7 +560,44 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnProvision_2.setText("Provision");
 
 		currentPageIndex = tabFolder.getSelectionIndex();
-		new Label(startAppComposite, SWT.NONE);
+
+		coreStarterComposite = new Composite(startAppComposite, SWT.NONE);
+		GridData gd_coreStarterComposite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_coreStarterComposite.widthHint = 277;
+		coreStarterComposite.setLayoutData(gd_coreStarterComposite);
+		coreStarterComposite.setLayout(new GridLayout(3, false));
+
+		Label lblNewLabel = new Label(coreStarterComposite, SWT.NONE);
+		lblNewLabel.setBounds(0, 0, 59, 14);
+		lblNewLabel.setText("Core ");
+		new Label(coreStarterComposite, SWT.NONE);
+		new Label(coreStarterComposite, SWT.NONE);
+
+		lblCoreStatus = new Label(coreStarterComposite, SWT.NONE);
+		lblCoreStatus.setText("Status : Offline");
+
+		startCoreBtn = new Button(coreStarterComposite, SWT.NONE);
+		startCoreBtn.setText("Start");
+
+		stopCoreBtn = new Button(coreStarterComposite, SWT.NONE);
+		stopCoreBtn.setText("Stop");
+		new Label(coreStarterComposite, SWT.NONE);
+		new Label(coreStarterComposite, SWT.NONE);
+		new Label(coreStarterComposite, SWT.NONE);
+
+		Label lblCompositionLoader = new Label(coreStarterComposite, SWT.NONE);
+		lblCompositionLoader.setText("Composition Loader");
+		new Label(coreStarterComposite, SWT.NONE);
+		new Label(coreStarterComposite, SWT.NONE);
+
+		compositionLoader_txt = new Text(coreStarterComposite, SWT.BORDER);
+		compositionLoader_txt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		browseCompositionBtn = new Button(coreStarterComposite, SWT.NONE);
+		browseCompositionBtn.setText("Browse");
+
+		loadCompositionBtn = new Button(coreStarterComposite, SWT.NONE);
+		loadCompositionBtn.setText("Load");
 
 		Composite selectServerController = new Composite(startAppComposite, SWT.BORDER);
 		GridData gd_selectServerController = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
@@ -749,6 +845,21 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private TableViewer tableViewer;
 	private ComboViewer sshComboViewer;
 	private ComboViewer serverComboViewer;
+	private Composite coreStarterComposite;
+	private Text compositionLoader_txt;
+	private Button browseCompositionBtn;
+	private Button loadCompositionBtn;
+	private Label lblCoreStatus;
+	private Button startCoreBtn;
+	private Button stopCoreBtn;
+
+	public Label getCoreStatusLabel() {
+		return this.lblCoreStatus;
+	}
+
+	public Text getCompositionText() {
+		return this.compositionLoader_txt;
+	}
 
 	public Label getServerControllerLabel() {
 		return this.lblServerControllerStatus;

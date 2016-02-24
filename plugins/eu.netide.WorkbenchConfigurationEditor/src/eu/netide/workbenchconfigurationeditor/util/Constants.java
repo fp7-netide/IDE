@@ -14,11 +14,13 @@ public class Constants {
 	// UI Status Model Constants
 	public static final String VAGRANT_RUNNING_MODEL = "vagrantRunning";
 	public static final String MININET_RUNNING_MODEL = "mininetRunning";
+	public static final String CORE_RUNNING = "coreRunning";
 	public static final String SSH_RUNNING_MODEL = "sshRunning";
 	public static final String SERVER_CONTROLLER_RUNNING_MODEL = "serverControllerRunning";
 	public static final String SSH_COMBO_SELECTION_INDEX = "sshComboSelectionIndex";
 	public static final String LAUNCH_TABLE_INDEX = "launchTableIndex";
 	public static final String SERVER_CONTROLLER_SELECTION = "serverControllerSelection";
+	public static final String COMPOSITION_PATH = "compositionPath";
 
 	// SSH Profile Model Constants
 	public static final String HOST_MODEL = "host";
@@ -26,6 +28,7 @@ public class Constants {
 	public static final String SSH_ID_FILE_MODEL = "sshIdFile";
 	public static final String USERNAME_MODEL = "username";
 	public static final String PROFILE_NAME_MODEL = "profileName";
+	public static final String SECOND_HOP = "secondHop";
 
 	// UI Constants
 	public static final String LABEL_RUNNING = "running";

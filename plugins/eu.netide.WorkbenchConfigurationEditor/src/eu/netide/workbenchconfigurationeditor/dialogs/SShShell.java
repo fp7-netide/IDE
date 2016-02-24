@@ -23,6 +23,7 @@ public class SShShell extends Shell {
 	private Text txt_sshidfile;
 	private Text txt_host;
 	private SShShell shell;
+	private Text txt_secondHop;
 
 	private boolean edit;
 	private boolean delete;
@@ -57,6 +58,8 @@ public class SShShell extends Shell {
 				txt_sshidfile.setText(profile.getSshIdFile());
 				txt_host.setText(profile.getHost());
 				txt_sshidfile.setText(profile.getSshIdFile());
+				txt_secondHop.setText(profile.getSecondHop());
+
 			}
 			while (!this.isDisposed()) {
 				if (!display.readAndDispatch()) {
@@ -174,6 +177,14 @@ public class SShShell extends Shell {
 
 		txt_host = new Text(composite, SWT.BORDER);
 		txt_host.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		Label lblSecondHop = new Label(composite, SWT.NONE);
+		lblSecondHop.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblSecondHop.setText("Second Hop");
+
+		txt_secondHop = new Text(composite, SWT.BORDER);
+
+		txt_secondHop.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txt_host.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -268,7 +279,7 @@ public class SShShell extends Shell {
 			saveBTN.setEnabled(true);
 
 			String[] tmpResult = { txt_host.getText(), txt_port.getText(), txt_sshidfile.getText(),
-					txt_username.getText(), txt_profileName.getText() };
+					txt_username.getText(), txt_profileName.getText(), txt_secondHop.getText() };
 			result = tmpResult;
 		} else {
 			saveBTN.setEnabled(false);
@@ -281,8 +292,8 @@ public class SShShell extends Shell {
 
 	/**
 	 * 
-	 * @return host, port, sshidfile, username, profilename null if action
-	 *         canceled by user
+	 * @return host, port, sshidfile, username, profilename, secondHop null if
+	 *         action canceled by user
 	 */
 	public String[] getResult() {
 		return result;

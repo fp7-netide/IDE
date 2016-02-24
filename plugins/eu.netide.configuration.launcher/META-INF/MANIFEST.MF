@@ -27,5 +27,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: NetIDE
 Export-Package: eu.netide.configuration.launcher.managers,
  eu.netide.configuration.launcher.starters,
- eu.netide.configuration.launcher.starters.backends
+ eu.netide.configuration.launcher.starters.backends,
+ eu.netide.configuration.launcher.starters.impl
 
