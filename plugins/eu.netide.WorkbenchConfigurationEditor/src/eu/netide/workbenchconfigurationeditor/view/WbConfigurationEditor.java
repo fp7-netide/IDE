@@ -77,7 +77,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		this.isDirty = false;
 		IFileEditorInput fileInput = (IFileEditorInput) input;
 		file = fileInput.getFile();
-		// StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).createVagrantFile(modelList);
+		//TODO: StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).createVagrantFile(modelList);
 		setSite(site);
 		setInput(input);
 
@@ -152,7 +152,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				if (table.getSelectionCount() > 0) {
 					engine.getStatusModel().removeEntryFromModelList();
 					setIsDirty(true);
-					// TODO: XmlHelper.removeFromXml(doc, tmp, file);
 				} else {
 					showMessage("Select a test to remove from the table.");
 				}
@@ -347,21 +346,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 						sshShell.openShell(profile);
 
 						setIsDirty(true);
-						if (!sshShell.deleteEntry()) {
 
-							String[] result = sshShell.getResult();
-							if (result != null) {
-
-								profile.setHost(result[0]);
-								profile.setPort(result[1]);
-								profile.setUsername(result[2]);
-								profile.setProfileName(result[3]);
-								profile.setProfileName(result[4]);
-
-							}
-						} else {
+						if (sshShell.deleteEntry()) {
 							engine.getStatusModel().removeEntryFromSSHList(profile);
 						}
+
 						sshProfileCombo.clearSelection();
 						sshProfileCombo.deselectAll();
 					}
@@ -646,8 +635,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		System.out.println("want to save!!!!!!!!!");
+		
 		// do saving
+		engine.saveAllChanges();
 		setIsDirty(false);
 	}
 

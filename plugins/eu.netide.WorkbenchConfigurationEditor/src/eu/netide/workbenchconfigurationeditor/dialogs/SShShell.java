@@ -197,11 +197,11 @@ public class SShShell extends Shell {
 		Button cancleButton = new Button(composite_1, SWT.NONE);
 		cancleButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		cancleButton.setText("Cancel");
-		cancleButton.addSelectionListener(new SelectionAdapter(){
+		cancleButton.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				String[] tmpResult = { profile.getHost(), profile.getPort(), profile.getSshIdFile(),
-						profile.getUsername(), profile.getProfileName()};
+						profile.getUsername(), profile.getProfileName() };
 				result = tmpResult;
 				delete = false;
 				shell.dispose();
@@ -212,6 +212,13 @@ public class SShShell extends Shell {
 		saveBTN.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+
+				profile.setHost(txt_host.getText());
+				profile.setPort(txt_port.getText());
+				profile.setProfileName(txt_profileName.getText());
+				profile.setSshIdFile(txt_sshidfile.getText());
+				profile.setUsername(txt_username.getText());
+
 				shell.dispose();
 			}
 		});

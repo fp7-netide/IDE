@@ -41,13 +41,32 @@ public class WorkbenchConfigurationEditorEngine {
 		doc = XmlHelper.getDocFromFile(inputFile);
 		this.ctx = new DataBindingContext();
 
-		// TODO: refactor creation process of controller manager
-		// controllerManager = ControllerManager.getStarter(topoPath);
+
 		initModel();
 		initDataBinding();
 	}
+	
+	public Document getDoc(){
+		return this.doc;
+	}
+	public void saveAllChanges(){
+		
+		for(LaunchConfigurationModel m : this.statusModel.getModelList()){
+			XmlHelper.removeFromXml(doc, m, inputFile);
+		}
+		
+		for(SshProfileModel s : this.statusModel.getProfileList()){
+			XmlHelper.removeFromXml(doc, s, inputFile);
+		}
+		
+		for(LaunchConfigurationModel m : this.statusModel.getModelList()){
+			XmlHelper.addModelToXmlFile(doc, m, inputFile);
+		}
+		for(SshProfileModel s : this.statusModel.getProfileList()){
+			XmlHelper.addSshProfileToXmlFile(doc, s, inputFile);
+		}
+	}
 
-	//TODO: write data back to xml on a central point
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initModel() {

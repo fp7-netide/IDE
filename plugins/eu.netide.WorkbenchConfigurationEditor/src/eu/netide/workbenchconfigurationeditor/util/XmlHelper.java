@@ -50,8 +50,8 @@ public class XmlHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
+	
 
 	public static void addModelToXmlFile(Document doc, LaunchConfigurationModel model, IFile file) {
 		Node wb = doc.getFirstChild();
@@ -134,7 +134,6 @@ public class XmlHelper {
 					}
 				}
 			}
-
 		}
 	}
 
