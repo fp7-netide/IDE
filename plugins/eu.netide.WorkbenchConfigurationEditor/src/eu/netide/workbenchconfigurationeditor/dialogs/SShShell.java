@@ -23,10 +23,11 @@ public class SShShell extends Shell {
 	private Text txt_sshidfile;
 	private Text txt_host;
 	private SShShell shell;
-	private Text txt_secondHop;
+	private Text txt_secondUsername;
 
 	private boolean edit;
 	private boolean delete;
+	private boolean useDoubleTunneL;
 	private SshProfileModel profile;
 
 	/**
@@ -58,7 +59,14 @@ public class SShShell extends Shell {
 				txt_sshidfile.setText(profile.getSshIdFile());
 				txt_host.setText(profile.getHost());
 				txt_sshidfile.setText(profile.getSshIdFile());
-				txt_secondHop.setText(profile.getSecondHop());
+				txt_secondUsername.setText(profile.getSecondUsername());
+				txt_SecondPort.setText(profile.getSecondPort());
+				txt_SecondHost.setText(profile.getSecondHost());
+				
+				if(!profile.getSecondHost().equals("") && !profile.getSecondPort().equals("") && !profile.getSecondUsername().equals("")){
+					this.useDoubleTunneL = true;
+					this.doubleTunnelComposite.setVisible(true);
+				}
 
 			}
 			while (!this.isDisposed()) {
@@ -83,10 +91,10 @@ public class SShShell extends Shell {
 		shell = this;
 		this.display = display;
 		setLayout(new GridLayout(1, false));
-
+		this.useDoubleTunneL = false;
 		Composite composite = new Composite(this, SWT.NONE);
 		GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_composite.heightHint = 207;
+		gd_composite.heightHint = 184;
 		gd_composite.widthHint = 425;
 		composite.setLayoutData(gd_composite);
 		composite.setLayout(new GridLayout(2, false));
@@ -177,14 +185,26 @@ public class SShShell extends Shell {
 
 		txt_host = new Text(composite, SWT.BORDER);
 		txt_host.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
+		new Label(composite, SWT.NONE);
 
-		Label lblSecondHop = new Label(composite, SWT.NONE);
-		lblSecondHop.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblSecondHop.setText("Second Hop");
+		Button btnCheckButton = new Button(composite, SWT.CHECK);
 
-		txt_secondHop = new Text(composite, SWT.BORDER);
+		btnCheckButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (useDoubleTunneL) {
+					useDoubleTunneL = false;
+					doubleTunnelComposite.setVisible(false);
+				} else {
+					useDoubleTunneL = true;
+					doubleTunnelComposite.setVisible(true);
+				}
+			}
+		});
 
-		txt_secondHop.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		btnCheckButton.setText("Use SSH Double Tunnel");
 		txt_host.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -199,6 +219,73 @@ public class SShShell extends Shell {
 			}
 		});
 
+		doubleTunnelComposite = new Composite(this, SWT.NONE);
+		doubleTunnelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		doubleTunnelComposite.setLayout(new GridLayout(2, false));
+
+		Label lblSecondUserName = new Label(doubleTunnelComposite, SWT.NONE);
+		lblSecondUserName.setText("Second UserName");
+
+		txt_secondUsername = new Text(doubleTunnelComposite, SWT.BORDER);
+		GridData gd_txt_secondUsername = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_txt_secondUsername.widthHint = 337;
+		txt_secondUsername.setLayoutData(gd_txt_secondUsername);
+		txt_secondUsername.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (!txt_secondUsername.getText().equals("")) {
+					secondUsernameSet = true;
+				} else {
+					secondUsernameSet = false;
+				}
+				checkForFinish();
+
+			}
+		});
+
+		Label lblSecondPort = new Label(doubleTunnelComposite, SWT.NONE);
+		lblSecondPort.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblSecondPort.setText("Second Port");
+
+		txt_SecondPort = new Text(doubleTunnelComposite, SWT.BORDER);
+		txt_SecondPort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		txt_SecondPort.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (!txt_SecondPort.getText().equals("")) {
+					secondPortSet = true;
+				} else {
+					secondPortSet = false;
+				}
+				checkForFinish();
+
+			}
+		});
+
+		Label lblNewLabel_4 = new Label(doubleTunnelComposite, SWT.NONE);
+		lblNewLabel_4.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblNewLabel_4.setText("Second Host");
+
+		txt_SecondHost = new Text(doubleTunnelComposite, SWT.BORDER);
+		txt_SecondHost.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txt_SecondHost.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (!txt_SecondHost.getText().equals("")) {
+					secondHostSet = true;
+				} else {
+					secondHostSet = false;
+				}
+				checkForFinish();
+
+			}
+		});
+
+		doubleTunnelComposite.setVisible(false);
 		Composite composite_1 = new Composite(this, SWT.NONE);
 		GridData gd_composite_1 = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
 		gd_composite_1.widthHint = 316;
@@ -263,7 +350,7 @@ public class SShShell extends Shell {
 	 */
 	protected void createContents() {
 		setText("SWT Application");
-		setSize(450, 289);
+		setSize(476, 330);
 
 	}
 
@@ -273,14 +360,29 @@ public class SShShell extends Shell {
 	boolean usernameSet;
 	boolean sshFileSet;
 	boolean profileNameSet;
+	boolean secondHostSet;
+	boolean secondPortSet;
+	boolean secondUsernameSet;
 
 	private void checkForFinish() {
 		if (hostSet && portSet && usernameSet && sshFileSet && profileNameSet) {
-			saveBTN.setEnabled(true);
+			if (!useDoubleTunneL) {
+				saveBTN.setEnabled(true);
 
-			String[] tmpResult = { txt_host.getText(), txt_port.getText(), txt_sshidfile.getText(),
-					txt_username.getText(), txt_profileName.getText(), txt_secondHop.getText() };
-			result = tmpResult;
+				String[] tmpResult = { txt_host.getText(), txt_port.getText(), txt_sshidfile.getText(),
+						txt_username.getText(), txt_profileName.getText(), "", "", "" };
+				result = tmpResult;
+			} else if (secondHostSet && secondPortSet && secondUsernameSet) {
+				saveBTN.setEnabled(true);
+
+				String[] tmpResult = { txt_host.getText(), txt_port.getText(), txt_sshidfile.getText(),
+						txt_username.getText(), txt_profileName.getText(), txt_secondUsername.getText(),
+						txt_SecondHost.getText(), txt_SecondPort.getText() };
+				result = tmpResult;
+			} else {
+				saveBTN.setEnabled(false);
+				result = null;
+			}
 		} else {
 			saveBTN.setEnabled(false);
 			result = null;
@@ -289,6 +391,9 @@ public class SShShell extends Shell {
 	}
 
 	private String[] result;
+	private Text txt_SecondPort;
+	private Text txt_SecondHost;
+	private Composite doubleTunnelComposite;
 
 	/**
 	 * 
@@ -297,6 +402,10 @@ public class SShShell extends Shell {
 	 */
 	public String[] getResult() {
 		return result;
+	}
+
+	public boolean isDoubleTunnel() {
+		return this.useDoubleTunneL;
 	}
 
 	@Override

@@ -13,7 +13,10 @@ public class SshProfileModel {
 	private String sshIdFile;
 	private String username;
 	private String profileName;
-	private String secondHop;
+	private String secondPort;
+	private String secondHost;
+	private String secondUsername;
+	
 	private String id;
 
 	private PropertyChangeSupport changes;
@@ -22,19 +25,38 @@ public class SshProfileModel {
 		changes = new PropertyChangeSupport(this);
 		this.id = "" + UUID.randomUUID();
 	}
+	
+	public boolean getIsDoubleTunnel(){
+		return (!getSecondHost().equals("") && !getSecondPort().equals("") && !getSecondUsername().equals(""));
+	}
 
 	public String getID() {
 		return this.id;
 	}
 	
-	public void setSecondHop(String hop){
-		this.changes.firePropertyChange(Constants.SECOND_HOP, this.secondHop, this.secondHop = hop);
+	public void setSecondUsername(String username){
+		this.changes.firePropertyChange(Constants.SECOND_USERNAME, this.secondUsername, this.secondUsername = username);
 	}
 	
-	public String getSecondHop(){
-		return this.secondHop;
+	public String getSecondUsername(){
+		return this.secondUsername;
 	}
 
+	public void setSecondHost(String host){
+		this.changes.firePropertyChange(Constants.SECOND_HOST, this.secondHost, this.secondHost = host);
+	}
+	
+	public String getSecondHost(){
+		return this.secondHost;
+	}
+	public void setSecondPort(String port){
+		this.changes.firePropertyChange(Constants.SECOND_PORT, this.secondPort, this.secondPort = port);
+	}
+	
+	public String getSecondPort(){
+		return this.secondPort;
+	}
+	
 	public void setHost(String host) {
 		this.changes.firePropertyChange(Constants.HOST_MODEL, this.host, this.host = host);
 	}

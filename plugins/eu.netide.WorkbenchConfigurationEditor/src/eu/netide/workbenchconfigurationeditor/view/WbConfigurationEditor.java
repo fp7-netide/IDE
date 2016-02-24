@@ -379,10 +379,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					SshProfileModel model = new SshProfileModel();
 					model.setHost(result[0]);
 					model.setPort(result[1]);
-					model.setUsername(result[2]);
-					model.setProfileName(result[3]);
+					model.setSshIdFile(result[2]);
+					model.setUsername(result[3]);
 					model.setProfileName(result[4]);
-					model.setSecondHop(result[5]);
+
+					model.setSecondUsername(result[5]);
+					model.setSecondHost(result[6]);
+					model.setSecondPort(result[7]);
 
 					engine.getStatusModel().addEntryToSSHList(model);
 					setIsDirty(true);

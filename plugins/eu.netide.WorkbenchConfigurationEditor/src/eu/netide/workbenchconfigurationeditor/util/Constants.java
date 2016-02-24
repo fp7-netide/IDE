@@ -28,9 +28,12 @@ public class Constants {
 	public static final String SSH_ID_FILE_MODEL = "sshIdFile";
 	public static final String USERNAME_MODEL = "username";
 	public static final String PROFILE_NAME_MODEL = "profileName";
-	public static final String SECOND_HOP = "secondHop";
+	public static final String SECOND_PORT = "secondPort";
+	public static final String SECOND_USERNAME = "secondUsername";
+	public static final String SECOND_HOST = "secondHost";
 
 	// UI Constants
 	public static final String LABEL_RUNNING = "running";
 	public static final String LABEL_OFFLINE = "offline";
+
 }

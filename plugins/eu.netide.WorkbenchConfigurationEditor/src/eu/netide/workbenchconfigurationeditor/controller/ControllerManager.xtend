@@ -10,6 +10,7 @@ import eu.netide.configuration.launcher.starters.IStarterRegistry
 import eu.netide.configuration.launcher.starters.StarterFactory
 import eu.netide.configuration.launcher.starters.backends.Backend
 import eu.netide.configuration.launcher.starters.backends.SshBackend
+import eu.netide.configuration.launcher.starters.backends.SshDoubleTunnelBackend
 import eu.netide.configuration.launcher.starters.backends.VagrantBackend
 import eu.netide.configuration.utils.NetIDE
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel
@@ -146,7 +147,13 @@ class ControllerManager {
 
 			sshJob = new Job("SshManager") {
 				override protected run(IProgressMonitor monitor) {
-					backend = new SshBackend(model.host, Integer.parseInt(model.port), model.username, model.sshIdFile)
+					if (!model.isDoubleTunnel) {
+						backend = new SshBackend(model.host, Integer.parseInt(model.port), model.username,
+							model.sshIdFile)
+					} else {
+						backend = new SshDoubleTunnelBackend(model.host, Integer.parseInt(model.port), model.secondHost,
+							Integer.parseInt(model.secondPort), model.username, model.secondUsername, model.sshIdFile);
+					}
 					sshManager = new SshManager(configuration, monitor)
 					sshManager.copyApps
 					sshManager.copyTopo
