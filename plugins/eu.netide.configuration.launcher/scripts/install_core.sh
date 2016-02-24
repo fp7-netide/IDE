@@ -11,7 +11,7 @@ if [ ! -d ~/core_engine ]; then
   
   mkdir core_engine
   cd core_engine
-  git clone -b CoreImplementation https://github.com/fp7-netide/Engine
+  git clone -b demo-brussels https://github.com/fp7-netide/Engine
   
   cd Engine/libraries/netip/java
   mvn clean install -Dgpg.skip=true
@@ -26,7 +26,7 @@ if [ ! -d ~/core_engine ]; then
 
 
   cd
-  wget http://ftp.fau.de/apache/karaf/3.0.6/apache-karaf-3.0.6.tar.gz
+  wget -q http://ftp.fau.de/apache/karaf/3.0.6/apache-karaf-3.0.6.tar.gz
   tar xzf apache-karaf-3.0.6.tar.gz
   cd apache-karaf-3.0.6/bin
   chmod +x ./client ./start ./stop

@@ -56,6 +56,9 @@ class VagrantfileGenerator {
 		
 		url = bundle.getEntry("scripts/install_core.sh")
 		var corescriptpath = scriptpath(url)
+		
+		url = bundle.getEntry("scripts/install_odl.sh")
+		var odlscriptpath = scriptpath(url)
 
 		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map [ c |
 			String.format("controller_platform_%s", c.name)
@@ -123,6 +126,7 @@ class VagrantfileGenerator {
 						config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
 						config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
 						config.vm.provision "shell", path: "«corescriptpath»", privileged: false
+						config.vm.provision "shell", path: "«odlscriptpath»", privileged: false						
 					«ENDIF»
 				«ENDIF»
 				
