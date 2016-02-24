@@ -14,6 +14,8 @@ import eu.netide.configuration.launcher.starters.impl.PyreticStarter
 import eu.netide.configuration.launcher.starters.impl.RyuBackendStarter
 import eu.netide.configuration.launcher.starters.impl.RyuShimStarter
 import eu.netide.configuration.launcher.starters.impl.RyuStarter
+import eu.netide.configuration.launcher.starters.impl.CoreStarter
+import eu.netide.configuration.launcher.starters.impl.EmulatorStarter
 import eu.netide.configuration.utils.NetIDE
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
@@ -93,6 +95,18 @@ class StarterFactory {
 
 	public def createDebuggerStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		var starter = new DebuggerStarter(configuration, monitor)
+		starter.backend = backend
+		return starter
+	}
+	
+	public def createCoreStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
+		var starter = new CoreStarter(configuration, monitor)
+		starter.backend = backend
+		return starter
+	}
+	
+	public def createEmulatorStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
+		var starter = new EmulatorStarter(configuration, monitor)
 		starter.backend = backend
 		return starter
 	}

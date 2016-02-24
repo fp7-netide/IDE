@@ -2,7 +2,7 @@
 cd
 
 if [ ! -d ~/Engine ]; then
-  git clone -b pyretic_intermediate_protocol https://github.com/fp7-netide/Engine
+  git clone https://github.com/fp7-netide/Engine
 fi
 
 x="export PYTHONPATH=\$PYTHONPATH:~/Engine/libraries/netip/python"

@@ -1,22 +1,16 @@
 #!/bin/bash
 cd
 if [ ! -d ~/openflowplugin ]; then
-   
-   sudo apt-get --yes install maven openjdk-7-jdk openjdk-7-doc openjdk-7-jre-lib
-   git clone https://git.opendaylight.org/gerrit/openflowplugin
-   cd openflowplugin
-   git checkout release/helium-sr1.1
-   mvn clean install -DskipTests
-   cd ..
+    sudo add-apt-repository ppa:andrei-pozolotin/maven3
+   sudo apt-get update
+   sudo apt-get --yes install maven3 openjdk-7-jdk openjdk-7-doc openjdk-7-jre-lib
+   mkdir -p ~/.m2
+   wget -q -O - https://raw.githubusercontent.com/opendaylight/odlparent/master/settings.xml > ~/.m2/settings.xml
+
    cd Engine/odl-shim
-   mv pom.xml pom_other_release.xml
-   mv pom_sr1.xml pom.xml
    mvn clean install
 
-   cd
-   cd ./openflowplugin/distribution/karaf/
-   mvn clean package
-   cd ./target/assembly/bin
+   cd karaf/target/assembly/bin
 
    chmod +x ./client ./start ./stop
    echo "Installing karaf dependencies for ODL shim"
@@ -27,9 +21,8 @@ if [ ! -d ~/openflowplugin ]; then
 	sleep 1
    done
    
-   ./client "bundle:install -s mvn:com.googlecode.json-simple/json-simple/1.1.1"
-   ./client "bundle:install -s mvn:org.apache.commons/commons-lang3/3.3.2"
-   ./client "bundle:install -s mvn:org.opendaylight.openflowplugin/pyretic-odl/0.0.4-Helium-SR1.1"
+
+   ./client "feature:install odl-netide-rest"
    ./client "feature:install odl-restconf"
    sleep 10
    ./stop

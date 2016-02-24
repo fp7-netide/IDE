@@ -34,7 +34,7 @@ class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 	}
 
 	override performFinish() {
-		var job = new ProjectCreationJob("NetIDE Project Creation", page.projectName, page.parameters, page.sysreq)
+		var job = new ProjectCreationJob("NetIDE Project Creation", page.projectName, page.parameters, page.sysreq, page.composition)
 
 		job.schedule
 
@@ -48,6 +48,9 @@ class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 		Boolean sysreq
 
 		Boolean parameters
+		
+		Boolean composition
+		
 
 		String paramstring = '''
 			// Parameter specification
@@ -74,12 +77,26 @@ class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 				
 			}
 		'''
+		
+		String compstring = '''
+			<?xml version="1.0" encoding="utf-8"?>
+			<CompositionSpecification xmlns="http://netide.eu/schemas/compositionspecification/v1">
+				<Modules>
+					<Module id="SimpleSwitch" loaderIdentification="simple_switch.py"/>
+				</Modules>
+				<Composition>
+					<ModuleCall module="SimpleSwitch"/>
+				</Composition>
+			</CompositionSpecification>
+		'''
+	
 
-		new(String name, String projectname, Boolean parameters, Boolean sysreq) {
+		new(String name, String projectname, Boolean parameters, Boolean sysreq, Boolean composition) {
 			super(name)
 			this.projectName = projectname
 			this.parameters = parameters
 			this.sysreq = sysreq
+			this.composition = composition
 		}
 
 		override runInUIThread(IProgressMonitor monitor) {
@@ -123,6 +140,14 @@ class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 			
 			var appsFolder = project.getFolder("apps")
 			appsFolder.create(false, true, null)
+			
+			var compositionFolder = project.getFolder("composition")
+			compositionFolder.create(false, true, null)
+			
+			if (composition) {
+				var compfile = project.getFile("composition/composition.xml")
+				compfile.create(new ByteArrayInputStream(compstring.getBytes("UTF-8")), false, monitor)
+			}
 
 			if (parameters) {
 				var templateFolder = project.getFolder("templates")
