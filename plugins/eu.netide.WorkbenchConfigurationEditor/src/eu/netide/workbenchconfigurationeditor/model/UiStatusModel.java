@@ -17,31 +17,42 @@ public class UiStatusModel {
 
 	private int sshComboSelectionIndex;
 	private int launchTableIndex;
+	private int compositionSelectionIndex;
 
 	private String serverControllerSelection;
 
 	private WritableList profileWritableList;
 	private WritableList modelWritableList;
+	private WritableList compositionWritableList;
+
 	// list corresponding to doc
 	private ArrayList<LaunchConfigurationModel> modelList;
 	// list corresponding to doc
 	private ArrayList<SshProfileModel> profileList;
 
-	private String compositionPath;
+	private ArrayList<CompositionModel> compositionList;
 
 	private PropertyChangeSupport changes;
 
 	public UiStatusModel() {
 		this.changes = new PropertyChangeSupport(this);
-
 	}
 
-	public void setCompositionPath(String path) {
-		changes.firePropertyChange(Constants.COMPOSITION_PATH, this.compositionPath, this.compositionPath = path);
+	public CompositionModel getCompositionAtSelectedIndex(){
+		return this.compositionList.get(this.compositionSelectionIndex);
+	}
+	
+	public void addCompositionToList(CompositionModel m){
+		compositionWritableList.add(m);
+	}
+	
+	public void setCompositionSelectionIndex(int index) {
+		changes.firePropertyChange(Constants.COMPOSITION_SELECTION_INDEX, this.compositionSelectionIndex,
+				this.compositionSelectionIndex = index);
 	}
 
-	public String getCompositionPath() {
-		return this.compositionPath;
+	public int getCompositionSelectionIndex() {
+		return this.compositionSelectionIndex;
 	}
 
 	public void setCoreRunning(boolean running) {
@@ -50,6 +61,22 @@ public class UiStatusModel {
 
 	public boolean getCoreRunning() {
 		return this.coreRunning;
+	}
+
+	public void setWritableCompositionList(WritableList input) {
+		this.compositionWritableList = input;
+	}
+
+	public WritableList getWritableCompositionList() {
+		return this.compositionWritableList;
+	}
+
+	public void setCompositionList(ArrayList<CompositionModel> compoList) {
+		this.compositionList = compoList;
+	}
+
+	public ArrayList<CompositionModel> getCompositionList() {
+		return this.compositionList;
 	}
 
 	public void setWritableModelList(WritableList input) {

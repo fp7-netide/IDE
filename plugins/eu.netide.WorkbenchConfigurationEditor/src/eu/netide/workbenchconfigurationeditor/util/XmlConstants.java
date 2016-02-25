@@ -22,6 +22,8 @@ public class XmlConstants {
 	public static final String ELEMENT_SERVER_CONTROLLER = "ServerController";
 	public static final String WORKBENCH = "workbench";
 	
+	public static final String COMPOSITION = "compositionPath";
+	
 	public static final String[] CONSTANT_ARRAY = new String[]{NODE_APP, ATTRIBUTE_APP_NAME, ATTRIBUTE_APP_ID, ELEMENT_APP_PATH,  ELEMENT_PLATFORM, ELEMENT_CLIENT_CONTROLLER, ELEMENT_SERVER_CONTROLLER };
 	public static final String ELEMENT_APP_PORT = "appPort";
 }

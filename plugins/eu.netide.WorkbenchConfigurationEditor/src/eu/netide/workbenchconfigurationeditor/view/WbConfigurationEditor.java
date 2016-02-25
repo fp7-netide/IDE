@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -47,6 +46,7 @@ import eu.netide.workbenchconfigurationeditor.controller.ControllerManager;
 import eu.netide.workbenchconfigurationeditor.controller.WorkbenchConfigurationEditorEngine;
 import eu.netide.workbenchconfigurationeditor.dialogs.ConfigurationShell;
 import eu.netide.workbenchconfigurationeditor.dialogs.SShShell;
+import eu.netide.workbenchconfigurationeditor.model.CompositionModel;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 import eu.netide.workbenchconfigurationeditor.util.Constants;
@@ -139,7 +139,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 							selectedFile = (IFile) result[0];
 
 							path = selectedFile.getFullPath().toOSString();
-							engine.getStatusModel().setCompositionPath(path);
+							CompositionModel m = new CompositionModel();
+							m.setCompositionPath(path);
+							engine.getStatusModel().addCompositionToList(m);
+							setIsDirty(true);
 						} else {
 							showMessage("Please select a Composition.");
 						}
@@ -621,11 +624,16 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		grpCompositionLoader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		grpCompositionLoader.setText("Composition Loader");
 		grpCompositionLoader.setLayout(new GridLayout(3, false));
+		new Label(grpCompositionLoader, SWT.NONE);
+		new Label(grpCompositionLoader, SWT.NONE);
+		new Label(grpCompositionLoader, SWT.NONE);
 
-		compositionLoader_txt = new Text(grpCompositionLoader, SWT.BORDER);
-		GridData gd_compositionLoader_txt = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_compositionLoader_txt.widthHint = 115;
-		compositionLoader_txt.setLayoutData(gd_compositionLoader_txt);
+		combo_Composition = new Combo(grpCompositionLoader, SWT.NONE);
+		GridData gd_combo_Composition = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_combo_Composition.widthHint = 128;
+		combo_Composition.setLayoutData(gd_combo_Composition);
+
+		combo_Composition_Viewer = new ComboViewer(combo_Composition);
 
 		browseCompositionBtn = new Button(grpCompositionLoader, SWT.NONE);
 		browseCompositionBtn.setText("Browse");
@@ -871,7 +879,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private TableViewer tableViewer;
 	private ComboViewer sshComboViewer;
 	private ComboViewer serverComboViewer;
-	private Text compositionLoader_txt;
+	private ComboViewer combo_Composition_Viewer;
 	private Button browseCompositionBtn;
 	private Button loadCompositionBtn;
 	private Label lblCoreStatus;
@@ -887,13 +895,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Group grpConfigurationOverview;
 	private Button btnInitVagrantFile;
 	private Button btnCopyApps;
+	private Combo combo_Composition;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;
-	}
-
-	public Text getCompositionText() {
-		return this.compositionLoader_txt;
 	}
 
 	public Label getServerControllerLabel() {
@@ -922,5 +927,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	public ComboViewer getServerComboViewer() {
 		return this.serverComboViewer;
+	}
+
+	public ComboViewer getCompositionComboViewer() {
+		return this.combo_Composition_Viewer;
 	}
 }

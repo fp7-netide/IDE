@@ -12,9 +12,9 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.w3c.dom.Document;
 
+import eu.netide.workbenchconfigurationeditor.model.CompositionModel;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 import eu.netide.workbenchconfigurationeditor.model.UiStatusModel;
@@ -58,6 +58,7 @@ public class WorkbenchConfigurationEditorEngine {
 		ArrayList[] parsed = XmlHelper.parseFileToModel(inputFile, doc);
 		this.statusModel.setModelList(parsed[0]);
 		this.statusModel.setProfileList(parsed[1]);
+		this.statusModel.setCompositionList(parsed[2]);
 
 		ControllerManager.initControllerManager(LaunchConfigurationModel.getTopology(), this.statusModel);
 	}
@@ -71,11 +72,29 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addStatusLabelDataBinding(this.editor.getVagrantStatusLabel(), Constants.VAGRANT_RUNNING_MODEL);
 		this.addStatusLabelDataBinding(this.editor.getCoreStatusLabel(), Constants.CORE_RUNNING);
 
-		this.addTextDataBinding(this.editor.getCompositionText(), Constants.COMPOSITION_PATH);
-
 		this.addTableDataBinding(this.statusModel.getModelList());
+
+		this.addComboDataBindingComposition();
 		this.addComboDataBinding(this.statusModel.getProfileList());
 		this.addServerControllerComboDataBinding();
+	}
+
+	private void addComboDataBindingComposition() {
+		WritableList input = new WritableList(this.statusModel.getCompositionList(), CompositionModel.class);
+		this.statusModel.setWritableCompositionList(input);
+
+		ComboViewer cv = this.editor.getCompositionComboViewer();
+		ViewerSupport.bind(cv, input, BeanProperties.value(Constants.COMPOSITION_MODEL_PATH));
+
+		// bind selectionIndex to model
+		// selectionIndex == profileListIndex, use it to match selection to
+		// actual model
+		IObservableValue selection = WidgetProperties.singleSelectionIndex().observe(cv.getCombo());
+		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, Constants.COMPOSITION_SELECTION_INDEX)
+				.observe(this.statusModel);
+
+		this.ctx.bindValue(modelValue, selection);
+
 	}
 
 	private void addComboDataBinding(ArrayList<SshProfileModel> profileList) {
@@ -143,13 +162,6 @@ public class WorkbenchConfigurationEditorEngine {
 		this.ctx.bindValue(widgetValue, modelValue, viewToModel, modelToView);
 	}
 
-	private void addTextDataBinding(Text text, String property) {
-		IObservableValue widgetValue = WidgetProperties.text().observe(text);
-		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, property).observe(this.statusModel);
-
-		this.ctx.bindValue(widgetValue, modelValue);
-	}
-
 	public UiStatusModel getStatusModel() {
 		return this.statusModel;
 	}
@@ -173,6 +185,10 @@ public class WorkbenchConfigurationEditorEngine {
 		}
 		for (SshProfileModel s : this.statusModel.getProfileList()) {
 			XmlHelper.addSshProfileToXmlFile(doc, s, inputFile);
+		}
+		
+		for(CompositionModel m : this.statusModel.getCompositionList()){
+			XmlHelper.addComposition(doc, m, inputFile);
 		}
 	}
 }

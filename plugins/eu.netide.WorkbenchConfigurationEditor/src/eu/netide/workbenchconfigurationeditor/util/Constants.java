@@ -20,7 +20,9 @@ public class Constants {
 	public static final String SSH_COMBO_SELECTION_INDEX = "sshComboSelectionIndex";
 	public static final String LAUNCH_TABLE_INDEX = "launchTableIndex";
 	public static final String SERVER_CONTROLLER_SELECTION = "serverControllerSelection";
-	public static final String COMPOSITION_PATH = "compositionPath";
+	public static final String COMPOSITION_SELECTION_INDEX = "compositionSelectionIndex";
+	
+	public static final String COMPOSITION_MODEL_PATH = "compositionPath";
 
 	// SSH Profile Model Constants
 	public static final String HOST_MODEL = "host";

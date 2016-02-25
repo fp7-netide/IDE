@@ -22,6 +22,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import eu.netide.workbenchconfigurationeditor.model.CompositionModel;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 
@@ -51,7 +52,19 @@ public class XmlHelper {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public static void addComposition(Document doc, CompositionModel model, IFile file) {
+		Node wb = doc.getFirstChild();
+
+		if (wb.getNodeName().equals(XmlConstants.WORKBENCH)) {
+			Element compo = doc.createElement(XmlConstants.COMPOSITION);
+			compo.setTextContent(model.getCompositionPath());
+			compo.setAttribute("id", model.getID());
+			wb.appendChild(compo);
+
+			XmlHelper.saveContentToXml(doc, file);
+		}
+	}
 
 	public static void addModelToXmlFile(Document doc, LaunchConfigurationModel model, IFile file) {
 		Node wb = doc.getFirstChild();
@@ -99,23 +112,23 @@ public class XmlHelper {
 			Element port = doc.createElement(XmlConstants.SSH_PORT);
 			port.setTextContent(model.getPort());
 			profile.appendChild(port);
- 
+
 			Element userName = doc.createElement(XmlConstants.SSH_USERNAME);
 			userName.setTextContent(model.getUsername());
 			profile.appendChild(userName);
-			
+
 			Element secondUserName = doc.createElement(XmlConstants.SSH_SECOND_USERNAME);
 			secondUserName.setTextContent(model.getSecondUsername());
 			profile.appendChild(secondUserName);
-			
+
 			Element secondHost = doc.createElement(XmlConstants.SSH_SECOND_HOST);
 			secondHost.setTextContent(model.getSecondHost());
 			profile.appendChild(secondHost);
-			
+
 			Element secondPort = doc.createElement(XmlConstants.SSH_SECOND_PORT);
 			secondPort.setTextContent(model.getSecondPort());
 			profile.appendChild(secondPort);
-			
+
 			Element sshId = doc.createElement(XmlConstants.SSH_ID_FILE);
 			sshId.setTextContent(model.getSshIdFile());
 			profile.appendChild(sshId);
@@ -204,6 +217,7 @@ public class XmlHelper {
 			File xmlFile = new File(file.getRawLocationURI());
 			modelList = new ArrayList<LaunchConfigurationModel>();
 			profileList = new ArrayList<SshProfileModel>();
+			compositonPathList = new ArrayList<CompositionModel>();
 
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -214,15 +228,15 @@ public class XmlHelper {
 
 				parseModelNode(doc.getChildNodes(), null);
 				parseProfileNode(doc.getChildNodes(), null);
+				parsePathNode(doc.getChildNodes());
 
 			}
 
-			return new ArrayList[] { modelList, profileList };
+			return new ArrayList[] { modelList, profileList, compositonPathList };
 		} catch (Exception e) {
 
 		}
 		return null;
-
 	}
 
 	private static ArrayList<SshProfileModel> profileList;
@@ -249,15 +263,15 @@ public class XmlHelper {
 				case XmlConstants.SSH_USERNAME:
 					model.setUsername(tempNode.getTextContent());
 					break;
-					
+
 				case XmlConstants.SSH_SECOND_HOST:
 					model.setSecondHost(tempNode.getTextContent());
 					break;
-				
+
 				case XmlConstants.SSH_SECOND_PORT:
 					model.setSecondPort(tempNode.getTextContent());
 					break;
-					
+
 				case XmlConstants.SSH_SECOND_USERNAME:
 					model.setSecondUsername(tempNode.getTextContent());
 					break;
@@ -290,6 +304,50 @@ public class XmlHelper {
 				// loop again if has child nodes
 				parseProfileNode(tempNode.getChildNodes(), model);
 			}
+		}
+
+	}
+
+	private static ArrayList<CompositionModel> compositonPathList;
+
+	private static void parsePathNode(NodeList nodeList) {
+
+		for (int count = 0; count < nodeList.getLength(); count++) {
+
+			Node tempNode = nodeList.item(count);
+			// make sure it's element node.
+			if (tempNode.getNodeType() == Node.ELEMENT_NODE) {
+
+				switch (tempNode.getNodeName()) {
+				case XmlConstants.COMPOSITION:
+					CompositionModel model = new CompositionModel();
+					model.setCompositionPath(tempNode.getTextContent());
+					
+					if (tempNode.hasAttributes()) {
+						NamedNodeMap nodeMap = tempNode.getAttributes();
+
+						for (int i = 0; i < nodeMap.getLength(); i++) {
+
+							Node node = nodeMap.item(i);
+							if (node.getNodeName().equals("id")) {
+								model.setID(node.getNodeValue());
+							}
+						}
+					}
+
+					compositonPathList.add(model);
+					break;
+				default:
+					// System.err.println("No match for node: " +
+					// tempNode.getNodeName());
+
+				}
+
+				if (tempNode.hasChildNodes()) {
+					parsePathNode(tempNode.getChildNodes());
+				}
+			}
+
 		}
 
 	}

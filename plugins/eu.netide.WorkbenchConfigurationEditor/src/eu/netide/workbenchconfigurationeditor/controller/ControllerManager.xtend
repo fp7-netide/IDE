@@ -472,7 +472,7 @@ class ControllerManager {
 			override protected run(IProgressMonitor monitor) {
 				// configuration needs to contain topology path !
 				compositionStarter = new CoreSpecificationStarter(configHelper.getTopoConfiguration,
-					statusModel.compositionPath, monitor);
+					statusModel.compositionAtSelectedIndex.compositionPath, monitor);
 				compositionStarter.syncStart
 				return Status.OK_STATUS
 			}
