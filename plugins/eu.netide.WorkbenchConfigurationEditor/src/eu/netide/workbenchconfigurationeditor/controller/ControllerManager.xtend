@@ -600,10 +600,11 @@ class ControllerManager {
 
 			override protected run(IProgressMonitor monitor) {
 
-				coreStarter = factory.createCoreStarter(getTopoConfiguration, monitor)
-				statusModel.coreRunning = true
-				startCoreJob.schedule
-
+				if (coreStarter == null) {
+					coreStarter = factory.createCoreStarter(getTopoConfiguration, monitor)
+				}
+				if (!statusModel.coreRunning)
+					startCoreJob.schedule
 				return Status.OK_STATUS;
 			}
 
@@ -612,9 +613,9 @@ class ControllerManager {
 		startCoreJob = new Job("StartCoreManager") {
 
 			override protected run(IProgressMonitor monitor) {
-
+				coreStarter.backend = backend
 				coreStarter.syncStart
-
+				statusModel.coreRunning = true
 				return Status.OK_STATUS;
 			}
 
