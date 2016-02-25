@@ -2,6 +2,7 @@ package eu.netide.workbenchconfigurationeditor.controller
 
 import Topology.NetworkEnvironment
 import eu.netide.configuration.generator.GenerateActionDelegate
+import eu.netide.configuration.generator.fsa.FSAProvider
 import eu.netide.configuration.generator.vagrantfile.VagrantfileGenerateAction
 import eu.netide.configuration.launcher.managers.SshManager
 import eu.netide.configuration.launcher.managers.VagrantManager
@@ -61,6 +62,12 @@ class ControllerManager {
 
 	public def createVagrantFile() {
 		val configuration = createVagrantConfiguration()
+
+		// TODO: should be handeld in the generate file action
+		var fsa2 = FSAProvider.get
+		fsa2.project = file.project
+		fsa2.generateFolder("gen")
+
 		var vgen = new VagrantfileGenerateAction(file, configuration)
 		vgen.run
 	}
@@ -120,6 +127,8 @@ class ControllerManager {
 					vagrantManager.init
 
 					vagrantManager.up
+
+					statusModel.vagrantRunning = true
 					return Status.OK_STATUS;
 				}
 
@@ -142,6 +151,13 @@ class ControllerManager {
 		startSshWithConfig(createSshConfiguration(), listener, model)
 	}
 
+	public def copyApps() {
+		if (sshManager != null) {
+			sshManager.copyApps
+			sshManager.copyTopo
+		}
+	}
+
 	private def startSshWithConfig(ILaunchConfiguration configuration, IJobChangeListener listener,
 		SshProfileModel model) {
 		if (!this.statusModel.sshRunning) {
@@ -157,12 +173,11 @@ class ControllerManager {
 							Integer.parseInt(model.secondPort), model.username, model.secondUsername, model.sshIdFile);
 					}
 					sshManager = new SshManager(configuration, monitor)
-					sshManager.copyApps
-					sshManager.copyTopo
 
 					// TODO: extra button 
 					// sshManager.provision
 					// TODO: add are u sure option
+					statusModel.sshRunning = true
 					return Status.OK_STATUS
 				}
 			}
@@ -466,6 +481,13 @@ class ControllerManager {
 				c.setAttribute(appPath, appPathOS);
 			}
 		}
+
+		if (modelList == null) {
+			var appPath = "controller_data_".concat("c1").concat("_".concat(NetIDE.CONTROLLER_ODL))
+			var appPathOS = "";
+			c.setAttribute(appPath, appPathOS);
+		}
+
 		c.setAttribute("reprovision", false);
 		c.setAttribute("shutdown", true);
 
@@ -605,6 +627,10 @@ class ControllerManager {
 	public def stopCore() {
 		// TODO: stop core
 		// TODO: this.statusModel.coreRunning = false
+		if (coreStarter != null && statusModel.coreRunning) {
+			coreStarter.stop
+			statusModel.coreRunning = false
+		}
 	}
 
 	private CoreSpecificationStarter compositionStarter;

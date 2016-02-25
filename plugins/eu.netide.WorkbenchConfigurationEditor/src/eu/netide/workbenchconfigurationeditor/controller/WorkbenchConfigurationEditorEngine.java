@@ -42,7 +42,6 @@ public class WorkbenchConfigurationEditorEngine {
 		doc = XmlHelper.getDocFromFile(inputFile);
 		this.ctx = new DataBindingContext();
 
-
 		initModel();
 		initDataBinding();
 	}
@@ -59,7 +58,7 @@ public class WorkbenchConfigurationEditorEngine {
 		ArrayList[] parsed = XmlHelper.parseFileToModel(inputFile, doc);
 		this.statusModel.setModelList(parsed[0]);
 		this.statusModel.setProfileList(parsed[1]);
-		
+
 		ControllerManager.initControllerManager(LaunchConfigurationModel.getTopology(), this.statusModel);
 	}
 
@@ -71,7 +70,7 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addStatusLabelDataBinding(this.editor.getSSHStautsLabel(), Constants.SSH_RUNNING_MODEL);
 		this.addStatusLabelDataBinding(this.editor.getVagrantStatusLabel(), Constants.VAGRANT_RUNNING_MODEL);
 		this.addStatusLabelDataBinding(this.editor.getCoreStatusLabel(), Constants.CORE_RUNNING);
-		
+
 		this.addTextDataBinding(this.editor.getCompositionText(), Constants.COMPOSITION_PATH);
 
 		this.addTableDataBinding(this.statusModel.getModelList());
@@ -84,7 +83,7 @@ public class WorkbenchConfigurationEditorEngine {
 		// bind sshmodellist to combobox content
 		WritableList input = new WritableList(profileList, SshProfileModel.class);
 		this.statusModel.setWritableProfileList(input);
-		
+
 		ComboViewer cv = this.editor.getSshComboViewer();
 		ViewerSupport.bind(cv, input, BeanProperties.values(new String[] { Constants.PROFILE_NAME_MODEL }));
 
@@ -103,15 +102,15 @@ public class WorkbenchConfigurationEditorEngine {
 		ComboViewer cv = this.editor.getServerComboViewer();
 
 		IObservableValue selection = WidgetProperties.text().observe(cv.getCombo());
-		IObservableValue modelValue = BeanProperties
-				.value(UiStatusModel.class, Constants.SERVER_CONTROLLER_SELECTION).observe(this.statusModel);
+		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, Constants.SERVER_CONTROLLER_SELECTION)
+				.observe(this.statusModel);
 
-		this.ctx.bindValue(modelValue, selection);		
+		this.ctx.bindValue(modelValue, selection);
 	}
 
 	private void addTableDataBinding(ArrayList<LaunchConfigurationModel> modelList) {
 		WritableList input = new WritableList(modelList, LaunchConfigurationModel.class);
-		
+
 		this.statusModel.setWritableModelList(input);
 		ViewerSupport.bind(this.editor.getTableViewer(), input,
 				BeanProperties.values(new String[] { Constants.APP_NAME_MODEL, Constants.APP_RUNNING_MODEL,
@@ -133,7 +132,8 @@ public class WorkbenchConfigurationEditorEngine {
 
 		IObservableValue widgetValue = WidgetProperties.text().observe(label);
 		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, property).observe(this.statusModel);
-
+		// WidgetProperties.font() bind with bool to display color corresponding
+		// to running status
 		UpdateValueStrategy modelToView = new UpdateValueStrategy();
 		modelToView.setConverter(new RunningBoolToStringConverter());
 
@@ -142,36 +142,36 @@ public class WorkbenchConfigurationEditorEngine {
 
 		this.ctx.bindValue(widgetValue, modelValue, viewToModel, modelToView);
 	}
-	
+
 	private void addTextDataBinding(Text text, String property) {
 		IObservableValue widgetValue = WidgetProperties.text().observe(text);
 		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, property).observe(this.statusModel);
 
 		this.ctx.bindValue(widgetValue, modelValue);
 	}
-	
-	public UiStatusModel getStatusModel(){
+
+	public UiStatusModel getStatusModel() {
 		return this.statusModel;
 	}
-	
-	public Document getDoc(){
+
+	public Document getDoc() {
 		return this.doc;
 	}
-	
-	public void saveAllChanges(){
-		
-		for(LaunchConfigurationModel m : this.statusModel.getModelList()){
+
+	public void saveAllChanges() {
+
+		for (LaunchConfigurationModel m : this.statusModel.getModelList()) {
 			XmlHelper.removeFromXml(doc, m, inputFile);
 		}
-		
-		for(SshProfileModel s : this.statusModel.getProfileList()){
+
+		for (SshProfileModel s : this.statusModel.getProfileList()) {
 			XmlHelper.removeFromXml(doc, s, inputFile);
 		}
-		
-		for(LaunchConfigurationModel m : this.statusModel.getModelList()){
+
+		for (LaunchConfigurationModel m : this.statusModel.getModelList()) {
 			XmlHelper.addModelToXmlFile(doc, m, inputFile);
 		}
-		for(SshProfileModel s : this.statusModel.getProfileList()){
+		for (SshProfileModel s : this.statusModel.getProfileList()) {
 			XmlHelper.addSshProfileToXmlFile(doc, s, inputFile);
 		}
 	}

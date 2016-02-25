@@ -100,7 +100,7 @@ public class SShShell extends Shell {
 		this.useDoubleTunneL = false;
 		Composite composite = new Composite(this, SWT.NONE);
 		GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_composite.heightHint = 184;
+		gd_composite.heightHint = 200;
 		gd_composite.widthHint = 425;
 		composite.setLayoutData(gd_composite);
 		composite.setLayout(new GridLayout(2, false));
@@ -196,6 +196,7 @@ public class SShShell extends Shell {
 		new Label(composite, SWT.NONE);
 
 		btnCheckButton = new Button(composite, SWT.CHECK);
+		btnCheckButton.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false, 1, 1));
 
 		btnCheckButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -226,7 +227,9 @@ public class SShShell extends Shell {
 		});
 
 		doubleTunnelComposite = new Composite(this, SWT.NONE);
-		doubleTunnelComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		GridData gd_doubleTunnelComposite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_doubleTunnelComposite.heightHint = 92;
+		doubleTunnelComposite.setLayoutData(gd_doubleTunnelComposite);
 		doubleTunnelComposite.setLayout(new GridLayout(2, false));
 
 		Label lblSecondUserName = new Label(doubleTunnelComposite, SWT.NONE);
@@ -293,14 +296,14 @@ public class SShShell extends Shell {
 
 		doubleTunnelComposite.setVisible(false);
 		Composite composite_1 = new Composite(this, SWT.NONE);
-		GridData gd_composite_1 = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
+		GridData gd_composite_1 = new GridData(SWT.CENTER, SWT.FILL, false, false, 1, 1);
 		gd_composite_1.widthHint = 316;
 		composite_1.setLayoutData(gd_composite_1);
 		composite_1.setLayout(new GridLayout(3, false));
 
 		Button cancleButton = new Button(composite_1, SWT.NONE);
 		cancleButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		cancleButton.setText("Cancel");
+		cancleButton.setText("Cancle");
 		cancleButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -365,7 +368,7 @@ public class SShShell extends Shell {
 	 */
 	protected void createContents() {
 		setText("SWT Application");
-		setSize(475, 345);
+		setSize(475, 379);
 
 	}
 

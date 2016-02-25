@@ -3,7 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Generator
 Bundle-SymbolicName: eu.netide.configuration.generator;singleton:=true
 Bundle-Version: 0.2.0.qualifier
-Export-Package: eu.netide.configuration.generator, eu.netide.configuration.generator.vagrantfile
+Export-Package: eu.netide.configuration.generator,
+ eu.netide.configuration.generator.fsa,
+ eu.netide.configuration.generator.vagrantfile
 Require-Bundle: org.eclipse.xtext.generator,
  eu.netide.configuration,
  org.eclipse.ui,

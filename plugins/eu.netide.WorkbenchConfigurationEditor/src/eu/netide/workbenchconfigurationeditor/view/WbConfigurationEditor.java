@@ -82,8 +82,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		this.isDirty = false;
 		IFileEditorInput fileInput = (IFileEditorInput) input;
 		file = fileInput.getFile();
-		// TODO:
-		// StarterStarter.getStarter(LaunchConfigurationModel.getTopology()).createVagrantFile(modelList);
 		setSite(site);
 		setInput(input);
 
@@ -176,6 +174,15 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	}
 
 	private void addVagrantButtonListener() {
+
+		btnInitVagrantFile.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO:
+				ControllerManager.getStarter().createVagrantFile();
+			}
+		});
+
 		btnVagrantUp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -323,6 +330,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	}
 
 	private void addSshButtonListener() {
+
+		btnCopyApps.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ControllerManager.getStarter().copyApps();
+			}
+		});
+
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -502,7 +517,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		composite_1 = new Composite(sshComposite, SWT.NONE);
 		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		composite_1.setLayout(new GridLayout(4, false));
+		composite_1.setLayout(new GridLayout(5, false));
 
 		lblSShStatus = new Label(composite_1, SWT.NONE);
 		lblSShStatus.setText("Status: Offline");
@@ -515,6 +530,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		btnProvision_1 = new Button(composite_1, SWT.NONE);
 		btnProvision_1.setText("Provision");
+
+		btnCopyApps = new Button(composite_1, SWT.NONE);
+
+		btnCopyApps.setText("Copy Apps ");
 
 		composite = new Composite(sshComposite, SWT.NONE);
 		GridData gd_composite = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
@@ -545,6 +564,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		Composite vagrantButtons = new Composite(tabFolder, SWT.NONE);
 		vagrantTabItem.setControl(vagrantButtons);
 		vagrantButtons.setLayout(new GridLayout(4, false));
+
+		btnInitVagrantFile = new Button(vagrantButtons, SWT.NONE);
+
+		btnInitVagrantFile.setText("Init Vagrant File");
+		new Label(vagrantButtons, SWT.NONE);
+		new Label(vagrantButtons, SWT.NONE);
+		new Label(vagrantButtons, SWT.NONE);
 
 		vagrantStatusLabel = new Label(vagrantButtons, SWT.NONE);
 		vagrantStatusLabel.setText("Status: Offline");
@@ -638,6 +664,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnStopServerController.setText("Off");
 
 		grpMininet = new Group(composite_4, SWT.NONE);
+		grpMininet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		grpMininet.setText("Mininet");
 		grpMininet.setLayout(new GridLayout(3, false));
 
@@ -670,7 +697,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		TableColumn tc4 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc5 = new TableColumn(table, SWT.CENTER);
 		tc1.setText("App Name");
-		tc2.setText("Aktiv");
+		tc2.setText("Active");
 		tc3.setText("Platform");
 		tc4.setText("Client");
 		tc5.setText("Port");
@@ -858,6 +885,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Composite composite_4;
 	private Group grpCompositionLoader;
 	private Group grpConfigurationOverview;
+	private Button btnInitVagrantFile;
+	private Button btnCopyApps;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;
