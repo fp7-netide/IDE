@@ -184,7 +184,7 @@ class ControllerManager {
 			sshJob.addJobChangeListener(listener)
 			sshJob.schedule
 
-			this.statusModel.sshRunning = true
+			this.statusModel.sshRunning
 
 		}
 
