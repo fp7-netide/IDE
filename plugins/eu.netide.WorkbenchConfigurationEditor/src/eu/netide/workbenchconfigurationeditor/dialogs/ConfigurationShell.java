@@ -245,7 +245,7 @@ public class ConfigurationShell extends Shell {
 				shell.dispose();
 			}
 		});
-		btnCancle.setText("Cancle");
+		btnCancle.setText("Cancel");
 
 		btnSaveConfig = new Button(composite, SWT.NONE);
 		btnSaveConfig.setEnabled(false);

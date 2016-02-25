@@ -285,18 +285,21 @@ class ControllerManager {
 	public def startServerController(String serverController) {
 		val config = createServerControllerConfiguration(serverController)
 
-		if (!this.statusModel.vagrantRunning && !this.statusModel.sshRunning) {
-			// start vagrant
-			startVagrantFromConfig(config, null)
-		}
+//		if (!this.statusModel.vagrantRunning && !this.statusModel.sshRunning) {
+//			// start vagrant
+//			startVagrantFromConfig(config, null)
+//		}
 
 		// create shim starter		
 		for (c : ne.controllers) {
 
 			var job = new Job("Shim Server") {
 				override protected run(IProgressMonitor monitor) {
-					serverControllerStarter = factory.createShimStarter(config, c, monitor) // config controller monitor
+
+					if (serverControllerStarter == null)
+						serverControllerStarter = factory.createShimStarter(config, c, monitor) // config controller monitor
 					serverControllerStarter.asyncStart
+					serverControllerStarter.backend = backend
 
 					return Status.OK_STATUS
 				}
