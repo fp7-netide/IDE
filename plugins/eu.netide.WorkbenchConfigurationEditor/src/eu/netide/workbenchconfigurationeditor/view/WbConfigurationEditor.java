@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -485,9 +486,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		GridData gd_startAppComposite = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_startAppComposite.widthHint = 888;
 		startAppComposite.setLayoutData(gd_startAppComposite);
-		startAppComposite.setLayout(new GridLayout(2, false));
+		startAppComposite.setLayout(new GridLayout(1, false));
 
-		tabFolder = new TabFolder(startAppComposite, SWT.NONE);
+		tabFolder = new TabFolder(startAppComposite, SWT.BORDER);
 		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd_tabFolder.widthHint = 515;
 		tabFolder.setLayoutData(gd_tabFolder);
@@ -501,18 +502,16 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		composite_1 = new Composite(sshComposite, SWT.NONE);
 		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		composite_1.setLayout(new GridLayout(2, false));
+		composite_1.setLayout(new GridLayout(4, false));
 
 		lblSShStatus = new Label(composite_1, SWT.NONE);
 		lblSShStatus.setText("Status: Offline");
-		new Label(composite_1, SWT.NONE);
 
 		btnSSH_Up = new Button(composite_1, SWT.NONE);
-		btnSSH_Up.setText("Start ssh Manager");
-		new Label(composite_1, SWT.NONE);
+		btnSSH_Up.setText("On");
 
 		btnCloseSSH = new Button(composite_1, SWT.NONE);
-		btnCloseSSH.setText("ssh Close");
+		btnCloseSSH.setText("Off");
 
 		btnProvision_1 = new Button(composite_1, SWT.NONE);
 		btnProvision_1.setText("Provision");
@@ -524,7 +523,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		composite.setLayout(new GridLayout(4, false));
 
 		sshProfileCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-	
 
 		GridData gd_sshProfileCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_sshProfileCombo.widthHint = 161;
@@ -544,119 +542,123 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		vagrantTabItem = new TabItem(tabFolder, SWT.NONE);
 		vagrantTabItem.setText("Vagrant");
 
-		Composite vagrantButtons = new Composite(tabFolder, SWT.BORDER);
+		Composite vagrantButtons = new Composite(tabFolder, SWT.NONE);
 		vagrantTabItem.setControl(vagrantButtons);
-		vagrantButtons.setLayout(new GridLayout(2, false));
+		vagrantButtons.setLayout(new GridLayout(4, false));
 
 		vagrantStatusLabel = new Label(vagrantButtons, SWT.NONE);
 		vagrantStatusLabel.setText("Status: Offline");
-		new Label(vagrantButtons, SWT.NONE);
 
 		btnVagrantUp = new Button(vagrantButtons, SWT.NONE);
 
-		btnVagrantUp.setText("Vagrant Up");
-		new Label(vagrantButtons, SWT.NONE);
+		btnVagrantUp.setText("Up");
 
 		btnVagrantHalt = new Button(vagrantButtons, SWT.NONE);
-		btnVagrantHalt.setText("Vagrant Halt");
+		btnVagrantHalt.setText("Halt");
 
 		btnProvision_2 = new Button(vagrantButtons, SWT.NONE);
 		btnProvision_2.setText("Provision");
 
 		currentPageIndex = tabFolder.getSelectionIndex();
 
-		coreStarterComposite = new Composite(startAppComposite, SWT.NONE);
-		GridData gd_coreStarterComposite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_coreStarterComposite.widthHint = 277;
-		coreStarterComposite.setLayoutData(gd_coreStarterComposite);
-		coreStarterComposite.setLayout(new GridLayout(3, false));
+		composite_2 = new Composite(startAppComposite, SWT.NONE);
 
-		Label lblNewLabel = new Label(coreStarterComposite, SWT.NONE);
-		lblNewLabel.setBounds(0, 0, 59, 14);
-		lblNewLabel.setText("Core ");
-		new Label(coreStarterComposite, SWT.NONE);
-		new Label(coreStarterComposite, SWT.NONE);
+		GridData gd_composite_2 = new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1);
+		gd_composite_2.widthHint = 624;
+		gd_composite_2.heightHint = 175;
+		composite_2.setLayoutData(gd_composite_2);
+		composite_2.setLayout(new GridLayout(2, false));
 
-		lblCoreStatus = new Label(coreStarterComposite, SWT.NONE);
+		composite_3 = new Composite(composite_2, SWT.NONE);
+		GridData gd_composite_3 = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_composite_3.widthHint = 300;
+		gd_composite_3.heightHint = 155;
+		composite_3.setLayoutData(gd_composite_3);
+		composite_3.setLayout(new GridLayout(1, false));
+
+		grpCore = new Group(composite_3, SWT.BORDER);
+
+		grpCore.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		grpCore.setText("Core");
+		grpCore.setLayout(new GridLayout(3, false));
+
+		lblCoreStatus = new Label(grpCore, SWT.NONE);
 		lblCoreStatus.setText("Status : Offline");
 
-		startCoreBtn = new Button(coreStarterComposite, SWT.NONE);
-		startCoreBtn.setText("Start");
+		startCoreBtn = new Button(grpCore, SWT.NONE);
+		startCoreBtn.setText("On");
 
-		stopCoreBtn = new Button(coreStarterComposite, SWT.NONE);
-		stopCoreBtn.setText("Stop");
-		new Label(coreStarterComposite, SWT.NONE);
-		new Label(coreStarterComposite, SWT.NONE);
-		new Label(coreStarterComposite, SWT.NONE);
+		stopCoreBtn = new Button(grpCore, SWT.NONE);
+		stopCoreBtn.setText("Off");
 
-		Label lblCompositionLoader = new Label(coreStarterComposite, SWT.NONE);
-		lblCompositionLoader.setText("Composition Loader");
-		new Label(coreStarterComposite, SWT.NONE);
-		new Label(coreStarterComposite, SWT.NONE);
+		grpCompositionLoader = new Group(composite_3, SWT.NONE);
+		grpCompositionLoader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		grpCompositionLoader.setText("Composition Loader");
+		grpCompositionLoader.setLayout(new GridLayout(3, false));
 
-		compositionLoader_txt = new Text(coreStarterComposite, SWT.BORDER);
-		compositionLoader_txt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		compositionLoader_txt = new Text(grpCompositionLoader, SWT.BORDER);
+		GridData gd_compositionLoader_txt = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_compositionLoader_txt.widthHint = 115;
+		compositionLoader_txt.setLayoutData(gd_compositionLoader_txt);
 
-		browseCompositionBtn = new Button(coreStarterComposite, SWT.NONE);
+		browseCompositionBtn = new Button(grpCompositionLoader, SWT.NONE);
 		browseCompositionBtn.setText("Browse");
 
-		loadCompositionBtn = new Button(coreStarterComposite, SWT.NONE);
+		loadCompositionBtn = new Button(grpCompositionLoader, SWT.NONE);
 		loadCompositionBtn.setText("Load");
 
-		Composite selectServerController = new Composite(startAppComposite, SWT.BORDER);
-		GridData gd_selectServerController = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_selectServerController.heightHint = 84;
-		selectServerController.setLayoutData(gd_selectServerController);
-		selectServerController.setLayout(new GridLayout(3, false));
+		composite_4 = new Composite(composite_2, SWT.NONE);
+		composite_4.setLayout(new GridLayout(1, false));
+		GridData gd_composite_4 = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_composite_4.widthHint = 321;
+		composite_4.setLayoutData(gd_composite_4);
 
-		lblServerControllerStatus = new Label(selectServerController, SWT.NONE);
-		GridData gd_lblServerControllerStatus = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblServerControllerStatus.widthHint = 109;
-		lblServerControllerStatus.setLayoutData(gd_lblServerControllerStatus);
+		grpServerController = new Group(composite_4, SWT.NONE);
+		grpServerController.setLayout(new GridLayout(4, false));
+		grpServerController.setText("Server Controller");
+
+		lblServerControllerStatus = new Label(grpServerController, SWT.NONE);
 		lblServerControllerStatus.setText(Constants.LABEL_OFFLINE);
-		new Label(selectServerController, SWT.NONE);
-		new Label(selectServerController, SWT.NONE);
 
-		selectServerCombo = new Combo(selectServerController, SWT.BORDER);
+		selectServerCombo = new Combo(grpServerController, SWT.BORDER | SWT.READ_ONLY);
+		GridData gd_selectServerCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_selectServerCombo.widthHint = 123;
+		selectServerCombo.setLayoutData(gd_selectServerCombo);
 		selectServerCombo.add(NetIDE.CONTROLLER_POX);
 		selectServerCombo.add(NetIDE.CONTROLLER_ODL);
 
-		GridData gd_selectServerCombo = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_selectServerCombo.heightHint = 22;
-		gd_selectServerCombo.widthHint = 166;
-		selectServerCombo.setLayoutData(gd_selectServerCombo);
-
 		serverComboViewer = new ComboViewer(selectServerCombo);
 
-		startServerController = new Button(selectServerController, SWT.BORDER);
+		startServerController = new Button(grpServerController, SWT.BORDER);
 
-		startServerController.setText("Start Server Controller");
-		GridData gd_startServerController = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_startServerController.widthHint = 166;
-		startServerController.setLayoutData(gd_startServerController);
+		startServerController.setText("On");
 
-		btnStopServerController = new Button(selectServerController, SWT.NONE);
+		btnStopServerController = new Button(grpServerController, SWT.NONE);
 
-		btnStopServerController.setText("Stop Server Controller");
+		btnStopServerController.setText("Off");
 
-		mininetComposite = new Composite(startAppComposite, SWT.NONE);
-		mininetComposite.setLayout(new GridLayout(1, false));
-		GridData gd_mininetComposite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_mininetComposite.widthHint = 115;
-		mininetComposite.setLayoutData(gd_mininetComposite);
+		grpMininet = new Group(composite_4, SWT.NONE);
+		grpMininet.setText("Mininet");
+		grpMininet.setLayout(new GridLayout(3, false));
 
-		mininetStatusLable = new Label(mininetComposite, SWT.NONE);
+		mininetStatusLable = new Label(grpMininet, SWT.NONE);
 		mininetStatusLable.setText("Status: Offline");
 
-		btnMininetOn = new Button(mininetComposite, SWT.NONE);
+		btnMininetOn = new Button(grpMininet, SWT.NONE);
+		btnMininetOn.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 
-		btnMininetOn.setText("Mininet On");
+		btnMininetOn.setText("On");
 
-		btnMininetOff = new Button(mininetComposite, SWT.NONE);
+		btnMininetOff = new Button(grpMininet, SWT.NONE);
 
-		btnMininetOff.setText("Mininet Off");
+		btnMininetOff.setText("Off");
 
-		tableViewer = new TableViewer(startAppComposite,
+		grpConfigurationOverview = new Group(startAppComposite, SWT.NONE);
+		grpConfigurationOverview.setLayout(new GridLayout(2, false));
+		grpConfigurationOverview.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		grpConfigurationOverview.setText("Configuration Overview");
+
+		tableViewer = new TableViewer(grpConfigurationOverview,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 
 		table = tableViewer.getTable();
@@ -680,11 +682,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-		Composite buttonComposite = new Composite(startAppComposite, SWT.BORDER);
+		Composite buttonComposite = new Composite(grpConfigurationOverview, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout(1, false));
-		GridData gd_buttonComposite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_buttonComposite.widthHint = 101;
-		buttonComposite.setLayoutData(gd_buttonComposite);
 
 		startBTN = new Button(buttonComposite, SWT.NONE);
 		startBTN.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
@@ -703,21 +702,18 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnReattach.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		btnReattach.setText("Reattach");
 
-		testButtons = new Composite(startAppComposite, SWT.NONE);
-		GridData gd_testButtons = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_testButtons.widthHint = 518;
-		testButtons.setLayoutData(gd_testButtons);
+		testButtons = new Composite(grpConfigurationOverview, SWT.NONE);
 		testButtons.setLayout(new GridLayout(3, false));
 
 		btnAddTest = new Button(testButtons, SWT.NONE);
-		btnAddTest.setText("Add Test");
+		btnAddTest.setText("Add");
 
 		btnRemoveTest = new Button(testButtons, SWT.NONE);
-		btnRemoveTest.setText("Remove Test");
+		btnRemoveTest.setText("Remove");
 
 		btnEditTest = new Button(testButtons, SWT.NONE);
-		btnEditTest.setText("Edit Test");
-		new Label(startAppComposite, SWT.NONE);
+		btnEditTest.setText("Edit");
+		new Label(grpConfigurationOverview, SWT.NONE);
 
 		sc2.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
@@ -815,7 +811,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Label lblServerControllerStatus;
 	private Button btnStopServerController;
 	private Button btnVagrantUp;
-	private Composite mininetComposite;
 	private Button btnMininetOff;
 	private Label vagrantStatusLabel;
 	private Label mininetStatusLable;
@@ -849,13 +844,20 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private TableViewer tableViewer;
 	private ComboViewer sshComboViewer;
 	private ComboViewer serverComboViewer;
-	private Composite coreStarterComposite;
 	private Text compositionLoader_txt;
 	private Button browseCompositionBtn;
 	private Button loadCompositionBtn;
 	private Label lblCoreStatus;
 	private Button startCoreBtn;
 	private Button stopCoreBtn;
+	private Group grpMininet;
+	private Group grpCore;
+	private Group grpServerController;
+	private Composite composite_2;
+	private Composite composite_3;
+	private Composite composite_4;
+	private Group grpCompositionLoader;
+	private Group grpConfigurationOverview;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;

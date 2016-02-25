@@ -177,7 +177,8 @@ class ControllerManager {
 
 	public def stopSSH() {
 		if (this.statusModel.sshRunning) {
-			sshManager.asyncHalt
+			if (sshManager != null)
+				sshManager.asyncHalt
 			this.statusModel.sshRunning = false
 		}
 	}
