@@ -18,18 +18,17 @@ import eu.netide.configuration.utils.NetIDE
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel
 import eu.netide.workbenchconfigurationeditor.model.UiStatusModel
+import eu.netide.workbenchconfigurationeditor.util.ConfigurationHelper
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.UUID
 import org.eclipse.core.resources.IResource
 import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.IJobChangeListener
 import org.eclipse.core.runtime.jobs.Job
-import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunchConfigurationType
 import org.eclipse.emf.common.util.URI
@@ -61,7 +60,7 @@ class ControllerManager {
 	}
 
 	public def createVagrantFile() {
-		val configuration = createVagrantConfiguration()
+		val configuration = configHelper.createVagrantConfiguration()
 
 		// TODO: should be handeld in the generate file action
 		var fsa2 = FSAProvider.get
@@ -74,11 +73,11 @@ class ControllerManager {
 
 	ILaunchConfigurationType configType;
 	ArrayList<String> controllerName;
+	ConfigurationHelper configHelper;
 
 	private new(String topologyPath, UiStatusModel statusModel) {
 		this.statusModel = statusModel
 		generateConfiguration(topologyPath)
-		configType = getLaunchConfigType
 
 		factory = new StarterFactory()
 		reg = IStarterRegistry.instance
@@ -90,6 +89,9 @@ class ControllerManager {
 
 		for (c : ne.controllers)
 			controllerName.add(c.name)
+
+		configHelper = new ConfigurationHelper(controllerName, statusModel)
+		configType = configHelper.launchConfigType
 
 		file = topologyPath.getIFile
 		configToStarter = new HashMap
@@ -143,12 +145,12 @@ class ControllerManager {
 	}
 
 	public def startSSH(ArrayList<LaunchConfigurationModel> modelList, SshProfileModel model) {
-		startSshWithConfig(createSshConfiguration(), null, model)
+		startSshWithConfig(configHelper.createSshConfiguration(), null, model)
 	}
 
 	public def startSSH(ArrayList<LaunchConfigurationModel> modelList, IJobChangeListener listener,
 		SshProfileModel model) {
-		startSshWithConfig(createSshConfiguration(), listener, model)
+		startSshWithConfig(configHelper.createSshConfiguration(), listener, model)
 	}
 
 	public def copyApps() {
@@ -199,11 +201,12 @@ class ControllerManager {
 	}
 
 	public def boolean startVagrant() {
-		return startVagrantFromConfig(createServerControllerConfiguration(NetIDE.CONTROLLER_ENGINE), null)
+		return startVagrantFromConfig(configHelper.createServerControllerConfiguration(NetIDE.CONTROLLER_ENGINE), null)
 	}
 
 	public def boolean startVagrant(IJobChangeListener listener) {
-		return startVagrantFromConfig(createServerControllerConfiguration(NetIDE.CONTROLLER_ENGINE), listener)
+		return startVagrantFromConfig(configHelper.createServerControllerConfiguration(NetIDE.CONTROLLER_ENGINE),
+			listener)
 	}
 
 	public def haltVagrant() {
@@ -283,13 +286,12 @@ class ControllerManager {
 	private IStarter serverControllerStarter;
 
 	public def startServerController(String serverController) {
-		val config = createServerControllerConfiguration(serverController)
+		val config = configHelper.createServerControllerConfiguration(serverController)
 
 //		if (!this.statusModel.vagrantRunning && !this.statusModel.sshRunning) {
 //			// start vagrant
 //			startVagrantFromConfig(config, null)
 //		}
-
 		// create shim starter		
 		for (c : ne.controllers) {
 
@@ -321,7 +323,7 @@ class ControllerManager {
 		val launchConfigurationModel = this.statusModel.modelAtIndex;
 		launchConfigurationModel.running = true
 
-		val configuration = createLaunchConfiguration()
+		val configuration = configHelper.createLaunchConfiguration()
 		var tmpstarterList = configToStarter.get(launchConfigurationModel)
 
 		if (tmpstarterList == null) {
@@ -426,172 +428,6 @@ class ControllerManager {
 			return ResourcesPlugin.getWorkspace().getRoot().findMember(platformString)
 		}
 		return null
-	}
-
-	private def ILaunchConfiguration createServerControllerConfiguration(String serverController) {
-
-		try {
-			var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
-
-			var c = configType.newInstance(null, serverController + UUID);
-			c.setAttribute("topologymodel", topoPath);
-
-			for (name : controllerName) {
-				// used by shim starter
-				c.setAttribute("controller_platform_target_".concat(name), serverController);
-
-				c.setAttribute("controller_platform_".concat(name), serverController);
-
-				var appPath = "controller_data_".concat(name).concat("_".concat(serverController))
-				var appPathOS = "";
-				c.setAttribute(appPath, appPathOS);
-			}
-			c.setAttribute("reprovision", false);
-			c.setAttribute("shutdown", true);
-
-			return c.doSave();
-
-		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-
-		}
-		return null;
-	}
-
-	private def ILaunchConfiguration createSshConfiguration() {
-		val modelList = statusModel.modelList
-//				this.sshHostname = launchConfiguration.getAttribute("target.hostname", "localhost")
-//		this.sshPort = launchConfiguration.getAttribute("target.ssh.port", "22")
-//		this.sshUsername = launchConfiguration.getAttribute("target.ssh.username", "")
-//		this.sshIdFile = launchConfiguration.getAttribute("target.ssh.idfile", "").absolutePath.toOSString
-//
-//		var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
-		var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
-
-		var c = configType.newInstance(null, "sshConfig" + UUID);
-		c.setAttribute("topologymodel", topoPath);
-		c.setAttribute("target.ssh.port", "22");
-
-		for (model : modelList) {
-
-			for (name : controllerName) {
-				c.setAttribute("controller_platform_".concat(name), model.getPlatform());
-				// used by shim starter
-				var appPath = "controller_data_".concat(name).concat("_".concat(model.getPlatform()));
-				var appPathOS = new Path(model.getAppPath()).toOSString();
-
-				c.setAttribute(appPath, appPathOS);
-			}
-		}
-
-		if (modelList == null) {
-			var appPath = "controller_data_".concat("c1").concat("_".concat(NetIDE.CONTROLLER_ODL))
-			var appPathOS = "";
-			c.setAttribute(appPath, appPathOS);
-		}
-
-		c.setAttribute("reprovision", false);
-		c.setAttribute("shutdown", true);
-
-		return c.doSave();
-
-	}
-
-	private def ILaunchConfiguration createVagrantConfiguration() {
-
-		var c = configType.newInstance(null, "vagrant" + UUID)
-		var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString()
-		c.setAttribute("topologymodel", topoPath)
-		c.setAttribute("controller_platform_source_".concat(NetIDE.CONTROLLER_ENGINE), NetIDE.CONTROLLER_ENGINE);
-		c.setAttribute("controller_platform_".concat("c1"), NetIDE.CONTROLLER_ODL);
-		var appPath = "controller_data_".concat("c1").concat("_".concat(NetIDE.CONTROLLER_ODL))
-		var appPathOS = "";
-		c.setAttribute(appPath, appPathOS);
-
-//		for (model : modelList) {
-//			for (name : controllerName) {
-//				c.setAttribute("controller_platform_".concat(name), model.getPlatform());
-//
-//				if (model.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
-//
-//					c.setAttribute("controller_platform_source_".concat(name), model.getClientController());
-//
-//				}
-//
-//				var appPath = "controller_data_".concat(name).concat("_".concat(model.getPlatform()));
-//				var appPathOS = new Path(model.getAppPath()).toOSString();
-//
-//				c.setAttribute(appPath, appPathOS);
-//			}
-//		}
-		return c.doSave
-	}
-
-	private def ILaunchConfigurationType getLaunchConfigType() {
-		var m = DebugPlugin.getDefault().getLaunchManager();
-
-		for (ILaunchConfigurationType l : m.getLaunchConfigurationTypes()) {
-
-			if (l.getName().equals("NetIDE Controller Deployment")) {
-
-				return l;
-			}
-
-		}
-		return null;
-	}
-
-	private def ILaunchConfiguration createLaunchConfiguration() {
-		val toStart = statusModel.modelAtIndex
-		// format
-		// launch Configuration: Network
-		// Set: [controller_data_c1_Network
-		// Engine=platform:/resource/UC1/app/simple_switch.py,
-		// controller_platform_c1=Network Engine,
-		// controller_platform_source_c1=Ryu, controller_platform_target_c1=Ryu,
-		// reprovision=false, shutdown=true,
-		// topologymodel=platform:/resource/UC2/UC2.topology]
-		//
-		// launch Configuration: New_configuration (1)
-		// Set:
-		// [controller_data_c1_Ryu=platform:/resource/UC1/app/simple_switch.py,
-		// controller_platform_c1=Ryu, reprovision=false, shutdown=true,
-		// topologymodel=platform:/resource/UC1/UC1.topology]
-		try {
-			if (toStart != null) {
-				var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
-
-				var c = configType.newInstance(null, toStart.getAppName() + toStart.getID());
-				c.setAttribute("topologymodel", topoPath);
-
-				for (name : controllerName) {
-					c.setAttribute("controller_platform_".concat(name), toStart.getPlatform());
-
-					if (toStart.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
-
-						c.setAttribute("controller_platform_source_".concat(name), toStart.getClientController());
-
-					}
-
-					var appPath = "controller_data_".concat(name).concat("_".concat(toStart.getPlatform()));
-					var appPathOS = new Path(toStart.getAppPath()).toOSString();
-
-					c.setAttribute(appPath, appPathOS);
-				}
-
-				c.setAttribute("reprovision", false);
-				c.setAttribute("shutdown", true);
-
-				return c.doSave();
-			}
-
-		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		return null;
 	}
 
 	private IStarter coreStarter;
