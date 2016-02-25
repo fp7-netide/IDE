@@ -99,11 +99,23 @@ public class XmlHelper {
 			Element port = doc.createElement(XmlConstants.SSH_PORT);
 			port.setTextContent(model.getPort());
 			profile.appendChild(port);
-
+ 
 			Element userName = doc.createElement(XmlConstants.SSH_USERNAME);
 			userName.setTextContent(model.getUsername());
 			profile.appendChild(userName);
-
+			
+			Element secondUserName = doc.createElement(XmlConstants.SSH_SECOND_USERNAME);
+			secondUserName.setTextContent(model.getSecondUsername());
+			profile.appendChild(secondUserName);
+			
+			Element secondHost = doc.createElement(XmlConstants.SSH_SECOND_HOST);
+			secondHost.setTextContent(model.getSecondHost());
+			profile.appendChild(secondHost);
+			
+			Element secondPort = doc.createElement(XmlConstants.SSH_SECOND_PORT);
+			secondPort.setTextContent(model.getSecondPort());
+			profile.appendChild(secondPort);
+			
 			Element sshId = doc.createElement(XmlConstants.SSH_ID_FILE);
 			sshId.setTextContent(model.getSshIdFile());
 			profile.appendChild(sshId);
@@ -236,6 +248,18 @@ public class XmlHelper {
 
 				case XmlConstants.SSH_USERNAME:
 					model.setUsername(tempNode.getTextContent());
+					break;
+					
+				case XmlConstants.SSH_SECOND_HOST:
+					model.setSecondHost(tempNode.getTextContent());
+					break;
+				
+				case XmlConstants.SSH_SECOND_PORT:
+					model.setSecondPort(tempNode.getTextContent());
+					break;
+					
+				case XmlConstants.SSH_SECOND_USERNAME:
+					model.setSecondUsername(tempNode.getTextContent());
 					break;
 
 				case XmlConstants.NODE_SSH:

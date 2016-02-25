@@ -12,6 +12,7 @@ import eu.netide.configuration.launcher.starters.backends.Backend
 import eu.netide.configuration.launcher.starters.backends.SshBackend
 import eu.netide.configuration.launcher.starters.backends.SshDoubleTunnelBackend
 import eu.netide.configuration.launcher.starters.backends.VagrantBackend
+import eu.netide.configuration.launcher.starters.impl.CoreSpecificationStarter
 import eu.netide.configuration.utils.NetIDE
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel
@@ -147,6 +148,7 @@ class ControllerManager {
 
 			sshJob = new Job("SshManager") {
 				override protected run(IProgressMonitor monitor) {
+
 					if (!model.isDoubleTunnel) {
 						backend = new SshBackend(model.host, Integer.parseInt(model.port), model.username,
 							model.sshIdFile)
@@ -575,7 +577,7 @@ class ControllerManager {
 
 			override protected run(IProgressMonitor monitor) {
 
-				coreStarter = factory.createCoreStarter(null, monitor)
+				coreStarter = factory.createCoreStarter(getTopoConfiguration, monitor)
 				statusModel.coreRunning = true
 				startCoreJob.schedule
 
@@ -604,8 +606,29 @@ class ControllerManager {
 		// TODO: this.statusModel.coreRunning = false
 	}
 
+	private CoreSpecificationStarter compositionStarter;
+
 	public def loadComposition() {
 		// TODO: loadComposite(this.statusModel.compositionPath)
+		val compositionJob = new Job("CompositionJob") {
+			override protected run(IProgressMonitor monitor) {
+				// configuration needs to contain topology path !
+				compositionStarter = new CoreSpecificationStarter(getTopoConfiguration, statusModel.compositionPath,
+					monitor);
+				compositionStarter.syncStart
+				return Status.OK_STATUS
+			}
+		}
+
+		compositionJob.schedule
+	}
+
+	private def ILaunchConfiguration getTopoConfiguration() {
+		var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
+
+		var c = configType.newInstance(null, "CoreConfiguration");
+		c.setAttribute("topologymodel", topoPath);
+		return c.doSave
 	}
 
 }

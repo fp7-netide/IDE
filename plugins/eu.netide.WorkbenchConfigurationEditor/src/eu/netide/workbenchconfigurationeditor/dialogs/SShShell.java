@@ -59,15 +59,20 @@ public class SShShell extends Shell {
 				txt_sshidfile.setText(profile.getSshIdFile());
 				txt_host.setText(profile.getHost());
 				txt_sshidfile.setText(profile.getSshIdFile());
-				txt_secondUsername.setText(profile.getSecondUsername());
-				txt_SecondPort.setText(profile.getSecondPort());
-				txt_SecondHost.setText(profile.getSecondHost());
-				
-				if(!profile.getSecondHost().equals("") && !profile.getSecondPort().equals("") && !profile.getSecondUsername().equals("")){
-					this.useDoubleTunneL = true;
-					this.doubleTunnelComposite.setVisible(true);
-				}
 
+				if (profile.getSecondHost() != null && profile.getSecondPort() != null
+						&& profile.getSecondUsername() != null) {
+					if (!profile.getSecondHost().equals("") && !profile.getSecondPort().equals("")
+							&& !profile.getSecondUsername().equals("")) {
+						this.useDoubleTunneL = true;
+						this.doubleTunnelComposite.setVisible(true);
+
+						txt_secondUsername.setText(profile.getSecondUsername());
+						txt_SecondPort.setText(profile.getSecondPort());
+						txt_SecondHost.setText(profile.getSecondHost());
+						btnCheckButton.setSelection(true);
+					}
+				}
 			}
 			while (!this.isDisposed()) {
 				if (!display.readAndDispatch()) {
@@ -80,6 +85,7 @@ public class SShShell extends Shell {
 	}
 
 	private Display display;
+	private Button btnCheckButton;
 
 	/**
 	 * Create the shell.
@@ -189,7 +195,7 @@ public class SShShell extends Shell {
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 
-		Button btnCheckButton = new Button(composite, SWT.CHECK);
+		btnCheckButton = new Button(composite, SWT.CHECK);
 
 		btnCheckButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -310,13 +316,22 @@ public class SShShell extends Shell {
 		saveBTN.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
-				profile.setHost(txt_host.getText());
-				profile.setPort(txt_port.getText());
-				profile.setProfileName(txt_profileName.getText());
-				profile.setSshIdFile(txt_sshidfile.getText());
-				profile.setUsername(txt_username.getText());
-
+				if (edit) {
+					profile.setHost(txt_host.getText());
+					profile.setPort(txt_port.getText());
+					profile.setProfileName(txt_profileName.getText());
+					profile.setSshIdFile(txt_sshidfile.getText());
+					profile.setUsername(txt_username.getText());
+					if (useDoubleTunneL) {
+						profile.setSecondHost(txt_SecondHost.getText());
+						profile.setSecondPort(txt_SecondPort.getText());
+						profile.setSecondUsername(txt_secondUsername.getText());
+					} else {
+						profile.setSecondHost("");
+						profile.setSecondPort("");
+						profile.setSecondUsername("");
+					}
+				}
 				shell.dispose();
 			}
 		});
@@ -350,7 +365,7 @@ public class SShShell extends Shell {
 	 */
 	protected void createContents() {
 		setText("SWT Application");
-		setSize(476, 330);
+		setSize(475, 345);
 
 	}
 

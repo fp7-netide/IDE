@@ -523,7 +523,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		composite.setLayoutData(gd_composite);
 		composite.setLayout(new GridLayout(4, false));
 
-		sshProfileCombo = new Combo(composite, SWT.BORDER);
+		sshProfileCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
+	
 
 		GridData gd_sshProfileCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_sshProfileCombo.widthHint = 161;

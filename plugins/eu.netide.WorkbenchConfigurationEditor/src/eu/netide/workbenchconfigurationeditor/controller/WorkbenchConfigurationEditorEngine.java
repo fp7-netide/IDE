@@ -54,6 +54,7 @@ public class WorkbenchConfigurationEditorEngine {
 		this.statusModel.setServerControllerRunning(new Boolean(false));
 		this.statusModel.setSshRunning(new Boolean(false));
 		this.statusModel.setVagrantRunning(new Boolean(false));
+		this.statusModel.setCoreRunning(false);
 
 		ArrayList[] parsed = XmlHelper.parseFileToModel(inputFile, doc);
 		this.statusModel.setModelList(parsed[0]);
@@ -82,6 +83,7 @@ public class WorkbenchConfigurationEditorEngine {
 
 		// bind sshmodellist to combobox content
 		WritableList input = new WritableList(profileList, SshProfileModel.class);
+		this.statusModel.setWritableProfileList(input);
 		
 		ComboViewer cv = this.editor.getSshComboViewer();
 		ViewerSupport.bind(cv, input, BeanProperties.values(new String[] { Constants.PROFILE_NAME_MODEL }));
