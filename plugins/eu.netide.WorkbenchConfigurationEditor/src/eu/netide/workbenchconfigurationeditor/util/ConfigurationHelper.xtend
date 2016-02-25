@@ -13,14 +13,22 @@ import org.eclipse.debug.core.ILaunchConfigurationType
 
 class ConfigurationHelper {
 
-	ILaunchConfigurationType configType;
-	ArrayList<String> controllerName
-	UiStatusModel statusModel
+	private ILaunchConfigurationType configType;
+	private ArrayList<String> controllerName
+	private UiStatusModel statusModel
 
 	new(ArrayList<String> controllerName, UiStatusModel statusModel) {
 		configType = getLaunchConfigType
 		this.controllerName = controllerName
 		this.statusModel = statusModel
+	}
+
+	public def ILaunchConfiguration getTopoConfiguration() {
+		var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
+
+		var c = configType.newInstance(null, "CoreConfiguration");
+		c.setAttribute("topologymodel", topoPath);
+		return c.doSave
 	}
 
 	public def ILaunchConfiguration createLaunchConfiguration() {

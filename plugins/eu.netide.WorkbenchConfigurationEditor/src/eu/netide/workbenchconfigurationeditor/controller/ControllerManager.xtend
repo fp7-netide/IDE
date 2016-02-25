@@ -21,16 +21,13 @@ import eu.netide.workbenchconfigurationeditor.model.UiStatusModel
 import eu.netide.workbenchconfigurationeditor.util.ConfigurationHelper
 import java.util.ArrayList
 import java.util.HashMap
-import java.util.UUID
 import org.eclipse.core.resources.IResource
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.IJobChangeListener
 import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.debug.core.ILaunchConfiguration
-import org.eclipse.debug.core.ILaunchConfigurationType
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
@@ -71,9 +68,8 @@ class ControllerManager {
 		vgen.run
 	}
 
-	ILaunchConfigurationType configType;
-	ArrayList<String> controllerName;
-	ConfigurationHelper configHelper;
+	private ArrayList<String> controllerName;
+	private ConfigurationHelper configHelper;
 
 	private new(String topologyPath, UiStatusModel statusModel) {
 		this.statusModel = statusModel
@@ -91,7 +87,6 @@ class ControllerManager {
 			controllerName.add(c.name)
 
 		configHelper = new ConfigurationHelper(controllerName, statusModel)
-		configType = configHelper.launchConfigType
 
 		file = topologyPath.getIFile
 		configToStarter = new HashMap
@@ -260,11 +255,8 @@ class ControllerManager {
 				mnstarter.setBackend(backend)
 				mnstarter.asyncStart
 			} else {
-				var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
 
-				var c = configType.newInstance(null, "mininet" + UUID);
-				c.setAttribute("topologymodel", topoPath);
-				val configuration = c.doSave
+				val configuration = configHelper.topoConfiguration
 
 				var jobMin = new Job("min Starter") {
 
@@ -298,8 +290,7 @@ class ControllerManager {
 			var job = new Job("Shim Server") {
 				override protected run(IProgressMonitor monitor) {
 
-					if (serverControllerStarter == null)
-						serverControllerStarter = factory.createShimStarter(config, c, monitor) // config controller monitor
+					serverControllerStarter = factory.createShimStarter(config, c, monitor) // config controller monitor
 					serverControllerStarter.asyncStart
 					serverControllerStarter.backend = backend
 
@@ -440,7 +431,7 @@ class ControllerManager {
 			override protected run(IProgressMonitor monitor) {
 
 				if (coreStarter == null) {
-					coreStarter = factory.createCoreStarter(getTopoConfiguration, monitor)
+					coreStarter = factory.createCoreStarter(configHelper.getTopoConfiguration, monitor)
 				}
 				if (!statusModel.coreRunning)
 					startCoreJob.schedule
@@ -480,22 +471,14 @@ class ControllerManager {
 		val compositionJob = new Job("CompositionJob") {
 			override protected run(IProgressMonitor monitor) {
 				// configuration needs to contain topology path !
-				compositionStarter = new CoreSpecificationStarter(getTopoConfiguration, statusModel.compositionPath,
-					monitor);
+				compositionStarter = new CoreSpecificationStarter(configHelper.getTopoConfiguration,
+					statusModel.compositionPath, monitor);
 				compositionStarter.syncStart
 				return Status.OK_STATUS
 			}
 		}
 
 		compositionJob.schedule
-	}
-
-	private def ILaunchConfiguration getTopoConfiguration() {
-		var topoPath = new Path(LaunchConfigurationModel.getTopology()).toOSString();
-
-		var c = configType.newInstance(null, "CoreConfiguration");
-		c.setAttribute("topologymodel", topoPath);
-		return c.doSave
 	}
 
 }
