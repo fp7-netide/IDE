@@ -46,6 +46,8 @@ class StarterFactory {
 					starter = new RyuStarter(configuration, controller, monitor)
 				case NetIDE.CONTROLLER_PYRETIC:
 					starter = new PyreticStarter(configuration, controller, monitor)
+				case NetIDE.CONTROLLER_FLOODLIGHT:
+					starter = new FloodlightBackendStarter(configuration, controller, monitor)
 			}
 			starter.setBackend(backend)
 			return starter

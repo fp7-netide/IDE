@@ -1,6 +1,6 @@
 package eu.netide.configuration.generator.vagrantfile
 
-import eu.netide.configuration.generator.fsa.FSAProvider
+import eu.netide.configuration.utils.fsa.FSAProvider
 import org.eclipse.core.resources.IResource
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.emf.common.util.URI

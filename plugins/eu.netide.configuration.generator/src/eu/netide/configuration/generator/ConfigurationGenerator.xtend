@@ -6,7 +6,7 @@ import Topology.Host
 import Topology.NetworkElement
 import Topology.NetworkEnvironment
 import Topology.Switch
-import eu.netide.configuration.generator.fsa.FileSystemAccess
+import eu.netide.configuration.utils.fsa.FileSystemAccess
 import org.eclipse.emf.ecore.resource.Resource
 
 /**

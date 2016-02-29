@@ -1,4 +1,4 @@
-package eu.netide.configuration.generator.fsa
+package eu.netide.configuration.utils.fsa
 
 import java.io.ByteArrayInputStream
 import org.eclipse.core.resources.IProject

@@ -100,7 +100,7 @@ abstract class Starter implements IStarter {
 		var job = new Job("Stop" + name) {
 			override protected run(IProgressMonitor monitor) {
 				startProcess(
-					String.format("\"sudo kill $(ps h --ppid $(screen -ls | grep %s | cut -d. -f1) -o pid)\"",
+					String.format("\'sudo kill $(ps h --ppid $(screen -ls | grep %s | cut -d. -f1) -o pid)\'",
 						safeName))
 				return Status.OK_STATUS
 			}

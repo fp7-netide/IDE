@@ -42,6 +42,8 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.EditorPart;
 
 import eu.netide.configuration.utils.NetIDE;
+import eu.netide.deployment.topologyimport.TopologyImport;
+import eu.netide.deployment.topologyimport.TopologyImportFactory;
 import eu.netide.workbenchconfigurationeditor.controller.ControllerManager;
 import eu.netide.workbenchconfigurationeditor.controller.WorkbenchConfigurationEditorEngine;
 import eu.netide.workbenchconfigurationeditor.dialogs.ConfigurationShell;
@@ -468,6 +470,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				}
 			}
 		});
+		
+		btnImportTopology.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ControllerManager.getStarter().importTopology();
+			}
+		});
 
 	}
 
@@ -507,7 +516,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		startAppComposite.setLayout(new GridLayout(1, false));
 
 		tabFolder = new TabFolder(startAppComposite, SWT.BORDER);
-		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_tabFolder.widthHint = 515;
 		tabFolder.setLayoutData(gd_tabFolder);
 
@@ -523,6 +532,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		composite_1.setLayout(new GridLayout(5, false));
 
 		lblSShStatus = new Label(composite_1, SWT.NONE);
+		lblSShStatus.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		lblSShStatus.setText("Status: Offline");
 
 		btnSSH_Up = new Button(composite_1, SWT.NONE);
@@ -599,7 +609,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		composite_2.setLayout(new GridLayout(2, false));
 
 		composite_3 = new Composite(composite_2, SWT.NONE);
-		GridData gd_composite_3 = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		GridData gd_composite_3 = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
 		gd_composite_3.widthHint = 300;
 		gd_composite_3.heightHint = 155;
 		composite_3.setLayoutData(gd_composite_3);
@@ -607,7 +617,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		grpCore = new Group(composite_3, SWT.BORDER);
 
-		grpCore.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		grpCore.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpCore.setText("Core");
 		grpCore.setLayout(new GridLayout(3, false));
 
@@ -621,7 +631,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		stopCoreBtn.setText("Off");
 
 		grpCompositionLoader = new Group(composite_3, SWT.NONE);
-		grpCompositionLoader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		grpCompositionLoader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpCompositionLoader.setText("Composition Loader");
 		grpCompositionLoader.setLayout(new GridLayout(3, false));
 		new Label(grpCompositionLoader, SWT.NONE);
@@ -643,11 +653,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		composite_4 = new Composite(composite_2, SWT.NONE);
 		composite_4.setLayout(new GridLayout(1, false));
-		GridData gd_composite_4 = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		GridData gd_composite_4 = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
 		gd_composite_4.widthHint = 321;
 		composite_4.setLayoutData(gd_composite_4);
 
 		grpServerController = new Group(composite_4, SWT.NONE);
+		grpServerController.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpServerController.setLayout(new GridLayout(4, false));
 		grpServerController.setText("Server Controller");
 
@@ -668,8 +679,16 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		startServerController.setText("On");
 
 		btnStopServerController = new Button(grpServerController, SWT.NONE);
+		btnStopServerController.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 
 		btnStopServerController.setText("Off");
+		new Label(grpServerController, SWT.NONE);
+		new Label(grpServerController, SWT.NONE);
+		
+		btnImportTopology = new Button(grpServerController, SWT.NONE);
+		btnImportTopology.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		
+		btnImportTopology.setText("Import Topology");
 
 		grpMininet = new Group(composite_4, SWT.NONE);
 		grpMininet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -687,17 +706,19 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnMininetOff = new Button(grpMininet, SWT.NONE);
 
 		btnMininetOff.setText("Off");
+		new Label(composite_2, SWT.NONE);
+		new Label(composite_2, SWT.NONE);
 
 		grpConfigurationOverview = new Group(startAppComposite, SWT.NONE);
 		grpConfigurationOverview.setLayout(new GridLayout(2, false));
-		grpConfigurationOverview.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		grpConfigurationOverview.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpConfigurationOverview.setText("Configuration Overview");
 
 		tableViewer = new TableViewer(grpConfigurationOverview,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 
 		table = tableViewer.getTable();
-		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		TableColumn tc1 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc2 = new TableColumn(table, SWT.CENTER);
@@ -896,6 +917,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Button btnInitVagrantFile;
 	private Button btnCopyApps;
 	private Combo combo_Composition;
+	private Button btnImportTopology;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;

@@ -10,7 +10,7 @@ class CoreStarter extends Starter {
 	}
 	
 	override getCommandLine() {
-		String.format("~/apache-karaf-3.0.6/bin/karaf")
+		String.format("~/apache-karaf-3.0.5/bin/karaf")
 	}
 	
 }

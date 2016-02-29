@@ -6,6 +6,7 @@ if [ ! -d ~/pox ]; then
   sudo -E pip install stevedore
   sudo -E pip install greenlet
 
+  cd netide
   git clone http://github.com/noxrepo/pox
 
   echo "export PYTHONPATH=\$PYTHONPATH:$HOME/pox" >> $HOME/.bashrc

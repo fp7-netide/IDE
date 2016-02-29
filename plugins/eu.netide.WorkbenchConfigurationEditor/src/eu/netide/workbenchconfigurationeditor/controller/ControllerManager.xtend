@@ -2,7 +2,7 @@ package eu.netide.workbenchconfigurationeditor.controller
 
 import Topology.NetworkEnvironment
 import eu.netide.configuration.generator.GenerateActionDelegate
-import eu.netide.configuration.generator.fsa.FSAProvider
+import eu.netide.configuration.utils.fsa.FSAProvider
 import eu.netide.configuration.generator.vagrantfile.VagrantfileGenerateAction
 import eu.netide.configuration.launcher.managers.SshManager
 import eu.netide.configuration.launcher.managers.VagrantManager
@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import eu.netide.deployment.topologyimport.TopologyImportFactory
 
 class ControllerManager {
 
@@ -153,6 +154,26 @@ class ControllerManager {
 			sshManager.copyApps
 			sshManager.copyTopo
 		}
+	}
+
+	public def importTopology() {
+		var topo = execWithReturn(
+			"curl -s -u admin:admin http://localhost:8181/restconf/operational/network-topology:network-topology/");
+		var topoImport = TopologyImportFactory.instance.createTopologyImport();
+
+		var manager = if(sshManager != null) sshManager else if(vagrantManager != null) vagrantManager
+		topoImport.createTopologyModelFromString(topo,
+			manager.getProject().getFile("import.topology").getFullPath().toPortableString());
+	}
+
+	public def execWithReturn(String cmd) {
+		var topo = ""
+		if (sshManager != null) {
+			topo = sshManager.execWithReturn(cmd)
+		} else if (vagrantManager != null) {
+			topo = vagrantManager.execWithReturn(cmd)
+		}
+		return topo
 	}
 
 	private def startSshWithConfig(ILaunchConfiguration configuration, IJobChangeListener listener,

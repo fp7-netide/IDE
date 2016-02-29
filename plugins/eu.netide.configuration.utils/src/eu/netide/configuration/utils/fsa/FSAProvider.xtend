@@ -1,4 +1,4 @@
-package eu.netide.configuration.generator.fsa
+package eu.netide.configuration.utils.fsa
 
 class FSAProvider {
 	static def get() {

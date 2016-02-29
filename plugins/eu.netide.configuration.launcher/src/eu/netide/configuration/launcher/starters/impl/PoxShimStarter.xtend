@@ -11,12 +11,12 @@ class PoxShimStarter extends ControllerStarter {
 	}
 	
 	override getEnvironmentVariables() {
-		return "PYTHONPATH=$PYTHONPATH:Engine/ryu-backend/tests"
+		return "PYTHONPATH=$PYTHONPATH:netide/Engine/ryu-backend/tests"
 	}
 
 	override getCommandLine() {
 		return String.format(
-			"pox/pox.py openflow.of_01 --port=%s pox_client",
+			"netide/pox/pox.py openflow.of_01 --port=%s pox_client",
 			controller.portNo)
 	}
 

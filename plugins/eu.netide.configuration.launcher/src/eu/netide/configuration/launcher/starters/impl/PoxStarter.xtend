@@ -12,11 +12,11 @@ class PoxStarter extends ControllerStarter {
 	}
 	
 	override getEnvironmentVariables() {
-		return String.format("PYTHONPATH=$PYTHONPATH:controllers/%s", getAppPath.removeFileExtension.lastSegment)
+		return String.format("PYTHONPATH=$PYTHONPATH:netide/controllers/%s", getAppPath.removeFileExtension.lastSegment)
 	}
 	
 	override getCommandLine() {
-		var poxline = String.format("pox/pox.py openflow.of_01 --port=%s %s ", controller.portNo, getAppPath.removeFileExtension.lastSegment)
+		var poxline = String.format("netide/pox/pox.py openflow.of_01 --port=%s %s ", controller.portNo, getAppPath.removeFileExtension.lastSegment)
 		return poxline
 	}
 	

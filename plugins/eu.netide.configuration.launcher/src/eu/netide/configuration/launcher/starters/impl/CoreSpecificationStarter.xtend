@@ -13,7 +13,7 @@ class CoreSpecificationStarter extends Starter{
 	}
 	
 	override getCommandLine() {
-		String.format("~/apache-karaf-3.0.6/bin/client netide:loadcomposition %s", compositionPath)
+		String.format("~/apache-karaf-3.0.5/bin/client netide:loadcomposition %s", compositionPath)
 	}
 	
 }

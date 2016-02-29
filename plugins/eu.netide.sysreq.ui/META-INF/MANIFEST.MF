@@ -21,5 +21,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: eu.netide.ui.quickfix,
  eu.netide.ui.contentassist,
  eu.netide.ui.internal,
- eu.netide.ui.contentassist.antlr
+ eu.netide.ui.contentassist.antlr,
+ eu.netide.ui.contentassist.antlr.internal
 Bundle-Activator: eu.netide.ui.internal.SysReqActivator

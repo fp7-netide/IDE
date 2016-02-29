@@ -12,7 +12,7 @@ class RyuStarter extends ControllerStarter {
 	}
 
 	override getCommandLine() {
-		var ryuline = String.format("ryu-manager --ofp-tcp-listen-port=%d controllers/%s/%s", controller.portNo,
+		var ryuline = String.format("ryu-manager --ofp-tcp-listen-port=%d netide/controllers/%s/%s", controller.portNo,
 			getAppPath.removeFileExtension.lastSegment, getAppPath.lastSegment)
 
 		return ryuline

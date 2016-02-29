@@ -22,5 +22,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: eu.netide.parameters.language.ui.quickfix,
  eu.netide.parameters.language.ui.contentassist,
  eu.netide.parameters.language.ui.contentassist.antlr,
- eu.netide.parameters.language.ui.internal
+ eu.netide.parameters.language.ui.internal,
+ eu.netide.parameters.language.ui.contentassist.antlr.internal
 Bundle-Activator: eu.netide.parameters.language.ui.internal.NetIDEParametersActivator

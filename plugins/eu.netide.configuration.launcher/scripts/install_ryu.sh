@@ -11,6 +11,8 @@ if [ "$(which pip)" == "" ] || [ "$(pip list | grep ryu)" == "" ]; then
   sudo apt-get --yes install python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev python-zmq python3-zmq
   sudo -E pip install ryu
   sudo -E pip install oslo.config
+
+  cd netide/
   
   mkdir -p ryu/ryu
   cp -r Engine/libraries/netip/python ryu/ryu

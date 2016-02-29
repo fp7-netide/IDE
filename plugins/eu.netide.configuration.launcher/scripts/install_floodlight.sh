@@ -2,7 +2,8 @@
 cd
 if [ ! -d ~/floodlight ]; then
    
-   sudo apt-get --yes install ant openjdk-7-jdk openjdk-7-doc openjdk-7-jre-lib
+    sudo apt-get --yes install ant openjdk-7-jdk openjdk-7-doc openjdk-7-jre-lib
+   cd netide 
    git clone https://github.com/floodlight/floodlight.git -b v0.90
 
    cp -r Engine/fl-odl/src/main/java/net/floodlightcontroller/interceptor/ floodlight/src/main/java/net/floodlightcontroller/

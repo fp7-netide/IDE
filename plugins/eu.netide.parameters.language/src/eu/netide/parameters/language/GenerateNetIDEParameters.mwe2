@@ -9,18 +9,23 @@ var fileExtensions = "params"
 var projectName = "eu.netide.parameters.language"
 var runtimeProject = "../${projectName}"
 var generateXtendStub = true
+var encoding = "UTF-8"
 
 Workflow {
 	bean = StandaloneSetup {
 		scanClassPath  = true
 		platformUri = "${runtimeProject}/.."
-		registerGeneratedEPackage = "parameters.ParametersPackage"
-		registerGenModelFile = "platform:/resource/eu.netide.parameters/parameters.genmodel"
+		registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
+    	registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
 	}
 
 	component = DirectoryCleaner {
 		directory = "${runtimeProject}/src-gen"
 	}
+
+	component = DirectoryCleaner {
+    	directory = "${runtimeProject}/model/generated"
+    }
 
 	component = DirectoryCleaner {
 		directory = "${runtimeProject}.ui/src-gen"
@@ -32,6 +37,7 @@ Workflow {
 		pathTestProject = "${runtimeProject}.tests"
 		projectNameRt = projectName
 		projectNameUi = "${projectName}.ui"
+		encoding = encoding
 		language = auto-inject {
 			uri = grammarURI
 
@@ -39,10 +45,10 @@ Workflow {
 			fragment = grammarAccess.GrammarAccessFragment auto-inject {}
 
 			// generates Java API for the generated EPackages
-			// fragment = ecore.EcoreGeneratorFragment auto-inject {}
+			fragment = ecore.EMFGeneratorFragment auto-inject {}
 
 			// the Ecore2Xtext specific terminal converter
-			fragment = ecore2xtext.Ecore2XtextValueConverterServiceFragment auto-inject {}
+			//fragment = ecore2xtext.Ecore2XtextValueConverterServiceFragment auto-inject {}
 
 			// serializer 2.0
 			fragment = serializer.SerializerFragment auto-inject {
@@ -57,9 +63,9 @@ Workflow {
 
 			// the Antlr parser
 			fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {
-				options = {
-					classSplitting = true
-				}
+//				options = {
+//					classSplitting = true
+//				}
 			}
 
 			// Xtend-based API for validation 
@@ -73,8 +79,8 @@ Workflow {
 			// fragment = exporting.QualifiedNamesFragment auto-inject {}
 
 			// scoping and exporting API
-			fragment = scoping.ImportURIScopingFragment auto-inject {}
-			fragment = exporting.SimpleNamesFragment auto-inject {}
+			fragment = scoping.ImportNamespacesScopingFragment auto-inject {}
+			fragment = exporting.QualifiedNamesFragment auto-inject {}
 			fragment = builder.BuilderIntegrationFragment auto-inject {}		
 
 			// generator API

@@ -13,7 +13,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType
 
 class ConfigurationHelper {
 
-	private ILaunchConfigurationType configType;
+	private ILaunchConfigurationType configType
 	private ArrayList<String> controllerName
 	private UiStatusModel statusModel
 
