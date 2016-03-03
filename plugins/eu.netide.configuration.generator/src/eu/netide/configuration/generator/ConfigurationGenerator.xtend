@@ -32,7 +32,7 @@ class ConfigurationGenerator  {
 		var switches = ne.networks.map[networkelements].flatten.filter(typeof(Switch))
 		var all_sdpid = switches.map[dpid]
 		for (s : switches) {
-			if (s.dpid > 0) {
+			if (Integer.decode(s.dpid) > 0) {
 				nodemap.put(s.fullname, s.dpid)
 			} else {
 				while (all_sdpid.toSet.contains(scounter))
@@ -46,7 +46,7 @@ class ConfigurationGenerator  {
 		var hosts = ne.networks.map[networkelements].flatten.filter(typeof(Host))
 		var all_hdpid = switches.map[dpid]
 		for (h : hosts) {
-			if (h.dpid > 0) {
+			if (Integer.decode(h.dpid) > 0) {
 				nodemap.put(h.fullname, h.dpid)
 			} else {
 				while (all_hdpid.toSet.contains(hcounter))
@@ -184,7 +184,7 @@ class ConfigurationGenerator  {
 
 	def envName(NetworkEnvironment n) {
 		if (!(n.name == null || n.name.equals("")))
-			n.name
+			n.name.replaceAll("[-/()]", "_")
 		else
 			"NetworkEnvironment"
 	}

@@ -27,8 +27,8 @@ if [ ! -d ~/core_engine ]; then
 
   cd
   wget -q http://ftp.fau.de/apache/karaf/3.0.6/apache-karaf-3.0.6.tar.gz
-  tar xzf apache-karaf-3.0.5.tar.gz
-  cd apache-karaf-3.0.5/bin
+  tar xzf apache-karaf-3.0.6.tar.gz
+  cd apache-karaf-3.0.6/bin
   chmod +x ./client ./start ./stop
   echo "Installing karaf dependencies for core"
   ./start

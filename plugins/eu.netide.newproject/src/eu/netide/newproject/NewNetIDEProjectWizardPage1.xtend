@@ -66,7 +66,7 @@ class NewNetIDEProjectWizardPage1 extends WizardPage {
 	
 	def getParameters() {
 //		return paramcheck.selection
-		false
+		true
 	}
 	
 }

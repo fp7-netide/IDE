@@ -33,6 +33,6 @@ class SshBackend extends Backend {
 	}
 	
 	override args() {
-		return String.format("-p %s -t -i %s %s@%s", port, idFile, username, hostname)
+		return String.format("-p %s -tt -i %s %s@%s", port, idFile, username, hostname)
 	}
 }

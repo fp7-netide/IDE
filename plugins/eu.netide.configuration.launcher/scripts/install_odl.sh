@@ -1,17 +1,18 @@
 #!/bin/bash
 cd
 if [ ! -d ~/netide/openflowplugin ]; then
-    sudo add-apt-repository ppa:andrei-pozolotin/maven3
-   sudo apt-get update
-   sudo apt-get --yes install maven3 openjdk-7-jdk openjdk-7-doc openjdk-7-jre-lib
-   mkdir -p ~/.m2
-   wget -q -O - https://raw.githubusercontent.com/opendaylight/odlparent/master/settings.xml > ~/.m2/settings.xml
 
+   
    cd netide
-   cd Engine/odl-shim
-   mvn clean install
+   wget https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.4.0-Beryllium/distribution-karaf-0.4.0-Beryllium.tar.gz
+   tar -xzf distribution-karaf-0.4.0-Beryllium.tar.gz
 
-   cd karaf/target/assembly/bin
+   cd distribution-karaf-0.4.0-Beryllium
+   
+   sed -i 's/44444/44445/g' etc/org.apache.karaf.management.cfg
+   sed -i 's/1099/1098/g' etc/org.apache.karaf.management.cfg
+   
+   cd bin
 
    chmod +x ./client ./start ./stop
    echo "Installing karaf dependencies for ODL shim"
@@ -24,7 +25,7 @@ if [ ! -d ~/netide/openflowplugin ]; then
    
 
    ./client "feature:install odl-netide-rest"
-   ./client "feature:install odl-restconf"
+   ./client "feature:install odl-restconf-all"
    sleep 10
    ./stop
 

@@ -11,7 +11,7 @@ class RyuShimStarter extends ControllerStarter {
 	}
 
 	override getEnvironmentVariables() {
-		return "PYTHONPATH=$PYTHONPATH:Engine/ryu-shim"
+		return "PYTHONPATH=$PYTHONPATH:netide/Engine/ryu-shim"
 	}
 
 	override getCommandLine() {

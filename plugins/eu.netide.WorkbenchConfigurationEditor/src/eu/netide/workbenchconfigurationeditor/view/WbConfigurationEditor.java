@@ -93,7 +93,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		file = fileInput.getFile();
 		setSite(site);
 		setInput(input);
-
+		
 		setPartName("Workbench");
 	}
 
@@ -627,7 +627,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		grpCore.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpCore.setText("Core");
-		grpCore.setLayout(new GridLayout(3, false));
+		grpCore.setLayout(new GridLayout(4, false));
 
 		lblCoreStatus = new Label(grpCore, SWT.NONE);
 		lblCoreStatus.setText("Status : Offline");
@@ -637,6 +637,15 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		stopCoreBtn = new Button(grpCore, SWT.NONE);
 		stopCoreBtn.setText("Off");
+		
+		btnReattachCore = new Button(grpCore, SWT.NONE);
+		btnReattachCore.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ControllerManager.getStarter().reattachCore();
+			}
+		});
+		btnReattachCore.setText("Reattach");
 
 		grpCompositionLoader = new Group(composite_3, SWT.NONE);
 		grpCompositionLoader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
@@ -669,7 +678,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		grpServerController = new Group(composite_4, SWT.NONE);
 		grpServerController.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		grpServerController.setLayout(new GridLayout(4, false));
+		grpServerController.setLayout(new GridLayout(5, false));
 		grpServerController.setText("Server Controller");
 
 		lblServerControllerStatus = new Label(grpServerController, SWT.NONE);
@@ -687,23 +696,32 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		startServerController = new Button(grpServerController, SWT.BORDER);
 
 		startServerController.setText("On");
-
-		btnStopServerController = new Button(grpServerController, SWT.NONE);
-		btnStopServerController.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-
-		btnStopServerController.setText("Off");
+		
+				btnStopServerController = new Button(grpServerController, SWT.NONE);
+				btnStopServerController.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+				
+						btnStopServerController.setText("Off");
+		
+		btnReattachServer = new Button(grpServerController, SWT.NONE);
+		btnReattachServer.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ControllerManager.getStarter().reattachServerController();
+			}
+		});
+		btnReattachServer.setText("Reattach");
 		new Label(grpServerController, SWT.NONE);
 		new Label(grpServerController, SWT.NONE);
 
 		btnImportTopology = new Button(grpServerController, SWT.NONE);
-		btnImportTopology.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		btnImportTopology.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
 
 		btnImportTopology.setText("Import Topology");
 
 		grpMininet = new Group(composite_4, SWT.NONE);
 		grpMininet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		grpMininet.setText("Mininet");
-		grpMininet.setLayout(new GridLayout(3, false));
+		grpMininet.setLayout(new GridLayout(4, false));
 
 		mininetStatusLable = new Label(grpMininet, SWT.NONE);
 		mininetStatusLable.setText("Status: Offline");
@@ -716,6 +734,15 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnMininetOff = new Button(grpMininet, SWT.NONE);
 
 		btnMininetOff.setText("Off");
+		
+		btnReattachMininet = new Button(grpMininet, SWT.NONE);
+		btnReattachMininet.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ControllerManager.getStarter().reattachMininet();
+			}
+		});
+		btnReattachMininet.setText("Reattach");
 		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 
@@ -938,6 +965,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Button btnCopyApps;
 	private Button btnImportTopology;
 	private Text textCompositionPath;
+	private Button btnReattachCore;
+	private Button btnReattachServer;
+	private Button btnReattachMininet;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;
@@ -1029,5 +1059,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	public Text getTextCompositionPath() {
 		return textCompositionPath;
+	}
+	public Button getBtnReattachCore() {
+		return btnReattachCore;
+	}
+	public Button getBtnReattachServer() {
+		return btnReattachServer;
+	}
+	public Button getBtnReattachMininet() {
+		return btnReattachMininet;
 	}
 }

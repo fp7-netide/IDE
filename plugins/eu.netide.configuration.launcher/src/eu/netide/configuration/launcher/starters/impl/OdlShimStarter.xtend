@@ -12,7 +12,7 @@ class OdlShimStarter extends ControllerStarter {
 	
 	override getCommandLine() {
 		//var str = String.format("~/netide/Engine/odl-shim/karaf/target/assembly/bin/karaf")
-		var str = String.format("~/netide/netide/distribution-karaf-0.4.0-Beryllium/bin/karaf")
+		var str = String.format("~/netide/distribution-karaf-0.4.0-Beryllium/bin/karaf")
 		return str	
 	}
 }

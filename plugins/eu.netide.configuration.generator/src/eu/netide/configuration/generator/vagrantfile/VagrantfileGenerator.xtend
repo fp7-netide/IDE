@@ -143,7 +143,7 @@ class VagrantfileGenerator {
 				
 				# Syncing controller paths with the vm
 				«FOR p : appPaths»
-					config.vm.synced_folder "«p.removeLastSegments(1)»", "/home/vagrant/netide/controllers/«p.removeFileExtension.lastSegment»"
+					config.vm.synced_folder "«res.project.location»/apps", "/home/vagrant/netide/controllers/«p.removeFileExtension.lastSegment»"
 				«ENDFOR»
 				
 			end

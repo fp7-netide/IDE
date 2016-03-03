@@ -63,7 +63,7 @@ public class WorkbenchConfigurationEditorEngine {
 		this.statusModel.setProfileList(parsed[1]);
 		this.statusModel.setCompositionModel(XmlHelper.getCompositionModel());
 
-		ControllerManager.initControllerManager(LaunchConfigurationModel.getTopology(), this.statusModel);
+		ControllerManager.initControllerManager(LaunchConfigurationModel.getTopology(), this.statusModel, editor.getFile());
 	}
 
 	private void initDataBinding() {
@@ -79,20 +79,29 @@ public class WorkbenchConfigurationEditorEngine {
 		
 		this.addButtonDisabledDataBinding(this.editor.getSshUpButton(), Constants.SSH_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getSshDownButton(), Constants.SSH_RUNNING_MODEL);
-		this.addButtonDisabledDataBinding(this.editor.getBtnMininetOn(), Constants.MININET_RUNNING_MODEL);
-		this.addButtonEnabledDataBinding(this.editor.getBtnMininetOff(), Constants.MININET_RUNNING_MODEL);
-		this.addButtonDisabledDataBinding(this.editor.getStartCoreBtn(), Constants.CORE_RUNNING_MODEL);
-		this.addButtonEnabledDataBinding(this.editor.getStopCoreBtn(), Constants.CORE_RUNNING_MODEL);
-		this.addButtonEnabledDataBinding(this.editor.getBtnCopyApps(), Constants.SSH_RUNNING_MODEL);
-		this.addButtonEnabledDataBinding(this.editor.getBtnProvision_1(), Constants.SSH_RUNNING_MODEL);
 		
 		this.addButtonDisabledDataBinding(this.editor.getBtnVagrantUp(), Constants.VAGRANT_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnProvision_2(), Constants.VAGRANT_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnVagrantHalt(), Constants.VAGRANT_RUNNING_MODEL);
 		
+		this.addButtonDisabledDataBinding(this.editor.getBtnMininetOn(), Constants.MININET_RUNNING_MODEL);
+		this.addButtonEnabledDataBinding(this.editor.getBtnMininetOff(), Constants.MININET_RUNNING_MODEL);
+		this.addButtonEnabledDataBinding(this.editor.getBtnReattachMininet(), Constants.MININET_RUNNING_MODEL);
+		
+				
+		this.addButtonDisabledDataBinding(this.editor.getStartCoreBtn(), Constants.CORE_RUNNING_MODEL);
+		this.addButtonEnabledDataBinding(this.editor.getStopCoreBtn(), Constants.CORE_RUNNING_MODEL);
+		this.addButtonEnabledDataBinding(this.editor.getBtnReattachCore(), Constants.CORE_RUNNING_MODEL);
+		
+		this.addButtonEnabledDataBinding(this.editor.getBtnCopyApps(), Constants.SSH_RUNNING_MODEL);
+		this.addButtonEnabledDataBinding(this.editor.getBtnProvision_1(), Constants.SSH_RUNNING_MODEL);
+		
 		this.addButtonDisabledDataBinding(this.editor.getStartServerController(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnStopServerController(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
+		this.addButtonEnabledDataBinding(this.editor.getBtnReattachServer(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnImportTopology(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
+		
+		
 		
 		this.addComboDataBinding(this.statusModel.getProfileList());
 		this.addServerControllerComboDataBinding();

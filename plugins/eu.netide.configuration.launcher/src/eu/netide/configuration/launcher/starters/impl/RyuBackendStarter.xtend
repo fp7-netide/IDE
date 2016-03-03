@@ -3,6 +3,7 @@ package eu.netide.configuration.launcher.starters.impl
 import Topology.Controller
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
+import org.eclipse.core.resources.ResourcesPlugin
 
 class RyuBackendStarter extends ControllerStarter {
 
@@ -16,13 +17,14 @@ class RyuBackendStarter extends ControllerStarter {
 	}
 
 	override getEnvironmentVariables() {
-		"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend:Engine/libraries/netip/python"
+		"PYTHONPATH=$PYTHONPATH:netide/Engine/ryu-backend:netide/Engine/libraries/netip/python"
 	}
 	
 	override getCommandLine() {
+		
 		return String.format(
-			"sudo ryu-manager --ofp-tcp-listen-port 7733 ~/netide/Engine/ryu-backend/ryu-backend.py ~/netide/controllers/%s/%s",
-			appPath.removeFileExtension.lastSegment, appPath.lastSegment)
+			"sudo ryu-manager --ofp-tcp-listen-port %s ~/netide/Engine/ryu-backend/ryu-backend.py ~/netide/apps/%s",
+			port, appPath.removeFirstSegments(1))
 	}
 
 }

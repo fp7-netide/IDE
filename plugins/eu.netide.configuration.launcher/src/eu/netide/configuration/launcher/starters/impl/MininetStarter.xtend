@@ -22,7 +22,7 @@ class MininetStarter extends Starter {
 
 	override getCommandLine() {
 		var mnpath = "sudo python ~/netide/mn-configs/" +
-			if(ne.name != null && ne.name != "") ne.name + "_run.py" else "NetworkEnvironment" + "_run.py"
+			if(ne.name != null && ne.name != "") ne.name.replaceAll("[-/()]", "_") + "_run.py" else "NetworkEnvironment" + "_run.py"
 
 		return mnpath
 	}

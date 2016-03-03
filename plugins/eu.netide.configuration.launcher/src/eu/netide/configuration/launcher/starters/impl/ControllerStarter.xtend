@@ -8,6 +8,7 @@ import org.eclipse.xtend.lib.annotations.Accessors
 
 import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
 import eu.netide.configuration.launcher.starters.backends.VagrantBackend
+import org.eclipse.core.resources.ResourcesPlugin
 
 abstract class ControllerStarter extends Starter {
 
@@ -19,7 +20,7 @@ abstract class ControllerStarter extends Starter {
 
 	@Accessors(PROTECTED_GETTER)
 	private String controllerplatform
-	
+
 	@Accessors(PROTECTED_GETTER)
 	private int port
 
@@ -39,20 +40,19 @@ abstract class ControllerStarter extends Starter {
 		else
 			null
 	}
-	
+
 	new(String name, int port, String appPath, IProgressMonitor monitor) {
 		super(name, appPath, new VagrantBackend, monitor)
-
 
 		this.controller = controller
 
 		this.controllerplatform = ""
-		
+
 		this.port = port
 
-		appPath = appPath.absolutePath
+		var tempAppPath = ResourcesPlugin.workspace.root.findMember(appPath.replaceFirst("platform:/resource", "")).projectRelativePath
+
+		this.appPath = tempAppPath
 	}
-
-
 
 }

@@ -31,11 +31,13 @@ import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import eu.netide.deployment.topologyimport.TopologyImportFactory
+import org.eclipse.core.resources.IFile
 
 class ControllerManager {
 
 	private NetworkEnvironment ne;
 	private IResource file;
+	private IResource wbFile;
 	private UiStatusModel statusModel;
 
 	private static ControllerManager instance = null;
@@ -51,9 +53,9 @@ class ControllerManager {
 		return instance;
 	}
 
-	public def static void initControllerManager(String topologyPath, UiStatusModel statusModel) {
+	public def static void initControllerManager(String topologyPath, UiStatusModel statusModel, IFile file) {
 		if (instance == null) {
-			instance = new ControllerManager(topologyPath, statusModel);
+			instance = new ControllerManager(topologyPath, statusModel, file);
 		}
 	}
 
@@ -62,7 +64,7 @@ class ControllerManager {
 
 		// TODO: should be handeld in the generate file action
 		var fsa2 = FSAProvider.get
-		fsa2.project = file.project
+		fsa2.project = wbFile.project
 		fsa2.generateFolder("gen")
 
 		var vgen = new VagrantfileGenerateAction(file, configuration)
@@ -72,9 +74,10 @@ class ControllerManager {
 	private ArrayList<String> controllerName;
 	private ConfigurationHelper configHelper;
 
-	private new(String topologyPath, UiStatusModel statusModel) {
+	private new(String topologyPath, UiStatusModel statusModel, IFile file) {
 		this.statusModel = statusModel
 		generateConfiguration(topologyPath)
+		wbFile = file
 
 		factory = new StarterFactory()
 		reg = IStarterRegistry.instance
@@ -190,7 +193,8 @@ class ControllerManager {
 						backend = new SshDoubleTunnelBackend(model.host, Integer.parseInt(model.port), model.secondHost,
 							Integer.parseInt(model.secondPort), model.username, model.secondUsername, model.sshIdFile);
 					}
-					sshManager = new SshManager(configuration, monitor, model.username, model.host, model.port, model.sshIdFile)
+					sshManager = new SshManager(configuration, monitor, model.username, model.host, model.port,
+						model.sshIdFile)
 
 					// TODO: extra button 
 					// sshManager.provision
@@ -210,8 +214,8 @@ class ControllerManager {
 
 	public def stopSSH() {
 		if (this.statusModel.sshRunning) {
-			//if (sshManager != null)
-				//sshManager.asyncHalt
+			// if (sshManager != null)
+			// sshManager.asyncHalt
 			this.statusModel.sshRunning = false
 		}
 	}
@@ -240,6 +244,11 @@ class ControllerManager {
 			mnstarter.stop
 	}
 
+	public def reattachMininet() {
+		if (mnstarter != null)
+			mnstarter.reattach
+	}
+
 	def reattachStarter() {
 		val config = this.statusModel.getModelAtIndex();
 		var re = configToStarter.get(config)
@@ -266,6 +275,12 @@ class ControllerManager {
 	public def stopServerController() {
 		if (serverControllerStarter != null) {
 			serverControllerStarter.stop
+		}
+	}
+
+	public def reattachServerController() {
+		if (serverControllerStarter != null) {
+			serverControllerStarter.reattach
 		}
 	}
 
@@ -312,8 +327,8 @@ class ControllerManager {
 				override protected run(IProgressMonitor monitor) {
 
 					serverControllerStarter = factory.createShimStarter(config, c, monitor) // config controller monitor
-					serverControllerStarter.asyncStart
 					serverControllerStarter.backend = backend
+					serverControllerStarter.asyncStart
 
 					return Status.OK_STATUS
 				}
@@ -350,15 +365,16 @@ class ControllerManager {
 			return;
 		}
 		val starterList = tmpstarterList
-		
+
 		var controllerplatform = launchConfigurationModel.platform
 		val path = launchConfigurationModel.appPath
 		val port = Integer.parseInt(launchConfigurationModel.appPort)
-		
+
 		if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
-			var job = new Job ("BackendStarter") {
-				override run (IProgressMonitor monitor) {
-					backendStarter = factory.createBackendStarter(launchConfigurationModel.clientController, path, port, monitor)
+			var job = new Job("BackendStarter") {
+				override run(IProgressMonitor monitor) {
+					backendStarter = factory.createBackendStarter(launchConfigurationModel.clientController, path, port,
+						monitor)
 					starterList.add(backendStarter)
 					backendStarter.backend = backend
 					configToStarter.put(launchConfigurationModel, starterList)
@@ -368,7 +384,7 @@ class ControllerManager {
 				}
 			}
 			job.schedule
-			
+
 		}
 
 //		// Iterate controllers in the network model and start apps for them 
@@ -432,7 +448,6 @@ class ControllerManager {
 //			}
 //
 //		}
-
 		Thread.sleep(2000)
 
 	}
@@ -502,6 +517,12 @@ class ControllerManager {
 		if (coreStarter != null && statusModel.coreRunning) {
 			coreStarter.stop
 			statusModel.coreRunning = false
+		}
+	}
+
+	public def reattachCore() {
+		if (coreStarter != null && statusModel.coreRunning) {
+			coreStarter.reattach
 		}
 	}
 
