@@ -1,5 +1,6 @@
 package eu.netide.workbenchconfigurationeditor.model;
 
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.UUID;
 
@@ -30,5 +31,17 @@ public class CompositionModel {
 
 	public String getCompositionPath() {
 		return this.compositionPath;
+	}
+	
+	public void addPropertyChangeListener(PropertyChangeListener l) {
+		changes.addPropertyChangeListener(l);
+	}
+
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		changes.addPropertyChangeListener(propertyName, listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener l) {
+		changes.removePropertyChangeListener(l);
 	}
 }

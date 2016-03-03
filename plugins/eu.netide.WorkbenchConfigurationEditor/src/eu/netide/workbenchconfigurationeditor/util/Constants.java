@@ -14,7 +14,7 @@ public class Constants {
 	// UI Status Model Constants
 	public static final String VAGRANT_RUNNING_MODEL = "vagrantRunning";
 	public static final String MININET_RUNNING_MODEL = "mininetRunning";
-	public static final String CORE_RUNNING = "coreRunning";
+	public static final String CORE_RUNNING_MODEL = "coreRunning";
 	public static final String SSH_RUNNING_MODEL = "sshRunning";
 	public static final String SERVER_CONTROLLER_RUNNING_MODEL = "serverControllerRunning";
 	public static final String SSH_COMBO_SELECTION_INDEX = "sshComboSelectionIndex";

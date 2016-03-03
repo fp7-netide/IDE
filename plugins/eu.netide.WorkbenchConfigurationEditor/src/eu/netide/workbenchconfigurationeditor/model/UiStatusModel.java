@@ -20,6 +20,7 @@ public class UiStatusModel {
 	private int compositionSelectionIndex;
 
 	private String serverControllerSelection;
+	private CompositionModel compositionModel;
 
 	private WritableList profileWritableList;
 	private WritableList modelWritableList;
@@ -30,7 +31,7 @@ public class UiStatusModel {
 	// list corresponding to doc
 	private ArrayList<SshProfileModel> profileList;
 
-	private ArrayList<CompositionModel> compositionList;
+	//private ArrayList<CompositionModel> compositionList;
 
 	private PropertyChangeSupport changes;
 
@@ -38,14 +39,14 @@ public class UiStatusModel {
 		this.changes = new PropertyChangeSupport(this);
 	}
 
-	public CompositionModel getCompositionAtSelectedIndex(){
-		return this.compositionList.get(this.compositionSelectionIndex);
-	}
-	
-	public void addCompositionToList(CompositionModel m){
-		compositionWritableList.add(m);
-	}
-	
+//	public CompositionModel getCompositionAtSelectedIndex() {
+//		return this.compositionList.get(this.compositionSelectionIndex);
+//	}
+//
+//	public void addCompositionToList(CompositionModel m) {
+//		compositionWritableList.add(m);
+//	}
+
 	public void setCompositionSelectionIndex(int index) {
 		changes.firePropertyChange(Constants.COMPOSITION_SELECTION_INDEX, this.compositionSelectionIndex,
 				this.compositionSelectionIndex = index);
@@ -56,7 +57,7 @@ public class UiStatusModel {
 	}
 
 	public void setCoreRunning(boolean running) {
-		changes.firePropertyChange(Constants.CORE_RUNNING, this.coreRunning, this.coreRunning = running);
+		changes.firePropertyChange(Constants.CORE_RUNNING_MODEL, this.coreRunning, this.coreRunning = running);
 	}
 
 	public boolean getCoreRunning() {
@@ -71,13 +72,13 @@ public class UiStatusModel {
 		return this.compositionWritableList;
 	}
 
-	public void setCompositionList(ArrayList<CompositionModel> compoList) {
-		this.compositionList = compoList;
-	}
-
-	public ArrayList<CompositionModel> getCompositionList() {
-		return this.compositionList;
-	}
+//	public void setCompositionList(ArrayList<CompositionModel> compoList) {
+//		this.compositionList = compoList;
+//	}
+//
+//	public ArrayList<CompositionModel> getCompositionList() {
+//		return this.compositionList;
+//	}
 
 	public void setWritableModelList(WritableList input) {
 		this.modelWritableList = input;
@@ -155,6 +156,11 @@ public class UiStatusModel {
 	public void setServerControllerRunning(Boolean serverControllerRunning) {
 		changes.firePropertyChange(Constants.SERVER_CONTROLLER_RUNNING_MODEL, this.serverControllerRunning,
 				this.serverControllerRunning = serverControllerRunning);
+	}
+
+	public void setCompositionModel(CompositionModel model) {
+		changes.firePropertyChange(Constants.COMPOSITION_MODEL_PATH, this.compositionModel,
+				this.compositionModel = model);
 	}
 
 	public void addEntryToModelList(LaunchConfigurationModel model) {
@@ -240,6 +246,10 @@ public class UiStatusModel {
 
 	public SshProfileModel getSshModelAtIndex() {
 		return this.profileList.get(this.sshComboSelectionIndex);
+	}
+
+	public CompositionModel getCompositionModel() {
+		return compositionModel;
 	}
 
 	public void addPropertyChangeListener(PropertyChangeListener l) {

@@ -10,6 +10,11 @@ class FloodlightBackendStarter extends ControllerStarter {
 		super("Floodlight Backend", configuration, controller, monitor)
 		name = String.format("%s (%s)", name, appPath.lastSegment)
 	}
+	
+	new(int port, String appPath, IProgressMonitor monitor) {
+		super("Floodlight Backend", port, appPath, monitor)
+		name = String.format("%s (%s)", name, appPath.IFile.location.lastSegment)
+	}
 
 	override getCommandLine() {
 		return String.format("bash $HOME/netide/floodlight/target/floodlight.sh")

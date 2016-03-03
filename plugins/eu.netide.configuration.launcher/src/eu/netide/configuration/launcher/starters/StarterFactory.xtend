@@ -54,6 +54,28 @@ class StarterFactory {
 		}
 	}
 
+//	public def IStarter createSingleControllerStarter(String platform, Controller controller,
+//		IProgressMonitor monitor) {
+//		var controllerplatform = platform
+//
+//		if (controllerplatform.equals(NetIDE.CONTROLLER_ENGINE)) {
+//		} else {
+//			var IStarter starter
+//			switch controllerplatform {
+//				case NetIDE.CONTROLLER_POX:
+//					starter = new PoxStarter(configuration, controller, monitor)
+//				case NetIDE.CONTROLLER_RYU:
+//					starter = new RyuStarter(configuration, controller, monitor)
+//				case NetIDE.CONTROLLER_PYRETIC:
+//					starter = new PyreticStarter(configuration, controller, monitor)
+//				case NetIDE.CONTROLLER_FLOODLIGHT:
+//					starter = new FloodlightBackendStarter(configuration, controller, monitor)
+//			}
+//			starter.setBackend(backend)
+//			return starter
+//		}
+//	}
+
 	public def IStarter createShimStarter(ILaunchConfiguration configuration, Controller controller,
 		IProgressMonitor monitor) {
 
@@ -89,6 +111,23 @@ class StarterFactory {
 		return starter
 	}
 
+	public def IStarter createBackendStarter(String platform, String appPath, int port,
+		IProgressMonitor monitor) {
+
+		var clientplatform = platform
+		var IStarter starter
+		switch clientplatform {
+			case NetIDE.CONTROLLER_FLOODLIGHT:
+				starter = new FloodlightBackendStarter(port, appPath, monitor)
+			case NetIDE.CONTROLLER_RYU:
+				starter = new RyuBackendStarter(port, appPath, monitor)
+			case NetIDE.CONTROLLER_PYRETIC:
+				starter = new PyreticBackendStarter(port, appPath, monitor)
+		}
+		starter.backend = backend
+		return starter
+	}
+
 	public def IStarter createMininetStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		var starter = new MininetStarter(configuration, monitor)
 		starter.backend = backend
@@ -100,13 +139,13 @@ class StarterFactory {
 		starter.backend = backend
 		return starter
 	}
-	
+
 	public def createCoreStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		var starter = new CoreStarter(configuration, monitor)
 		starter.backend = backend
 		return starter
 	}
-	
+
 	public def createEmulatorStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		var starter = new EmulatorStarter(configuration, monitor)
 		starter.backend = backend

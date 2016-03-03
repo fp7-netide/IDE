@@ -95,6 +95,49 @@ class SshManager implements IManager {
 
 		this.workingDirectory = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
 	}
+	
+	new(ILaunchConfiguration launchConfiguration, IProgressMonitor monitor, String username, String hostname, String port, String idfile) {
+		this.launch = new Launch(launchConfiguration, "debug", null)
+		this.launch.setAttribute("org.eclipse.debug.core.capture_output", "true")
+		this.launch.setAttribute("org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING", "UTF-8")
+		this.launch.setAttribute("org.eclipse.debug.core.launch.timestamp", new Date().time + "")
+		DebugPlugin.getDefault().getLaunchManager().addLaunch(this.launch)
+
+		this.sshHostname = hostname
+		this.sshPort = port
+		this.sshUsername = username
+		this.sshIdFile = idfile.absolutePath.toOSString
+
+		var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
+
+		var resset = new ResourceSetImpl
+		var res = resset.getResource(URI.createURI(topofile.fullPath.toString), true)
+
+		this.project = topofile.project
+
+		var ne = res.allContents.filter(typeof(NetworkEnvironment)).next
+
+		this.appPaths = ne.controllers.map [
+			var platform = launchConfiguration.attributes.get("controller_platform_" + name)
+			launchConfiguration.attributes.get(String.format("controller_data_%s_%s", name, platform)) as String
+		].toSet.map[e|NetIDEUtil.absolutePath(e)]
+
+		this.monitor = monitor
+
+		this.sshPath = new Path(
+			Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
+				NetIDEPreferenceConstants.SSH_PATH, "", null)).toOSString
+
+		this.scpPath = new Path(
+			Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
+				NetIDEPreferenceConstants.SCP_PATH, "", null)).toOSString
+
+		var path = launch.launchConfiguration.attributes.get("topologymodel") as String
+
+		this.workingDirectory = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
+
+
+	}
 
 	override getRunningSessions() {
 		var cmdline = newArrayList(sshPath, "-i", sshIdFile, "-p", sshPort, sshUsername + "@" + sshHostname,

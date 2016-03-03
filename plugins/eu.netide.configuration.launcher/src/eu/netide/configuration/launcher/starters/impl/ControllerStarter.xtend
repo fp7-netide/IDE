@@ -7,6 +7,7 @@ import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.xtend.lib.annotations.Accessors
 
 import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
+import eu.netide.configuration.launcher.starters.backends.VagrantBackend
 
 abstract class ControllerStarter extends Starter {
 
@@ -18,6 +19,9 @@ abstract class ControllerStarter extends Starter {
 
 	@Accessors(PROTECTED_GETTER)
 	private String controllerplatform
+	
+	@Accessors(PROTECTED_GETTER)
+	private int port
 
 	new(String name, ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
 		super(name, configuration, monitor)
@@ -35,5 +39,20 @@ abstract class ControllerStarter extends Starter {
 		else
 			null
 	}
+	
+	new(String name, int port, String appPath, IProgressMonitor monitor) {
+		super(name, appPath, new VagrantBackend, monitor)
+
+
+		this.controller = controller
+
+		this.controllerplatform = ""
+		
+		this.port = port
+
+		appPath = appPath.absolutePath
+	}
+
+
 
 }

@@ -190,7 +190,7 @@ class ControllerManager {
 						backend = new SshDoubleTunnelBackend(model.host, Integer.parseInt(model.port), model.secondHost,
 							Integer.parseInt(model.secondPort), model.username, model.secondUsername, model.sshIdFile);
 					}
-					sshManager = new SshManager(configuration, monitor)
+					sshManager = new SshManager(configuration, monitor, model.username, model.host, model.port, model.sshIdFile)
 
 					// TODO: extra button 
 					// sshManager.provision
@@ -210,8 +210,8 @@ class ControllerManager {
 
 	public def stopSSH() {
 		if (this.statusModel.sshRunning) {
-			if (sshManager != null)
-				sshManager.asyncHalt
+			//if (sshManager != null)
+				//sshManager.asyncHalt
 			this.statusModel.sshRunning = false
 		}
 	}
@@ -350,68 +350,88 @@ class ControllerManager {
 			return;
 		}
 		val starterList = tmpstarterList
-
-		// Iterate controllers in the network model and start apps for them 
-		for (c : ne.controllers) {
-			var controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
-
-			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
-
-				var job = new Job("Backend Starter") {
-
-					override protected run(IProgressMonitor monitor) {
-						backendStarter = factory.createBackendStarter(configuration, c, monitor)
-						starterList.add(backendStarter)
-						backendStarter.setBackend(backend)
-						configToStarter.put(launchConfigurationModel, starterList)
-						reg.register(backendStarter.safeName, backendStarter)
-						backendStarter.syncStart
-						return Status.OK_STATUS
-					}
-
-				};
-				job.schedule();
-				Thread.sleep(2000)
-
-				// var NetIDE_server = configuration.attributes.get("controller_platform_target_" + c.name) as String // to know if server_platform is ODL #AB
-				var jobShim = new Job("shim Starter") {
-
-					override protected run(IProgressMonitor monitor) {
-						shimStarter = factory.createShimStarter(configuration, c, monitor)
-						starterList.add(shimStarter)
-						shimStarter.setBackend(backend)
-						configToStarter.put(launchConfigurationModel, starterList)
-						reg.register(shimStarter.safeName, shimStarter)
-						shimStarter.syncStart
-
-						return Status.OK_STATUS
-					}
-
-				};
-				jobShim.schedule();
-
-				Thread.sleep(2000)
-
-			} else {
-
-				var jobSingle = new Job("single Starter") {
-
-					override protected run(IProgressMonitor monitor) {
-						starter = factory.createSingleControllerStarter(configuration, c, monitor)
-						starter.setBackend(backend)
-						reg.register(starter.safeName, starter)
-						starterList.add(starter)
-						configToStarter.put(launchConfigurationModel, starterList)
-						starter.syncStart
-						return Status.OK_STATUS
-					}
-
-				};
-				jobSingle.schedule();
-			// Thread.sleep(2000)
+		
+		var controllerplatform = launchConfigurationModel.platform
+		val path = launchConfigurationModel.appPath
+		val port = Integer.parseInt(launchConfigurationModel.appPort)
+		
+		if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
+			var job = new Job ("BackendStarter") {
+				override run (IProgressMonitor monitor) {
+					backendStarter = factory.createBackendStarter(launchConfigurationModel.clientController, path, port, monitor)
+					starterList.add(backendStarter)
+					backendStarter.backend = backend
+					configToStarter.put(launchConfigurationModel, starterList)
+					reg.register(backendStarter.safeName, backendStarter)
+					backendStarter.syncStart
+					return Status.OK_STATUS
+				}
 			}
-
+			job.schedule
+			
 		}
+
+//		// Iterate controllers in the network model and start apps for them 
+//		for (c : ne.controllers) {
+//			controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
+//
+//			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
+//
+//				var job = new Job("Backend Starter") {
+//
+//					override protected run(IProgressMonitor monitor) {
+//						backendStarter = factory.createBackendStarter(configuration, c, monitor)
+//						starterList.add(backendStarter)
+//						backendStarter.setBackend(backend)
+//						configToStarter.put(launchConfigurationModel, starterList)
+//						reg.register(backendStarter.safeName, backendStarter)
+//						backendStarter.syncStart
+//						return Status.OK_STATUS
+//					}
+//
+//				};
+//				job.schedule();
+//				Thread.sleep(2000)
+//
+//				// var NetIDE_server = configuration.attributes.get("controller_platform_target_" + c.name) as String // to know if server_platform is ODL #AB
+//				var jobShim = new Job("shim Starter") {
+//
+//					override protected run(IProgressMonitor monitor) {
+//						shimStarter = factory.createShimStarter(configuration, c, monitor)
+//						starterList.add(shimStarter)
+//						shimStarter.setBackend(backend)
+//						configToStarter.put(launchConfigurationModel, starterList)
+//						reg.register(shimStarter.safeName, shimStarter)
+//						shimStarter.syncStart
+//
+//						return Status.OK_STATUS
+//					}
+//
+//				};
+//				jobShim.schedule();
+//
+//				Thread.sleep(2000)
+//
+//			} else {
+//
+//				var jobSingle = new Job("single Starter") {
+//
+//					override protected run(IProgressMonitor monitor) {
+//						starter = factory.createSingleControllerStarter(configuration, c, monitor)
+//						starter.setBackend(backend)
+//						reg.register(starter.safeName, starter)
+//						starterList.add(starter)
+//						configToStarter.put(launchConfigurationModel, starterList)
+//						starter.syncStart
+//						return Status.OK_STATUS
+//					}
+//
+//				};
+//				jobSingle.schedule();
+//			// Thread.sleep(2000)
+//			}
+//
+//		}
 
 		Thread.sleep(2000)
 
@@ -493,7 +513,8 @@ class ControllerManager {
 			override protected run(IProgressMonitor monitor) {
 				// configuration needs to contain topology path !
 				compositionStarter = new CoreSpecificationStarter(configHelper.getTopoConfiguration,
-					statusModel.compositionAtSelectedIndex.compositionPath, monitor);
+					statusModel.compositionModel.compositionPath, monitor);
+				compositionStarter.backend = backend;
 				compositionStarter.syncStart
 				return Status.OK_STATUS
 			}

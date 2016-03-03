@@ -28,6 +28,8 @@ import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 
 public class XmlHelper {
 
+	private static CompositionModel compositionModel;
+
 	public static void saveContentToXml(Document doc, IFile file) {
 		saveContentToXml(doc, new File(file.getLocation().toOSString()));
 	}
@@ -52,6 +54,7 @@ public class XmlHelper {
 			e.printStackTrace();
 		}
 	}
+	
 
 	public static void addComposition(Document doc, CompositionModel model, IFile file) {
 		Node wb = doc.getFirstChild();
@@ -61,7 +64,7 @@ public class XmlHelper {
 			compo.setTextContent(model.getCompositionPath());
 			compo.setAttribute("id", model.getID());
 			wb.appendChild(compo);
-
+			
 			XmlHelper.saveContentToXml(doc, file);
 		}
 	}
@@ -198,7 +201,6 @@ public class XmlHelper {
 			doc = dBuilder.parse(xmlFile);
 			doc.getDocumentElement().normalize();
 		} catch (SAXException | IOException | ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -217,7 +219,8 @@ public class XmlHelper {
 			File xmlFile = new File(file.getRawLocationURI());
 			modelList = new ArrayList<LaunchConfigurationModel>();
 			profileList = new ArrayList<SshProfileModel>();
-			compositonPathList = new ArrayList<CompositionModel>();
+			compositonPath = new ArrayList<CompositionModel>();
+			compositionModel = new CompositionModel();
 
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -232,11 +235,15 @@ public class XmlHelper {
 
 			}
 
-			return new ArrayList[] { modelList, profileList, compositonPathList };
+			return new ArrayList[] { modelList, profileList, compositonPath };
 		} catch (Exception e) {
 
 		}
 		return null;
+	}
+	
+	public static CompositionModel getCompositionModel() {
+		return compositionModel;
 	}
 
 	private static ArrayList<SshProfileModel> profileList;
@@ -308,7 +315,7 @@ public class XmlHelper {
 
 	}
 
-	private static ArrayList<CompositionModel> compositonPathList;
+	private static ArrayList<CompositionModel> compositonPath;
 
 	private static void parsePathNode(NodeList nodeList) {
 
@@ -335,7 +342,7 @@ public class XmlHelper {
 						}
 					}
 
-					compositonPathList.add(model);
+					compositonPath.add(model);
 					break;
 				default:
 					// System.err.println("No match for node: " +
@@ -368,7 +375,9 @@ public class XmlHelper {
 					break;
 				case XmlConstants.ELEMENT_TOPOLOGY_PATH:
 					LaunchConfigurationModel.setTopology(tempNode.getTextContent());
-
+					break;
+				case XmlConstants.COMPOSITION_PATH:
+					compositionModel.setCompositionPath(tempNode.getTextContent());
 					break;
 				case XmlConstants.ELEMENT_APP_PORT:
 					model.setAppPort(tempNode.getTextContent());
@@ -396,7 +405,6 @@ public class XmlHelper {
 				case XmlConstants.ELEMENT_CLIENT_CONTROLLER:
 					model.setClientController(tempNode.getTextContent());
 					break;
-
 				case XmlConstants.ELEMENT_PLATFORM:
 					model.setPlatform(tempNode.getTextContent());
 					break;

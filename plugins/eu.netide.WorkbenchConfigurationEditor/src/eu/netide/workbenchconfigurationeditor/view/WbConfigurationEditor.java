@@ -1,5 +1,9 @@
 package eu.netide.workbenchconfigurationeditor.view;
 
+import java.beans.XMLEncoder;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
@@ -52,6 +56,9 @@ import eu.netide.workbenchconfigurationeditor.model.CompositionModel;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 import eu.netide.workbenchconfigurationeditor.util.Constants;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.ModifyEvent;
 
 /**
  * 
@@ -143,7 +150,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 							path = selectedFile.getFullPath().toOSString();
 							CompositionModel m = new CompositionModel();
 							m.setCompositionPath(path);
-							engine.getStatusModel().addCompositionToList(m);
+							engine.getStatusModel().getCompositionModel().setCompositionPath(path);
+							
 							setIsDirty(true);
 						} else {
 							showMessage("Please select a Composition.");
@@ -470,7 +478,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				}
 			}
 		});
-		
+
 		btnImportTopology.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -638,12 +646,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		new Label(grpCompositionLoader, SWT.NONE);
 		new Label(grpCompositionLoader, SWT.NONE);
 
-		combo_Composition = new Combo(grpCompositionLoader, SWT.NONE);
-		GridData gd_combo_Composition = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_combo_Composition.widthHint = 128;
-		combo_Composition.setLayoutData(gd_combo_Composition);
-
-		combo_Composition_Viewer = new ComboViewer(combo_Composition);
+		textCompositionPath = new Text(grpCompositionLoader, SWT.BORDER);
+		textCompositionPath.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				engine.getStatusModel().getCompositionModel().setCompositionPath(textCompositionPath.getText());
+				setIsDirty(true);
+			}
+		});
+		textCompositionPath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		browseCompositionBtn = new Button(grpCompositionLoader, SWT.NONE);
 		browseCompositionBtn.setText("Browse");
@@ -684,10 +694,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnStopServerController.setText("Off");
 		new Label(grpServerController, SWT.NONE);
 		new Label(grpServerController, SWT.NONE);
-		
+
 		btnImportTopology = new Button(grpServerController, SWT.NONE);
 		btnImportTopology.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
-		
+
 		btnImportTopology.setText("Import Topology");
 
 		grpMininet = new Group(composite_4, SWT.NONE);
@@ -789,6 +799,17 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		// do saving
 		engine.saveAllChanges();
 		setIsDirty(false);
+
+		try {
+			File file = new File("/home/piotr/blub.xml");
+			XMLEncoder encoder = new XMLEncoder(new FileOutputStream(file));
+			encoder.writeObject(engine.getStatusModel());
+			encoder.writeObject(engine.getStatusModel());
+			encoder.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override
@@ -900,7 +921,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private TableViewer tableViewer;
 	private ComboViewer sshComboViewer;
 	private ComboViewer serverComboViewer;
-	private ComboViewer combo_Composition_Viewer;
 	private Button browseCompositionBtn;
 	private Button loadCompositionBtn;
 	private Label lblCoreStatus;
@@ -916,8 +936,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Group grpConfigurationOverview;
 	private Button btnInitVagrantFile;
 	private Button btnCopyApps;
-	private Combo combo_Composition;
 	private Button btnImportTopology;
+	private Text textCompositionPath;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;
@@ -951,7 +971,63 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		return this.serverComboViewer;
 	}
 
-	public ComboViewer getCompositionComboViewer() {
-		return this.combo_Composition_Viewer;
+	public Button getSshUpButton() {
+		return this.btnSSH_Up;
+	}
+
+	public Button getSshDownButton() {
+		return this.btnCloseSSH;
+	}
+
+	public Button getBtnVagrantUp() {
+		return btnVagrantUp;
+	}
+
+	public Button getBtnMininetOff() {
+		return btnMininetOff;
+	}
+
+	public Button getBtnVagrantHalt() {
+		return btnVagrantHalt;
+	}
+
+	public Button getBtnMininetOn() {
+		return btnMininetOn;
+	}
+
+	public Button getStartCoreBtn() {
+		return startCoreBtn;
+	}
+
+	public Button getStopCoreBtn() {
+		return stopCoreBtn;
+	}
+
+	public Button getBtnProvision_1() {
+		return btnProvision_1;
+	}
+
+	public Button getBtnCopyApps() {
+		return btnCopyApps;
+	}
+
+	public Button getBtnProvision_2() {
+		return btnProvision_2;
+	}
+
+	public Button getBtnStopServerController() {
+		return btnStopServerController;
+	}
+
+	public Button getStartServerController() {
+		return startServerController;
+	}
+
+	public Button getBtnImportTopology() {
+		return btnImportTopology;
+	}
+
+	public Text getTextCompositionPath() {
+		return textCompositionPath;
 	}
 }

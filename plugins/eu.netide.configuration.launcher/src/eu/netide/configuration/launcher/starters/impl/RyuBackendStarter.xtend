@@ -10,6 +10,10 @@ class RyuBackendStarter extends ControllerStarter {
 		super("Ryu Backend", configuration, controller, monitor)
 		name = String.format("%s (%s)", name, appPath.lastSegment)
 	}
+	
+	new (int port, String appPath, IProgressMonitor monitor) {
+		super("Ryu Backend", port, appPath, monitor)
+	}
 
 	override getEnvironmentVariables() {
 		"PYTHONPATH=$PYTHONPATH:Engine/ryu-backend:Engine/libraries/netip/python"
