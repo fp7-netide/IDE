@@ -32,6 +32,7 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import eu.netide.deployment.topologyimport.TopologyImportFactory
 import org.eclipse.core.resources.IFile
+import eu.netide.configuration.launcher.starters.impl.DebuggerStarter
 
 class ControllerManager {
 
@@ -39,6 +40,7 @@ class ControllerManager {
 	private IResource file;
 	private IResource wbFile;
 	private UiStatusModel statusModel;
+	private DebuggerStarter debuggerStarter;
 
 	private static ControllerManager instance = null;
 
@@ -475,6 +477,46 @@ class ControllerManager {
 			return ResourcesPlugin.getWorkspace().getRoot().findMember(platformString)
 		}
 		return null
+	}
+
+	private Job startDebuggerJob;
+
+	public def startDebugger() {
+		val debuggerJob = new Job("Debugger") {
+			override protected run(IProgressMonitor monitor) {
+				if (debuggerStarter == null) {
+					debuggerStarter = factory.createDebuggerStarter(configHelper.topoConfiguration, monitor)
+				}
+				if (!statusModel.debuggerRunning) {
+					startDebuggerJob.schedule
+				}
+				return Status.OK_STATUS
+			}
+		}
+
+		startDebuggerJob = new Job("Start Debugger") {
+			override protected run(IProgressMonitor monitor) {
+				debuggerStarter.backend = backend
+				debuggerStarter.syncStart
+				statusModel.debuggerRunning = true
+				return Status.OK_STATUS
+			}
+		}
+
+		debuggerJob.schedule
+	}
+
+	public def stopDebugger() {
+		if (debuggerStarter != null && statusModel.debuggerRunning) {
+			debuggerStarter.stop
+			statusModel.debuggerRunning = false
+		}
+	}
+
+	public def reattachDebugger() {
+		if (debuggerStarter != null && statusModel.debuggerRunning) {
+			debuggerStarter.reattach
+		}
 	}
 
 	private IStarter coreStarter;

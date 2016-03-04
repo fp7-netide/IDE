@@ -32,7 +32,7 @@ class ConfigurationGenerator  {
 		var switches = ne.networks.map[networkelements].flatten.filter(typeof(Switch))
 		var all_sdpid = switches.map[dpid]
 		for (s : switches) {
-			if (Integer.decode(s.dpid) > 0) {
+			if (s.dpid != "-1" && Integer.decode("0x"+s.dpid) > 0) {
 				nodemap.put(s.fullname, s.dpid)
 			} else {
 				while (all_sdpid.toSet.contains(scounter))
@@ -46,7 +46,7 @@ class ConfigurationGenerator  {
 		var hosts = ne.networks.map[networkelements].flatten.filter(typeof(Host))
 		var all_hdpid = switches.map[dpid]
 		for (h : hosts) {
-			if (Integer.decode(h.dpid) > 0) {
+			if (h.dpid != "-1" && Integer.decode("0x"+h.dpid) > 0) {
 				nodemap.put(h.fullname, h.dpid)
 			} else {
 				while (all_hdpid.toSet.contains(hcounter))
@@ -92,12 +92,12 @@ class ConfigurationGenerator  {
 			    
 			        # Adding Switches
 			        «FOR Switch s : switches»
-			        	self.«s.fullname» = self.addSwitch('«s.fullname»', dpid=int2dpid(«nodemap.get(s.fullname)»))
+			        	self.«s.fullname» = self.addSwitch('«s.fullname»', dpid='«nodemap.get(s.fullname)»'«IF !(s.mac == null || s.mac.empty)», mac='«s.mac»'«ENDIF»)
 			        «ENDFOR»
 			        
 			        # Adding Hosts
 			        «FOR Host h : hosts»
-			        	self.«h.fullname» = self.addHost('«h.fullname»')
+			        	self.«h.fullname» = self.addHost('«h.fullname»'«IF !(h.ip == null || h.ip.empty)», ip='«h.ip»'«ENDIF»«IF !(h.mac == null || h.mac.empty)», mac='«h.mac»'«ENDIF»)
 			        «ENDFOR»
 			        
 			        # Adding Links
@@ -105,19 +105,19 @@ class ConfigurationGenerator  {
 			        	self.addLink(self.«c.connectedports.get(0).networkelement.fullname», self.«c.connectedports.get(1).networkelement.fullname»)
 			        «ENDFOR»
 			        
-			    «IF hasIPs»
-			    def SetIPConfiguration(self, net):
-			        «FOR s : switches»
-			        «IF s.ip != null && s.ip != ""»
-			            net.get("«s.fullname»").setIP("«s.ip»"«IF s.prefix > 0», "«s.prefix»"«ENDIF»)
-			        «ENDIF»
-			        «ENDFOR»
-			        «FOR h : hosts»
-			        «IF h.ip != null && h.ip != ""»
-			            net.get("«h.fullname»").setIP("«h.ip»"«IF h.prefix > 0», "«h.prefix»"«ENDIF»)
-			        «ENDIF»
-			        «ENDFOR»
-			        «ENDIF»
+«««			    «IF hasIPs»
+«««			    def SetIPConfiguration(self, net):
+«««			        «FOR s : switches»
+«««			        «IF s.ip != null && s.ip != ""»
+«««			            net.get("«s.fullname»").setIP("«s.ip»"«IF s.prefix > 0», "«s.prefix»"«ENDIF»)
+«««			        «ENDIF»
+«««			        «ENDFOR»
+«««			        «FOR h : hosts»
+«««			        «IF h.ip != null && h.ip != ""»
+«««			            net.get("«h.fullname»").setIP("«h.ip»"«IF h.prefix > 0», "«h.prefix»"«ENDIF»)
+«««			        «ENDIF»
+«««			        «ENDFOR»
+«««			        «ENDIF»
 			    
 			topos = { '«ne.envName»': ( lambda: «ne.envName»() ) }
 		'''
@@ -135,6 +135,7 @@ class ConfigurationGenerator  {
 			from mininet.cli import CLI
 			from mininet.log import setLogLevel
 			from «ne.envName» import «ne.envName»
+			from functools import *
 			
 			
 			def setup_and_run_«ne.envName» ():
@@ -158,13 +159,14 @@ class ConfigurationGenerator  {
 			            return OVSSwitch.start( self, [ cmap[ self.name ] ] )
 			    
 			    topo = «ne.envName»()
-			    net = Mininet(topo=topo, switch=MultiSwitch, build=False)
+			    switch = partial(MultiSwitch, protocols='«ne.ofVersion.getName»')
+			    net = Mininet(topo=topo, switch=switch, build=False)
 			    for c in controllers:
 			        net.addController(c)
 			    net.build()
-			    «IF hasIPs»
-			    topo.SetIPConfiguration(net)
-			    «ENDIF»
+«««			    «IF hasIPs»
+«««			    topo.SetIPConfiguration(net)
+«««			    «ENDIF»
 			    net.start()
 			    CLI(net)
 			    net.stop()

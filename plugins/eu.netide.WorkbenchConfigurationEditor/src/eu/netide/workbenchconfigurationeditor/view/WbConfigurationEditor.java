@@ -540,7 +540,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		composite_1.setLayout(new GridLayout(5, false));
 
 		lblSShStatus = new Label(composite_1, SWT.NONE);
-		lblSShStatus.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		GridData gd_lblSShStatus = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_lblSShStatus.widthHint = 96;
+		lblSShStatus.setLayoutData(gd_lblSShStatus);
 		lblSShStatus.setText("Status: Offline");
 
 		btnSSH_Up = new Button(composite_1, SWT.NONE);
@@ -555,6 +557,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnCopyApps = new Button(composite_1, SWT.NONE);
 
 		btnCopyApps.setText("Copy Apps ");
+		new Label(composite_1, SWT.NONE);
+		new Label(composite_1, SWT.NONE);
+		new Label(composite_1, SWT.NONE);
+		new Label(composite_1, SWT.NONE);
+		new Label(composite_1, SWT.NONE);
 
 		composite = new Composite(sshComposite, SWT.NONE);
 		GridData gd_composite = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
@@ -612,7 +619,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		GridData gd_composite_2 = new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1);
 		gd_composite_2.widthHint = 624;
-		gd_composite_2.heightHint = 175;
+		gd_composite_2.heightHint = 244;
 		composite_2.setLayoutData(gd_composite_2);
 		composite_2.setLayout(new GridLayout(2, false));
 
@@ -630,6 +637,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		grpCore.setLayout(new GridLayout(4, false));
 
 		lblCoreStatus = new Label(grpCore, SWT.NONE);
+		GridData gd_lblCoreStatus = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblCoreStatus.widthHint = 97;
+		lblCoreStatus.setLayoutData(gd_lblCoreStatus);
 		lblCoreStatus.setText("Status : Offline");
 
 		startCoreBtn = new Button(grpCore, SWT.NONE);
@@ -682,6 +692,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		grpServerController.setText("Server Controller");
 
 		lblServerControllerStatus = new Label(grpServerController, SWT.NONE);
+		GridData gd_lblServerControllerStatus = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblServerControllerStatus.widthHint = 56;
+		lblServerControllerStatus.setLayoutData(gd_lblServerControllerStatus);
 		lblServerControllerStatus.setText(Constants.LABEL_OFFLINE);
 
 		selectServerCombo = new Combo(grpServerController, SWT.BORDER | SWT.READ_ONLY);
@@ -743,6 +756,45 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnReattachMininet.setText("Reattach");
+		
+		grpDebugger = new Group(composite_2, SWT.NONE);
+		grpDebugger.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		grpDebugger.setText("Debugger");
+		grpDebugger.setLayout(new GridLayout(4, false));
+		
+		lblDebuggerStatus = new Label(grpDebugger, SWT.NONE);
+		GridData gd_lblDebuggerStatus = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblDebuggerStatus.widthHint = 99;
+		lblDebuggerStatus.setLayoutData(gd_lblDebuggerStatus);
+		lblDebuggerStatus.setText("Status: Offline");
+		
+		btnDebuggerOn = new Button(grpDebugger, SWT.NONE);
+		btnDebuggerOn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ControllerManager.getStarter().startDebugger();
+			}
+		});
+		btnDebuggerOn.setText("On");
+		
+		btnDebuggerOff = new Button(grpDebugger, SWT.NONE);
+		btnDebuggerOff.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ControllerManager.getStarter().stopDebugger();
+			}
+		});
+		btnDebuggerOff.setText("Off");
+		
+		btnDebuggerReattach = new Button(grpDebugger, SWT.NONE);
+		btnDebuggerReattach.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ControllerManager.getStarter().reattachDebugger();
+			}
+		});
+		btnDebuggerReattach.setText("Reattach");
+		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 
@@ -968,6 +1020,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Button btnReattachCore;
 	private Button btnReattachServer;
 	private Button btnReattachMininet;
+	private Group grpDebugger;
+	private Button btnDebuggerReattach;
+	private Button btnDebuggerOn;
+	private Button btnDebuggerOff;
+	private Label lblDebuggerStatus;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;
@@ -1068,5 +1125,17 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	}
 	public Button getBtnReattachMininet() {
 		return btnReattachMininet;
+	}
+	public Button getBtnDebuggerOn() {
+		return btnDebuggerOn;
+	}
+	public Button getBtnDebuggerOff() {
+		return btnDebuggerOff;
+	}
+	public Button getBtnDebuggerReattach() {
+		return btnDebuggerReattach;
+	}
+	public Label getLblDebuggerStatus() {
+		return lblDebuggerStatus;
 	}
 }

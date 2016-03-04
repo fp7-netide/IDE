@@ -136,14 +136,14 @@ class VagrantfileGenerator {
 				config.vm.synced_folder "«res.project.location»/gen/mininet", "/home/vagrant/netide/mn-configs"
 			
 				# Syncing the debugger results folder with the vm
-				config.vm.synced_folder "«res.project.location»/results", "/home/vagrant/debug_results"
+				config.vm.synced_folder "«res.project.location»/results", "/home/vagrant/netide/debug_results"
 				
 				# Syncing the composition folder with the vm
 				config.vm.synced_folder "«res.project.location»/composition", "/home/vagrant/netide/composition"
 				
 				# Syncing controller paths with the vm
 				«FOR p : appPaths»
-					config.vm.synced_folder "«res.project.location»/apps", "/home/vagrant/netide/controllers/«p.removeFileExtension.lastSegment»"
+					config.vm.synced_folder "«res.project.location»/apps", "/home/vagrant/netide/apps"
 				«ENDFOR»
 				
 			end

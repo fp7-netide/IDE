@@ -168,7 +168,7 @@ abstract class Starter implements IStarter {
 		return cmdline
 	}
 
-	private def startProcess(String command) {
+	protected def startProcess(String command) {
 
 		var ts = TerminalServiceFactory.service
 

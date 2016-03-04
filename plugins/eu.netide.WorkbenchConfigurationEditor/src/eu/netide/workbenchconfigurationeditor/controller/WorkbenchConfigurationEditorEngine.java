@@ -57,6 +57,7 @@ public class WorkbenchConfigurationEditorEngine {
 		this.statusModel.setSshRunning(new Boolean(false));
 		this.statusModel.setVagrantRunning(new Boolean(false));
 		this.statusModel.setCoreRunning(false);
+		this.statusModel.setDebuggerRunning(false);
 
 		ArrayList[] parsed = XmlHelper.parseFileToModel(inputFile, doc);
 		this.statusModel.setModelList(parsed[0]);
@@ -101,7 +102,11 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addButtonEnabledDataBinding(this.editor.getBtnReattachServer(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnImportTopology(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
 		
+		this.addButtonDisabledDataBinding(this.editor.getBtnDebuggerOn(), Constants.DEBUGGER_RUNNING_MODEL);
+		this.addButtonEnabledDataBinding(this.editor.getBtnDebuggerOff(), Constants.DEBUGGER_RUNNING_MODEL);
+		this.addButtonEnabledDataBinding(this.editor.getBtnDebuggerReattach(), Constants.DEBUGGER_RUNNING_MODEL);
 		
+		this.addStatusLabelDataBinding(this.editor.getLblDebuggerStatus(), Constants.DEBUGGER_RUNNING_MODEL);
 		
 		this.addComboDataBinding(this.statusModel.getProfileList());
 		this.addServerControllerComboDataBinding();

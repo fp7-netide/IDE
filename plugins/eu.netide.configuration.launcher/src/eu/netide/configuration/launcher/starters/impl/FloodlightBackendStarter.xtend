@@ -17,6 +17,6 @@ class FloodlightBackendStarter extends ControllerStarter {
 	}
 
 	override getCommandLine() {
-		return String.format("bash $HOME/netide/floodlight/target/floodlight.sh")
+		return String.format("bash $HOME/netide/floodlight/floodlight.sh")
 	}
 }

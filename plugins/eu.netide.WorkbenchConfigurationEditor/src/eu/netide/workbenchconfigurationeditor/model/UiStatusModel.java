@@ -11,6 +11,7 @@ import eu.netide.workbenchconfigurationeditor.util.Constants;
 public class UiStatusModel {
 	private Boolean vagrantRunning;
 	private Boolean mininetRunning;
+	private Boolean debuggerRunning;
 	private Boolean sshRunning;
 	private Boolean serverControllerRunning;
 	private Boolean coreRunning;
@@ -31,7 +32,7 @@ public class UiStatusModel {
 	// list corresponding to doc
 	private ArrayList<SshProfileModel> profileList;
 
-	//private ArrayList<CompositionModel> compositionList;
+	// private ArrayList<CompositionModel> compositionList;
 
 	private PropertyChangeSupport changes;
 
@@ -39,13 +40,13 @@ public class UiStatusModel {
 		this.changes = new PropertyChangeSupport(this);
 	}
 
-//	public CompositionModel getCompositionAtSelectedIndex() {
-//		return this.compositionList.get(this.compositionSelectionIndex);
-//	}
-//
-//	public void addCompositionToList(CompositionModel m) {
-//		compositionWritableList.add(m);
-//	}
+	// public CompositionModel getCompositionAtSelectedIndex() {
+	// return this.compositionList.get(this.compositionSelectionIndex);
+	// }
+	//
+	// public void addCompositionToList(CompositionModel m) {
+	// compositionWritableList.add(m);
+	// }
 
 	public void setCompositionSelectionIndex(int index) {
 		changes.firePropertyChange(Constants.COMPOSITION_SELECTION_INDEX, this.compositionSelectionIndex,
@@ -72,13 +73,13 @@ public class UiStatusModel {
 		return this.compositionWritableList;
 	}
 
-//	public void setCompositionList(ArrayList<CompositionModel> compoList) {
-//		this.compositionList = compoList;
-//	}
-//
-//	public ArrayList<CompositionModel> getCompositionList() {
-//		return this.compositionList;
-//	}
+	// public void setCompositionList(ArrayList<CompositionModel> compoList) {
+	// this.compositionList = compoList;
+	// }
+	//
+	// public ArrayList<CompositionModel> getCompositionList() {
+	// return this.compositionList;
+	// }
 
 	public void setWritableModelList(WritableList input) {
 		this.modelWritableList = input;
@@ -156,6 +157,15 @@ public class UiStatusModel {
 	public void setServerControllerRunning(Boolean serverControllerRunning) {
 		changes.firePropertyChange(Constants.SERVER_CONTROLLER_RUNNING_MODEL, this.serverControllerRunning,
 				this.serverControllerRunning = serverControllerRunning);
+	}
+
+	public Boolean getDebuggerRunning() {
+		return debuggerRunning;
+	}
+
+	public void setDebuggerRunning(Boolean debuggerRunning) {
+		changes.firePropertyChange(Constants.DEBUGGER_RUNNING_MODEL, this.debuggerRunning,
+				this.debuggerRunning = debuggerRunning);
 	}
 
 	public void setCompositionModel(CompositionModel model) {

@@ -17,10 +17,12 @@ public class Constants {
 	public static final String CORE_RUNNING_MODEL = "coreRunning";
 	public static final String SSH_RUNNING_MODEL = "sshRunning";
 	public static final String SERVER_CONTROLLER_RUNNING_MODEL = "serverControllerRunning";
+	public static final String DEBUGGER_RUNNING_MODEL = "debuggerRunning";
 	public static final String SSH_COMBO_SELECTION_INDEX = "sshComboSelectionIndex";
 	public static final String LAUNCH_TABLE_INDEX = "launchTableIndex";
 	public static final String SERVER_CONTROLLER_SELECTION = "serverControllerSelection";
 	public static final String COMPOSITION_SELECTION_INDEX = "compositionSelectionIndex";
+	
 	
 	public static final String COMPOSITION_MODEL_PATH = "compositionPath";
 
@@ -37,5 +39,6 @@ public class Constants {
 	// UI Constants
 	public static final String LABEL_RUNNING = "running";
 	public static final String LABEL_OFFLINE = "offline";
+	
 
 }
