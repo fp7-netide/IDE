@@ -11,9 +11,14 @@ class RyuStarter extends ControllerStarter {
 		name = String.format("%s (%s)", name, appPath.lastSegment)
 	}
 
+	new(int port, String appPath, IProgressMonitor monitor) {
+		super("Ryu", port, appPath, monitor)
+		name = String.format("%s (%s)", name, this.appPath.lastSegment)
+	}
+
 	override getCommandLine() {
-		var ryuline = String.format("ryu-manager --ofp-tcp-listen-port=%d netide/controllers/%s/%s", controller.portNo,
-			getAppPath.removeFileExtension.lastSegment, getAppPath.lastSegment)
+		var ryuline = String.format("ryu-manager --ofp-tcp-listen-port=%d ~/netide/apps/%s", port,
+			getAppPath.removeFirstSegments(1))
 
 		return ryuline
 	}

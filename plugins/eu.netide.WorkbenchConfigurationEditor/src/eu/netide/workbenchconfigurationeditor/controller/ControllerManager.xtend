@@ -368,7 +368,7 @@ class ControllerManager {
 		}
 		val starterList = tmpstarterList
 
-		var controllerplatform = launchConfigurationModel.platform
+		val controllerplatform = launchConfigurationModel.platform
 		val path = launchConfigurationModel.appPath
 		val port = Integer.parseInt(launchConfigurationModel.appPort)
 
@@ -387,6 +387,23 @@ class ControllerManager {
 			}
 			job.schedule
 
+		} else {
+
+			var jobSingle = new Job("single Starter") {
+
+				override protected run(IProgressMonitor monitor) {
+					starter = factory.createSingleControllerStarter(controllerplatform, path, port, monitor)
+					starter.setBackend(backend)
+					reg.register(starter.safeName, starter)
+					starterList.add(starter)
+					configToStarter.put(launchConfigurationModel, starterList)
+					starter.syncStart
+					return Status.OK_STATUS
+				}
+
+			};
+			jobSingle.schedule();
+		// Thread.sleep(2000)
 		}
 
 //		// Iterate controllers in the network model and start apps for them 

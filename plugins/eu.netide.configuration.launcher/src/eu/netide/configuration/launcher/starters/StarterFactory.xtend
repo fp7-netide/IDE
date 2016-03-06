@@ -53,6 +53,26 @@ class StarterFactory {
 			return starter
 		}
 	}
+	
+	public def IStarter createSingleControllerStarter(String platform, String appPath, int port,
+		IProgressMonitor monitor) {
+		var controllerplatform = platform
+
+		if (controllerplatform.equals(NetIDE.CONTROLLER_ENGINE)) {
+		} else {
+			var IStarter starter
+			switch controllerplatform {
+				case NetIDE.CONTROLLER_POX:
+					starter = new PoxStarter(port, appPath, monitor)
+				case NetIDE.CONTROLLER_RYU:
+					starter = new RyuStarter(port, appPath, monitor)
+				case NetIDE.CONTROLLER_PYRETIC:
+					starter = new PyreticStarter(port, appPath, monitor)
+			}
+			starter.setBackend(backend)
+			return starter
+		}
+	}
 
 //	public def IStarter createSingleControllerStarter(String platform, Controller controller,
 //		IProgressMonitor monitor) {

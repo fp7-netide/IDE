@@ -14,6 +14,7 @@ class RyuBackendStarter extends ControllerStarter {
 	
 	new (int port, String appPath, IProgressMonitor monitor) {
 		super("Ryu Backend", port, appPath, monitor)
+		name = String.format("%s (%s)", name, this.appPath.lastSegment)
 	}
 
 	override getEnvironmentVariables() {

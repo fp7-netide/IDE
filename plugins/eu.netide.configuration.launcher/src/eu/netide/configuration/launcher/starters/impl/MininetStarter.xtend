@@ -25,7 +25,7 @@ class MininetStarter extends Starter {
 		var job = new Job("Stop" + name) {
 			override protected run(IProgressMonitor monitor) {
 				startProcess(
-					String.format("\'sudo kill $(ps h --ppid $(screen -ls | grep %s | cut -d. -f1) -o pid)\'",
+					String.format("\'screen -S %s -p 0 -X stuff \"quit\\n\"\'",
 						safeName))
 					return Status.OK_STATUS
 				}
