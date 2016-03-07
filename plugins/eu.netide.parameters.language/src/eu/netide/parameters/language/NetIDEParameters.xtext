@@ -30,7 +30,11 @@ NewType:
 ;
 
 Keyval:
-	name=ID ':' type=(TypeReference | Type);
+	name=ID ':' type=(TypeReference | Type) ('=' defaultValue=DefaultValue)?;
+
+DefaultValue:
+	STRING | "true" | "false" | INT 
+;
 	
 TypeReference:
 	type=[Type]

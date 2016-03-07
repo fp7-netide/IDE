@@ -737,6 +737,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		grpMininet.setLayout(new GridLayout(4, false));
 
 		mininetStatusLable = new Label(grpMininet, SWT.NONE);
+		GridData gd_mininetStatusLable = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_mininetStatusLable.widthHint = 99;
+		mininetStatusLable.setLayoutData(gd_mininetStatusLable);
 		mininetStatusLable.setText("Status: Offline");
 
 		btnMininetOn = new Button(grpMininet, SWT.NONE);
