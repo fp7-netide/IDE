@@ -33,6 +33,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import eu.netide.deployment.topologyimport.TopologyImportFactory
 import org.eclipse.core.resources.IFile
 import eu.netide.configuration.launcher.starters.impl.DebuggerStarter
+import org.eclipse.swt.widgets.Display
+import org.eclipse.jface.dialogs.MessageDialog
 
 class ControllerManager {
 
@@ -219,6 +221,7 @@ class ControllerManager {
 			// if (sshManager != null)
 			// sshManager.asyncHalt
 			this.statusModel.sshRunning = false
+			this.backend = null
 		}
 	}
 
@@ -281,6 +284,7 @@ class ControllerManager {
 	}
 
 	public def reattachServerController() {
+		
 		if (serverControllerStarter != null) {
 			serverControllerStarter.reattach
 		}
@@ -602,5 +606,7 @@ class ControllerManager {
 
 		compositionJob.schedule
 	}
+
+
 
 }

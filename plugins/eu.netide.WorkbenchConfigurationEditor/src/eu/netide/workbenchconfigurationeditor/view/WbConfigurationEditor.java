@@ -689,7 +689,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		grpServerController = new Group(composite_4, SWT.NONE);
 		grpServerController.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpServerController.setLayout(new GridLayout(5, false));
-		grpServerController.setText("Server Controller");
+		grpServerController.setText("Shim");
 
 		lblServerControllerStatus = new Label(grpServerController, SWT.NONE);
 		GridData gd_lblServerControllerStatus = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -804,7 +804,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		grpConfigurationOverview = new Group(startAppComposite, SWT.NONE);
 		grpConfigurationOverview.setLayout(new GridLayout(2, false));
 		grpConfigurationOverview.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		grpConfigurationOverview.setText("Configuration Overview");
+		grpConfigurationOverview.setText("Apps");
 
 		tableViewer = new TableViewer(grpConfigurationOverview,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);

@@ -2,64 +2,65 @@ grammar eu.netide.SysReq with org.eclipse.xtext.common.Terminals
 
 generate sysReq "http://www.netide.eu/SysReq"
 
-Model:
-	(app += App)*;
+//Model:
+//	(app += App)*;
 	
 App:
-	'app' (name = STRING)?
+	{App}
+	'app' ':'
 	'{'
-		'name' STRING
-		'version' STRING
-		(controller += Controller)|
-		(hardware += Hardware)|
-		(network += Network)|
-		(software += Software)
+		'name' ':' name = STRING ','
+		'version' ':' version=STRING ','
+		(controller += Controller) ','
+		((hardware += Hardware) ',')?
+		((network += Network) ',')?
+		((software += Software) ',')?
 	'}'
 ;
 
 Controller:
 	{Controller}
-	'controller' (name = STRING)?
+	'controller' ':'
 	'{'
-		'name' STRING
-		'version' STRING
+		'name' ':' name=STRING
+		'version' ':' version=STRING
 	'}'
 ;
 
 
 Hardware:
 	{Hardware}
-	'hardwareReq' (name = STRING)?
+	'hardwareReq' ':'
 	'{'
-		'CPU' STRING
-		'RAM' STRING
-		'OS' STRING
+		('CPU' ':' cpu=STRING ',')?
+		('RAM' ':' ram=STRING ',')?
+		('OS' ':' os=STRING ',')?
 	'}'
 ;
 
 Network:
 	{Network}
-	'networkReq' (name = STRING)?
+	'networkReq' ':'
 	'{'
-		'protocolType' STRING
-		'switchType' STRING
+		('protocolType' ':' networkReq=STRING)?
+		('switchType' ':' switchType=STRING)?
 	'}'
 ;
 
 Software:
 	{Software}
-	'softwareReq' (name = STRING)?
+	'softwareReq' ':'
 	'{'
-		(software += SoftwareList)*
+		(software += SoftwareList) (',' software += SoftwareList)* (',')?
 	'}'
 ;
 
 SoftwareList:
 	{SoftwareList}
-	'software' (name = STRING)?
+	'software' ':'
 	'{'
-		'name' STRING
-		'version' STRING
+		'name' ':' name=STRING
+		'version' ':' version=STRING
 	'}'
 ;
 

@@ -7,11 +7,9 @@
     editorPluginID="eu.netide.sysreq.editor" runtimeVersion="2.11">
   <genPackages prefix="SysReq" basePackage="eu.netide" disposableProviderFactory="true"
       fileExtensions="sysreq" ecorePackage="SysReq.ecore#/">
-    <genClasses ecoreClass="SysReq.ecore#//Model">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SysReq.ecore#//Model/app"/>
-    </genClasses>
     <genClasses ecoreClass="SysReq.ecore#//App">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//App/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//App/version"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SysReq.ecore#//App/controller"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SysReq.ecore#//App/hardware"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SysReq.ecore#//App/network"/>
@@ -19,19 +17,23 @@
     </genClasses>
     <genClasses ecoreClass="SysReq.ecore#//Controller">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Controller/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Controller/version"/>
     </genClasses>
     <genClasses ecoreClass="SysReq.ecore#//Hardware">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Hardware/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Hardware/cpu"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Hardware/ram"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Hardware/os"/>
     </genClasses>
     <genClasses ecoreClass="SysReq.ecore#//Network">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Network/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Network/networkReq"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Network/switchType"/>
     </genClasses>
     <genClasses ecoreClass="SysReq.ecore#//Software">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Software/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference SysReq.ecore#//Software/software"/>
     </genClasses>
     <genClasses ecoreClass="SysReq.ecore#//SoftwareList">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//SoftwareList/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//SoftwareList/version"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
