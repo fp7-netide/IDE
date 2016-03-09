@@ -34,7 +34,8 @@ class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 	}
 
 	override performFinish() {
-		var job = new ProjectCreationJob("NetIDE Project Creation", page.projectName, page.parameters, page.sysreq, page.composition)
+		var job = new ProjectCreationJob("NetIDE Project Creation", page.projectName, page.parameters, page.sysreq,
+			page.composition)
 
 		job.schedule
 
@@ -48,9 +49,8 @@ class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 		Boolean sysreq
 
 		Boolean parameters
-		
+
 		Boolean composition
-		
 
 		String paramstring = '''
 			{
@@ -72,7 +72,7 @@ class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 				
 			}
 		'''
-		
+
 		String compstring = '''
 			<?xml version="1.0" encoding="utf-8"?>
 			<CompositionSpecification xmlns="http://netide.eu/schemas/compositionspecification/v1">
@@ -84,7 +84,6 @@ class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 				</Composition>
 			</CompositionSpecification>
 		'''
-	
 
 		new(String name, String projectname, Boolean parameters, Boolean sysreq, Boolean composition) {
 			super(name)
@@ -109,45 +108,46 @@ class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 			var sessionResourceURI = URI.createPlatformResourceURI(
 				String.format("/%s/representations.aird", projectName), true)
 
-			
 			var session = SessionManager.INSTANCE.getSession(sessionResourceURI, monitor) as Session
 			session.open(monitor)
-			
+
 			var usersession = UserSession.from(session)
 			usersession.selectViewpoints(#["Topology"])
-			
+
 			var ne = session.getSemanticResources().iterator.next.getContents.get(0)
-			
+
 			usersession.save(monitor)
 			session.open(monitor)
-			
+
 			var viewpoints = session.getSelectedViewpoints(true)
 			var viewpoint = viewpoints.iterator.next()
-			
+
 			var desc = DialectManager.INSTANCE.getAvailableRepresentationDescriptions(viewpoints, ne).iterator.next
-			
-			//DialectManager.INSTANCE.createRepresentation(projectName, ne, desc, session, monitor)
-			
+
+			// DialectManager.INSTANCE.createRepresentation(projectName, ne, desc, session, monitor)
 			var createViewCommand = new CreateRepresentationCommand(session, desc, ne, projectName, monitor)
 			session.getTransactionalEditingDomain().getCommandStack().execute(createViewCommand)
-			
+
 			session.createView(viewpoint, newHashSet(ne), monitor)
-			
+
 			var appsFolder = project.getFolder("apps")
 			appsFolder.create(false, true, null)
-			
+
 			var compositionFolder = project.getFolder("composition")
 			compositionFolder.create(false, true, null)
-			
+
 			if (composition) {
 				var compfile = project.getFile("composition/composition.xml")
 				compfile.create(new ByteArrayInputStream(compstring.getBytes("UTF-8")), false, monitor)
 			}
 
+			var resfolder = project.getFolder("results")
+			resfolder.create(false, true, null)
+
 			if (parameters) {
 				var templateFolder = project.getFolder("templates")
 				templateFolder.create(false, true, null)
-				
+
 				var paramFile = project.getFile("parameters.json")
 				paramFile.create(new ByteArrayInputStream(paramstring.getBytes("UTF-8")), false, monitor)
 			}

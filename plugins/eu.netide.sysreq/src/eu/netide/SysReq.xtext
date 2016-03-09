@@ -22,8 +22,8 @@ Controller:
 	{Controller}
 	'controller' ':'
 	'{'
-		'name' ':' name=STRING
-		'version' ':' version=STRING
+		'name' ':' name=STRING ','
+		('version' ':' version=STRING ',')?
 	'}'
 ;
 
