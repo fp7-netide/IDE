@@ -18,6 +18,8 @@
     <genClasses ecoreClass="SysReq.ecore#//Controller">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Controller/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Controller/version"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Controller/entrypoint"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Controller/features"/>
     </genClasses>
     <genClasses ecoreClass="SysReq.ecore#//Hardware">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute SysReq.ecore#//Hardware/cpu"/>
