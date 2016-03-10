@@ -65,7 +65,7 @@
       <ports id="2" connector="//@networks.0/@connectors.9"/>
       <ports id="3" connector="//@networks.0/@connectors.10"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW2" dpid="2" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW2" ip="" dpid="2" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.11"/>
       <ports id="2" connector="//@networks.0/@connectors.21"/>
       <ports id="3" connector="//@networks.0/@connectors.9"/>

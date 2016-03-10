@@ -133,7 +133,7 @@ class ControllerDeploymentTab3 extends AbstractLaunchConfigurationTab {
 			}
 		})
 
-		val chooserbutton = createPushButton(group, "Choose Model", null)
+		val chooserbutton = createPushButton(group, "Choose File", null)
 		chooserbutton.addMouseListener(new MouseAdapter() {
 			override mouseUp(MouseEvent e) {
 				super.mouseUp(e)

@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.ui,
  eu.netide.parameters.language.ui,
  org.eclipse.xtext.junit4,
  org.eclipse.ui.workbench;resolution:=optional,
- org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
+ org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: eu.netide.parameters.language

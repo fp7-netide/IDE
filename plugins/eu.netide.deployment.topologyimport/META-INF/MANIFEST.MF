@@ -16,5 +16,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.xtend.lib.macro
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: eu.netide.deployment.topologyimport
+Export-Package: eu.netide.deployment.topologyimport,
+ eu.netide.deployment.topologyimport.json
 Import-Package: org.eclipse.core.resources

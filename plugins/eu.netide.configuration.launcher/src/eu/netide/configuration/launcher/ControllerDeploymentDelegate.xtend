@@ -43,12 +43,11 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		val String sshPort = configuration.getAttribute("target.ssh.port", "22")
 		val String sshUsername = configuration.getAttribute("target.ssh.username", "")
 		val String sshIdFile = configuration.getAttribute("target.ssh.idfile", "")
-		
+
 		var Backend backend
-		
+
 		if (isSsh)
 			backend = new SshBackend(sshHostname, Integer.parseInt(sshPort), sshUsername, sshIdFile)
-		
 
 		var NetIDE_server = ""
 
@@ -68,14 +67,14 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			return
 		}
 
-		var factory = if (isVagrant) new StarterFactory  else new StarterFactory(backend)
-		
+		var factory = if(isVagrant) new StarterFactory else new StarterFactory(backend)
+
 		val reg = IStarterRegistry.instance
 
 		if (monitor.isCanceled()) {
 			return;
 		}
-		
+
 		val vagrantManager = new VagrantManager(configuration, monitor)
 		val sshManager = new SshManager(configuration, monitor)
 
@@ -84,19 +83,31 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 			vagrantManager.up
 			if(configuration.attributes.get("reprovision") as Boolean) vagrantManager.provision
 		}
-		
+
 		if (isSsh) {
 			sshManager.copyApps
 			sshManager.copyTopo
 			sshManager.provision
-			
-		}
-		
 
+		}
+
+		Thread.sleep(2000)
 
 		// Iterate controllers in the network model and start apps for them 
 		for (c : ne.controllers) {
 			var controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
+
+			if (controllerplatform == NetIDE.CONTROLLER_CORE) {
+				var coreStarter = factory.createCoreStarter(configuration, monitor)
+				reg.register(coreStarter.safeName, coreStarter)
+				coreStarter.asyncStart
+
+				Thread.sleep(2000)
+
+				var emulatorStarter = factory.createEmulatorStarter(configuration, monitor)
+				reg.register(emulatorStarter.safeName, emulatorStarter)
+				emulatorStarter.asyncStart
+			}
 
 			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
 				var backendStarter = factory.createBackendStarter(configuration, c, monitor)
@@ -140,15 +151,14 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 		val mnstarter = factory.createMininetStarter(configuration, monitor)
 		reg.register(mnstarter.safeName, mnstarter)
 //		mnstarter.syncStart
-
 		Display.getDefault().asyncExec(
 			new Runnable() {
 				@Override
 				override run() {
 					var dummygui = PlatformUI.getWorkbench().activeWorkbenchWindow.activePage.showView(
 						DummyGUI.ID) as DummyGUI
-					if (isVagrant) dummygui.manager = vagrantManager
-					if (isSsh) dummygui.manager = sshManager
+					if(isVagrant) dummygui.manager = vagrantManager
+					if(isSsh) dummygui.manager = sshManager
 					dummygui.mininet = mnstarter
 				}
 			})

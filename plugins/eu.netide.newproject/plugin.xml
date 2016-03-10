@@ -16,6 +16,12 @@
             name="NetIDE Project"
             project="true">
       </wizard>
+      <wizard
+            category="eu.netide.newproject.category"
+            class="eu.netide.newproject.newapp.NewAppWizard"
+            id="eu.netide.newproject.newapp"
+            name="NetIDE App">
+      </wizard>
    </extension>
 
 </plugin>

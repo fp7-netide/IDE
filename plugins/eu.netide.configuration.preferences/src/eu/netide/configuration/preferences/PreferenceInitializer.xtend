@@ -22,6 +22,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			switch Platform.getOS {
 				case Platform.OS_LINUX: "/usr/bin/vagrant"
 				case Platform.OS_WIN32: "C:\\Hashicorp\\Vagrant\\bin\\vagrant.exe"
+				case Platform.OS_MACOSX: "/opt/vagrant/bin/vagrant" 
 			}
 		)
 		store.setDefault(

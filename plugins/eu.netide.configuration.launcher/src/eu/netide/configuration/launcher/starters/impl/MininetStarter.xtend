@@ -5,11 +5,13 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.core.runtime.jobs.Job
+import org.eclipse.core.runtime.Status
 
 class MininetStarter extends Starter {
 
 	private NetworkEnvironment ne
-
+	@Deprecated
 	new(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		super("Mininet", configuration, monitor)
 
@@ -19,12 +21,26 @@ class MininetStarter extends Starter {
 		this.ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
 	}
 
+	override void stop() {
+		var job = new Job("Stop" + name) {
+			override protected run(IProgressMonitor monitor) {
+				startProcess(
+					String.format("\'screen -S %s -p 0 -X stuff \"quit\\n\"\'",
+						safeName))
+					return Status.OK_STATUS
+				}
 
-	override getCommandLine() {
-		var mnpath = "sudo python ~/mn-configs/" +
-			if(ne.name != null && ne.name != "") ne.name + "_run.py" else "NetworkEnvironment" + "_run.py"
+			}
+			job.schedule
+		}
 
-		return mnpath
+		override getCommandLine() {
+			var mnpath = "sudo python ~/netide/mn-configs/" +
+				if(ne.name != null && ne.name != "") ne.name.replaceAll("[-/()]", "_") +
+					"_run.py" else "NetworkEnvironment" + "_run.py"
+
+			return mnpath
+		}
+
 	}
-
-}
+	

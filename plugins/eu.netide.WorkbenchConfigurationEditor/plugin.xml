@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="eu.netide.workbenchconfigurationeditor.view.WbConfigurationEditor"
+            extensions="wb"
+            icon="icons/netide.png"
+            id="workbenchconfigurationeditor.editors.WbConfigurationEditor"
+            name="Workbench Configuration Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="workbenchConfigurationEditor"
+            name="Workbench Configuration Editor">
+      </category>
+      <wizard
+            category="workbenchConfigurationEditor"
+            class="eu.netide.workbenchconfigurationeditor.wizards.Configuration_Wizard"
+            icon="icons/netide.png"
+            id="workbenchconfigurationeditor.wizards.Configuration_Wizard"
+            name="Workbench Configuration">
+      </wizard>
+   </extension>
+
+</plugin>
