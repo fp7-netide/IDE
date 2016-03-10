@@ -14,16 +14,12 @@
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
-      <category
-            id="workbenchConfigurationEditor"
-            name="Workbench Configuration Editor">
-      </category>
       <wizard
-            category="workbenchConfigurationEditor"
+            category="eu.netide.newproject.category"
             class="eu.netide.workbenchconfigurationeditor.wizards.Configuration_Wizard"
             icon="icons/netide.png"
             id="workbenchconfigurationeditor.wizards.Configuration_Wizard"
-            name="Workbench Configuration">
+            name="NetIDE Configuration Manager">
       </wizard>
    </extension>
 
