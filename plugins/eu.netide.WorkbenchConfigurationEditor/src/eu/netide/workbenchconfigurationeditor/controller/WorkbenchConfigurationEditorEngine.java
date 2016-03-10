@@ -64,7 +64,8 @@ public class WorkbenchConfigurationEditorEngine {
 		this.statusModel.setProfileList(parsed[1]);
 		this.statusModel.setCompositionModel(XmlHelper.getCompositionModel());
 
-		ControllerManager.initControllerManager(LaunchConfigurationModel.getTopology(), this.statusModel, editor.getFile());
+		ControllerManager.initControllerManager(LaunchConfigurationModel.getTopology(), this.statusModel,
+				editor.getFile());
 	}
 
 	private void initDataBinding() {
@@ -77,65 +78,49 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addStatusLabelDataBinding(this.editor.getCoreStatusLabel(), Constants.CORE_RUNNING_MODEL);
 
 		this.addTableDataBinding(this.statusModel.getModelList());
-		
+
 		this.addButtonDisabledDataBinding(this.editor.getSshUpButton(), Constants.SSH_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getSshDownButton(), Constants.SSH_RUNNING_MODEL);
-		
+
 		this.addButtonDisabledDataBinding(this.editor.getBtnVagrantUp(), Constants.VAGRANT_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnProvision_2(), Constants.VAGRANT_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnVagrantHalt(), Constants.VAGRANT_RUNNING_MODEL);
-		
+
 		this.addButtonDisabledDataBinding(this.editor.getBtnMininetOn(), Constants.MININET_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnMininetOff(), Constants.MININET_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnReattachMininet(), Constants.MININET_RUNNING_MODEL);
-		
-				
+
 		this.addButtonDisabledDataBinding(this.editor.getStartCoreBtn(), Constants.CORE_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getStopCoreBtn(), Constants.CORE_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnReattachCore(), Constants.CORE_RUNNING_MODEL);
-		
+
 		this.addButtonEnabledDataBinding(this.editor.getBtnCopyApps(), Constants.SSH_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnProvision_1(), Constants.SSH_RUNNING_MODEL);
-		
-		this.addButtonDisabledDataBinding(this.editor.getStartServerController(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
-		this.addButtonEnabledDataBinding(this.editor.getBtnStopServerController(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
+
+		this.addButtonDisabledDataBinding(this.editor.getStartServerController(),
+				Constants.SERVER_CONTROLLER_RUNNING_MODEL);
+		this.addButtonEnabledDataBinding(this.editor.getBtnStopServerController(),
+				Constants.SERVER_CONTROLLER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnReattachServer(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnImportTopology(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
-		
+
 		this.addButtonDisabledDataBinding(this.editor.getBtnDebuggerOn(), Constants.DEBUGGER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnDebuggerOff(), Constants.DEBUGGER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnDebuggerReattach(), Constants.DEBUGGER_RUNNING_MODEL);
-		
+
 		this.addStatusLabelDataBinding(this.editor.getLblDebuggerStatus(), Constants.DEBUGGER_RUNNING_MODEL);
-		
+
 		this.addComboDataBinding(this.statusModel.getProfileList());
 		this.addServerControllerComboDataBinding();
 		this.addTextDataBinding(this.editor.getTextCompositionPath(), Constants.COMPOSITION_MODEL_PATH);
 	}
-	
+
 	private void addTextDataBinding(Text text, String property) {
 		IObservableValue textObs = WidgetProperties.text().observe(text);
-		IObservableValue pathObs = BeanProperties.value(CompositionModel.class, property).observe(this.statusModel.getCompositionModel());
+		IObservableValue pathObs = BeanProperties.value(CompositionModel.class, property)
+				.observe(this.statusModel.getCompositionModel());
 		this.ctx.bindValue(textObs, pathObs);
 	}
-
-//	private void addComboDataBindingComposition() {
-//		WritableList input = new WritableList(this.statusModel.getCompositionList(), CompositionModel.class);
-//		this.statusModel.setWritableCompositionList(input);
-//
-//		ComboViewer cv = this.editor.getCompositionComboViewer();
-//		ViewerSupport.bind(cv, input, BeanProperties.value(Constants.COMPOSITION_MODEL_PATH));
-//
-//		// bind selectionIndex to model
-//		// selectionIndex == profileListIndex, use it to match selection to
-//		// actual model
-//		IObservableValue selection = WidgetProperties.singleSelectionIndex().observe(cv.getCombo());
-//		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, Constants.COMPOSITION_SELECTION_INDEX)
-//				.observe(this.statusModel);
-//
-//		this.ctx.bindValue(modelValue, selection);
-//
-//	}
 
 	private void addComboDataBinding(ArrayList<SshProfileModel> profileList) {
 
@@ -153,6 +138,9 @@ public class WorkbenchConfigurationEditorEngine {
 		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, Constants.SSH_COMBO_SELECTION_INDEX)
 				.observe(this.statusModel);
 
+		if(!input.isEmpty())
+			cv.getCombo().select(0);
+		
 		this.ctx.bindValue(modelValue, selection);
 	}
 
@@ -164,6 +152,8 @@ public class WorkbenchConfigurationEditorEngine {
 		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, Constants.SERVER_CONTROLLER_SELECTION)
 				.observe(this.statusModel);
 
+		cv.getCombo().select(0);
+		
 		this.ctx.bindValue(modelValue, selection);
 	}
 
@@ -193,7 +183,7 @@ public class WorkbenchConfigurationEditorEngine {
 		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, property).observe(this.statusModel);
 		this.ctx.bindValue(widgetValue, modelValue);
 	}
-	
+
 	private void addButtonDisabledDataBinding(Button button, String property) {
 
 		IObservableValue widgetValue = WidgetProperties.enabled().observe(button);
@@ -201,10 +191,10 @@ public class WorkbenchConfigurationEditorEngine {
 		UpdateValueStrategy modelToView = new UpdateValueStrategy();
 		modelToView.setConverter(new RunningBoolInverter(Boolean.class, Boolean.class));
 		UpdateValueStrategy viewToModel = new UpdateValueStrategy();
-		
+
 		this.ctx.bindValue(widgetValue, modelValue, viewToModel, modelToView);
 	}
-	
+
 	private void addStatusLabelDataBinding(Label label, String property) {
 
 		IObservableValue widgetValue = WidgetProperties.text().observe(label);
@@ -244,11 +234,8 @@ public class WorkbenchConfigurationEditorEngine {
 		for (SshProfileModel s : this.statusModel.getProfileList()) {
 			XmlHelper.addSshProfileToXmlFile(doc, s, inputFile);
 		}
-		
+
 		XmlHelper.addComposition(doc, this.statusModel.getCompositionModel(), inputFile);
-		
-//		for(CompositionModel m : this.statusModel.getCompositionModel()){
-//			XmlHelper.addCompositionModel(doc, model, file);(doc, m, inputFile);
-//		}
+
 	}
 }

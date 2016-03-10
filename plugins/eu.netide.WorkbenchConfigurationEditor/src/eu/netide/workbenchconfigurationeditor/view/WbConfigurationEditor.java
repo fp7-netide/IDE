@@ -20,6 +20,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -36,6 +38,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -46,8 +49,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.EditorPart;
 
 import eu.netide.configuration.utils.NetIDE;
-import eu.netide.deployment.topologyimport.TopologyImport;
-import eu.netide.deployment.topologyimport.TopologyImportFactory;
 import eu.netide.workbenchconfigurationeditor.controller.ControllerManager;
 import eu.netide.workbenchconfigurationeditor.controller.WorkbenchConfigurationEditorEngine;
 import eu.netide.workbenchconfigurationeditor.dialogs.ConfigurationShell;
@@ -56,9 +57,6 @@ import eu.netide.workbenchconfigurationeditor.model.CompositionModel;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 import eu.netide.workbenchconfigurationeditor.util.Constants;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.ModifyEvent;
 
 /**
  * 
@@ -93,7 +91,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		file = fileInput.getFile();
 		setSite(site);
 		setInput(input);
-		
+
 		setPartName("Workbench");
 	}
 
@@ -151,7 +149,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 							CompositionModel m = new CompositionModel();
 							m.setCompositionPath(path);
 							engine.getStatusModel().getCompositionModel().setCompositionPath(path);
-							
+
 							setIsDirty(true);
 						} else {
 							showMessage("Please select a Composition.");
@@ -417,6 +415,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					model.setSecondPort(result[7]);
 
 					engine.getStatusModel().addEntryToSSHList(model);
+					
+					sshProfileCombo.select(engine.getStatusModel().getProfileList().indexOf(model));
 					setIsDirty(true);
 				}
 
@@ -438,10 +438,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 						if (sshShell.deleteEntry()) {
 							engine.getStatusModel().removeEntryFromSSHList(profile);
+							sshProfileCombo.clearSelection();
+							sshProfileCombo.deselectAll();
 						}
 
-						sshProfileCombo.clearSelection();
-						sshProfileCombo.deselectAll();
 					}
 
 				} else {
@@ -647,7 +647,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		stopCoreBtn = new Button(grpCore, SWT.NONE);
 		stopCoreBtn.setText("Off");
-		
+
 		btnReattachCore = new Button(grpCore, SWT.NONE);
 		btnReattachCore.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -709,12 +709,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		startServerController = new Button(grpServerController, SWT.BORDER);
 
 		startServerController.setText("On");
-		
-				btnStopServerController = new Button(grpServerController, SWT.NONE);
-				btnStopServerController.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-				
-						btnStopServerController.setText("Off");
-		
+
+		btnStopServerController = new Button(grpServerController, SWT.NONE);
+		btnStopServerController.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+
+		btnStopServerController.setText("Off");
+
 		btnReattachServer = new Button(grpServerController, SWT.NONE);
 		btnReattachServer.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -750,7 +750,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnMininetOff = new Button(grpMininet, SWT.NONE);
 
 		btnMininetOff.setText("Off");
-		
+
 		btnReattachMininet = new Button(grpMininet, SWT.NONE);
 		btnReattachMininet.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -759,18 +759,18 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnReattachMininet.setText("Reattach");
-		
+
 		grpDebugger = new Group(composite_2, SWT.NONE);
 		grpDebugger.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpDebugger.setText("Debugger");
 		grpDebugger.setLayout(new GridLayout(4, false));
-		
+
 		lblDebuggerStatus = new Label(grpDebugger, SWT.NONE);
 		GridData gd_lblDebuggerStatus = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_lblDebuggerStatus.widthHint = 99;
 		lblDebuggerStatus.setLayoutData(gd_lblDebuggerStatus);
 		lblDebuggerStatus.setText("Status: Offline");
-		
+
 		btnDebuggerOn = new Button(grpDebugger, SWT.NONE);
 		btnDebuggerOn.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -779,7 +779,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnDebuggerOn.setText("On");
-		
+
 		btnDebuggerOff = new Button(grpDebugger, SWT.NONE);
 		btnDebuggerOff.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -788,7 +788,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnDebuggerOff.setText("Off");
-		
+
 		btnDebuggerReattach = new Button(grpDebugger, SWT.NONE);
 		btnDebuggerReattach.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -1120,24 +1120,31 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	public Text getTextCompositionPath() {
 		return textCompositionPath;
 	}
+
 	public Button getBtnReattachCore() {
 		return btnReattachCore;
 	}
+
 	public Button getBtnReattachServer() {
 		return btnReattachServer;
 	}
+
 	public Button getBtnReattachMininet() {
 		return btnReattachMininet;
 	}
+
 	public Button getBtnDebuggerOn() {
 		return btnDebuggerOn;
 	}
+
 	public Button getBtnDebuggerOff() {
 		return btnDebuggerOff;
 	}
+
 	public Button getBtnDebuggerReattach() {
 		return btnDebuggerReattach;
 	}
+
 	public Label getLblDebuggerStatus() {
 		return lblDebuggerStatus;
 	}

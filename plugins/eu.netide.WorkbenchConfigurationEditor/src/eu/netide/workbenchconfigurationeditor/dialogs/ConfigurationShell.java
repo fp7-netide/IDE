@@ -49,6 +49,10 @@ public class ConfigurationShell extends Shell {
 				this.platformCombo.select(platformIndex);
 				this.platformSet = true;
 				
+				if (platformCombo.getItem(platformIndex).equals(NetIDE.CONTROLLER_ENGINE)) {
+					client_server.setVisible(true);
+				}
+				
 				if (!model.getClientController().equals("")) {
 					int clientIndex = this.clientControllerCombo.indexOf(model.getClientController());
 					this.clientControllerCombo.select(clientIndex);
