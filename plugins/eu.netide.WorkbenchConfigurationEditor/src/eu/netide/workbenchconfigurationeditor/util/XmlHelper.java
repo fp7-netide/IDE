@@ -25,10 +25,12 @@ import org.xml.sax.SAXException;
 import eu.netide.workbenchconfigurationeditor.model.CompositionModel;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
+import eu.netide.workbenchconfigurationeditor.model.TopologyModel;
 
 public class XmlHelper {
 
 	private static CompositionModel compositionModel;
+	private static TopologyModel topologyModel;
 
 	public static void saveContentToXml(Document doc, IFile file) {
 		saveContentToXml(doc, new File(file.getLocation().toOSString()));
@@ -62,6 +64,19 @@ public class XmlHelper {
 		if (wb.getNodeName().equals(XmlConstants.WORKBENCH)) {
 			Element compo = doc.createElement(XmlConstants.COMPOSITION);
 			compo.setTextContent(model.getCompositionPath());
+			compo.setAttribute("id", model.getID());
+			wb.appendChild(compo);
+			
+			XmlHelper.saveContentToXml(doc, file);
+		}
+	}
+	
+	public static void addTopology(Document doc, TopologyModel model, IFile file) {
+		Node wb = doc.getFirstChild();
+
+		if (wb.getNodeName().equals(XmlConstants.WORKBENCH)) {
+			Element compo = doc.createElement(XmlConstants.ELEMENT_TOPOLOGY_PATH);
+			compo.setTextContent(model.getTopologyPath());
 			compo.setAttribute("id", model.getID());
 			wb.appendChild(compo);
 			
@@ -232,6 +247,7 @@ public class XmlHelper {
 				parseModelNode(doc.getChildNodes(), null);
 				parseProfileNode(doc.getChildNodes(), null);
 				parsePathNode(doc.getChildNodes());
+				parseTopologyNode(doc.getChildNodes());
 
 			}
 
@@ -373,9 +389,7 @@ public class XmlHelper {
 				case XmlConstants.ELEMENT_APP_PATH:
 					model.setAppPath(tempNode.getTextContent());
 					break;
-				case XmlConstants.ELEMENT_TOPOLOGY_PATH:
-					LaunchConfigurationModel.setTopology(tempNode.getTextContent());
-					break;
+
 				case XmlConstants.COMPOSITION_PATH:
 					compositionModel.setCompositionPath(tempNode.getTextContent());
 					break;
@@ -422,5 +436,49 @@ public class XmlHelper {
 
 		}
 
+	}
+	
+	private static void parseTopologyNode(NodeList nodeList) {
+
+		for (int count = 0; count < nodeList.getLength(); count++) {
+
+			Node tempNode = nodeList.item(count);
+			// make sure it's element node.
+			if (tempNode.getNodeType() == Node.ELEMENT_NODE) {
+
+				switch (tempNode.getNodeName()) {
+				case XmlConstants.ELEMENT_TOPOLOGY_PATH:
+					 topologyModel = new TopologyModel();
+					 topologyModel.setTopologyPath(tempNode.getTextContent());
+					
+					if (tempNode.hasAttributes()) {
+						NamedNodeMap nodeMap = tempNode.getAttributes();
+
+						for (int i = 0; i < nodeMap.getLength(); i++) {
+
+							Node node = nodeMap.item(i);
+							if (node.getNodeName().equals("id")) {
+								topologyModel.setID(node.getNodeValue());
+							}
+						}
+					}
+					break;
+				default:
+					// System.err.println("No match for node: " +
+					// tempNode.getNodeName());
+
+				}
+
+				if (tempNode.hasChildNodes()) {
+					parsePathNode(tempNode.getChildNodes());
+				}
+			}
+
+		}
+
+	}
+
+	public static TopologyModel getTopologyModel() {
+		return topologyModel;
 	}
 }

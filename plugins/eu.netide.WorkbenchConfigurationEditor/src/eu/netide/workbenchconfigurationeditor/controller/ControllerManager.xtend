@@ -222,14 +222,14 @@ class ControllerManager {
 			this.backend = null
 			val starter = configToStarter.values
 
-			for(starterList : starter){
-				for(s : starterList){
+			for (starterList : starter) {
+				for (s : starterList) {
 					s.backend = this.backend
 				}
 			}
 			mnstarter.backend = this.backend
 			serverControllerStarter.backend = this.backend
-			
+
 		}
 	}
 
@@ -292,7 +292,7 @@ class ControllerManager {
 	}
 
 	public def reattachServerController() {
-		
+
 		if (serverControllerStarter != null) {
 			serverControllerStarter.reattach
 		}
@@ -411,7 +411,6 @@ class ControllerManager {
 			jobSingle.schedule();
 		// Thread.sleep(2000)
 		}
-
 
 		Thread.sleep(2000)
 
@@ -548,7 +547,5 @@ class ControllerManager {
 
 		compositionJob.schedule
 	}
-
-
 
 }

@@ -56,6 +56,7 @@ import eu.netide.workbenchconfigurationeditor.dialogs.SShShell;
 import eu.netide.workbenchconfigurationeditor.model.CompositionModel;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
+import eu.netide.workbenchconfigurationeditor.model.TopologyModel;
 import eu.netide.workbenchconfigurationeditor.util.Constants;
 
 /**
@@ -112,6 +113,42 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	}
 
+	public void addTopoButtonListener() {
+		this.btnBrowse_topo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String path = null;
+
+				IFile selectedFile = null;
+				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(container.getShell(),
+						new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
+				dialog.setTitle("Tree Selection");
+				dialog.setMessage("Select the elements from the tree:");
+				dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+				if (dialog.open() == ElementTreeSelectionDialog.OK) {
+					Object[] result = dialog.getResult();
+					if (result.length == 1) {
+						if (result[0] instanceof IFile) {
+
+							selectedFile = (IFile) result[0];
+
+							path = selectedFile.getFullPath().toOSString();
+
+							TopologyModel m = new TopologyModel();
+							m.setTopologyPath(path);
+							engine.getStatusModel().getTopologyModel().setTopologyPath(path);
+
+							setIsDirty(true);
+						} else {
+							showMessage("Please select a Topology.");
+						}
+
+					}
+				}
+			}
+		});
+	}
+
 	private void addCoreButtonListener() {
 		this.startCoreBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -148,7 +185,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 							path = selectedFile.getFullPath().toOSString();
 							CompositionModel m = new CompositionModel();
 							m.setCompositionPath(path);
-							engine.getStatusModel().getCompositionModel().setCompositionPath(path);
+							engine.getStatusModel().setCompositionModel(m);
 
 							setIsDirty(true);
 						} else {
@@ -415,7 +452,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					model.setSecondPort(result[7]);
 
 					engine.getStatusModel().addEntryToSSHList(model);
-					
+
 					sshProfileCombo.select(engine.getStatusModel().getProfileList().indexOf(model));
 					setIsDirty(true);
 				}
@@ -619,7 +656,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		GridData gd_composite_2 = new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1);
 		gd_composite_2.widthHint = 624;
-		gd_composite_2.heightHint = 244;
+		gd_composite_2.heightHint = 290;
 		composite_2.setLayoutData(gd_composite_2);
 		composite_2.setLayout(new GridLayout(2, false));
 
@@ -761,7 +798,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnReattachMininet.setText("Reattach");
 
 		grpDebugger = new Group(composite_2, SWT.NONE);
-		grpDebugger.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		GridData gd_grpDebugger = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_grpDebugger.heightHint = 44;
+		grpDebugger.setLayoutData(gd_grpDebugger);
 		grpDebugger.setText("Debugger");
 		grpDebugger.setLayout(new GridLayout(4, false));
 
@@ -797,7 +836,17 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnDebuggerReattach.setText("Reattach");
-		new Label(composite_2, SWT.NONE);
+
+		grpTopology = new Group(composite_2, SWT.NONE);
+		grpTopology.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		grpTopology.setText("Topology ");
+		grpTopology.setLayout(new GridLayout(2, false));
+
+		topo_text = new Text(grpTopology, SWT.BORDER);
+		topo_text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		btnBrowse_topo = new Button(grpTopology, SWT.NONE);
+		btnBrowse_topo.setText("Browse");
 		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 
@@ -1028,6 +1077,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Button btnDebuggerOn;
 	private Button btnDebuggerOff;
 	private Label lblDebuggerStatus;
+	private Group grpTopology;
+	private Text topo_text;
+	private Button btnBrowse_topo;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;
@@ -1147,5 +1199,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	public Label getLblDebuggerStatus() {
 		return lblDebuggerStatus;
+	}
+
+	public Text getTopologyText() {
+		return this.topo_text;
 	}
 }

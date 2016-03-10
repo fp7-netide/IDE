@@ -13,8 +13,7 @@ public class LaunchConfigurationModel {
 	private String platform;
 	private String id;
 	private String clientController;
-	// TODO: remove topology here and move to a more appropriate place
-	private static String topology;
+
 	private String appName;
 	private String appPort;
 	private boolean running;
@@ -80,14 +79,6 @@ public class LaunchConfigurationModel {
 	public void setClientController(String clientController) {
 		changes.firePropertyChange(Constants.CLIENT_CONTROLLER_MODEL, this.clientController,
 				this.clientController = clientController);
-	}
-
-	public static String getTopology() {
-		return topology;
-	}
-
-	public static void setTopology(String topology) {
-		LaunchConfigurationModel.topology = topology;
 	}
 
 	@Override

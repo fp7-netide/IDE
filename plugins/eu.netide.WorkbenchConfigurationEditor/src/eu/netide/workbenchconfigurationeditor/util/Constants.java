@@ -22,8 +22,9 @@ public class Constants {
 	public static final String LAUNCH_TABLE_INDEX = "launchTableIndex";
 	public static final String SERVER_CONTROLLER_SELECTION = "serverControllerSelection";
 	public static final String COMPOSITION_SELECTION_INDEX = "compositionSelectionIndex";
-	
-	
+
+	public static final String TOPOLOGY_MODEL_PATH = "topologyPath";
+
 	public static final String COMPOSITION_MODEL_PATH = "compositionPath";
 
 	// SSH Profile Model Constants
@@ -39,6 +40,5 @@ public class Constants {
 	// UI Constants
 	public static final String LABEL_RUNNING = "running";
 	public static final String LABEL_OFFLINE = "offline";
-	
 
 }

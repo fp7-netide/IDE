@@ -22,6 +22,7 @@ public class UiStatusModel {
 
 	private String serverControllerSelection;
 	private CompositionModel compositionModel;
+	private TopologyModel topologyModel;
 
 	private WritableList profileWritableList;
 	private WritableList modelWritableList;
@@ -171,6 +172,14 @@ public class UiStatusModel {
 	public void setCompositionModel(CompositionModel model) {
 		changes.firePropertyChange(Constants.COMPOSITION_MODEL_PATH, this.compositionModel,
 				this.compositionModel = model);
+	}
+
+	public void setTopologyModel(TopologyModel model) {
+		changes.firePropertyChange(Constants.TOPOLOGY_MODEL, this.topologyModel, this.topologyModel = model);
+	}
+
+	public TopologyModel getTopologyModel() {
+		return this.topologyModel;
 	}
 
 	public void addEntryToModelList(LaunchConfigurationModel model) {

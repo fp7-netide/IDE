@@ -19,6 +19,7 @@ import org.w3c.dom.Document;
 import eu.netide.workbenchconfigurationeditor.model.CompositionModel;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
+import eu.netide.workbenchconfigurationeditor.model.TopologyModel;
 import eu.netide.workbenchconfigurationeditor.model.UiStatusModel;
 import eu.netide.workbenchconfigurationeditor.util.Constants;
 import eu.netide.workbenchconfigurationeditor.util.RunningBoolInverter;
@@ -63,9 +64,15 @@ public class WorkbenchConfigurationEditorEngine {
 		this.statusModel.setModelList(parsed[0]);
 		this.statusModel.setProfileList(parsed[1]);
 		this.statusModel.setCompositionModel(XmlHelper.getCompositionModel());
+		this.statusModel.setTopologyModel(XmlHelper.getTopologyModel());
 
-		ControllerManager.initControllerManager(LaunchConfigurationModel.getTopology(), this.statusModel,
-				editor.getFile());
+		String topoPath;
+		if (this.statusModel.getTopologyModel() != null)
+			topoPath = this.statusModel.getTopologyModel().getTopologyPath();
+		else
+			topoPath = "";
+
+		ControllerManager.initControllerManager(topoPath, this.statusModel, editor.getFile());
 	}
 
 	private void initDataBinding() {
@@ -112,13 +119,15 @@ public class WorkbenchConfigurationEditorEngine {
 
 		this.addComboDataBinding(this.statusModel.getProfileList());
 		this.addServerControllerComboDataBinding();
-		this.addTextDataBinding(this.editor.getTextCompositionPath(), Constants.COMPOSITION_MODEL_PATH);
+		this.addTextDataBinding(this.editor.getTextCompositionPath(), Constants.COMPOSITION_MODEL_PATH,
+				CompositionModel.class);
+		this.addTextDataBinding(this.editor.getTopologyText(), Constants.TOPOLOGY_MODEL, TopologyModel.class);
+
 	}
 
-	private void addTextDataBinding(Text text, String property) {
+	private void addTextDataBinding(Text text, String property, @SuppressWarnings("rawtypes") Class c) {
 		IObservableValue textObs = WidgetProperties.text().observe(text);
-		IObservableValue pathObs = BeanProperties.value(CompositionModel.class, property)
-				.observe(this.statusModel.getCompositionModel());
+		IObservableValue pathObs = BeanProperties.value(c, property).observe(this.statusModel.getCompositionModel());
 		this.ctx.bindValue(textObs, pathObs);
 	}
 
@@ -138,9 +147,9 @@ public class WorkbenchConfigurationEditorEngine {
 		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, Constants.SSH_COMBO_SELECTION_INDEX)
 				.observe(this.statusModel);
 
-		if(!input.isEmpty())
+		if (!input.isEmpty())
 			cv.getCombo().select(0);
-		
+
 		this.ctx.bindValue(modelValue, selection);
 	}
 
@@ -153,7 +162,7 @@ public class WorkbenchConfigurationEditorEngine {
 				.observe(this.statusModel);
 
 		cv.getCombo().select(0);
-		
+
 		this.ctx.bindValue(modelValue, selection);
 	}
 
@@ -236,6 +245,7 @@ public class WorkbenchConfigurationEditorEngine {
 		}
 
 		XmlHelper.addComposition(doc, this.statusModel.getCompositionModel(), inputFile);
+		XmlHelper.addTopology(doc, this.statusModel.getTopologyModel(), inputFile);
 
 	}
 }
