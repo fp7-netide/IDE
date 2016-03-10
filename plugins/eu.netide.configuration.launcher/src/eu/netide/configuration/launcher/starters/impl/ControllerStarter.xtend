@@ -21,9 +21,10 @@ abstract class ControllerStarter extends Starter {
 	@Accessors(PROTECTED_GETTER)
 	private String controllerplatform
 
-	@Accessors(PROTECTED_GETTER)
+	@Accessors(PUBLIC_GETTER,PUBLIC_SETTER)
 	private int port
 
+	@Deprecated
 	new(String name, ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
 		super(name, configuration, monitor)
 

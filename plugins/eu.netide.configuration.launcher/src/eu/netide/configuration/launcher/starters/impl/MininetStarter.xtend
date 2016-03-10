@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.Status
 class MininetStarter extends Starter {
 
 	private NetworkEnvironment ne
-
+	@Deprecated
 	new(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		super("Mininet", configuration, monitor)
 

@@ -6,6 +6,7 @@ import org.eclipse.debug.core.ILaunchConfiguration
 
 class RyuShimStarter extends ControllerStarter {
 
+	@Deprecated
 	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
 		super("Ryu Shim", configuration, controller, monitor)
 	}

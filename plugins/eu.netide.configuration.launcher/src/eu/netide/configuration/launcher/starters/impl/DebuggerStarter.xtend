@@ -4,7 +4,7 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
 
 class DebuggerStarter extends Starter {
-	
+	@Deprecated
 	new(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		super("Debugger", configuration, monitor)
 	}

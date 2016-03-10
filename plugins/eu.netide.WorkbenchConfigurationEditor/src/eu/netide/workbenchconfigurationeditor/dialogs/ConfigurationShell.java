@@ -106,7 +106,7 @@ public class ConfigurationShell extends Shell {
 		setLayout(new GridLayout(1, false));
 
 		Group appGroup = new Group(this, SWT.NONE);
-		GridData gd_appGroup = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		GridData gd_appGroup = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_appGroup.heightHint = 81;
 		appGroup.setLayoutData(gd_appGroup);
 		appGroup.setLayout(new GridLayout(3, false));
@@ -177,7 +177,7 @@ public class ConfigurationShell extends Shell {
 		new Label(appGroup, SWT.NONE);
 
 		Group platform = new Group(this, SWT.NONE);
-		platform.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		platform.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		platform.setLayout(new GridLayout(2, false));
 
 		Label lblAppController = new Label(platform, SWT.NONE);
@@ -231,7 +231,7 @@ public class ConfigurationShell extends Shell {
 		client_server.setVisible(false);
 
 		Composite composite = new Composite(this, SWT.NONE);
-		GridData gd_composite = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
+		GridData gd_composite = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_composite.widthHint = 210;
 		composite.setLayoutData(gd_composite);
 		composite.setLayout(new GridLayout(3, false));

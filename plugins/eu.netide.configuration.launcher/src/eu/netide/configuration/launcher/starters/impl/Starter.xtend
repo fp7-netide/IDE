@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.emf.common.util.URI
 import org.eclipse.jface.dialogs.MessageDialog
 import org.eclipse.swt.widgets.Display
+import org.eclipse.tm.terminal.view.core.interfaces.ITerminalTabListener
 
 abstract class Starter implements IStarter {
 
@@ -45,10 +46,12 @@ abstract class Starter implements IStarter {
 
 	protected IProgressMonitor monitor
 
+	@Deprecated
 	new(String name, ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		this(name, configuration, new VagrantBackend, monitor)
 	}
 
+	@Deprecated
 	new(String name, ILaunchConfiguration configuration, Backend backend, IProgressMonitor monitor) {
 		this.name = name
 		this.configuration = configuration
@@ -186,6 +189,7 @@ abstract class Starter implements IStarter {
 			)
 
 			ts.openConsole(options, null)
+
 		}
 
 		override getEnvironmentVariables() {

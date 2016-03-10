@@ -7,7 +7,7 @@ import org.eclipse.core.resources.ResourcesPlugin
 class CoreSpecificationStarter extends Starter{
 	
 	private String compositionPath
-	
+	@Deprecated
 	new(ILaunchConfiguration configuration, String compositionPath, IProgressMonitor monitor) {
 		super("Core", configuration, monitor)
 		this.compositionPath = compositionPath

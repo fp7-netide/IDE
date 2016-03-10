@@ -7,6 +7,7 @@ import org.eclipse.core.resources.ResourcesPlugin
 
 class RyuBackendStarter extends ControllerStarter {
 
+	@Deprecated
 	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
 		super("Ryu Backend", configuration, controller, monitor)
 		name = String.format("%s (%s)", name, appPath.lastSegment)

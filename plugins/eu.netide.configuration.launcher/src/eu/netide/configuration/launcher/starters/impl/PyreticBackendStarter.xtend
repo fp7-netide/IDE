@@ -5,7 +5,7 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
 
 class PyreticBackendStarter extends ControllerStarter {
-
+	@Deprecated
 	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
 		super("Pyretic Backend", configuration, controller, monitor)
 	}

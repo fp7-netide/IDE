@@ -148,8 +148,8 @@ class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 				var templateFolder = project.getFolder("templates")
 				templateFolder.create(false, true, null)
 
-				var paramFile = project.getFile("parameters.json")
-				paramFile.create(new ByteArrayInputStream(paramstring.getBytes("UTF-8")), false, monitor)
+//				var paramFile = project.getFile("parameters.json")
+//				paramFile.create(new ByteArrayInputStream(paramstring.getBytes("UTF-8")), false, monitor)
 			}
 
 			if (sysreq) {
