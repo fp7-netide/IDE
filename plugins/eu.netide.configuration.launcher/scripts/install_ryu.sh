@@ -1,11 +1,9 @@
 #!/bin/bash
 if [ "$(which pip)" == "" ] || [ "$(pip list | grep ryu)" == "" ]; then
 
-  sudo apt-get --yes install python-pip python-dev python-repoze.lru libxml2-dev libxslt1-dev zlib1g-dev python-zmq python3-zmq
-  sudo -E pip install ecdsa
-  sudo -E pip install stevedore
-  sudo -E pip install greenlet
+  sudo apt-get --yes install python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev python-zmq python3-zmq
   sudo -E pip install ryu
+  sudo -E pip install oslo.config
   
 
   sudo cp -r Engine/ryu-backend/netide /usr/local/lib/python2.7/dist-packages/ryu/
