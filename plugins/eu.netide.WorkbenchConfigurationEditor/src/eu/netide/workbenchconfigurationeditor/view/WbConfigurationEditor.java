@@ -141,7 +141,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 							selectedFile = (IFile) result[0];
 
 							path = selectedFile.getFullPath().toOSString();
-
+							path = "platform:/resource".concat(path);
 							TopologyModel m = new TopologyModel();
 							m.setTopologyPath(path);
 							
