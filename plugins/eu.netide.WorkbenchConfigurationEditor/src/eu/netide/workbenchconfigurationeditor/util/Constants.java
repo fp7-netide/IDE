@@ -24,6 +24,9 @@ public class Constants {
 	public static final String COMPOSITION_SELECTION_INDEX = "compositionSelectionIndex";
 
 	public static final String TOPOLOGY_MODEL_PATH = "topologyPath";
+	public static final String COMPOSITION = "compositionPath";
+	public static final String COMPOSITION_PATH = "compositionPath";
+	public static final String ELEMENT_TOPOLOGY_PATH = "topologyPath";
 
 	public static final String COMPOSITION_MODEL_PATH = "compositionPath";
 

@@ -65,13 +65,7 @@ public class WorkbenchConfigurationEditorEngine {
 		if (statusModel == null) {
 			this.statusModel = new UiStatusModel();
 		}
-
-		// ArrayList[] parsed = XmlHelper.parseFileToModel(inputFile, doc);
-		// this.statusModel.setModelList(parsed[0]);
-		// this.statusModel.setProfileList(parsed[1]);
-		// this.statusModel.setCompositionModel(XmlHelper.getCompositionModel());
-		// this.statusModel.setTopologyModel(XmlHelper.getTopologyModel());
-
+		
 		ControllerManager.initControllerManager(this.statusModel, editor.getFile());
 	}
 
@@ -278,26 +272,5 @@ public class WorkbenchConfigurationEditorEngine {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		// for (LaunchConfigurationModel m : this.statusModel.getModelList()) {
-		// XmlHelper.removeFromXml(doc, m, inputFile);
-		// }
-		//
-		// for (SshProfileModel s : this.statusModel.getProfileList()) {
-		// XmlHelper.removeFromXml(doc, s, inputFile);
-		// }
-		//
-		// for (LaunchConfigurationModel m : this.statusModel.getModelList()) {
-		// XmlHelper.addModelToXmlFile(doc, m, inputFile);
-		// }
-		// for (SshProfileModel s : this.statusModel.getProfileList()) {
-		// XmlHelper.addSshProfileToXmlFile(doc, s, inputFile);
-		// }
-		//
-		// XmlHelper.addComposition(doc, this.statusModel.getCompositionModel(),
-		// inputFile);
-		// XmlHelper.addTopology(doc, this.statusModel.getTopologyModel(),
-		// inputFile);
-
 	}
 }
