@@ -1,9 +1,5 @@
 package eu.netide.workbenchconfigurationeditor.view;
 
-import java.beans.XMLEncoder;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
@@ -20,8 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -114,14 +108,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	}
 
 	public void addTopoButtonListener() {
-		
-		this.btnLoadTopo.addSelectionListener(new SelectionAdapter(){
+
+		this.btnLoadTopo.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
+			public void widgetSelected(SelectionEvent e) {
 				ControllerManager.getStarter().initTopo();
 			}
 		});
-		
+
 		this.btnBrowse_topo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -140,13 +134,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 							selectedFile = (IFile) result[0];
 
-							path = selectedFile.getFullPath().toOSString();
+							path = selectedFile.getFullPath().toString();
 							path = "platform:/resource".concat(path);
 							TopologyModel m = new TopologyModel();
 							m.setTopologyPath(path);
-							
+
 							engine.getStatusModel().getTopologyModel().setTopologyPath(path);
-							
+
 							setIsDirty(true);
 						} else {
 							showMessage("Please select a Topology.");
@@ -191,7 +185,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 							selectedFile = (IFile) result[0];
 
-							path = selectedFile.getFullPath().toOSString();
+							path = selectedFile.getFullPath().toString();
 							CompositionModel m = new CompositionModel();
 							m.setCompositionPath(path);
 							engine.getStatusModel().getCompositionModel().setCompositionPath(path);
@@ -713,12 +707,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		new Label(grpCompositionLoader, SWT.NONE);
 
 		textCompositionPath = new Text(grpCompositionLoader, SWT.BORDER);
-		textCompositionPath.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				engine.getStatusModel().getCompositionModel().setCompositionPath(textCompositionPath.getText());
-				setIsDirty(true);
-			}
-		});
+
 		textCompositionPath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		browseCompositionBtn = new Button(grpCompositionLoader, SWT.NONE);
@@ -857,7 +846,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		btnBrowse_topo = new Button(grpTopology, SWT.NONE);
 		btnBrowse_topo.setText("Browse");
-		
+
 		btnLoadTopo = new Button(grpTopology, SWT.NONE);
 		btnLoadTopo.setText("Load");
 		new Label(composite_2, SWT.NONE);
@@ -943,17 +932,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		// do saving
 		engine.saveAllChanges();
 		setIsDirty(false);
-
-		//TODO: 
-		try {
-			File file = new File("/home/piotr/blub.xml");
-			XMLEncoder encoder = new XMLEncoder(new FileOutputStream(file));
-			encoder.writeObject(engine.getStatusModel());
-			encoder.writeObject(engine.getStatusModel());
-			encoder.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 	}
 

@@ -9,6 +9,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import eu.netide.workbenchconfigurationeditor.util.Constants;
 
 public class UiStatusModel {
+
 	private Boolean vagrantRunning;
 	private Boolean mininetRunning;
 	private Boolean debuggerRunning;
@@ -39,6 +40,17 @@ public class UiStatusModel {
 
 	public UiStatusModel() {
 		this.changes = new PropertyChangeSupport(this);
+		this.modelList = new ArrayList<LaunchConfigurationModel>();
+		this.profileList = new ArrayList<SshProfileModel>();
+		this.topologyModel = new TopologyModel();
+		this.compositionModel = new CompositionModel();
+
+		this.setMininetRunning(new Boolean(false));
+		this.setServerControllerRunning(new Boolean(false));
+		this.setSshRunning(new Boolean(false));
+		this.setVagrantRunning(new Boolean(false));
+		this.setCoreRunning(false);
+		this.setDebuggerRunning(false);
 	}
 
 	// public CompositionModel getCompositionAtSelectedIndex() {

@@ -3,10 +3,6 @@ package eu.netide.workbenchconfigurationeditor.wizards;
 import java.io.File;
 import java.io.IOException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -19,10 +15,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import eu.netide.workbenchconfigurationeditor.util.XmlHelper;
 
 public class Configuration_Wizard extends Wizard implements INewWizard {
 
@@ -58,7 +50,7 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 		String filePath = getPathFromSelection();
 		filePath += "/" + fileName + ".wb";
 
-		filePath = new Path(filePath).toOSString();
+		filePath = new Path(filePath).toString();
 
 		File file = new File(filePath);
 
@@ -66,7 +58,7 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 			try {
 				file.createNewFile();
 
-				writeContent(file);
+				//writeContent(file);
 
 				try {
 					
@@ -88,24 +80,24 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 		return true;
 	}
 
-	private void writeContent(File file) {
-		try {
-
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-
-			// root elements
-			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement("workbench");
-			doc.appendChild(rootElement);
-
-			
-			XmlHelper.saveContentToXml(doc, file);
-			
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-	}
+//	private void writeContent(File file) {
+//		try {
+//
+//			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+//			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+//
+//			// root elements
+//			Document doc = docBuilder.newDocument();
+//			Element rootElement = doc.createElement("workbench");
+//			doc.appendChild(rootElement);
+//
+//			
+//			//XmlHelper.saveContentToXml(doc, file);
+//			
+//		} catch (ParserConfigurationException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	private ISelection selection;
 
@@ -126,30 +118,30 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 		
 			if (obj instanceof IPackageFragment) {
 				IPackageFragment pf = (IPackageFragment) obj;
-				path = pf.getResource().getLocation().toOSString();
+				path = pf.getResource().getLocation().toString();
 
 			} else {
 				if (obj instanceof IPackageFragmentRoot) {
 					IPackageFragmentRoot pfr = (IPackageFragmentRoot) obj;
-					path = pfr.getResource().getLocation().toOSString();
+					path = pfr.getResource().getLocation().toString();
 				} else {
 					if (obj instanceof IJavaProject) {
 						IJavaProject p = (IJavaProject) obj;
-						path = p.getResource().getLocation().toOSString();
+						path = p.getResource().getLocation().toString();
 
 					} else if (obj instanceof IResource) {
 						IResource r = (IResource) obj;
-						path = r.getLocation().toOSString();
+						path = r.getLocation().toString();
 
 					} else {
-						path = ResourcesPlugin.getWorkspace().getRoot().getProjects()[0].getLocation().toOSString();
+						path = ResourcesPlugin.getWorkspace().getRoot().getProjects()[0].getLocation().toString();
 					}
 				}
 
 			}
 
 		} else {
-			path = ResourcesPlugin.getWorkspace().getRoot().getProjects()[0].getLocation().toOSString();
+			path = ResourcesPlugin.getWorkspace().getRoot().getProjects()[0].getLocation().toString();
 		}
 		return path;
 

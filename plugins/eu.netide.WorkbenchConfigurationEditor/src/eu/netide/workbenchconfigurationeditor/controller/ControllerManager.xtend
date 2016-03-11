@@ -521,8 +521,7 @@ class ControllerManager {
 	}
 
 	public def stopCore() {
-		// TODO: stop core
-		// TODO: this.statusModel.coreRunning = false
+
 		if (coreStarter != null && statusModel.coreRunning) {
 			coreStarter.stop
 			statusModel.coreRunning = false
@@ -538,7 +537,6 @@ class ControllerManager {
 	private CoreSpecificationStarter compositionStarter;
 
 	public def loadComposition() {
-		// TODO: loadComposite(this.statusModel.compositionPath)
 		val compositionJob = new Job("CompositionJob") {
 			override protected run(IProgressMonitor monitor) {
 				// configuration needs to contain topology path !

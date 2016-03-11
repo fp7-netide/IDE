@@ -1,5 +1,14 @@
 package eu.netide.workbenchconfigurationeditor.controller;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.core.databinding.DataBindingContext;
@@ -25,7 +34,6 @@ import eu.netide.workbenchconfigurationeditor.util.Constants;
 import eu.netide.workbenchconfigurationeditor.util.RunningBoolInverter;
 import eu.netide.workbenchconfigurationeditor.util.RunningBoolToStringConverter;
 import eu.netide.workbenchconfigurationeditor.util.RunningStringToBoolConverter;
-import eu.netide.workbenchconfigurationeditor.util.XmlHelper;
 import eu.netide.workbenchconfigurationeditor.view.WbConfigurationEditor;
 
 public class WorkbenchConfigurationEditorEngine {
@@ -43,28 +51,26 @@ public class WorkbenchConfigurationEditorEngine {
 	public WorkbenchConfigurationEditorEngine(WbConfigurationEditor editor) {
 		this.editor = editor;
 		this.inputFile = editor.getFile();
-		doc = XmlHelper.getDocFromFile(inputFile);
+		// doc = XmlHelper.getDocFromFile(inputFile);
 		this.ctx = new DataBindingContext();
 
 		initModel();
 		initDataBinding();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initModel() {
-		this.statusModel = new UiStatusModel();
-		this.statusModel.setMininetRunning(new Boolean(false));
-		this.statusModel.setServerControllerRunning(new Boolean(false));
-		this.statusModel.setSshRunning(new Boolean(false));
-		this.statusModel.setVagrantRunning(new Boolean(false));
-		this.statusModel.setCoreRunning(false);
-		this.statusModel.setDebuggerRunning(false);
 
-		ArrayList[] parsed = XmlHelper.parseFileToModel(inputFile, doc);
-		this.statusModel.setModelList(parsed[0]);
-		this.statusModel.setProfileList(parsed[1]);
-		this.statusModel.setCompositionModel(XmlHelper.getCompositionModel());
-		this.statusModel.setTopologyModel(XmlHelper.getTopologyModel());
+		this.statusModel = loadXML();
+
+		if (statusModel == null) {
+			this.statusModel = new UiStatusModel();
+		}
+
+		// ArrayList[] parsed = XmlHelper.parseFileToModel(inputFile, doc);
+		// this.statusModel.setModelList(parsed[0]);
+		// this.statusModel.setProfileList(parsed[1]);
+		// this.statusModel.setCompositionModel(XmlHelper.getCompositionModel());
+		// this.statusModel.setTopologyModel(XmlHelper.getTopologyModel());
 
 		ControllerManager.initControllerManager(this.statusModel, editor.getFile());
 	}
@@ -228,25 +234,70 @@ public class WorkbenchConfigurationEditorEngine {
 		return this.doc;
 	}
 
+	public UiStatusModel loadXML() {
+		XMLDecoder decoder = null;
+		try {
+			decoder = new XMLDecoder(
+					new BufferedInputStream(new FileInputStream(this.inputFile.getLocation().toString())));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (decoder != null) {
+			Object tmp;
+			try {
+				tmp = decoder.readObject();
+			} catch (ArrayIndexOutOfBoundsException e) {
+				return null;
+			}
+			decoder.close();
+			if (tmp != null) {
+				if (tmp instanceof UiStatusModel) {
+					UiStatusModel model = (UiStatusModel) tmp;
+					return model;
+				}
+			}
+		}
+		return null;
+	}
+
 	public void saveAllChanges() {
 
-		for (LaunchConfigurationModel m : this.statusModel.getModelList()) {
-			XmlHelper.removeFromXml(doc, m, inputFile);
+		try {
+			System.out.println(this.inputFile.getLocation());
+			File file = new File(this.inputFile.getLocation().toString());
+
+			if (!file.exists()) {
+				System.out.println(file.createNewFile());
+			}
+
+			XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(file)));
+			encoder.writeObject(this.statusModel);
+			encoder.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
-		for (SshProfileModel s : this.statusModel.getProfileList()) {
-			XmlHelper.removeFromXml(doc, s, inputFile);
-		}
-
-		for (LaunchConfigurationModel m : this.statusModel.getModelList()) {
-			XmlHelper.addModelToXmlFile(doc, m, inputFile);
-		}
-		for (SshProfileModel s : this.statusModel.getProfileList()) {
-			XmlHelper.addSshProfileToXmlFile(doc, s, inputFile);
-		}
-
-		XmlHelper.addComposition(doc, this.statusModel.getCompositionModel(), inputFile);
-		XmlHelper.addTopology(doc, this.statusModel.getTopologyModel(), inputFile);
+		// for (LaunchConfigurationModel m : this.statusModel.getModelList()) {
+		// XmlHelper.removeFromXml(doc, m, inputFile);
+		// }
+		//
+		// for (SshProfileModel s : this.statusModel.getProfileList()) {
+		// XmlHelper.removeFromXml(doc, s, inputFile);
+		// }
+		//
+		// for (LaunchConfigurationModel m : this.statusModel.getModelList()) {
+		// XmlHelper.addModelToXmlFile(doc, m, inputFile);
+		// }
+		// for (SshProfileModel s : this.statusModel.getProfileList()) {
+		// XmlHelper.addSshProfileToXmlFile(doc, s, inputFile);
+		// }
+		//
+		// XmlHelper.addComposition(doc, this.statusModel.getCompositionModel(),
+		// inputFile);
+		// XmlHelper.addTopology(doc, this.statusModel.getTopologyModel(),
+		// inputFile);
 
 	}
 }

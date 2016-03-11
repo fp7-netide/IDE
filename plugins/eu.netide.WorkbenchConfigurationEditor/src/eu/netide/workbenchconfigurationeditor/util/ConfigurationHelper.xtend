@@ -23,7 +23,7 @@ class ConfigurationHelper {
 	}
 
 	public def ILaunchConfiguration getTopoConfiguration() {
-		var topoPath = new Path(statusModel.getTopologyModel().topologyPath).toOSString();
+		var topoPath = new Path(statusModel.getTopologyModel().topologyPath).toString();
 
 		var c = configType.newInstance(null, "CoreConfiguration");
 		c.setAttribute("topologymodel", topoPath);
@@ -48,7 +48,7 @@ class ConfigurationHelper {
 		// topologymodel=platform:/resource/UC1/UC1.topology]
 		try {
 			if (toStart != null) {
-				var topoPath = new Path(statusModel.getTopologyModel().topologyPath).toOSString();
+				var topoPath = new Path(statusModel.getTopologyModel().topologyPath).toString();
 
 				var c = configType.newInstance(null, toStart.getAppName() + toStart.getID());
 				c.setAttribute("topologymodel", topoPath);
@@ -63,7 +63,7 @@ class ConfigurationHelper {
 					}
 
 					var appPath = "controller_data_".concat(name).concat("_".concat(toStart.getPlatform()));
-					var appPathOS = new Path(toStart.getAppPath()).toOSString();
+					var appPathOS = new Path(toStart.getAppPath()).toString();
 
 					c.setAttribute(appPath, appPathOS);
 				}
@@ -85,7 +85,7 @@ class ConfigurationHelper {
 	public def ILaunchConfiguration createServerControllerConfiguration(String serverController) {
 
 		try {
-			var topoPath = new Path(statusModel.getTopologyModel().topologyPath).toOSString();
+			var topoPath = new Path(statusModel.getTopologyModel().topologyPath).toString();
 
 			var c = configType.newInstance(null, serverController + UUID);
 			c.setAttribute("topologymodel", topoPath);
@@ -121,7 +121,7 @@ class ConfigurationHelper {
 //		this.sshIdFile = launchConfiguration.getAttribute("target.ssh.idfile", "").absolutePath.toOSString
 //
 //		var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
-		var topoPath = new Path(statusModel.getTopologyModel().topologyPath).toOSString();
+		var topoPath = new Path(statusModel.getTopologyModel().topologyPath).toString();
 
 		var c = configType.newInstance(null, "sshConfig" + UUID);
 		c.setAttribute("topologymodel", topoPath);
@@ -133,7 +133,7 @@ class ConfigurationHelper {
 				c.setAttribute("controller_platform_".concat(name), model.getPlatform());
 				// used by shim starter
 				var appPath = "controller_data_".concat(name).concat("_".concat(model.getPlatform()));
-				var appPathOS = new Path(model.getAppPath()).toOSString();
+				var appPathOS = new Path(model.getAppPath()).toString();
 
 				c.setAttribute(appPath, appPathOS);
 			}
@@ -155,7 +155,7 @@ class ConfigurationHelper {
 	public def ILaunchConfiguration createVagrantConfiguration() {
 
 		var c = configType.newInstance(null, "vagrant" + UUID)
-		var topoPath = new Path(statusModel.getTopologyModel().topologyPath).toOSString()
+		var topoPath = new Path(statusModel.getTopologyModel().topologyPath).toString()
 		c.setAttribute("topologymodel", topoPath)
 		c.setAttribute("controller_platform_source_".concat(NetIDE.CONTROLLER_ENGINE), NetIDE.CONTROLLER_ENGINE);
 		c.setAttribute("controller_platform_".concat("c1"), NetIDE.CONTROLLER_ODL);
