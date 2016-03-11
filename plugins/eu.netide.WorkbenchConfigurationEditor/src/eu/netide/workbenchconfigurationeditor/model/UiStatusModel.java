@@ -175,7 +175,7 @@ public class UiStatusModel {
 	}
 
 	public void setTopologyModel(TopologyModel model) {
-		changes.firePropertyChange(Constants.TOPOLOGY_MODEL, this.topologyModel, this.topologyModel = model);
+		changes.firePropertyChange(Constants.TOPOLOGY_MODEL_PATH, this.topologyModel, this.topologyModel = model);
 	}
 
 	public TopologyModel getTopologyModel() {

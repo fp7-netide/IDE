@@ -55,9 +55,9 @@ class ControllerManager {
 		return instance;
 	}
 
-	public def static void initControllerManager(String topologyPath, UiStatusModel statusModel, IFile file) {
+	public def static void initControllerManager(UiStatusModel statusModel, IFile file) {
 		if (instance == null) {
-			instance = new ControllerManager(topologyPath, statusModel, file);
+			instance = new ControllerManager(statusModel, file);
 		}
 	}
 
@@ -76,30 +76,31 @@ class ControllerManager {
 	private ArrayList<String> controllerName;
 	private ConfigurationHelper configHelper;
 
-	private new(String topologyPath, UiStatusModel statusModel, IFile file) {
+	private new(UiStatusModel statusModel, IFile file) {
 		this.statusModel = statusModel
-		generateConfiguration(topologyPath)
+
 		wbFile = file
 
-		factory = new StarterFactory()
-		reg = IStarterRegistry.instance
-
-		var resset = new ResourceSetImpl
-		var res = resset.getResource(URI.createURI(topologyPath), true)
-		ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
 		controllerName = new ArrayList<String>
-
-		for (c : ne.controllers)
-			controllerName.add(c.name)
 
 		configHelper = new ConfigurationHelper(controllerName, statusModel)
 
-		file = topologyPath.getIFile
 		configToStarter = new HashMap
 
 		this.statusModel.setSshRunning(new Boolean(false));
 		this.statusModel.setVagrantRunning(new Boolean(false));
+	}
 
+	public def initTopo() {
+		generateConfiguration(this.statusModel.topologyModel.topologyPath)
+		factory = new StarterFactory()
+		reg = IStarterRegistry.instance
+		var resset = new ResourceSetImpl
+		var res = resset.getResource(URI.createURI(this.statusModel.topologyModel.topologyPath), true)
+		ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
+		for (c : ne.controllers)
+			controllerName.add(c.name)
+		file = this.statusModel.topologyModel.topologyPath.getIFile
 	}
 
 	private StarterFactory factory
@@ -111,6 +112,7 @@ class ControllerManager {
 	private Job vagrantJob
 
 	private SshManager sshManager
+
 	private Job sshJob
 
 	private Backend backend;
@@ -351,7 +353,9 @@ class ControllerManager {
 	private HashMap<LaunchConfigurationModel, ArrayList<IStarter>> configToStarter;
 
 	private IStarter backendStarter;
+
 	private IStarter starter;
+
 	private IStarter mnstarter;
 
 	public def startApp() {
@@ -482,6 +486,7 @@ class ControllerManager {
 	}
 
 	private IStarter coreStarter;
+
 	private Job startCoreJob;
 
 	public def startCore() {

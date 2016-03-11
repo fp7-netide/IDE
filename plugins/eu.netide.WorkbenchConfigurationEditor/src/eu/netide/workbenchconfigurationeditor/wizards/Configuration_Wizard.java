@@ -22,7 +22,6 @@ import org.eclipse.ui.IWorkbench;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import eu.netide.workbenchconfigurationeditor.util.XmlConstants;
 import eu.netide.workbenchconfigurationeditor.util.XmlHelper;
 
 public class Configuration_Wizard extends Wizard implements INewWizard {
@@ -50,11 +49,11 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 
-		return createNewFile(page.getFileName(), page.getTopologyPath());
+		return createNewFile(page.getFileName());
 
 	}
 
-	private boolean createNewFile(final String fileName, String topoName) {
+	private boolean createNewFile(final String fileName) {
 
 		String filePath = getPathFromSelection();
 		filePath += "/" + fileName + ".wb";
@@ -66,12 +65,8 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 		if (!file.exists()) {
 			try {
 				file.createNewFile();
-				// formate topo path to match the launch configuration
-				// requirements
-				topoName = topoName.split(":")[1];
-				topoName = topoName.replace("\\", "/");
-				topoName = "platform:/resource".concat(topoName);
-				writeContent(file, topoName);
+
+				writeContent(file);
 
 				try {
 					
@@ -93,7 +88,7 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 		return true;
 	}
 
-	private void writeContent(File file, String topoName) {
+	private void writeContent(File file) {
 		try {
 
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -104,10 +99,6 @@ public class Configuration_Wizard extends Wizard implements INewWizard {
 			Element rootElement = doc.createElement("workbench");
 			doc.appendChild(rootElement);
 
-			// staff elements
-			Element topo = doc.createElement(XmlConstants.ELEMENT_TOPOLOGY_PATH);
-			topo.setTextContent(topoName);
-			rootElement.appendChild(topo);
 			
 			XmlHelper.saveContentToXml(doc, file);
 			

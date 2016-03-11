@@ -236,6 +236,7 @@ public class XmlHelper {
 			profileList = new ArrayList<SshProfileModel>();
 			compositonPath = new ArrayList<CompositionModel>();
 			compositionModel = new CompositionModel();
+			topologyModel  = new TopologyModel();
 
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -470,7 +471,7 @@ public class XmlHelper {
 				}
 
 				if (tempNode.hasChildNodes()) {
-					parsePathNode(tempNode.getChildNodes());
+					parseTopologyNode(tempNode.getChildNodes());
 				}
 			}
 

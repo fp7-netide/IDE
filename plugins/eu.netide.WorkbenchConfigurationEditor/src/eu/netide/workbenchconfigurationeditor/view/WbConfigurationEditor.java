@@ -114,6 +114,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	}
 
 	public void addTopoButtonListener() {
+		
+		this.btnLoadTopo.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				ControllerManager.getStarter().initTopo();
+			}
+		});
+		
 		this.btnBrowse_topo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -136,8 +144,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 							TopologyModel m = new TopologyModel();
 							m.setTopologyPath(path);
+							
 							engine.getStatusModel().getTopologyModel().setTopologyPath(path);
-
+							
 							setIsDirty(true);
 						} else {
 							showMessage("Please select a Topology.");
@@ -185,7 +194,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 							path = selectedFile.getFullPath().toOSString();
 							CompositionModel m = new CompositionModel();
 							m.setCompositionPath(path);
-							engine.getStatusModel().setCompositionModel(m);
+							engine.getStatusModel().getCompositionModel().setCompositionPath(path);
 
 							setIsDirty(true);
 						} else {
@@ -532,6 +541,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		addSshButtonListener();
 		addServerControllerButtonListener();
 		addCoreButtonListener();
+		addTopoButtonListener();
 
 	}
 
@@ -840,13 +850,16 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		grpTopology = new Group(composite_2, SWT.NONE);
 		grpTopology.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		grpTopology.setText("Topology ");
-		grpTopology.setLayout(new GridLayout(2, false));
+		grpTopology.setLayout(new GridLayout(3, false));
 
 		topo_text = new Text(grpTopology, SWT.BORDER);
 		topo_text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		btnBrowse_topo = new Button(grpTopology, SWT.NONE);
 		btnBrowse_topo.setText("Browse");
+		
+		btnLoadTopo = new Button(grpTopology, SWT.NONE);
+		btnLoadTopo.setText("Load");
 		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 
@@ -931,6 +944,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		engine.saveAllChanges();
 		setIsDirty(false);
 
+		//TODO: 
 		try {
 			File file = new File("/home/piotr/blub.xml");
 			XMLEncoder encoder = new XMLEncoder(new FileOutputStream(file));
@@ -1080,6 +1094,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Group grpTopology;
 	private Text topo_text;
 	private Button btnBrowse_topo;
+	private Button btnLoadTopo;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;
