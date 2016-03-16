@@ -19,13 +19,9 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.w3c.dom.Document;
 
@@ -55,7 +51,7 @@ public class WorkbenchConfigurationEditorEngine {
 	public WorkbenchConfigurationEditorEngine(WbConfigurationEditor editor) {
 		this.editor = editor;
 		this.inputFile = editor.getFile();
-		// doc = XmlHelper.getDocFromFile(inputFile);
+
 		this.ctx = new DataBindingContext();
 
 		initModel();

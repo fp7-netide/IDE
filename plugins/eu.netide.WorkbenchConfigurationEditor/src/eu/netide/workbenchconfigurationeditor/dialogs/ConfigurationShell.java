@@ -55,17 +55,7 @@ public class ConfigurationShell extends Shell {
 					this.platformCombo.select(platformIndex);
 				}
 				this.platformSet = true;
-				// if
-				// (platformCombo.getItem(platformIndex).equals(NetIDE.CONTROLLER_ENGINE))
-				// {
-				// client_server.setVisible(true);
-				// }
-				//
-				// if (!model.getClientController().equals("")) {
-				// int clientIndex =
-				// this.clientControllerCombo.indexOf(model.getClientController());
-				// this.clientControllerCombo.select(clientIndex);
-				// }
+
 				this.portText.setText(model.getAppPort());
 
 				checkForFinish();
@@ -103,8 +93,6 @@ public class ConfigurationShell extends Shell {
 	private ConfigurationShell shell;
 	private CCombo platformCombo;
 	private Button btnCheckButton;
-	// private Group client_server;
-	// private CCombo clientControllerCombo;
 	private Button btnSaveConfig;
 
 	/**
@@ -211,15 +199,7 @@ public class ConfigurationShell extends Shell {
 				int index = platformCombo.getSelectionIndex();
 				if (index != -1) {
 					platformSet = true;
-					// if
-					// (platformCombo.getItem(index).equals(NetIDE.CONTROLLER_ENGINE))
-					// {
-					// client_server.setVisible(true);
-					// } else {
-					// if (client_server.getVisible() == true) {
-					// client_server.setVisible(false);
-					// }
-					// }
+
 				} else {
 					platformSet = false;
 				}
@@ -234,26 +214,6 @@ public class ConfigurationShell extends Shell {
 
 		btnCheckButton = new Button(checkBoxComposite, SWT.CHECK);
 		btnCheckButton.setText("Use Network Engine");
-
-		// client_server = new Group(this, SWT.NONE);
-		// GridData gd_client_server = new GridData(SWT.FILL, SWT.FILL, false,
-		// false, 1, 1);
-		// gd_client_server.heightHint = 71;
-		// client_server.setLayoutData(gd_client_server);
-		// client_server.setLayout(new GridLayout(2, false));
-		//
-		// Label clientController = new Label(client_server, SWT.NONE);
-		// clientController.setText("Client Controller");
-		//
-		// clientControllerCombo = new CCombo(client_server, SWT.BORDER);
-		// GridData gd_clientControllerCombo = new GridData(SWT.LEFT,
-		// SWT.CENTER, false, false, 1, 1);
-		// gd_clientControllerCombo.heightHint = 20;
-		// gd_clientControllerCombo.widthHint = 131;
-		// clientControllerCombo.setLayoutData(gd_clientControllerCombo);
-		// setComboboxContent(clientControllerCombo);
-		//
-		// client_server.setVisible(false);
 
 		Composite btnComposite = new Composite(this, SWT.NONE);
 		GridData gd_btnComposite = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
@@ -292,19 +252,6 @@ public class ConfigurationShell extends Shell {
 							content[1] = platformCombo.getItem(platformCombo.getSelectionIndex());
 							content[2] = "";
 						}
-						// if (client_server.getVisible() == true) {
-						// if (clientControllerCombo.getSelectionIndex() != -1)
-						// {
-						//
-						// content[2] =
-						// clientControllerCombo.getItem(clientControllerCombo.getSelectionIndex());
-						// }
-						//
-						// } else {
-						// content[2] = "";
-						// }
-
-						// TODO:
 
 					}
 					content[3] = portText.getText();
