@@ -316,6 +316,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 						tmpModel.setClientController(content[2]);
 						tmpModel.setAppPort(content[3]);
 						tmpModel.setAppPath(content[4]);
+						tmpModel.setName(content[5]);
 						tmpModel.setRunning(false);
 						String[] tmp = content[4].split("/");
 						String appName = tmp[tmp.length - 1];
@@ -863,16 +864,20 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		table = tableViewer.getTable();
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
+		TableColumn tc0 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc1 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc2 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc3 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc4 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc5 = new TableColumn(table, SWT.CENTER);
+
+		tc0.setText("Name");
 		tc1.setText("App Name");
 		tc2.setText("Active");
 		tc3.setText("Platform");
 		tc4.setText("Client");
 		tc5.setText("Port");
+		tc0.setWidth(100);
 		tc1.setWidth(120);
 		tc2.setWidth(80);
 		tc3.setWidth(100);

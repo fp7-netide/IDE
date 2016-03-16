@@ -172,10 +172,9 @@ public class WorkbenchConfigurationEditorEngine {
 
 		this.statusModel.setWritableModelList(input);
 		ViewerSupport.bind(this.editor.getTableViewer(), input,
-				BeanProperties.values(new String[] { Constants.APP_NAME_MODEL, Constants.APP_RUNNING_MODEL,
+				BeanProperties.values(new String[] {Constants.LaunchName, Constants.APP_NAME_MODEL, Constants.APP_RUNNING_MODEL,
 						Constants.PLATFORM_MODEL, Constants.CLIENT_CONTROLLER_MODEL, Constants.PORT_MODEL }));
 
-		System.out.println("column count: " + this.editor.getTableViewer().getTable().getColumnCount());
 		// bind selectionIndex to model
 		// selectionIndex == profileListIndex, use it to match selection to
 		// actual model

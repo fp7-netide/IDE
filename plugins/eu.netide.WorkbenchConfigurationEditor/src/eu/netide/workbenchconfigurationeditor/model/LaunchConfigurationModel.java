@@ -17,6 +17,7 @@ public class LaunchConfigurationModel {
 	private String appName;
 	private String appPort;
 	private boolean running;
+	private String name;
 
 	public LaunchConfigurationModel() {
 		changes = new PropertyChangeSupport(this);
@@ -30,6 +31,14 @@ public class LaunchConfigurationModel {
 		return this.running;
 	}
 
+	public String getName(){
+		return this.name;
+	}
+	
+	public void setName(String name){
+		changes.firePropertyChange(Constants.LaunchName, this.name, this.name = name);
+	}
+	
 	public String getPlatform() {
 		return this.platform;
 	}

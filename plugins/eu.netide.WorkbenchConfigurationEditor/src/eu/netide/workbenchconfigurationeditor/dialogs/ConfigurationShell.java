@@ -45,6 +45,8 @@ public class ConfigurationShell extends Shell {
 				this.appPathText.setText(model.getAppPath());
 				this.appPathSet = true;
 
+				this.nameSet = true;
+				this.textName.setText(model.getName());
 				// set checkbox according to using network engine
 
 				if (model.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
@@ -108,10 +110,32 @@ public class ConfigurationShell extends Shell {
 		setLayout(new GridLayout(1, false));
 
 		Group appGroup = new Group(this, SWT.NONE);
-		GridData gd_appGroup = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		GridData gd_appGroup = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
 		gd_appGroup.heightHint = 81;
 		appGroup.setLayoutData(gd_appGroup);
 		appGroup.setLayout(new GridLayout(3, false));
+		
+		Label lblName = new Label(appGroup, SWT.NONE);
+		lblName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		lblName.setText("Name");
+		
+		textName = new Text(appGroup, SWT.BORDER);
+		
+		textName.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (!textName.getText().equals("")) {
+					nameSet = true;
+				} else {
+					nameSet = false;
+				}
+				checkForFinish();
+
+			}
+		});
+		textName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(appGroup, SWT.NONE);
 
 		Label lblApp = new Label(appGroup, SWT.NONE);
 		lblApp.setText("App");
@@ -238,7 +262,7 @@ public class ConfigurationShell extends Shell {
 		btnSaveConfig.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				content = new String[5];
+				content = new String[6];
 				if (!appPathText.getText().equals("")) {
 
 					content[4] = appPathText.getText();
@@ -255,6 +279,7 @@ public class ConfigurationShell extends Shell {
 
 					}
 					content[3] = portText.getText();
+					content[5] = textName.getText();
 				}
 				shell.dispose();
 
@@ -266,9 +291,10 @@ public class ConfigurationShell extends Shell {
 
 	private boolean appPathSet = false;
 	private boolean platformSet = false;
+	private boolean nameSet = false;
 
 	private void checkForFinish() {
-		if (appPathSet && platformSet)
+		if (appPathSet && platformSet && nameSet)
 			btnSaveConfig.setEnabled(true);
 		else
 			btnSaveConfig.setEnabled(false);
@@ -277,6 +303,7 @@ public class ConfigurationShell extends Shell {
 	private String[] content;
 	private Text appPathText;
 	private Text portText;
+	private Text textName;
 
 	/**
 	 * 
