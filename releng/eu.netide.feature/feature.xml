@@ -243,6 +243,9 @@ any resulting litigation.
       <import plugin="org.eclipse.emf"/>
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="eu.netide.configuration.generator" version="0.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.tm.terminal.view.ui" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.tm.terminal.connector.local" version="4.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.tm.terminal.view.core" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtend.lib.macro"/>
       <import plugin="com.google.guava"/>
       <import plugin="org.eclipse.xtext.xbase.lib"/>
@@ -253,10 +256,26 @@ any resulting litigation.
       <import plugin="eu.netide.newproject" version="0.2.0" match="greaterOrEqual"/>
       <import plugin="eu.netide.debug" version="0.2.0" match="greaterOrEqual"/>
       <import plugin="eu.netide.profile" version="0.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal.view.ui" version="4.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal.connector.local" version="4.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.tm.terminal.view.core" version="4.0.0" match="greaterOrEqual"/>
       <import plugin="org.apache.log4j"/>
+      <import plugin="org.eclipse.xtext"/>
+      <import plugin="org.eclipse.equinox.common" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.util"/>
+      <import plugin="org.eclipse.emf.common"/>
+      <import plugin="org.antlr.runtime"/>
+      <import plugin="org.eclipse.xtext.common.types"/>
+      <import plugin="org.eclipse.ui.editors" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext.common.types.ui"/>
+      <import plugin="org.eclipse.xtext.ui.codetemplates.ui"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="eu.netide.deployment.topologyimport" version="0.2.0" match="greaterOrEqual"/>
+      <import plugin="eu.netide.parameters.language" version="0.2.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.io" version="2.2.0" match="greaterOrEqual"/>
+      <import plugin="eu.netide.configuration.utils" version="0.3.0" match="greaterOrEqual"/>
+      <import plugin="com.fasterxml.jackson.core.jackson-databind" version="2.7.2" match="greaterOrEqual"/>
+      <import plugin="com.github.jknack.handlebars" version="4.0.4" match="greaterOrEqual"/>
+      <import plugin="com.github.jknack.handlebars-jackson2" version="4.0.4" match="greaterOrEqual"/>
+      <import plugin="com.fasterxml.jackson.core.jackson-core" version="2.7.2" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -359,6 +378,27 @@ any resulting litigation.
 
    <plugin
          id="eu.netide.sysreq.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.parameters.language"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.parameters.language.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.parameters.templates"
          download-size="0"
          install-size="0"
          version="0.0.0"

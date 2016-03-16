@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>eu.netide.dependencies</groupId>
+	<artifactId>eu.netide.dependencies</artifactId>
+	<version>0.3.0.SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>eu.netide.dependencies</name>
+
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.reficio</groupId>
+				<artifactId>p2-maven-plugin</artifactId>
+				<version>1.2.0-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<id>com.github.jknack:handlebars-jackson2:4.0.4</id>
+									<instructions>
+										<Import-Package>*</Import-Package>
+									</instructions>
+								</artifact>
+								<artifact>
+									<id>com.fasterxml.jackson.core:jackson-databind:2.7.2</id>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>reficio</id>
+			<url>http://repo.reficio.org/maven/</url>
+		</pluginRepository>
+	</pluginRepositories>
+</project>

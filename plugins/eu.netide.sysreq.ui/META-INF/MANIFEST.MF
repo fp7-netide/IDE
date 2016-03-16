@@ -18,9 +18,10 @@ Require-Bundle: eu.netide.sysreq;visibility:=reexport,
  org.eclipse.compare,
  org.antlr.runtime
 Import-Package: org.apache.log4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: eu.netide.ui.quickfix,
  eu.netide.ui.contentassist,
  eu.netide.ui.internal,
- eu.netide.ui.contentassist.antlr
+ eu.netide.ui.contentassist.antlr,
+ eu.netide.ui.contentassist.antlr.internal
 Bundle-Activator: eu.netide.ui.internal.SysReqActivator

@@ -23,9 +23,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.tm.terminal.connector.local;bundle-version="4.0.0",
  org.eclipse.tm.terminal.view.core;bundle-version="4.0.0",
  eu.netide.deployment.topologyimport
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: NetIDE
+Bundle-Vendor: NetIDE Project
 Export-Package: eu.netide.configuration.launcher.managers,
  eu.netide.configuration.launcher.starters,
  eu.netide.configuration.launcher.starters.backends,

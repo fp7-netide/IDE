@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.sirius.ui.tools.views.model.explorer#PopupMenu">
+         <command
+               commandId="eu.netide.parameters.templates.configureparams"
+               label="Configure Parameters"
+               style="push">
+         </command>
+         <command
+               commandId="eu.netide.parameters.templates.render"
+               label="Render Templates"
+               style="push">
+
+         </command>
+         <command
+               commandId="eu.netide.parameters.templates.copy"
+               label="Copy to Templates"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="eu.netide.parameters.templates.gui.ConfigureParametersHandler"
+            id="eu.netide.parameters.templates.configureparams"
+            name="Configure Parameters">
+      </command>
+      <command
+            defaultHandler="eu.netide.parameters.templates.RenderHandler"
+            id="eu.netide.parameters.templates.render"
+            name="Render Template">
+      </command>
+      <command
+            defaultHandler="eu.netide.parameters.templates.copy.CopyHandler"
+            id="eu.netide.parameters.templates.copy"
+            name="Copy to Templates">
+      </command>
+   </extension>
+
+</plugin>

@@ -12,4 +12,4 @@ Require-Bundle: eu.netide.configuration;bundle-version="0.2.0",
  eu.netide.configuration.utils;bundle-version="0.2.0",
  eu.netide.configuration.preferences;bundle-version="0.2.0"
 Bundle-Vendor: NetIDE
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: WorkbenchConfigurationEditor
-Bundle-SymbolicName: sampleXMLEditor;singleton:=true
-Bundle-Version: 0.2.0.qualifier
+Bundle-SymbolicName: eu.netide.workbenchconfigurationeditor;singleton:=true
+Bundle-Version: 0.3.0.qualifier
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.jface.text,
@@ -31,5 +31,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface.databinding,
  com.ibm.icu,
  eu.netide.deployment.topologyimport
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: NetIDE Project
 
