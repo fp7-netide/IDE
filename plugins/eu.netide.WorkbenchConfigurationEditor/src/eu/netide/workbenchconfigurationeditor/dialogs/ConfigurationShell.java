@@ -43,22 +43,31 @@ public class ConfigurationShell extends Shell {
 			this.layout();
 			if (edit) {
 				this.appPathText.setText(model.getAppPath());
-				this.appPathSet= true;
-				
-				int platformIndex = this.platformCombo.indexOf(model.getPlatform());
-				this.platformCombo.select(platformIndex);
-				this.platformSet = true;
-				
-				if (platformCombo.getItem(platformIndex).equals(NetIDE.CONTROLLER_ENGINE)) {
-					client_server.setVisible(true);
+				this.appPathSet = true;
+
+				// set checkbox according to using network engine
+
+				if (model.getPlatform().equals(NetIDE.CONTROLLER_ENGINE)) {
+					this.btnCheckButton.setSelection(true);
+					this.platformCombo.select(this.platformCombo.indexOf(model.getClientController()));
+				} else {
+					int platformIndex = this.platformCombo.indexOf(model.getPlatform());
+					this.platformCombo.select(platformIndex);
 				}
-				
-				if (!model.getClientController().equals("")) {
-					int clientIndex = this.clientControllerCombo.indexOf(model.getClientController());
-					this.clientControllerCombo.select(clientIndex);
-				}	
+				this.platformSet = true;
+				// if
+				// (platformCombo.getItem(platformIndex).equals(NetIDE.CONTROLLER_ENGINE))
+				// {
+				// client_server.setVisible(true);
+				// }
+				//
+				// if (!model.getClientController().equals("")) {
+				// int clientIndex =
+				// this.clientControllerCombo.indexOf(model.getClientController());
+				// this.clientControllerCombo.select(clientIndex);
+				// }
 				this.portText.setText(model.getAppPort());
-				
+
 				checkForFinish();
 			}
 			while (!this.isDisposed()) {
@@ -93,8 +102,9 @@ public class ConfigurationShell extends Shell {
 
 	private ConfigurationShell shell;
 	private CCombo platformCombo;
-	private Group client_server;
-	private CCombo clientControllerCombo;
+	private Button btnCheckButton;
+	// private Group client_server;
+	// private CCombo clientControllerCombo;
 	private Button btnSaveConfig;
 
 	/**
@@ -171,11 +181,11 @@ public class ConfigurationShell extends Shell {
 		});
 
 		btnBrowseApp.setText("Browse");
-		
+
 		Label lblPort = new Label(appGroup, SWT.NONE);
 		lblPort.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblPort.setText("Open Flow Port");
-		
+
 		portText = new Text(appGroup, SWT.BORDER);
 		portText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(appGroup, SWT.NONE);
@@ -201,13 +211,15 @@ public class ConfigurationShell extends Shell {
 				int index = platformCombo.getSelectionIndex();
 				if (index != -1) {
 					platformSet = true;
-					if (platformCombo.getItem(index).equals(NetIDE.CONTROLLER_ENGINE)) {
-						client_server.setVisible(true);
-					} else {
-						if (client_server.getVisible() == true) {
-							client_server.setVisible(false);
-						}
-					}
+					// if
+					// (platformCombo.getItem(index).equals(NetIDE.CONTROLLER_ENGINE))
+					// {
+					// client_server.setVisible(true);
+					// } else {
+					// if (client_server.getVisible() == true) {
+					// client_server.setVisible(false);
+					// }
+					// }
 				} else {
 					platformSet = false;
 				}
@@ -216,32 +228,41 @@ public class ConfigurationShell extends Shell {
 		});
 		setComboboxContent(platformCombo);
 
-		client_server = new Group(this, SWT.NONE);
-		GridData gd_client_server = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_client_server.heightHint = 71;
-		client_server.setLayoutData(gd_client_server);
-		client_server.setLayout(new GridLayout(2, false));
+		Composite checkBoxComposite = new Composite(this, SWT.NONE);
+		checkBoxComposite.setLayout(new GridLayout(1, false));
+		checkBoxComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-		Label clientController = new Label(client_server, SWT.NONE);
-		clientController.setText("Client Controller");
+		btnCheckButton = new Button(checkBoxComposite, SWT.CHECK);
+		btnCheckButton.setText("Use Network Engine");
 
-		clientControllerCombo = new CCombo(client_server, SWT.BORDER);
-		GridData gd_clientControllerCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_clientControllerCombo.heightHint = 20;
-		gd_clientControllerCombo.widthHint = 131;
-		clientControllerCombo.setLayoutData(gd_clientControllerCombo);
-		setComboboxContent(clientControllerCombo);
+		// client_server = new Group(this, SWT.NONE);
+		// GridData gd_client_server = new GridData(SWT.FILL, SWT.FILL, false,
+		// false, 1, 1);
+		// gd_client_server.heightHint = 71;
+		// client_server.setLayoutData(gd_client_server);
+		// client_server.setLayout(new GridLayout(2, false));
+		//
+		// Label clientController = new Label(client_server, SWT.NONE);
+		// clientController.setText("Client Controller");
+		//
+		// clientControllerCombo = new CCombo(client_server, SWT.BORDER);
+		// GridData gd_clientControllerCombo = new GridData(SWT.LEFT,
+		// SWT.CENTER, false, false, 1, 1);
+		// gd_clientControllerCombo.heightHint = 20;
+		// gd_clientControllerCombo.widthHint = 131;
+		// clientControllerCombo.setLayoutData(gd_clientControllerCombo);
+		// setComboboxContent(clientControllerCombo);
+		//
+		// client_server.setVisible(false);
 
-		client_server.setVisible(false);
+		Composite btnComposite = new Composite(this, SWT.NONE);
+		GridData gd_btnComposite = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_btnComposite.widthHint = 210;
+		btnComposite.setLayoutData(gd_btnComposite);
+		btnComposite.setLayout(new GridLayout(3, false));
+		new Label(btnComposite, SWT.NONE);
 
-		Composite composite = new Composite(this, SWT.NONE);
-		GridData gd_composite = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_composite.widthHint = 210;
-		composite.setLayoutData(gd_composite);
-		composite.setLayout(new GridLayout(3, false));
-		new Label(composite, SWT.NONE);
-
-		Button btnCancle = new Button(composite, SWT.NONE);
+		Button btnCancle = new Button(btnComposite, SWT.NONE);
 		btnCancle.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -251,7 +272,7 @@ public class ConfigurationShell extends Shell {
 		});
 		btnCancle.setText("Cancel");
 
-		btnSaveConfig = new Button(composite, SWT.NONE);
+		btnSaveConfig = new Button(btnComposite, SWT.NONE);
 		btnSaveConfig.setEnabled(false);
 
 		btnSaveConfig.addSelectionListener(new SelectionAdapter() {
@@ -264,17 +285,26 @@ public class ConfigurationShell extends Shell {
 
 					if (platformCombo.getSelectionIndex() != -1) {
 
-						content[1] = platformCombo.getItem(platformCombo.getSelectionIndex());
-
-						if (client_server.getVisible() == true) {
-							if (clientControllerCombo.getSelectionIndex() != -1) {
-
-								content[2] = clientControllerCombo.getItem(clientControllerCombo.getSelectionIndex());
-							}
-							
+						if (btnCheckButton.getSelection()) {
+							content[1] = NetIDE.CONTROLLER_ENGINE;
+							content[2] = platformCombo.getItem(platformCombo.getSelectionIndex());
 						} else {
+							content[1] = platformCombo.getItem(platformCombo.getSelectionIndex());
 							content[2] = "";
 						}
+						// if (client_server.getVisible() == true) {
+						// if (clientControllerCombo.getSelectionIndex() != -1)
+						// {
+						//
+						// content[2] =
+						// clientControllerCombo.getItem(clientControllerCombo.getSelectionIndex());
+						// }
+						//
+						// } else {
+						// content[2] = "";
+						// }
+
+						// TODO:
 
 					}
 					content[3] = portText.getText();
@@ -285,7 +315,6 @@ public class ConfigurationShell extends Shell {
 		});
 		btnSaveConfig.setText("Save Config");
 		createContents();
-
 	}
 
 	private boolean appPathSet = false;
@@ -304,9 +333,8 @@ public class ConfigurationShell extends Shell {
 
 	/**
 	 * 
-	 * @return 0 = topology, 1 = platform, 2 = clientController, 3 =
-	 *         appPort, 4 = appPath, null if content wasn't set or an
-	 *         error occurred
+	 * @return 0 = topology, 1 = platform, 2 = clientController, 3 = appPort, 4
+	 *         = appPath, null if content wasn't set or an error occurred
 	 */
 	public String[] getSelectedContent() {
 		return this.content;
@@ -314,8 +342,6 @@ public class ConfigurationShell extends Shell {
 
 	private void setComboboxContent(CCombo combo) {
 
-
-		combo.add(NetIDE.CONTROLLER_ENGINE);
 		combo.add(NetIDE.CONTROLLER_FLOODLIGHT);
 
 		combo.add(NetIDE.CONTROLLER_PYRETIC);
@@ -328,7 +354,7 @@ public class ConfigurationShell extends Shell {
 	 */
 	protected void createContents() {
 		setText("Choose App Run Configuration");
-		setSize(396, 321);
+		setSize(396, 296);
 
 	}
 

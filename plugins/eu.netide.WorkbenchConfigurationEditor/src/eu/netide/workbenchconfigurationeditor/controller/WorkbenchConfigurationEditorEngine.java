@@ -19,9 +19,13 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.w3c.dom.Document;
 
@@ -174,7 +178,9 @@ public class WorkbenchConfigurationEditorEngine {
 		ViewerSupport.bind(this.editor.getTableViewer(), input,
 				BeanProperties.values(new String[] { Constants.APP_NAME_MODEL, Constants.APP_RUNNING_MODEL,
 						Constants.PLATFORM_MODEL, Constants.CLIENT_CONTROLLER_MODEL, Constants.PORT_MODEL }));
-
+		
+		
+		System.out.println("column count: " +this.editor.getTableViewer().getTable().getColumnCount());
 		// bind selectionIndex to model
 		// selectionIndex == profileListIndex, use it to match selection to
 		// actual model

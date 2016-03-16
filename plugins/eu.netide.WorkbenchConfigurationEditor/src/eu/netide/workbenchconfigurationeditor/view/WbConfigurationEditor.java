@@ -848,7 +848,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnBrowse_topo.setText("Browse");
 
 		btnLoadTopo = new Button(grpTopology, SWT.NONE);
-		btnLoadTopo.setText("Load");
+		btnLoadTopo.setText("Generate");
 		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 
