@@ -215,6 +215,10 @@ after the cause of action arose. Each party waives its rights to a jury trial in
 any resulting litigation.
    </license>
 
+   <url>
+      <discovery label="NetIDE Dependencies" url="http://updatesite.netide.eu/dependencies/"/>
+   </url>
+
    <includes
          id="org.eclipse.sirius.specifier"
          version="0.0.0"
@@ -268,14 +272,12 @@ any resulting litigation.
       <import plugin="org.eclipse.xtext.common.types.ui"/>
       <import plugin="org.eclipse.xtext.ui.codetemplates.ui"/>
       <import plugin="org.eclipse.compare"/>
-      <import plugin="eu.netide.deployment.topologyimport" version="0.2.0" match="greaterOrEqual"/>
       <import plugin="eu.netide.parameters.language" version="0.2.0" match="greaterOrEqual"/>
-      <import plugin="org.apache.commons.io" version="2.2.0" match="greaterOrEqual"/>
       <import plugin="eu.netide.configuration.utils" version="0.3.0" match="greaterOrEqual"/>
+      <import plugin="com.fasterxml.jackson.core.jackson-core" version="2.7.2" match="greaterOrEqual"/>
       <import plugin="com.fasterxml.jackson.core.jackson-databind" version="2.7.2" match="greaterOrEqual"/>
       <import plugin="com.github.jknack.handlebars" version="4.0.4" match="greaterOrEqual"/>
-      <import plugin="com.github.jknack.handlebars-jackson2" version="4.0.4" match="greaterOrEqual"/>
-      <import plugin="com.fasterxml.jackson.core.jackson-core" version="2.7.2" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.io" version="2.2.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
