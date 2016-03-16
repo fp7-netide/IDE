@@ -65,7 +65,7 @@ public class WorkbenchConfigurationEditorEngine {
 		if (statusModel == null) {
 			this.statusModel = new UiStatusModel();
 		}
-		
+
 		ControllerManager.initControllerManager(this.statusModel, editor.getFile());
 	}
 
@@ -174,9 +174,8 @@ public class WorkbenchConfigurationEditorEngine {
 		ViewerSupport.bind(this.editor.getTableViewer(), input,
 				BeanProperties.values(new String[] { Constants.APP_NAME_MODEL, Constants.APP_RUNNING_MODEL,
 						Constants.PLATFORM_MODEL, Constants.CLIENT_CONTROLLER_MODEL, Constants.PORT_MODEL }));
-		
-		
-		System.out.println("column count: " +this.editor.getTableViewer().getTable().getColumnCount());
+
+		System.out.println("column count: " + this.editor.getTableViewer().getTable().getColumnCount());
 		// bind selectionIndex to model
 		// selectionIndex == profileListIndex, use it to match selection to
 		// actual model
@@ -240,19 +239,50 @@ public class WorkbenchConfigurationEditorEngine {
 			e.printStackTrace();
 		}
 		if (decoder != null) {
-			Object tmp;
-			try {
-				tmp = decoder.readObject();
-			} catch (ArrayIndexOutOfBoundsException e) {
-				return null;
-			}
-			decoder.close();
-			if (tmp != null) {
-				if (tmp instanceof UiStatusModel) {
-					UiStatusModel model = (UiStatusModel) tmp;
-					return model;
+
+			UiStatusModel model = new UiStatusModel();
+			ArrayList<LaunchConfigurationModel> am = new ArrayList<LaunchConfigurationModel>();
+			ArrayList<SshProfileModel> pm = new ArrayList<SshProfileModel>();
+
+			boolean moreObjects = true;
+
+			while (moreObjects) {
+				Object tmp;
+				try {
+					tmp = decoder.readObject();
+
+					if (tmp instanceof CompositionModel) {
+						model.setCompositionModel((CompositionModel) tmp);
+					} else if (tmp instanceof TopologyModel) {
+						model.setTopologyModel((TopologyModel) tmp);
+					} else if (tmp instanceof ArrayList<?>) {
+						ArrayList<?> a = (ArrayList<?>) tmp;
+						if (!a.isEmpty()) {
+
+							for (Object o : a) {
+								if (o instanceof LaunchConfigurationModel) {
+									am.add((LaunchConfigurationModel) o);
+								} else if (o instanceof SshProfileModel) {
+									pm.add((SshProfileModel) o);
+								}
+							}
+
+						}
+
+					}
+
+				} catch (ArrayIndexOutOfBoundsException e) {
+					moreObjects = false;
 				}
 			}
+
+			decoder.close();
+
+			model.setModelList(am);
+			model.setProfileList(pm);
+
+			return model;
+
 		}
 		return null;
 	}
@@ -260,7 +290,7 @@ public class WorkbenchConfigurationEditorEngine {
 	public void saveAllChanges() {
 
 		try {
-			System.out.println(this.inputFile.getLocation());
+
 			File file = new File(this.inputFile.getLocation().toString());
 
 			if (!file.exists()) {
@@ -268,7 +298,12 @@ public class WorkbenchConfigurationEditorEngine {
 			}
 
 			XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(file)));
-			encoder.writeObject(this.statusModel);
+
+			encoder.writeObject(this.statusModel.getCompositionModel());
+			encoder.writeObject(this.statusModel.getTopologyModel());
+			encoder.writeObject(this.statusModel.getModelList());
+			encoder.writeObject(this.statusModel.getProfileList());
+
 			encoder.close();
 
 		} catch (IOException e) {
