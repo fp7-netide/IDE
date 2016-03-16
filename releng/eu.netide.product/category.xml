@@ -8,5 +8,5 @@
          An IDE for SDN App development.
       </description>
    </category-def>
-   <repository-reference location="http://https://updatesite.netide.eu/dependencies/" enabled="true" />
+   <repository-reference location="http://updatesite.netide.eu/dependencies/" enabled="true" />
 </site>

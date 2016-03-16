@@ -51,15 +51,15 @@ public class Resolver implements ValueResolver {
 	def private Object resolve(JsonNode node) {
 		// binary node
 		var newnode = switch node {
-			ObjectNode: (node as ObjectNode).toObjectMap
-			TextNode: (node as TextNode).textValue
-			BinaryNode: (node as BinaryNode).binaryValue
-			BooleanNode: (node as BooleanNode).booleanValue
-			IntNode: (node as IntNode).intValue
-			DoubleNode: (node as DoubleNode).doubleValue
-			BigIntegerNode: (node as BigIntegerNode).bigIntegerValue
-			DecimalNode: (node as DecimalNode).decimalValue
-			LongNode: (node as LongNode).longValue
+			ObjectNode: node.toObjectMap
+			TextNode: node.textValue
+			BinaryNode: node.binaryValue
+			BooleanNode: node.booleanValue
+			IntNode: node.intValue
+			DoubleNode: node.doubleValue
+			BigIntegerNode: node.bigIntegerValue
+			DecimalNode: node.decimalValue
+			LongNode: node.longValue
 			NullNode: null
 			default: node
 			
