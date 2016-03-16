@@ -28,7 +28,7 @@
 		<repository>
 			<id>netide-dependencies</id>
 			<layout>p2</layout>
-			<url>https://updatesite.netide.eu/dependencies/</url>
+			<url>http://updatesite.netide.eu/dependencies/</url>
 		</repository>
 	</repositories>
 
