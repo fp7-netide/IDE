@@ -28,7 +28,7 @@
 		<repository>
 			<id>netide-dependencies</id>
 			<layout>p2</layout>
-			<url>file:${project.basedir}/../../releng/eu.netide.dependencies/target/repository</url>
+			<url>https://updatesite.netide.eu/dependencies/</url>
 		</repository>
 	</repositories>
 
