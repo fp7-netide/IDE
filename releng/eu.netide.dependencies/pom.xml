@@ -26,7 +26,7 @@
 						<configuration>
 							<artifacts>
 								<artifact>
-									<id>com.github.jknack:handlebars-jackson2:4.0.4</id>
+									<id>com.github.jknack:handlebars:4.0.4</id>
 									<instructions>
 										<Import-Package>*</Import-Package>
 									</instructions>

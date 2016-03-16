@@ -12,8 +12,8 @@ Require-Bundle: org.eclipse.ui,
  eu.netide.configuration.utils;bundle-version="0.3.0",
  com.fasterxml.jackson.core.jackson-core;bundle-version="2.7.2",
  com.fasterxml.jackson.core.jackson-databind;bundle-version="2.7.2",
- org.apache.commons.io;bundle-version="2.2.0",
  com.github.jknack.handlebars;bundle-version="4.0.4",
+ org.apache.commons.io;bundle-version="2.2.0",
  org.eclipse.xtext.xbase
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
