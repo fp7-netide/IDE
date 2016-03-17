@@ -2,7 +2,6 @@ package eu.netide.workbenchconfigurationeditor.controller
 
 import Topology.NetworkEnvironment
 import eu.netide.configuration.generator.GenerateActionDelegate
-import eu.netide.configuration.utils.fsa.FSAProvider
 import eu.netide.configuration.generator.vagrantfile.VagrantfileGenerateAction
 import eu.netide.configuration.launcher.managers.SshManager
 import eu.netide.configuration.launcher.managers.VagrantManager
@@ -14,13 +13,17 @@ import eu.netide.configuration.launcher.starters.backends.SshBackend
 import eu.netide.configuration.launcher.starters.backends.SshDoubleTunnelBackend
 import eu.netide.configuration.launcher.starters.backends.VagrantBackend
 import eu.netide.configuration.launcher.starters.impl.CoreSpecificationStarter
+import eu.netide.configuration.launcher.starters.impl.DebuggerStarter
 import eu.netide.configuration.utils.NetIDE
+import eu.netide.configuration.utils.fsa.FSAProvider
+import eu.netide.deployment.topologyimport.TopologyImportFactory
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel
 import eu.netide.workbenchconfigurationeditor.model.UiStatusModel
 import eu.netide.workbenchconfigurationeditor.util.ConfigurationHelper
 import java.util.ArrayList
 import java.util.HashMap
+import org.eclipse.core.resources.IFile
 import org.eclipse.core.resources.IResource
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
@@ -30,11 +33,6 @@ import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import eu.netide.deployment.topologyimport.TopologyImportFactory
-import org.eclipse.core.resources.IFile
-import eu.netide.configuration.launcher.starters.impl.DebuggerStarter
-import org.eclipse.swt.widgets.Display
-import org.eclipse.jface.dialogs.MessageDialog
 
 class ControllerManager {
 
@@ -57,9 +55,9 @@ class ControllerManager {
 		return instance;
 	}
 
-	public def static void initControllerManager(String topologyPath, UiStatusModel statusModel, IFile file) {
+	public def static void initControllerManager(UiStatusModel statusModel, IFile file) {
 		if (instance == null) {
-			instance = new ControllerManager(topologyPath, statusModel, file);
+			instance = new ControllerManager(statusModel, file);
 		}
 	}
 
@@ -78,30 +76,31 @@ class ControllerManager {
 	private ArrayList<String> controllerName;
 	private ConfigurationHelper configHelper;
 
-	private new(String topologyPath, UiStatusModel statusModel, IFile file) {
+	private new(UiStatusModel statusModel, IFile file) {
 		this.statusModel = statusModel
-		generateConfiguration(topologyPath)
+
 		wbFile = file
 
-		factory = new StarterFactory()
-		reg = IStarterRegistry.instance
-
-		var resset = new ResourceSetImpl
-		var res = resset.getResource(URI.createURI(topologyPath), true)
-		ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
 		controllerName = new ArrayList<String>
-
-		for (c : ne.controllers)
-			controllerName.add(c.name)
 
 		configHelper = new ConfigurationHelper(controllerName, statusModel)
 
-		file = topologyPath.getIFile
 		configToStarter = new HashMap
 
 		this.statusModel.setSshRunning(new Boolean(false));
 		this.statusModel.setVagrantRunning(new Boolean(false));
+	}
 
+	public def initTopo() {
+		generateConfiguration(this.statusModel.topologyModel.topologyPath)
+		factory = new StarterFactory()
+		reg = IStarterRegistry.instance
+		var resset = new ResourceSetImpl
+		var res = resset.getResource(URI.createURI(this.statusModel.topologyModel.topologyPath), true)
+		ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
+		for (c : ne.controllers)
+			controllerName.add(c.name)
+		file = this.statusModel.topologyModel.topologyPath.getIFile
 	}
 
 	private StarterFactory factory
@@ -113,6 +112,7 @@ class ControllerManager {
 	private Job vagrantJob
 
 	private SshManager sshManager
+
 	private Job sshJob
 
 	private Backend backend;
@@ -222,6 +222,16 @@ class ControllerManager {
 			// sshManager.asyncHalt
 			this.statusModel.sshRunning = false
 			this.backend = null
+			val starter = configToStarter.values
+
+			for (starterList : starter) {
+				for (s : starterList) {
+					s.backend = this.backend
+				}
+			}
+			mnstarter.backend = this.backend
+			serverControllerStarter.backend = this.backend
+
 		}
 	}
 
@@ -284,7 +294,7 @@ class ControllerManager {
 	}
 
 	public def reattachServerController() {
-		
+
 		if (serverControllerStarter != null) {
 			serverControllerStarter.reattach
 		}
@@ -322,10 +332,6 @@ class ControllerManager {
 	public def startServerController(String serverController) {
 		val config = configHelper.createServerControllerConfiguration(serverController)
 
-//		if (!this.statusModel.vagrantRunning && !this.statusModel.sshRunning) {
-//			// start vagrant
-//			startVagrantFromConfig(config, null)
-//		}
 		// create shim starter		
 		for (c : ne.controllers) {
 
@@ -347,8 +353,9 @@ class ControllerManager {
 	private HashMap<LaunchConfigurationModel, ArrayList<IStarter>> configToStarter;
 
 	private IStarter backendStarter;
-	private IStarter shimStarter;
+
 	private IStarter starter;
+
 	private IStarter mnstarter;
 
 	public def startApp() {
@@ -356,7 +363,6 @@ class ControllerManager {
 		val launchConfigurationModel = this.statusModel.modelAtIndex;
 		launchConfigurationModel.running = true
 
-		val configuration = configHelper.createLaunchConfiguration()
 		var tmpstarterList = configToStarter.get(launchConfigurationModel)
 
 		if (tmpstarterList == null) {
@@ -410,67 +416,6 @@ class ControllerManager {
 		// Thread.sleep(2000)
 		}
 
-//		// Iterate controllers in the network model and start apps for them 
-//		for (c : ne.controllers) {
-//			controllerplatform = configuration.attributes.get("controller_platform_" + c.name) as String
-//
-//			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
-//
-//				var job = new Job("Backend Starter") {
-//
-//					override protected run(IProgressMonitor monitor) {
-//						backendStarter = factory.createBackendStarter(configuration, c, monitor)
-//						starterList.add(backendStarter)
-//						backendStarter.setBackend(backend)
-//						configToStarter.put(launchConfigurationModel, starterList)
-//						reg.register(backendStarter.safeName, backendStarter)
-//						backendStarter.syncStart
-//						return Status.OK_STATUS
-//					}
-//
-//				};
-//				job.schedule();
-//				Thread.sleep(2000)
-//
-//				// var NetIDE_server = configuration.attributes.get("controller_platform_target_" + c.name) as String // to know if server_platform is ODL #AB
-//				var jobShim = new Job("shim Starter") {
-//
-//					override protected run(IProgressMonitor monitor) {
-//						shimStarter = factory.createShimStarter(configuration, c, monitor)
-//						starterList.add(shimStarter)
-//						shimStarter.setBackend(backend)
-//						configToStarter.put(launchConfigurationModel, starterList)
-//						reg.register(shimStarter.safeName, shimStarter)
-//						shimStarter.syncStart
-//
-//						return Status.OK_STATUS
-//					}
-//
-//				};
-//				jobShim.schedule();
-//
-//				Thread.sleep(2000)
-//
-//			} else {
-//
-//				var jobSingle = new Job("single Starter") {
-//
-//					override protected run(IProgressMonitor monitor) {
-//						starter = factory.createSingleControllerStarter(configuration, c, monitor)
-//						starter.setBackend(backend)
-//						reg.register(starter.safeName, starter)
-//						starterList.add(starter)
-//						configToStarter.put(launchConfigurationModel, starterList)
-//						starter.syncStart
-//						return Status.OK_STATUS
-//					}
-//
-//				};
-//				jobSingle.schedule();
-//			// Thread.sleep(2000)
-//			}
-//
-//		}
 		Thread.sleep(2000)
 
 	}
@@ -541,6 +486,7 @@ class ControllerManager {
 	}
 
 	private IStarter coreStarter;
+
 	private Job startCoreJob;
 
 	public def startCore() {
@@ -575,8 +521,7 @@ class ControllerManager {
 	}
 
 	public def stopCore() {
-		// TODO: stop core
-		// TODO: this.statusModel.coreRunning = false
+
 		if (coreStarter != null && statusModel.coreRunning) {
 			coreStarter.stop
 			statusModel.coreRunning = false
@@ -592,7 +537,6 @@ class ControllerManager {
 	private CoreSpecificationStarter compositionStarter;
 
 	public def loadComposition() {
-		// TODO: loadComposite(this.statusModel.compositionPath)
 		val compositionJob = new Job("CompositionJob") {
 			override protected run(IProgressMonitor monitor) {
 				// configuration needs to contain topology path !
@@ -606,7 +550,5 @@ class ControllerManager {
 
 		compositionJob.schedule
 	}
-
-
 
 }

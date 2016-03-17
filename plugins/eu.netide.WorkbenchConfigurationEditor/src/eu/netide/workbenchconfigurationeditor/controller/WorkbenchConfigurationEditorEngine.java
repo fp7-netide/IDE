@@ -1,5 +1,14 @@
 package eu.netide.workbenchconfigurationeditor.controller;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.core.databinding.DataBindingContext;
@@ -19,12 +28,12 @@ import org.w3c.dom.Document;
 import eu.netide.workbenchconfigurationeditor.model.CompositionModel;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
+import eu.netide.workbenchconfigurationeditor.model.TopologyModel;
 import eu.netide.workbenchconfigurationeditor.model.UiStatusModel;
 import eu.netide.workbenchconfigurationeditor.util.Constants;
 import eu.netide.workbenchconfigurationeditor.util.RunningBoolInverter;
 import eu.netide.workbenchconfigurationeditor.util.RunningBoolToStringConverter;
 import eu.netide.workbenchconfigurationeditor.util.RunningStringToBoolConverter;
-import eu.netide.workbenchconfigurationeditor.util.XmlHelper;
 import eu.netide.workbenchconfigurationeditor.view.WbConfigurationEditor;
 
 public class WorkbenchConfigurationEditorEngine {
@@ -42,29 +51,22 @@ public class WorkbenchConfigurationEditorEngine {
 	public WorkbenchConfigurationEditorEngine(WbConfigurationEditor editor) {
 		this.editor = editor;
 		this.inputFile = editor.getFile();
-		doc = XmlHelper.getDocFromFile(inputFile);
+
 		this.ctx = new DataBindingContext();
 
 		initModel();
 		initDataBinding();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initModel() {
-		this.statusModel = new UiStatusModel();
-		this.statusModel.setMininetRunning(new Boolean(false));
-		this.statusModel.setServerControllerRunning(new Boolean(false));
-		this.statusModel.setSshRunning(new Boolean(false));
-		this.statusModel.setVagrantRunning(new Boolean(false));
-		this.statusModel.setCoreRunning(false);
-		this.statusModel.setDebuggerRunning(false);
 
-		ArrayList[] parsed = XmlHelper.parseFileToModel(inputFile, doc);
-		this.statusModel.setModelList(parsed[0]);
-		this.statusModel.setProfileList(parsed[1]);
-		this.statusModel.setCompositionModel(XmlHelper.getCompositionModel());
+		this.statusModel = loadXML();
 
-		ControllerManager.initControllerManager(LaunchConfigurationModel.getTopology(), this.statusModel, editor.getFile());
+		if (statusModel == null) {
+			this.statusModel = new UiStatusModel();
+		}
+
+		ControllerManager.initControllerManager(this.statusModel, editor.getFile());
 	}
 
 	private void initDataBinding() {
@@ -77,65 +79,58 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addStatusLabelDataBinding(this.editor.getCoreStatusLabel(), Constants.CORE_RUNNING_MODEL);
 
 		this.addTableDataBinding(this.statusModel.getModelList());
-		
+
 		this.addButtonDisabledDataBinding(this.editor.getSshUpButton(), Constants.SSH_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getSshDownButton(), Constants.SSH_RUNNING_MODEL);
-		
+
 		this.addButtonDisabledDataBinding(this.editor.getBtnVagrantUp(), Constants.VAGRANT_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnProvision_2(), Constants.VAGRANT_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnVagrantHalt(), Constants.VAGRANT_RUNNING_MODEL);
-		
+
 		this.addButtonDisabledDataBinding(this.editor.getBtnMininetOn(), Constants.MININET_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnMininetOff(), Constants.MININET_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnReattachMininet(), Constants.MININET_RUNNING_MODEL);
-		
-				
+
 		this.addButtonDisabledDataBinding(this.editor.getStartCoreBtn(), Constants.CORE_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getStopCoreBtn(), Constants.CORE_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnReattachCore(), Constants.CORE_RUNNING_MODEL);
-		
+
 		this.addButtonEnabledDataBinding(this.editor.getBtnCopyApps(), Constants.SSH_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnProvision_1(), Constants.SSH_RUNNING_MODEL);
-		
-		this.addButtonDisabledDataBinding(this.editor.getStartServerController(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
-		this.addButtonEnabledDataBinding(this.editor.getBtnStopServerController(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
+
+		this.addButtonDisabledDataBinding(this.editor.getStartServerController(),
+				Constants.SERVER_CONTROLLER_RUNNING_MODEL);
+		this.addButtonEnabledDataBinding(this.editor.getBtnStopServerController(),
+				Constants.SERVER_CONTROLLER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnReattachServer(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnImportTopology(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
-		
+
 		this.addButtonDisabledDataBinding(this.editor.getBtnDebuggerOn(), Constants.DEBUGGER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnDebuggerOff(), Constants.DEBUGGER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnDebuggerReattach(), Constants.DEBUGGER_RUNNING_MODEL);
-		
+
 		this.addStatusLabelDataBinding(this.editor.getLblDebuggerStatus(), Constants.DEBUGGER_RUNNING_MODEL);
-		
+
 		this.addComboDataBinding(this.statusModel.getProfileList());
 		this.addServerControllerComboDataBinding();
-		this.addTextDataBinding(this.editor.getTextCompositionPath(), Constants.COMPOSITION_MODEL_PATH);
+		this.addCompositionTextDataBinding(this.editor.getTextCompositionPath(), Constants.COMPOSITION_MODEL_PATH);
+		this.addTopologyTextDataBinding(this.editor.getTopologyText(), Constants.TOPOLOGY_MODEL_PATH);
+
 	}
-	
-	private void addTextDataBinding(Text text, String property) {
+
+	private void addCompositionTextDataBinding(Text text, String property) {
 		IObservableValue textObs = WidgetProperties.text().observe(text);
-		IObservableValue pathObs = BeanProperties.value(CompositionModel.class, property).observe(this.statusModel.getCompositionModel());
+		IObservableValue pathObs = BeanProperties.value(CompositionModel.class, property)
+				.observe(this.statusModel.getCompositionModel());
 		this.ctx.bindValue(textObs, pathObs);
 	}
 
-//	private void addComboDataBindingComposition() {
-//		WritableList input = new WritableList(this.statusModel.getCompositionList(), CompositionModel.class);
-//		this.statusModel.setWritableCompositionList(input);
-//
-//		ComboViewer cv = this.editor.getCompositionComboViewer();
-//		ViewerSupport.bind(cv, input, BeanProperties.value(Constants.COMPOSITION_MODEL_PATH));
-//
-//		// bind selectionIndex to model
-//		// selectionIndex == profileListIndex, use it to match selection to
-//		// actual model
-//		IObservableValue selection = WidgetProperties.singleSelectionIndex().observe(cv.getCombo());
-//		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, Constants.COMPOSITION_SELECTION_INDEX)
-//				.observe(this.statusModel);
-//
-//		this.ctx.bindValue(modelValue, selection);
-//
-//	}
+	private void addTopologyTextDataBinding(Text text, String property) {
+		IObservableValue textObs = WidgetProperties.text().observe(text);
+		IObservableValue pathObs = BeanProperties.value(TopologyModel.class, property)
+				.observe(this.statusModel.getTopologyModel());
+		this.ctx.bindValue(textObs, pathObs);
+	}
 
 	private void addComboDataBinding(ArrayList<SshProfileModel> profileList) {
 
@@ -153,6 +148,9 @@ public class WorkbenchConfigurationEditorEngine {
 		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, Constants.SSH_COMBO_SELECTION_INDEX)
 				.observe(this.statusModel);
 
+		if (!input.isEmpty())
+			cv.getCombo().select(0);
+
 		this.ctx.bindValue(modelValue, selection);
 	}
 
@@ -164,6 +162,8 @@ public class WorkbenchConfigurationEditorEngine {
 		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, Constants.SERVER_CONTROLLER_SELECTION)
 				.observe(this.statusModel);
 
+		cv.getCombo().select(0);
+
 		this.ctx.bindValue(modelValue, selection);
 	}
 
@@ -172,7 +172,7 @@ public class WorkbenchConfigurationEditorEngine {
 
 		this.statusModel.setWritableModelList(input);
 		ViewerSupport.bind(this.editor.getTableViewer(), input,
-				BeanProperties.values(new String[] { Constants.APP_NAME_MODEL, Constants.APP_RUNNING_MODEL,
+				BeanProperties.values(new String[] {Constants.LaunchName, Constants.APP_NAME_MODEL, Constants.APP_RUNNING_MODEL,
 						Constants.PLATFORM_MODEL, Constants.CLIENT_CONTROLLER_MODEL, Constants.PORT_MODEL }));
 
 		// bind selectionIndex to model
@@ -193,7 +193,7 @@ public class WorkbenchConfigurationEditorEngine {
 		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, property).observe(this.statusModel);
 		this.ctx.bindValue(widgetValue, modelValue);
 	}
-	
+
 	private void addButtonDisabledDataBinding(Button button, String property) {
 
 		IObservableValue widgetValue = WidgetProperties.enabled().observe(button);
@@ -201,10 +201,10 @@ public class WorkbenchConfigurationEditorEngine {
 		UpdateValueStrategy modelToView = new UpdateValueStrategy();
 		modelToView.setConverter(new RunningBoolInverter(Boolean.class, Boolean.class));
 		UpdateValueStrategy viewToModel = new UpdateValueStrategy();
-		
+
 		this.ctx.bindValue(widgetValue, modelValue, viewToModel, modelToView);
 	}
-	
+
 	private void addStatusLabelDataBinding(Label label, String property) {
 
 		IObservableValue widgetValue = WidgetProperties.text().observe(label);
@@ -228,27 +228,85 @@ public class WorkbenchConfigurationEditorEngine {
 		return this.doc;
 	}
 
+	public UiStatusModel loadXML() {
+		XMLDecoder decoder = null;
+		try {
+			decoder = new XMLDecoder(
+					new BufferedInputStream(new FileInputStream(this.inputFile.getLocation().toString())));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (decoder != null) {
+
+			UiStatusModel model = new UiStatusModel();
+			ArrayList<LaunchConfigurationModel> am = new ArrayList<LaunchConfigurationModel>();
+			ArrayList<SshProfileModel> pm = new ArrayList<SshProfileModel>();
+
+			boolean moreObjects = true;
+
+			while (moreObjects) {
+				Object tmp;
+				try {
+					tmp = decoder.readObject();
+
+					if (tmp instanceof CompositionModel) {
+						model.setCompositionModel((CompositionModel) tmp);
+					} else if (tmp instanceof TopologyModel) {
+						model.setTopologyModel((TopologyModel) tmp);
+					} else if (tmp instanceof ArrayList<?>) {
+						ArrayList<?> a = (ArrayList<?>) tmp;
+						if (!a.isEmpty()) {
+
+							for (Object o : a) {
+								if (o instanceof LaunchConfigurationModel) {
+									am.add((LaunchConfigurationModel) o);
+								} else if (o instanceof SshProfileModel) {
+									pm.add((SshProfileModel) o);
+								}
+							}
+
+						}
+
+					}
+
+				} catch (ArrayIndexOutOfBoundsException e) {
+					moreObjects = false;
+				}
+			}
+
+			decoder.close();
+
+			model.setModelList(am);
+			model.setProfileList(pm);
+
+			return model;
+
+		}
+		return null;
+	}
+
 	public void saveAllChanges() {
 
-		for (LaunchConfigurationModel m : this.statusModel.getModelList()) {
-			XmlHelper.removeFromXml(doc, m, inputFile);
-		}
+		try {
 
-		for (SshProfileModel s : this.statusModel.getProfileList()) {
-			XmlHelper.removeFromXml(doc, s, inputFile);
-		}
+			File file = new File(this.inputFile.getLocation().toString());
 
-		for (LaunchConfigurationModel m : this.statusModel.getModelList()) {
-			XmlHelper.addModelToXmlFile(doc, m, inputFile);
+			if (!file.exists()) {
+				System.out.println(file.createNewFile());
+			}
+
+			XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(file)));
+
+			encoder.writeObject(this.statusModel.getCompositionModel());
+			encoder.writeObject(this.statusModel.getTopologyModel());
+			encoder.writeObject(this.statusModel.getModelList());
+			encoder.writeObject(this.statusModel.getProfileList());
+
+			encoder.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		for (SshProfileModel s : this.statusModel.getProfileList()) {
-			XmlHelper.addSshProfileToXmlFile(doc, s, inputFile);
-		}
-		
-		XmlHelper.addComposition(doc, this.statusModel.getCompositionModel(), inputFile);
-		
-//		for(CompositionModel m : this.statusModel.getCompositionModel()){
-//			XmlHelper.addCompositionModel(doc, model, file);(doc, m, inputFile);
-//		}
 	}
 }

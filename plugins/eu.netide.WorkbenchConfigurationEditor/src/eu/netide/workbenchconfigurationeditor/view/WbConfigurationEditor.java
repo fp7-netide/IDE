@@ -1,9 +1,5 @@
 package eu.netide.workbenchconfigurationeditor.view;
 
-import java.beans.XMLEncoder;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
@@ -36,6 +32,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -46,8 +43,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.EditorPart;
 
 import eu.netide.configuration.utils.NetIDE;
-import eu.netide.deployment.topologyimport.TopologyImport;
-import eu.netide.deployment.topologyimport.TopologyImportFactory;
 import eu.netide.workbenchconfigurationeditor.controller.ControllerManager;
 import eu.netide.workbenchconfigurationeditor.controller.WorkbenchConfigurationEditorEngine;
 import eu.netide.workbenchconfigurationeditor.dialogs.ConfigurationShell;
@@ -55,10 +50,8 @@ import eu.netide.workbenchconfigurationeditor.dialogs.SShShell;
 import eu.netide.workbenchconfigurationeditor.model.CompositionModel;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
+import eu.netide.workbenchconfigurationeditor.model.TopologyModel;
 import eu.netide.workbenchconfigurationeditor.util.Constants;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.ModifyEvent;
 
 /**
  * 
@@ -93,7 +86,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		file = fileInput.getFile();
 		setSite(site);
 		setInput(input);
-		
+
 		setPartName("Workbench");
 	}
 
@@ -112,6 +105,51 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		engine = new WorkbenchConfigurationEditorEngine(this);
 		addButtonListener();
 
+	}
+
+	public void addTopoButtonListener() {
+
+		this.btnLoadTopo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ControllerManager.getStarter().initTopo();
+			}
+		});
+
+		this.btnBrowse_topo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String path = null;
+
+				IFile selectedFile = null;
+				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(container.getShell(),
+						new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider());
+				dialog.setTitle("Tree Selection");
+				dialog.setMessage("Select the elements from the tree:");
+				dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+				if (dialog.open() == ElementTreeSelectionDialog.OK) {
+					Object[] result = dialog.getResult();
+					if (result.length == 1) {
+						if (result[0] instanceof IFile) {
+
+							selectedFile = (IFile) result[0];
+
+							path = selectedFile.getFullPath().toString();
+							path = "platform:/resource".concat(path);
+							TopologyModel m = new TopologyModel();
+							m.setTopologyPath(path);
+
+							engine.getStatusModel().getTopologyModel().setTopologyPath(path);
+
+							setIsDirty(true);
+						} else {
+							showMessage("Please select a Topology.");
+						}
+
+					}
+				}
+			}
+		});
 	}
 
 	private void addCoreButtonListener() {
@@ -147,11 +185,11 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 							selectedFile = (IFile) result[0];
 
-							path = selectedFile.getFullPath().toOSString();
+							path = selectedFile.getFullPath().toString();
 							CompositionModel m = new CompositionModel();
 							m.setCompositionPath(path);
 							engine.getStatusModel().getCompositionModel().setCompositionPath(path);
-							
+
 							setIsDirty(true);
 						} else {
 							showMessage("Please select a Composition.");
@@ -278,6 +316,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 						tmpModel.setClientController(content[2]);
 						tmpModel.setAppPort(content[3]);
 						tmpModel.setAppPath(content[4]);
+						tmpModel.setName(content[5]);
 						tmpModel.setRunning(false);
 						String[] tmp = content[4].split("/");
 						String appName = tmp[tmp.length - 1];
@@ -417,6 +456,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					model.setSecondPort(result[7]);
 
 					engine.getStatusModel().addEntryToSSHList(model);
+
+					sshProfileCombo.select(engine.getStatusModel().getProfileList().indexOf(model));
 					setIsDirty(true);
 				}
 
@@ -438,10 +479,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 						if (sshShell.deleteEntry()) {
 							engine.getStatusModel().removeEntryFromSSHList(profile);
+							sshProfileCombo.clearSelection();
+							sshProfileCombo.deselectAll();
 						}
 
-						sshProfileCombo.clearSelection();
-						sshProfileCombo.deselectAll();
 					}
 
 				} else {
@@ -495,6 +536,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		addSshButtonListener();
 		addServerControllerButtonListener();
 		addCoreButtonListener();
+		addTopoButtonListener();
 
 	}
 
@@ -619,7 +661,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		GridData gd_composite_2 = new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1);
 		gd_composite_2.widthHint = 624;
-		gd_composite_2.heightHint = 244;
+		gd_composite_2.heightHint = 290;
 		composite_2.setLayoutData(gd_composite_2);
 		composite_2.setLayout(new GridLayout(2, false));
 
@@ -647,7 +689,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		stopCoreBtn = new Button(grpCore, SWT.NONE);
 		stopCoreBtn.setText("Off");
-		
+
 		btnReattachCore = new Button(grpCore, SWT.NONE);
 		btnReattachCore.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -666,12 +708,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		new Label(grpCompositionLoader, SWT.NONE);
 
 		textCompositionPath = new Text(grpCompositionLoader, SWT.BORDER);
-		textCompositionPath.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				engine.getStatusModel().getCompositionModel().setCompositionPath(textCompositionPath.getText());
-				setIsDirty(true);
-			}
-		});
+
 		textCompositionPath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		browseCompositionBtn = new Button(grpCompositionLoader, SWT.NONE);
@@ -709,12 +746,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		startServerController = new Button(grpServerController, SWT.BORDER);
 
 		startServerController.setText("On");
-		
-				btnStopServerController = new Button(grpServerController, SWT.NONE);
-				btnStopServerController.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-				
-						btnStopServerController.setText("Off");
-		
+
+		btnStopServerController = new Button(grpServerController, SWT.NONE);
+		btnStopServerController.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+
+		btnStopServerController.setText("Off");
+
 		btnReattachServer = new Button(grpServerController, SWT.NONE);
 		btnReattachServer.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -750,7 +787,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnMininetOff = new Button(grpMininet, SWT.NONE);
 
 		btnMininetOff.setText("Off");
-		
+
 		btnReattachMininet = new Button(grpMininet, SWT.NONE);
 		btnReattachMininet.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -759,18 +796,20 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnReattachMininet.setText("Reattach");
-		
+
 		grpDebugger = new Group(composite_2, SWT.NONE);
-		grpDebugger.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		GridData gd_grpDebugger = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_grpDebugger.heightHint = 44;
+		grpDebugger.setLayoutData(gd_grpDebugger);
 		grpDebugger.setText("Debugger");
 		grpDebugger.setLayout(new GridLayout(4, false));
-		
+
 		lblDebuggerStatus = new Label(grpDebugger, SWT.NONE);
 		GridData gd_lblDebuggerStatus = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_lblDebuggerStatus.widthHint = 99;
 		lblDebuggerStatus.setLayoutData(gd_lblDebuggerStatus);
 		lblDebuggerStatus.setText("Status: Offline");
-		
+
 		btnDebuggerOn = new Button(grpDebugger, SWT.NONE);
 		btnDebuggerOn.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -779,7 +818,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnDebuggerOn.setText("On");
-		
+
 		btnDebuggerOff = new Button(grpDebugger, SWT.NONE);
 		btnDebuggerOff.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -788,7 +827,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnDebuggerOff.setText("Off");
-		
+
 		btnDebuggerReattach = new Button(grpDebugger, SWT.NONE);
 		btnDebuggerReattach.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -797,7 +836,20 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnDebuggerReattach.setText("Reattach");
-		new Label(composite_2, SWT.NONE);
+
+		grpTopology = new Group(composite_2, SWT.NONE);
+		grpTopology.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		grpTopology.setText("Topology ");
+		grpTopology.setLayout(new GridLayout(3, false));
+
+		topo_text = new Text(grpTopology, SWT.BORDER);
+		topo_text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		btnBrowse_topo = new Button(grpTopology, SWT.NONE);
+		btnBrowse_topo.setText("Browse");
+
+		btnLoadTopo = new Button(grpTopology, SWT.NONE);
+		btnLoadTopo.setText("Generate");
 		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 
@@ -812,16 +864,20 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		table = tableViewer.getTable();
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
+		TableColumn tc0 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc1 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc2 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc3 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc4 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc5 = new TableColumn(table, SWT.CENTER);
+
+		tc0.setText("Name");
 		tc1.setText("App Name");
 		tc2.setText("Active");
 		tc3.setText("Platform");
 		tc4.setText("Client");
 		tc5.setText("Port");
+		tc0.setWidth(100);
 		tc1.setWidth(120);
 		tc2.setWidth(80);
 		tc3.setWidth(100);
@@ -881,16 +937,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		// do saving
 		engine.saveAllChanges();
 		setIsDirty(false);
-
-		try {
-			File file = new File("/home/piotr/blub.xml");
-			XMLEncoder encoder = new XMLEncoder(new FileOutputStream(file));
-			encoder.writeObject(engine.getStatusModel());
-			encoder.writeObject(engine.getStatusModel());
-			encoder.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 	}
 
@@ -1028,6 +1074,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Button btnDebuggerOn;
 	private Button btnDebuggerOff;
 	private Label lblDebuggerStatus;
+	private Group grpTopology;
+	private Text topo_text;
+	private Button btnBrowse_topo;
+	private Button btnLoadTopo;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;
@@ -1120,25 +1170,36 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	public Text getTextCompositionPath() {
 		return textCompositionPath;
 	}
+
 	public Button getBtnReattachCore() {
 		return btnReattachCore;
 	}
+
 	public Button getBtnReattachServer() {
 		return btnReattachServer;
 	}
+
 	public Button getBtnReattachMininet() {
 		return btnReattachMininet;
 	}
+
 	public Button getBtnDebuggerOn() {
 		return btnDebuggerOn;
 	}
+
 	public Button getBtnDebuggerOff() {
 		return btnDebuggerOff;
 	}
+
 	public Button getBtnDebuggerReattach() {
 		return btnDebuggerReattach;
 	}
+
 	public Label getLblDebuggerStatus() {
 		return lblDebuggerStatus;
+	}
+
+	public Text getTopologyText() {
+		return this.topo_text;
 	}
 }

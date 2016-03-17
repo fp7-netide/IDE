@@ -10,6 +10,7 @@ public class Constants {
 	public static final String PORT_MODEL = "appPort";
 	public static final String APP_NAME_MODEL = "appName";
 	public static final String APP_RUNNING_MODEL = "running";
+	public static final String LaunchName = "name";
 
 	// UI Status Model Constants
 	public static final String VAGRANT_RUNNING_MODEL = "vagrantRunning";
@@ -22,8 +23,12 @@ public class Constants {
 	public static final String LAUNCH_TABLE_INDEX = "launchTableIndex";
 	public static final String SERVER_CONTROLLER_SELECTION = "serverControllerSelection";
 	public static final String COMPOSITION_SELECTION_INDEX = "compositionSelectionIndex";
-	
-	
+
+	public static final String TOPOLOGY_MODEL_PATH = "topologyPath";
+	public static final String COMPOSITION = "compositionPath";
+	public static final String COMPOSITION_PATH = "compositionPath";
+	public static final String ELEMENT_TOPOLOGY_PATH = "topologyPath";
+
 	public static final String COMPOSITION_MODEL_PATH = "compositionPath";
 
 	// SSH Profile Model Constants
@@ -39,6 +44,5 @@ public class Constants {
 	// UI Constants
 	public static final String LABEL_RUNNING = "running";
 	public static final String LABEL_OFFLINE = "offline";
-	
 
 }

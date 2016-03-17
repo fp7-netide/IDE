@@ -13,11 +13,11 @@ public class LaunchConfigurationModel {
 	private String platform;
 	private String id;
 	private String clientController;
-	// TODO: remove topology here and move to a more appropriate place
-	private static String topology;
+
 	private String appName;
 	private String appPort;
 	private boolean running;
+	private String name;
 
 	public LaunchConfigurationModel() {
 		changes = new PropertyChangeSupport(this);
@@ -31,6 +31,14 @@ public class LaunchConfigurationModel {
 		return this.running;
 	}
 
+	public String getName(){
+		return this.name;
+	}
+	
+	public void setName(String name){
+		changes.firePropertyChange(Constants.LaunchName, this.name, this.name = name);
+	}
+	
 	public String getPlatform() {
 		return this.platform;
 	}
@@ -80,14 +88,6 @@ public class LaunchConfigurationModel {
 	public void setClientController(String clientController) {
 		changes.firePropertyChange(Constants.CLIENT_CONTROLLER_MODEL, this.clientController,
 				this.clientController = clientController);
-	}
-
-	public static String getTopology() {
-		return topology;
-	}
-
-	public static void setTopology(String topology) {
-		LaunchConfigurationModel.topology = topology;
 	}
 
 	@Override

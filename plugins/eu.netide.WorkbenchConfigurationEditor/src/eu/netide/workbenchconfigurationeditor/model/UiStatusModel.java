@@ -9,6 +9,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import eu.netide.workbenchconfigurationeditor.util.Constants;
 
 public class UiStatusModel {
+
 	private Boolean vagrantRunning;
 	private Boolean mininetRunning;
 	private Boolean debuggerRunning;
@@ -22,6 +23,7 @@ public class UiStatusModel {
 
 	private String serverControllerSelection;
 	private CompositionModel compositionModel;
+	private TopologyModel topologyModel;
 
 	private WritableList profileWritableList;
 	private WritableList modelWritableList;
@@ -38,6 +40,17 @@ public class UiStatusModel {
 
 	public UiStatusModel() {
 		this.changes = new PropertyChangeSupport(this);
+		this.modelList = new ArrayList<LaunchConfigurationModel>();
+		this.profileList = new ArrayList<SshProfileModel>();
+		this.topologyModel = new TopologyModel();
+		this.compositionModel = new CompositionModel();
+
+		this.setMininetRunning(new Boolean(false));
+		this.setServerControllerRunning(new Boolean(false));
+		this.setSshRunning(new Boolean(false));
+		this.setVagrantRunning(new Boolean(false));
+		this.setCoreRunning(false);
+		this.setDebuggerRunning(false);
 	}
 
 	// public CompositionModel getCompositionAtSelectedIndex() {
@@ -171,6 +184,14 @@ public class UiStatusModel {
 	public void setCompositionModel(CompositionModel model) {
 		changes.firePropertyChange(Constants.COMPOSITION_MODEL_PATH, this.compositionModel,
 				this.compositionModel = model);
+	}
+
+	public void setTopologyModel(TopologyModel model) {
+		changes.firePropertyChange(Constants.TOPOLOGY_MODEL_PATH, this.topologyModel, this.topologyModel = model);
+	}
+
+	public TopologyModel getTopologyModel() {
+		return this.topologyModel;
 	}
 
 	public void addEntryToModelList(LaunchConfigurationModel model) {
