@@ -52,7 +52,6 @@
 		<module>../../plugins/eu.netide.sysreq</module>
 		<module>../../plugins/eu.netide.sysreq.sdk</module>
 		<module>../../plugins/eu.netide.sysreq.ui</module>
-		<module>../../plugins/eu.netide.sysreq.tests</module>
 		<module>../../plugins/eu.netide.parameters.language</module>
 		<module>../../plugins/eu.netide.parameters.language.ui</module>
 		<module>../../plugins/eu.netide.parameters.templates</module>
