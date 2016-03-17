@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/eu.netide.feature_0.3.0.qualifier.jar" id="eu.netide.feature" version="0.3.0.qualifier">
+   <feature url="features/eu.netide.feature_0.3.1.qualifier.jar" id="eu.netide.feature" version="0.3.1.qualifier">
       <category name="eu.netide"/>
    </feature>
    <category-def name="eu.netide" label="NetIDE">

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Launcher
 Bundle-SymbolicName: eu.netide.configuration.launcher;singleton:=true
-Bundle-Version: 0.3.0.qualifier
+Bundle-Version: 0.3.1.qualifier
 Eclipse-BundleShape: dir
 Bundle-Activator: eu.netide.configuration.launcher.Activator
 Require-Bundle: org.eclipse.core.runtime,

@@ -8,10 +8,10 @@
 	<parent>
 		<groupId>eu.netide.parent</groupId>
 		<artifactId>eu.netide.parent</artifactId>
-		<version>0.3.0-SNAPSHOT</version>
+		<version>0.3.1-SNAPSHOT</version>
 		<relativePath>../../releng/eu.netide.parent/pom.xml</relativePath>
 	</parent>
 
 	<packaging>eclipse-feature</packaging>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.3.1-SNAPSHOT</version>
 </project>
