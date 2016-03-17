@@ -66,7 +66,6 @@
 	<build>
 
 		<plugins>
-			
 			<!-- <plugin> <groupId>org.apache.felix</groupId> <artifactId>maven-bundle-plugin</artifactId> 
 				<version>1.2.0</version> <configuration> <unpackBundle>${unpack.bundle}</unpackBundle> 
 				<instructions> <Bundle-Name>${project.artifactId}</Bundle-Name> <Bundle-SymbolicName>${symbolic.name}</Bundle-SymbolicName> 
@@ -144,7 +143,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 
 		<pluginManagement>
