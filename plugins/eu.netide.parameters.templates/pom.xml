@@ -3,8 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.netide.parameters.templates</groupId>
 	<artifactId>eu.netide.parameters.templates</artifactId>
-
 	<packaging>eclipse-plugin</packaging>
+	
+	<parent>
+		<groupId>eu.netide.parent</groupId>
+		<artifactId>eu.netide.parent</artifactId>
+		<version>0.3.0-SNAPSHOT</version>
+		<relativePath>../../releng/eu.netide.parent/pom.xml</relativePath>
+	</parent>
 	<build>
 		<plugins>
 			<plugin>
@@ -12,13 +18,6 @@
 				<artifactId>xtend-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-
 	</build>
-	<parent>
-		<groupId>eu.netide.parent</groupId>
-		<artifactId>eu.netide.parent</artifactId>
-		<version>0.3.0-SNAPSHOT</version>
-		<relativePath>../../releng/eu.netide.parent/pom.xml</relativePath>
-	</parent>
 
 </project>
