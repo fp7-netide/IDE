@@ -1,18 +1,19 @@
 package eu.netide.newproject.newapp
 
-import org.eclipse.jface.wizard.WizardPage
-import org.eclipse.swt.widgets.Composite
-import org.eclipse.swt.SWT
+import eu.netide.configuration.utils.NetIDE
 import org.eclipse.debug.internal.ui.SWTFactory
-import org.eclipse.swt.widgets.Text
+import org.eclipse.jface.wizard.WizardPage
+import org.eclipse.swt.SWT
 import org.eclipse.swt.events.ModifyEvent
 import org.eclipse.swt.events.ModifyListener
-import org.eclipse.swt.widgets.Button
+import org.eclipse.swt.widgets.Combo
+import org.eclipse.swt.widgets.Composite
+import org.eclipse.swt.widgets.Text
 
 class NewAppWizardPage1 extends WizardPage {
 	
 	Text nametext
-	Text platformtext
+	Combo platformtext
 	//Button sysreqcheck
 	//Button paramcheck
 	
@@ -32,7 +33,7 @@ class NewAppWizardPage1 extends WizardPage {
 			}
 		})
 		SWTFactory.createLabel(container, "Controller", 1)
-		platformtext = SWTFactory.createText(container,SWT.BORDER, 1)
+		platformtext = SWTFactory.createCombo(container,SWT.BORDER, 1, NetIDE.CONTROLLERS)
 		platformtext.addModifyListener(new ModifyListener() {
 			override modifyText(ModifyEvent e) {
 				dialogChanged()

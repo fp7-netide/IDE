@@ -6,22 +6,68 @@
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.sirius.ui.tools.views.model.explorer#PopupMenu">
-         <command
-               commandId="eu.netide.parameters.templates.configureparams"
-               label="Configure Parameters"
-               style="push">
-         </command>
-         <command
-               commandId="eu.netide.parameters.templates.render"
-               label="Render Templates"
-               style="push">
-
-         </command>
-         <command
-               commandId="eu.netide.parameters.templates.copy"
-               label="Copy to Templates"
-               style="push">
-         </command>
+         <menu
+               icon="icons/netide.png"
+               id="eu.netide.parameter.templates.contribution"
+               label="NetIDE">
+            <command
+                  commandId="eu.netide.parameters.templates.copy"
+                  id="eu.netide.parameters.templates.copy.menu"
+                  label="Copy to Templates"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeMenuSelection">
+                     <iterate
+                           ifEmpty="true"
+                           operator="or">
+                        <instanceof
+                              value="org.eclipse.core.resources.IFile">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="eu.netide.parameters.templates.render"
+                  id="eu.netide.parameters.templates.render.menu"
+                  label="Render Templates"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeMenuSelection">
+                     <iterate
+                           ifEmpty="true"
+                           operator="or">
+                        <instanceof
+                              value="org.eclipse.core.resources.IProject">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="eu.netide.parameters.templates.configureparams"
+                  id="eu.netide.parameters.templates.configureparams.menu"
+                  label="Configure Parameters"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeMenuSelection">
+                     <iterate
+                           ifEmpty="true"
+                           operator="or">
+                        <instanceof
+                              value="org.eclipse.core.resources.IProject">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
       </menuContribution>
    </extension>
    <extension

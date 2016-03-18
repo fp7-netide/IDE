@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.ui,
  eu.netide.configuration,
  org.eclipse.sirius.ui,
- org.eclipse.emf.transaction
+ org.eclipse.emf.transaction,
+ eu.netide.configuration.utils;bundle-version="0.3.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: eu.netide.newproject
