@@ -50,7 +50,6 @@
 		<module>../../plugins/eu.netide.debug</module>
 		<module>../../plugins/eu.netide.perspective</module>
 		<module>../../plugins/eu.netide.sysreq</module>
-		<module>../../plugins/eu.netide.sysreq.sdk</module>
 		<module>../../plugins/eu.netide.sysreq.ui</module>
 		<module>../../plugins/eu.netide.parameters.language</module>
 		<module>../../plugins/eu.netide.parameters.language.ui</module>
@@ -65,13 +64,6 @@
 	<build>
 
 		<plugins>
-			<!-- <plugin> <groupId>org.apache.felix</groupId> <artifactId>maven-bundle-plugin</artifactId> 
-				<version>1.2.0</version> <configuration> <unpackBundle>${unpack.bundle}</unpackBundle> 
-				<instructions> <Bundle-Name>${project.artifactId}</Bundle-Name> <Bundle-SymbolicName>${symbolic.name}</Bundle-SymbolicName> 
-				<Bundle-Description>${project.name}</Bundle-Description> <Import-Package>${import.packages}</Import-Package> 
-				<Private-Package>${private.packages}</Private-Package> <Include-Resource>${include.resources}</Include-Resource> 
-				<Embed-Dependency>${embed-dep}</Embed-Dependency> <_exportcontents>${export.packages}</_exportcontents> 
-				</instructions> </configuration> <extensions>true</extensions> </plugin> -->
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
