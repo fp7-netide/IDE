@@ -9,20 +9,19 @@ if [ ! -d ~/core_engine ]; then
   sudo apt-get --yes install oracle-java8-installer
   sudo apt-get --yes install oracle-java8-set-default
 
-  mkdir core_engine
-  cd core_engine
+  cd netide
   git clone -b demo-brussels https://github.com/fp7-netide/Engine
 
   cd Engine/libraries/netip/java
   mvn clean install -Dgpg.skip=true
 
   cd
-  cd core_engine/Engine/core
+  cd netide/Engine/core
   mvn clean install
   cd tools/emulator
   mvn clean install -Dgpg.skip=true
   cd target
-  cp emulator-1.0-jar-with-dependencies.jar /home/vagrant/composition/
+  cp emulator-1.0-jar-with-dependencies.jar ~/netide/composition/
 
 
   cd
@@ -40,7 +39,7 @@ if [ ! -d ~/core_engine ]; then
 
   ./client "feature:repo-add mvn:eu.netide.core/core/1.0.0.0-SNAPSHOT/xml/features"
   ./client "feature:install netide-core"
-  sleep 10
+  sleep 15
   ./stop
 
   cd

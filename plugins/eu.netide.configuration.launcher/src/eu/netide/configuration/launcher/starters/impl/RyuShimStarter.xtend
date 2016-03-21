@@ -10,6 +10,10 @@ class RyuShimStarter extends ControllerStarter {
 	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
 		super("Ryu Shim", configuration, controller, monitor)
 	}
+	
+	new(String appPath, int port, IProgressMonitor monitor) {
+		super("Ryu Shim", port, appPath, monitor)
+	}
 
 	override getEnvironmentVariables() {
 		return "PYTHONPATH=$PYTHONPATH:netide/Engine/ryu-shim"

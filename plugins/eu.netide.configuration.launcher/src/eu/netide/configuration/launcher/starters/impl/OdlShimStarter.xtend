@@ -10,6 +10,10 @@ class OdlShimStarter extends ControllerStarter {
 		super("OpenDaylight Shim",  configuration, controller, monitor)
 	}
 	
+	new (String appPath, int port, IProgressMonitor monitor) {
+		super("OpenDaylight Shim", port, appPath, monitor)
+	}
+	
 	override getCommandLine() {
 		//var str = String.format("~/netide/Engine/odl-shim/karaf/target/assembly/bin/karaf")
 		var str = String.format("~/netide/distribution-karaf-0.4.0-Beryllium/bin/karaf")

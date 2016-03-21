@@ -9,17 +9,23 @@ import org.eclipse.core.runtime.Path
 import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunchConfigurationType
+import org.eclipse.core.resources.IResource
+import org.eclipse.core.resources.IFile
+import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.emf.common.util.URI
 
 class ConfigurationHelper {
 
 	private ILaunchConfigurationType configType
 	private ArrayList<String> controllerName
 	private UiStatusModel statusModel
+	private IResource wbFile
 
-	new(ArrayList<String> controllerName, UiStatusModel statusModel) {
+	new(ArrayList<String> controllerName, UiStatusModel statusModel, IResource wbFile) {
 		configType = getLaunchConfigType
 		this.controllerName = controllerName
 		this.statusModel = statusModel
+		this.wbFile = wbFile
 	}
 
 	public def ILaunchConfiguration getTopoConfiguration() {
@@ -85,7 +91,7 @@ class ConfigurationHelper {
 	public def ILaunchConfiguration createServerControllerConfiguration(String serverController) {
 
 		try {
-			var topoPath = new Path(statusModel.getTopologyModel().topologyPath).toString();
+			var topoPath = URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString
 
 			var c = configType.newInstance(null, serverController + UUID);
 			c.setAttribute("topologymodel", topoPath);
@@ -121,8 +127,9 @@ class ConfigurationHelper {
 //		this.sshIdFile = launchConfiguration.getAttribute("target.ssh.idfile", "").absolutePath.toOSString
 //
 //		var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
-		var topoPath = new Path(statusModel.getTopologyModel().topologyPath).toString();
-
+//		var topoPath = new Path(statusModel.getTopologyModel().topologyPath).toString();
+		var topoPath = URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString
+		
 		var c = configType.newInstance(null, "sshConfig" + UUID);
 		c.setAttribute("topologymodel", topoPath);
 		c.setAttribute("target.ssh.port", "22");

@@ -33,6 +33,10 @@ import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import eu.netide.configuration.launcher.starters.impl.CoreStarter
+import eu.netide.configuration.utils.NetIDEUtil
+import javax.management.openmbean.OpenDataException
+import eu.netide.configuration.launcher.starters.impl.OdlShimStarter
 
 class ControllerManager {
 
@@ -83,7 +87,7 @@ class ControllerManager {
 
 		controllerName = new ArrayList<String>
 
-		configHelper = new ConfigurationHelper(controllerName, statusModel)
+		configHelper = new ConfigurationHelper(controllerName, statusModel, wbFile)
 
 		configToStarter = new HashMap
 
@@ -333,21 +337,24 @@ class ControllerManager {
 		val config = configHelper.createServerControllerConfiguration(serverController)
 
 		// create shim starter		
-		for (c : ne.controllers) {
+//		for (c : ne.controllers) {
+		var job = new Job("Shim Server") {
+			override protected run(IProgressMonitor monitor) {
 
-			var job = new Job("Shim Server") {
-				override protected run(IProgressMonitor monitor) {
+				serverControllerStarter = new OdlShimStarter(
+					NetIDEUtil.toPlatformUri(wbFile), 
+					7733, 
+					monitor
+				)
+				serverControllerStarter.backend = backend
+				serverControllerStarter.asyncStart
 
-					serverControllerStarter = factory.createShimStarter(config, c, monitor) // config controller monitor
-					serverControllerStarter.backend = backend
-					serverControllerStarter.asyncStart
-
-					return Status.OK_STATUS
-				}
+				return Status.OK_STATUS
 			}
-			job.schedule
-			Thread.sleep(2000)
 		}
+		job.schedule
+//		Thread.sleep(2000)
+//		}
 	}
 
 	private HashMap<LaunchConfigurationModel, ArrayList<IStarter>> configToStarter;
@@ -496,7 +503,9 @@ class ControllerManager {
 			override protected run(IProgressMonitor monitor) {
 
 				if (coreStarter == null) {
-					coreStarter = factory.createCoreStarter(configHelper.getTopoConfiguration, monitor)
+//					coreStarter = factory.createCoreStarter(configHelper.getTopoConfiguration, monitor)
+					coreStarter = new CoreStarter(backend,
+						URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString, monitor)
 				}
 				if (!statusModel.coreRunning)
 					startCoreJob.schedule

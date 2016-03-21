@@ -1,8 +1,8 @@
 package eu.netide.configuration.launcher.starters.impl
 
+import eu.netide.configuration.launcher.starters.backends.Backend
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
-import eu.netide.configuration.launcher.starters.backends.Backend
 
 class CoreStarter extends Starter {
 	@Deprecated
@@ -10,8 +10,8 @@ class CoreStarter extends Starter {
 		super("Core", configuration, monitor)
 	}
 	
-	new (Backend backend, IProgressMonitor monitor) {
-		super("Core", "", backend, monitor)
+	new (Backend backend, String project, IProgressMonitor monitor) {
+		super("Core", project, backend, monitor)
 	}
 	
 	override getCommandLine() {

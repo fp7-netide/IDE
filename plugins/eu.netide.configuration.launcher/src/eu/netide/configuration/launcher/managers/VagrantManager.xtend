@@ -38,7 +38,7 @@ class VagrantManager implements IManager {
 	private File workingDirectory
 
 	private IProgressMonitor monitor
-	
+
 	@Accessors(PUBLIC_GETTER)
 	private IProject project
 
@@ -58,7 +58,7 @@ class VagrantManager implements IManager {
 		var path = launch.launchConfiguration.attributes.get("topologymodel") as String
 
 		this.workingDirectory = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
-		
+
 		var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
 		this.project = topofile.project
 	}
@@ -142,7 +142,7 @@ class VagrantManager implements IManager {
 		p.waitFor
 		return output
 	}
-	
+
 	override execWithReturn(String cmd) {
 		var p = DebugPlugin.exec(newArrayList(vagrantpath, "ssh", "-c", cmd), workingDirectory, null)
 		var br = new BufferedReader(new InputStreamReader(p.getInputStream()))
@@ -156,7 +156,6 @@ class VagrantManager implements IManager {
 		}
 		return output
 	}
-
 
 	def startProcess(ArrayList<String> cmdline) {
 
@@ -208,15 +207,19 @@ class VagrantManager implements IManager {
 
 	def getIFile(String s) {
 
-		var resSet = new ResourceSetImpl
-		var res = resSet.getResource(URI.createURI(s), true)
-
-		var eUri = res.getURI()
-		if (eUri.isPlatformResource()) {
-			var platformString = eUri.toPlatformString(true)
-			return ResourcesPlugin.getWorkspace().getRoot().findMember(platformString)
-		}
-		return null
+//		var resSet = new ResourceSetImpl
+//		var res = resSet.getResource(URI.createURI(s), true)
+//
+//		var eUri = res.getURI()
+//		if (eUri.isPlatformResource()) {
+//			var platformString = eUri.toPlatformString(true)
+//			return ResourcesPlugin.getWorkspace().getRoot().findMember(platformString)
+//		}
+//		return null
+		var path = new Path(s)
+		var file = ResourcesPlugin.getWorkspace().getRoot().findMember(path.removeFirstSegments(2));
+		var project = file.project
+		return file
 	}
 
 	def generateCommandLine(String[] commandLine) {
@@ -259,7 +262,6 @@ class VagrantManager implements IManager {
 			cmd,
 			"--",
 			"-tt"
-			
 		))
 	}
 

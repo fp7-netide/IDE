@@ -53,7 +53,7 @@ class StarterFactory {
 			return starter
 		}
 	}
-	
+
 	public def IStarter createSingleControllerStarter(String platform, String appPath, int port,
 		IProgressMonitor monitor) {
 		var controllerplatform = platform
@@ -95,7 +95,6 @@ class StarterFactory {
 //			return starter
 //		}
 //	}
-
 	public def IStarter createShimStarter(ILaunchConfiguration configuration, Controller controller,
 		IProgressMonitor monitor) {
 
@@ -108,6 +107,23 @@ class StarterFactory {
 				starter = new RyuShimStarter(configuration, controller, monitor)
 			case NetIDE.CONTROLLER_ODL:
 				starter = new OdlShimStarter(configuration, controller, monitor)
+		}
+		starter.setBackend(backend)
+		return starter
+
+	}
+
+	public def IStarter createShimStarter(String platform, String appPath, int port, IProgressMonitor monitor) {
+
+		var serverplatform = platform
+		var IStarter starter
+		switch serverplatform {
+			case NetIDE.CONTROLLER_POX:
+				starter = new PoxShimStarter(appPath, port, monitor)
+			case NetIDE.CONTROLLER_RYU:
+				starter = new RyuShimStarter(appPath, port, monitor)
+			case NetIDE.CONTROLLER_ODL:
+				starter = new OdlShimStarter(appPath, port, monitor)
 		}
 		starter.setBackend(backend)
 		return starter
@@ -131,8 +147,7 @@ class StarterFactory {
 		return starter
 	}
 
-	public def IStarter createBackendStarter(String platform, String appPath, int port,
-		IProgressMonitor monitor) {
+	public def IStarter createBackendStarter(String platform, String appPath, int port, IProgressMonitor monitor) {
 
 		var clientplatform = platform
 		var IStarter starter

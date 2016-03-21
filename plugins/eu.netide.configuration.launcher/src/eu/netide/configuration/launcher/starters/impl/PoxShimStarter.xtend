@@ -10,6 +10,10 @@ class PoxShimStarter extends ControllerStarter {
 		super("POX Shim", configuration, controller, monitor)
 	}
 	
+	new(String appPath, int port, IProgressMonitor monitor) {
+		super("POX Shim", port, appPath, monitor)
+	}
+	
 	override getEnvironmentVariables() {
 		return "PYTHONPATH=$PYTHONPATH:netide/Engine/ryu-backend/tests"
 	}

@@ -111,7 +111,7 @@ public class ConfigurationShell extends Shell {
 
 		Group appGroup = new Group(this, SWT.NONE);
 		GridData gd_appGroup = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-		gd_appGroup.heightHint = 81;
+		gd_appGroup.heightHint = 94;
 		appGroup.setLayoutData(gd_appGroup);
 		appGroup.setLayout(new GridLayout(3, false));
 		

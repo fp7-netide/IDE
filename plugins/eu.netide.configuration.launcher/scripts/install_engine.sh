@@ -2,8 +2,8 @@
 cd
 
 if [ ! -d ~/netide/Engine ]; then
-  cd netide  
-  git clone https://github.com/fp7-netide/Engine
+  cd netide
+  git clone -b demo-brussels https://github.com/fp7-netide/Engine
   cd
 fi
 

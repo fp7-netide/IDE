@@ -62,6 +62,9 @@ class VagrantfileGenerator {
 		
 		url = bundle.getEntry("scripts/install_floodlight.sh")
 		var flscriptpath = scriptpath(url)
+		
+		url = bundle.getEntry("scripts/install_tools.sh")
+		var toolscriptpath = scriptpath(url)
 
 		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map [ c |
 			String.format("controller_platform_%s", c.name)
@@ -130,6 +133,7 @@ class VagrantfileGenerator {
 					config.vm.provision "shell", path: "«corescriptpath»", privileged: false
 					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«flscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«toolscriptpath»", privileged: false
 				«ENDIF»
 				
 				# Syncing the mininet configuration folder with the vm

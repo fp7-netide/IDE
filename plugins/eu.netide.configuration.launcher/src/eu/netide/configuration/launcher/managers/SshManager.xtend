@@ -50,7 +50,6 @@ class SshManager implements IManager {
 	String sshPort
 	String sshUsername
 	String sshIdFile
-	Iterable<IPath> appPaths
 	@Accessors(PUBLIC_GETTER)
 	IProject project
 
@@ -69,17 +68,17 @@ class SshManager implements IManager {
 
 		var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
 
-		var resset = new ResourceSetImpl
-		var res = resset.getResource(URI.createURI(topofile.fullPath.toString), true)
+//		var resset = new ResourceSetImpl
+//		var res = resset.getResource(URI.createURI(topofile.fullPath.toString), true)
 
 		this.project = topofile.project
 
-		var ne = res.allContents.filter(typeof(NetworkEnvironment)).next
+//		var ne = res.allContents.filter(typeof(NetworkEnvironment)).next
 
-		this.appPaths = ne.controllers.map [
-			var platform = launchConfiguration.attributes.get("controller_platform_" + name)
-			launchConfiguration.attributes.get(String.format("controller_data_%s_%s", name, platform)) as String
-		].toSet.map[e|NetIDEUtil.absolutePath(e)]
+//		this.appPaths = ne.controllers.map [
+//			var platform = launchConfiguration.attributes.get("controller_platform_" + name)
+//			launchConfiguration.attributes.get(String.format("controller_data_%s_%s", name, platform)) as String
+//		].toSet.map[e|NetIDEUtil.absolutePath(e)]
 
 		this.monitor = monitor
 
@@ -95,8 +94,9 @@ class SshManager implements IManager {
 
 		this.workingDirectory = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
 	}
-	
-	new(ILaunchConfiguration launchConfiguration, IProgressMonitor monitor, String username, String hostname, String port, String idfile) {
+
+	new(ILaunchConfiguration launchConfiguration, IProgressMonitor monitor, String username, String hostname,
+		String port, String idfile) {
 		this.launch = new Launch(launchConfiguration, "debug", null)
 		this.launch.setAttribute("org.eclipse.debug.core.capture_output", "true")
 		this.launch.setAttribute("org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING", "UTF-8")
@@ -110,17 +110,17 @@ class SshManager implements IManager {
 
 		var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
 
-		var resset = new ResourceSetImpl
-		var res = resset.getResource(URI.createURI(topofile.fullPath.toString), true)
+//		var resset = new ResourceSetImpl
+//		var res = resset.getResource(URI.createURI(topofile.fullPath.toString), true)
 
 		this.project = topofile.project
 
-		var ne = res.allContents.filter(typeof(NetworkEnvironment)).next
+//		var ne = res.allContents.filter(typeof(NetworkEnvironment)).next
 
-		this.appPaths = ne.controllers.map [
-			var platform = launchConfiguration.attributes.get("controller_platform_" + name)
-			launchConfiguration.attributes.get(String.format("controller_data_%s_%s", name, platform)) as String
-		].toSet.map[e|NetIDEUtil.absolutePath(e)]
+//		this.appPaths = ne.controllers.map [
+//			var platform = launchConfiguration.attributes.get("controller_platform_" + name)
+//			launchConfiguration.attributes.get(String.format("controller_data_%s_%s", name, platform)) as String
+//		].toSet.map[e|NetIDEUtil.absolutePath(e)]
 
 		this.monitor = monitor
 
@@ -135,7 +135,6 @@ class SshManager implements IManager {
 		var path = launch.launchConfiguration.attributes.get("topologymodel") as String
 
 		this.workingDirectory = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
-
 
 	}
 
@@ -162,8 +161,7 @@ class SshManager implements IManager {
 	}
 
 	override execWithReturn(String cmd) {
-		var cmdline = newArrayList(sshPath, "-i", sshIdFile, "-p", sshPort, sshUsername + "@" + sshHostname,
-			cmd)
+		var cmdline = newArrayList(sshPath, "-i", sshIdFile, "-p", sshPort, sshUsername + "@" + sshHostname, cmd)
 		var p = DebugPlugin.exec(cmdline, workingDirectory, null)
 		var br = new BufferedReader(new InputStreamReader(p.getInputStream()))
 		p.waitFor
@@ -174,7 +172,7 @@ class SshManager implements IManager {
 			output = output + l + "\n"
 			l = br.readLine
 		}
-		
+
 		return output
 	}
 
@@ -250,15 +248,12 @@ class SshManager implements IManager {
 	}
 
 	def copyApps() {
-		exec("rm -rf controllers")
-		exec("mkdir controllers")
+		exec("rm -rf netide/apps")
 
-		appPaths.forEach [ p |
-			scp(
-				'''«p.removeLastSegments(1)»''',
-				'''controllers/«p.removeFileExtension.lastSegment»'''
-			)
-		]
+		scp (
+			this.project.location + "/apps",
+			"netide/apps"
+		)
 	}
 
 	def copyTopo() {
@@ -337,15 +332,20 @@ class SshManager implements IManager {
 
 	def getIFile(String s) {
 
-		var resSet = new ResourceSetImpl
-		var res = resSet.getResource(URI.createURI(s), true)
+//		var resSet = new ResourceSetImpl
+//		var res = resSet.getResource(URI.createURI(s), true)
+//
+//		var eUri = res.getURI()
+//		if (eUri.isPlatformResource()) {
+//			var platformString = eUri.toPlatformString(true)
+//			return ResourcesPlugin.getWorkspace().getRoot().findMember(platformString)
+//		}
+//		return null
 
-		var eUri = res.getURI()
-		if (eUri.isPlatformResource()) {
-			var platformString = eUri.toPlatformString(true)
-			return ResourcesPlugin.getWorkspace().getRoot().findMember(platformString)
-		}
-		return null
+		var path = new Path(s)
+		var file = ResourcesPlugin.getWorkspace().getRoot().findMember(path.removeFirstSegments(2));
+		//var project = file.project
+		return file
 	}
 
 	def generateCommandLine(String[] commandLine) {
