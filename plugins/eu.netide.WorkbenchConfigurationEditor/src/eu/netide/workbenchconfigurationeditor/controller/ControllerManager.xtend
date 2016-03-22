@@ -69,7 +69,7 @@ class ControllerManager {
 		fsa2.project = wbFile.project
 		fsa2.generateFolder("gen")
 
-		var vgen = new VagrantfileGenerateAction(file)
+		var vgen = new VagrantfileGenerateAction(wbFile)
 		vgen.run
 	}
 

@@ -1,6 +1,5 @@
 package eu.netide.configuration.generator.vagrantfile
 
-import Topology.Controller
 import Topology.NetworkElement
 import Topology.NetworkEnvironment
 import eu.netide.configuration.preferences.NetIDEPreferenceConstants
@@ -21,17 +20,15 @@ class VagrantfileGenerator {
 
 	//private ILaunchConfiguration configuration
 
-	def doGenerate(IResource resource, Resource input, FileSystemAccess fsa) {
+	def doGenerate(IResource resource, FileSystemAccess fsa) {
 		var proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
 			NetIDEPreferenceConstants.PROXY_ON, false, null)
 		if (proxyOn)
 			fsa.generateFile(NetIDE.VAGRANTFILE_PATH + "proxyconf.sh", proxySetupScript)
-		fsa.generateFile(NetIDE.VAGRANTFILE_PATH + "Vagrantfile", input.compile(resource))
+		fsa.generateFile(NetIDE.VAGRANTFILE_PATH + "Vagrantfile", compile(resource))
 	}
 
-	def compile(Resource input, IResource res) {
-
-		var ne = input.allContents.filter(typeof(NetworkEnvironment)).next
+	def compile(IResource res) {
 
 		var projectName = res.fullPath.segment(0)
 		
@@ -63,9 +60,9 @@ class VagrantfileGenerator {
 		url = bundle.getEntry("scripts/install_tools.sh")
 		var toolscriptpath = scriptpath(url)
 
-		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map [ c |
-			String.format("controller_platform_%s", c.name)
-		]
+//		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map [ c |
+//			String.format("controller_platform_%s", c.name)
+//		]
 
 		var proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
 			NetIDEPreferenceConstants.PROXY_ON, false, null)

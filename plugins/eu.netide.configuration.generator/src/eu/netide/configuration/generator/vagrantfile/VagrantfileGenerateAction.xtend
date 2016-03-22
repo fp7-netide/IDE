@@ -29,9 +29,6 @@ class VagrantfileGenerateAction {
 		
 		var generator = new VagrantfileGenerator
 
-		var resset = new ResourceSetImpl
-		var res = resset.getResource(URI.createURI(resource.fullPath.toString), true)
-
-		generator.doGenerate(resource, res, fsa)
+		generator.doGenerate(resource, fsa)
 	}
 }
