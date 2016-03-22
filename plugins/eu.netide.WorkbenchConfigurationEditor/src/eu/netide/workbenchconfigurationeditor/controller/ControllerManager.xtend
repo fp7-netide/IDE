@@ -13,14 +13,17 @@ import eu.netide.configuration.launcher.starters.backends.SshBackend
 import eu.netide.configuration.launcher.starters.backends.SshDoubleTunnelBackend
 import eu.netide.configuration.launcher.starters.backends.VagrantBackend
 import eu.netide.configuration.launcher.starters.impl.CoreSpecificationStarter
+import eu.netide.configuration.launcher.starters.impl.CoreStarter
 import eu.netide.configuration.launcher.starters.impl.DebuggerStarter
+import eu.netide.configuration.launcher.starters.impl.MininetStarter
+import eu.netide.configuration.launcher.starters.impl.OdlShimStarter
 import eu.netide.configuration.utils.NetIDE
+import eu.netide.configuration.utils.NetIDEUtil
 import eu.netide.configuration.utils.fsa.FSAProvider
 import eu.netide.deployment.topologyimport.TopologyImportFactory
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel
 import eu.netide.workbenchconfigurationeditor.model.UiStatusModel
-import eu.netide.workbenchconfigurationeditor.util.ConfigurationHelper
 import java.util.ArrayList
 import java.util.HashMap
 import org.eclipse.core.resources.IFile
@@ -30,13 +33,9 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.IJobChangeListener
 import org.eclipse.core.runtime.jobs.Job
-import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import eu.netide.configuration.launcher.starters.impl.CoreStarter
-import eu.netide.configuration.utils.NetIDEUtil
-import javax.management.openmbean.OpenDataException
-import eu.netide.configuration.launcher.starters.impl.OdlShimStarter
+import org.eclipse.xtend.lib.annotations.Accessors
 
 class ControllerManager {
 
@@ -66,45 +65,32 @@ class ControllerManager {
 	}
 
 	public def createVagrantFile() {
-		val configuration = configHelper.createVagrantConfiguration()
-
-		// TODO: should be handeld in the generate file action
 		var fsa2 = FSAProvider.get
 		fsa2.project = wbFile.project
 		fsa2.generateFolder("gen")
 
-		var vgen = new VagrantfileGenerateAction(file, configuration)
+		var vgen = new VagrantfileGenerateAction(file)
 		vgen.run
 	}
 
-	private ArrayList<String> controllerName;
-	private ConfigurationHelper configHelper;
-
+	// private ArrayList<String> controllerName;
+//	private ConfigurationHelper configHelper;
 	private new(UiStatusModel statusModel, IFile file) {
 		this.statusModel = statusModel
 
 		wbFile = file
 
-		controllerName = new ArrayList<String>
-
-		configHelper = new ConfigurationHelper(controllerName, statusModel, wbFile)
-
+//		controllerName = new ArrayList<String>
+//		configHelper = new ConfigurationHelper(controllerName, statusModel, wbFile)
 		configToStarter = new HashMap
-
+		reg = IStarterRegistry.instance
+		factory = new StarterFactory()
 		this.statusModel.setSshRunning(new Boolean(false));
 		this.statusModel.setVagrantRunning(new Boolean(false));
 	}
 
 	public def initTopo() {
 		generateConfiguration(this.statusModel.topologyModel.topologyPath)
-		factory = new StarterFactory()
-		reg = IStarterRegistry.instance
-		var resset = new ResourceSetImpl
-		var res = resset.getResource(URI.createURI(this.statusModel.topologyModel.topologyPath), true)
-		ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
-		for (c : ne.controllers)
-			controllerName.add(c.name)
-		file = this.statusModel.topologyModel.topologyPath.getIFile
 	}
 
 	private StarterFactory factory
@@ -124,7 +110,7 @@ class ControllerManager {
 	/**
 	 * listener may be null
 	 */
-	private def boolean startVagrantFromConfig(ILaunchConfiguration configuration, IJobChangeListener listener) {
+	private def boolean startVagrantFromConfig(IJobChangeListener listener) {
 
 		if (!this.statusModel.vagrantRunning) {
 			backend = new VagrantBackend
@@ -132,7 +118,7 @@ class ControllerManager {
 			vagrantJob = new Job("VagrantManager") {
 
 				override protected run(IProgressMonitor monitor) {
-					vagrantManager = new VagrantManager(configuration, monitor)
+					vagrantManager = new VagrantManager(wbFile.project, monitor)
 					vagrantManager.init
 
 					vagrantManager.up
@@ -152,12 +138,12 @@ class ControllerManager {
 	}
 
 	public def startSSH(ArrayList<LaunchConfigurationModel> modelList, SshProfileModel model) {
-		startSshWithConfig(configHelper.createSshConfiguration(), null, model)
+		startSshWithConfig(null, model)
 	}
 
 	public def startSSH(ArrayList<LaunchConfigurationModel> modelList, IJobChangeListener listener,
 		SshProfileModel model) {
-		startSshWithConfig(configHelper.createSshConfiguration(), listener, model)
+		startSshWithConfig(listener, model)
 	}
 
 	public def copyApps() {
@@ -187,8 +173,7 @@ class ControllerManager {
 		return topo
 	}
 
-	private def startSshWithConfig(ILaunchConfiguration configuration, IJobChangeListener listener,
-		SshProfileModel model) {
+	private def startSshWithConfig(IJobChangeListener listener, SshProfileModel model) {
 		if (!this.statusModel.sshRunning) {
 
 			sshJob = new Job("SshManager") {
@@ -201,7 +186,7 @@ class ControllerManager {
 						backend = new SshDoubleTunnelBackend(model.host, Integer.parseInt(model.port), model.secondHost,
 							Integer.parseInt(model.secondPort), model.username, model.secondUsername, model.sshIdFile);
 					}
-					sshManager = new SshManager(configuration, monitor, model.username, model.host, model.port,
+					sshManager = new SshManager(wbFile.project, monitor, model.username, model.host, model.port,
 						model.sshIdFile)
 
 					// TODO: extra button 
@@ -240,12 +225,11 @@ class ControllerManager {
 	}
 
 	public def boolean startVagrant() {
-		return startVagrantFromConfig(configHelper.createServerControllerConfiguration(NetIDE.CONTROLLER_ENGINE), null)
+		return startVagrantFromConfig(null)
 	}
 
 	public def boolean startVagrant(IJobChangeListener listener) {
-		return startVagrantFromConfig(configHelper.createServerControllerConfiguration(NetIDE.CONTROLLER_ENGINE),
-			listener)
+		return startVagrantFromConfig(listener)
 	}
 
 	public def haltVagrant() {
@@ -312,12 +296,12 @@ class ControllerManager {
 				mnstarter.asyncStart
 			} else {
 
-				val configuration = configHelper.topoConfiguration
+				//val configuration = configHelper.topoConfiguration
 
 				var jobMin = new Job("min Starter") {
 
 					override protected run(IProgressMonitor monitor) {
-						mnstarter = factory.createMininetStarter(configuration, monitor)
+						mnstarter = new MininetStarter(statusModel.topologyModel.topologyPath, backend, monitor)
 						mnstarter.setBackend(backend)
 						// Start Mininet. 
 						reg.register(mnstarter.safeName, mnstarter)
@@ -334,16 +318,14 @@ class ControllerManager {
 	private IStarter serverControllerStarter;
 
 	public def startServerController(String serverController) {
-		val config = configHelper.createServerControllerConfiguration(serverController)
-
 		// create shim starter		
 //		for (c : ne.controllers) {
 		var job = new Job("Shim Server") {
 			override protected run(IProgressMonitor monitor) {
 
 				serverControllerStarter = new OdlShimStarter(
-					NetIDEUtil.toPlatformUri(wbFile), 
-					7733, 
+					NetIDEUtil.toPlatformUri(wbFile),
+					7733,
 					monitor
 				)
 				serverControllerStarter.backend = backend
@@ -458,7 +440,7 @@ class ControllerManager {
 		val debuggerJob = new Job("Debugger") {
 			override protected run(IProgressMonitor monitor) {
 				if (debuggerStarter == null) {
-					debuggerStarter = factory.createDebuggerStarter(configHelper.topoConfiguration, monitor)
+					debuggerStarter = new DebuggerStarter(backend, NetIDEUtil.toPlatformUri(wbFile), monitor)
 				}
 				if (!statusModel.debuggerRunning) {
 					startDebuggerJob.schedule
@@ -492,6 +474,7 @@ class ControllerManager {
 		}
 	}
 
+	@Accessors(PUBLIC_GETTER)
 	private IStarter coreStarter;
 
 	private Job startCoreJob;
@@ -549,8 +532,8 @@ class ControllerManager {
 		val compositionJob = new Job("CompositionJob") {
 			override protected run(IProgressMonitor monitor) {
 				// configuration needs to contain topology path !
-				compositionStarter = new CoreSpecificationStarter(configHelper.getTopoConfiguration,
-					statusModel.compositionModel.compositionPath, monitor);
+				compositionStarter = new CoreSpecificationStarter(statusModel.compositionModel.compositionPath,
+					backend, monitor);
 				compositionStarter.backend = backend;
 				compositionStarter.syncStart
 				return Status.OK_STATUS

@@ -3,15 +3,13 @@ package eu.netide.configuration.generator.vagrantfile
 import Topology.Controller
 import Topology.NetworkElement
 import Topology.NetworkEnvironment
-import eu.netide.configuration.utils.fsa.FileSystemAccess
 import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 import eu.netide.configuration.utils.NetIDE
-import eu.netide.configuration.utils.NetIDEUtil
+import eu.netide.configuration.utils.fsa.FileSystemAccess
 import java.net.URL
 import org.eclipse.core.resources.IResource
 import org.eclipse.core.runtime.FileLocator
 import org.eclipse.core.runtime.Platform
-import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.emf.ecore.resource.Resource
 
 /**
@@ -21,10 +19,9 @@ import org.eclipse.emf.ecore.resource.Resource
  */
 class VagrantfileGenerator {
 
-	private ILaunchConfiguration configuration
+	//private ILaunchConfiguration configuration
 
-	def doGenerate(IResource resource, Resource input, ILaunchConfiguration configuration, FileSystemAccess fsa) {
-		this.configuration = configuration
+	def doGenerate(IResource resource, Resource input, FileSystemAccess fsa) {
 		var proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
 			NetIDEPreferenceConstants.PROXY_ON, false, null)
 		if (proxyOn)
@@ -69,28 +66,6 @@ class VagrantfileGenerator {
 		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map [ c |
 			String.format("controller_platform_%s", c.name)
 		]
-
-		var requiredPlatforms = controllerPlatformKeys.map[k|configuration.attributes.get(k) as String].toList
-
-		var crosscontrollers = ne.controllers.filter [
-			configuration.attributes.get("controller_platform_" + name) == NetIDE.CONTROLLER_ENGINE
-		]
-
-		var clientPlatforms = crosscontrollers.map [ c |
-			configuration.attributes.get("controller_platform_source_" + c.name) as String
-		].toList
-
-		var serverPlatforms = crosscontrollers.map [ c |
-			configuration.attributes.get("controller_platform_target_" + c.name) as String
-		].toList
-
-		requiredPlatforms.addAll(clientPlatforms)
-		requiredPlatforms.addAll(serverPlatforms)
-
-		var appPaths = ne.controllers.map [
-			var platform = configuration.attributes.get("controller_platform_" + name)
-			configuration.attributes.get(String.format("controller_data_%s_%s", name, platform)) as String
-		].toSet.map[e|NetIDEUtil.absolutePath(e)]
 
 		var proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
 			NetIDEPreferenceConstants.PROXY_ON, false, null)
@@ -146,9 +121,8 @@ class VagrantfileGenerator {
 				config.vm.synced_folder "«res.project.location»/composition", "/home/vagrant/netide/composition"
 				
 				# Syncing controller paths with the vm
-				«FOR p : appPaths»
-					config.vm.synced_folder "«res.project.location»/apps", "/home/vagrant/netide/apps"
-				«ENDFOR»
+				config.vm.synced_folder "«res.project.location»/apps", "/home/vagrant/netide/apps"
+
 				
 			end
 		'''

@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import eu.netide.parameters.language.paramschema.ParameterSchema;
 import eu.netide.parameters.templates.TemplateRenderer;
 
+@SuppressWarnings("unused")
 public class ConfigureParametersHandler extends AbstractHandler {
 
 	@Override

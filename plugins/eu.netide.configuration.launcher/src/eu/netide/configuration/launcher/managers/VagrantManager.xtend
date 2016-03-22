@@ -22,11 +22,10 @@ import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunch
 import org.eclipse.debug.core.ILaunchConfiguration
+import org.eclipse.debug.core.ILaunchConfigurationType
 import org.eclipse.debug.core.Launch
 import org.eclipse.debug.core.RefreshUtil
 import org.eclipse.debug.core.model.IProcess
-import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.xtend.lib.annotations.Accessors
 
 class VagrantManager implements IManager {
@@ -42,6 +41,7 @@ class VagrantManager implements IManager {
 	@Accessors(PUBLIC_GETTER)
 	private IProject project
 
+	@Deprecated
 	new(ILaunchConfiguration launchConfiguration, IProgressMonitor monitor) {
 
 		this.launch = new Launch(launchConfiguration, "run", null)
@@ -61,6 +61,40 @@ class VagrantManager implements IManager {
 
 		var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
 		this.project = topofile.project
+	}
+
+	new(IProject project, IProgressMonitor monitor) {
+		var conf = launchConfigType.newInstance(null, "Vagrant Session")
+		this.launch = new Launch(conf, "run", null)
+		this.launch.setAttribute("org.eclipse.debug.core.capture_output", "true")
+		this.launch.setAttribute("org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING", "UTF-8")
+		this.launch.setAttribute("org.eclipse.debug.core.launch.timestamp", new Date().time + "")
+		DebugPlugin.getDefault().getLaunchManager().addLaunch(this.launch)
+		this.monitor = monitor
+
+		this.vagrantpath = new Path(
+			Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
+				NetIDEPreferenceConstants.VAGRANT_PATH, "", null)).toOSString
+
+		var path = launch.launchConfiguration.attributes.get("topologymodel") as String
+
+		this.workingDirectory = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
+
+		this.project = project
+	}
+
+	public def getLaunchConfigType() {
+		var m = DebugPlugin.getDefault().getLaunchManager();
+
+		for (ILaunchConfigurationType l : m.getLaunchConfigurationTypes()) {
+
+			if (l.getName().equals("NetIDE Controller Deployment")) {
+
+				return l;
+			}
+
+		}
+		return null;
 	}
 
 	def up() {

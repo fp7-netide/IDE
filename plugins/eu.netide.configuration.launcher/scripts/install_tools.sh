@@ -3,3 +3,5 @@ if [ ! -d ~/netide/Tools ]; then
   git clone https://github.com/fp7-netide/Tools
   cd
 fi
+
+sudo pip install scapy

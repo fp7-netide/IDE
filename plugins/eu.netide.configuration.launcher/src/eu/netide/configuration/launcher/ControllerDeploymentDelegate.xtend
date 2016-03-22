@@ -60,7 +60,7 @@ class ControllerDeploymentDelegate extends LaunchConfigurationDelegate {
 
 		var file = path.IFile
 
-		var vgen = new VagrantfileGenerateAction(file, configuration)
+		var vgen = new VagrantfileGenerateAction(file)
 		vgen.run
 
 		if (monitor.isCanceled()) {

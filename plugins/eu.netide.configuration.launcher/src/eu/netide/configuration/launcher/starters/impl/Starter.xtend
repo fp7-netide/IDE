@@ -4,6 +4,7 @@ import eu.netide.configuration.launcher.starters.IStarter
 import eu.netide.configuration.launcher.starters.backends.Backend
 import eu.netide.configuration.launcher.starters.backends.VagrantBackend
 import eu.netide.configuration.utils.NetIDE
+import java.io.File
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
@@ -11,16 +12,11 @@ import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.model.IProcess
+import org.eclipse.jface.dialogs.MessageDialog
+import org.eclipse.swt.widgets.Display
 import org.eclipse.tm.terminal.view.core.TerminalServiceFactory
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants
 import org.eclipse.xtend.lib.annotations.Accessors
-import org.eclipse.core.resources.IFile
-import java.io.File
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.emf.common.util.URI
-import org.eclipse.jface.dialogs.MessageDialog
-import org.eclipse.swt.widgets.Display
-import org.eclipse.tm.terminal.view.core.interfaces.ITerminalTabListener
 
 abstract class Starter implements IStarter {
 
@@ -146,20 +142,8 @@ abstract class Starter implements IStarter {
 		}
 
 		def getIFile(String s) {
-
-//		var resSet = new ResourceSetImpl
-//		var res = resSet.getResource(URI.createURI(s), true)
-//
-//		var eUri = res.getURI()
-//		if (eUri.isPlatformResource()) {
-//			var platformString = eUri.toPlatformString(true)
-//			return ResourcesPlugin.getWorkspace().getRoot().findMember(platformString)
-//		}
-//		return null
-//
 			var path = new Path(s)
 			var file = ResourcesPlugin.getWorkspace().getRoot().findMember(path.removeFirstSegments(2));
-			var project = file.project
 			return file
 		}
 

@@ -25,6 +25,7 @@ if [ ! -d ~/core_engine ]; then
 
 
   cd
+  echo "Downloading Karaf..."
   wget -q http://ftp.fau.de/apache/karaf/3.0.6/apache-karaf-3.0.6.tar.gz
   tar xzf apache-karaf-3.0.6.tar.gz
   cd apache-karaf-3.0.6/bin

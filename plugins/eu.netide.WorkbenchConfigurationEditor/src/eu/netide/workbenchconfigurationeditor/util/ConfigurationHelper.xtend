@@ -4,14 +4,12 @@ import eu.netide.configuration.utils.NetIDE
 import eu.netide.workbenchconfigurationeditor.model.UiStatusModel
 import java.util.ArrayList
 import java.util.UUID
+import org.eclipse.core.resources.IResource
 import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.Path
 import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunchConfigurationType
-import org.eclipse.core.resources.IResource
-import org.eclipse.core.resources.IFile
-import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.emf.common.util.URI
 
 class ConfigurationHelper {

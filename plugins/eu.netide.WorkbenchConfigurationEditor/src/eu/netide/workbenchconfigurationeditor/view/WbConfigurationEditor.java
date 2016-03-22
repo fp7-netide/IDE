@@ -186,6 +186,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 							selectedFile = (IFile) result[0];
 
 							path = selectedFile.getFullPath().toString();
+							path = "platform:/resource".concat(path);
 							CompositionModel m = new CompositionModel();
 							m.setCompositionPath(path);
 							engine.getStatusModel().getCompositionModel().setCompositionPath(path);

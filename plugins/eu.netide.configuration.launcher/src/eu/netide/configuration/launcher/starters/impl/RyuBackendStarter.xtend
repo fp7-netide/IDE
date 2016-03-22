@@ -3,7 +3,6 @@ package eu.netide.configuration.launcher.starters.impl
 import Topology.Controller
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
-import org.eclipse.core.resources.ResourcesPlugin
 
 class RyuBackendStarter extends ControllerStarter {
 

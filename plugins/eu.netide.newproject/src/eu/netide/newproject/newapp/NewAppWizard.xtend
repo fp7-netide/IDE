@@ -1,15 +1,14 @@
 package eu.netide.newproject.newapp
 
+import java.io.ByteArrayInputStream
+import org.eclipse.core.resources.IProject
+import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.core.runtime.Status
 import org.eclipse.jface.viewers.IStructuredSelection
 import org.eclipse.jface.wizard.Wizard
 import org.eclipse.ui.INewWizard
 import org.eclipse.ui.IWorkbench
-import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.ui.progress.UIJob
-import org.eclipse.core.runtime.Status
-import org.eclipse.core.resources.IProject
-import java.io.ByteArrayInputStream
 
 class NewAppWizard extends Wizard implements INewWizard {
 	NewAppWizardPage1 page
