@@ -30,6 +30,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			switch Platform.getOS {
 				case Platform.OS_LINUX: "/usr/bin/ssh"
 				case Platform.OS_MACOSX: "/usr/bin/ssh"
+				case Platform.OS_WIN32: ""
 			}
 		)
 		store.setDefault(
@@ -37,6 +38,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			switch Platform.getOS {
 				case Platform.OS_LINUX: "/usr/bin/scp"
 				case Platform.OS_MACOSX: "/usr/bin/scp"
+				case Platform.OS_WIN32: ""
 			}
 		)
 	}

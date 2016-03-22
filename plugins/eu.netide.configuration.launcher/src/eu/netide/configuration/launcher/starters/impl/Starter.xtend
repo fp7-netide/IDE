@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Display
 import org.eclipse.tm.terminal.view.core.TerminalServiceFactory
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants
 import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.emf.common.util.URI
 
 abstract class Starter implements IStarter {
 
@@ -142,8 +143,9 @@ abstract class Starter implements IStarter {
 		}
 
 		def getIFile(String s) {
-			var path = new Path(s)
-			var file = ResourcesPlugin.getWorkspace().getRoot().findMember(path.removeFirstSegments(2));
+			var uri = URI.createURI(s)
+			var path = new Path(uri.path)
+			var file = ResourcesPlugin.getWorkspace().getRoot().findMember(path.removeFirstSegments(1));
 			return file
 		}
 
