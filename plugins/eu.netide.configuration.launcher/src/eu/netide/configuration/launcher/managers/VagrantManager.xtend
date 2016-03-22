@@ -27,6 +27,7 @@ import org.eclipse.debug.core.Launch
 import org.eclipse.debug.core.RefreshUtil
 import org.eclipse.debug.core.model.IProcess
 import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.emf.common.util.URI
 
 class VagrantManager implements IManager {
 
@@ -240,19 +241,9 @@ class VagrantManager implements IManager {
 	}
 
 	def getIFile(String s) {
-
-//		var resSet = new ResourceSetImpl
-//		var res = resSet.getResource(URI.createURI(s), true)
-//
-//		var eUri = res.getURI()
-//		if (eUri.isPlatformResource()) {
-//			var platformString = eUri.toPlatformString(true)
-//			return ResourcesPlugin.getWorkspace().getRoot().findMember(platformString)
-//		}
-//		return null
-		var path = new Path(s)
-		var file = ResourcesPlugin.getWorkspace().getRoot().findMember(path.removeFirstSegments(2));
-		var project = file.project
+		var uri = URI.createURI(s)
+		var path = new Path(uri.path)
+		var file = ResourcesPlugin.getWorkspace().getRoot().findMember(path.removeFirstSegments(1));
 		return file
 	}
 

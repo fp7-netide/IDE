@@ -34,6 +34,7 @@ import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnecto
 import org.eclipse.xtend.lib.annotations.Accessors
 
 import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
+import org.eclipse.emf.common.util.URI
 
 class SshManager implements IManager {
 
@@ -89,7 +90,6 @@ class SshManager implements IManager {
 		this.workingDirectory = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
 	}
 
-
 	new(IProject project, IProgressMonitor monitor, String username, String hostname, String port, String idfile) {
 		var conf = launchConfigType.newInstance(null, "SSH Session")
 		this.launch = new Launch(conf, "debug", null)
@@ -103,8 +103,7 @@ class SshManager implements IManager {
 		this.sshUsername = username
 		this.sshIdFile = idfile.absolutePath.toOSString
 
-		//var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
-
+		// var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
 		this.project = project
 
 		this.monitor = monitor
@@ -327,19 +326,9 @@ class SshManager implements IManager {
 	}
 
 	def getIFile(String s) {
-
-//		var resSet = new ResourceSetImpl
-//		var res = resSet.getResource(URI.createURI(s), true)
-//
-//		var eUri = res.getURI()
-//		if (eUri.isPlatformResource()) {
-//			var platformString = eUri.toPlatformString(true)
-//			return ResourcesPlugin.getWorkspace().getRoot().findMember(platformString)
-//		}
-//		return null
-		var path = new Path(s)
-		var file = ResourcesPlugin.getWorkspace().getRoot().findMember(path.removeFirstSegments(2));
-		// var project = file.project
+		var uri = URI.createURI(s)
+		var path = new Path(uri.path)
+		var file = ResourcesPlugin.getWorkspace().getRoot().findMember(path.removeFirstSegments(1));
 		return file
 	}
 
