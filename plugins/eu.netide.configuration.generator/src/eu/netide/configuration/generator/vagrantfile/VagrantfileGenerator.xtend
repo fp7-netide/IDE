@@ -9,7 +9,6 @@ import java.net.URL
 import org.eclipse.core.resources.IResource
 import org.eclipse.core.runtime.FileLocator
 import org.eclipse.core.runtime.Platform
-import org.eclipse.emf.ecore.resource.Resource
 
 /**
  * Generates and writes a Vagrantfile depending on required controller platforms and network applications.

@@ -95,6 +95,7 @@ class StarterFactory {
 //			return starter
 //		}
 //	}
+	@Deprecated
 	public def IStarter createShimStarter(ILaunchConfiguration configuration, Controller controller,
 		IProgressMonitor monitor) {
 

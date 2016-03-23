@@ -24,10 +24,14 @@ public class UiStatusModel {
 	private String serverControllerSelection;
 	private CompositionModel compositionModel;
 	private TopologyModel topologyModel;
+	private ShimModel shimModel;
+
+
 
 	private WritableList profileWritableList;
 	private WritableList modelWritableList;
 	private WritableList compositionWritableList;
+	
 
 	// list corresponding to doc
 	private ArrayList<LaunchConfigurationModel> modelList;
@@ -44,6 +48,7 @@ public class UiStatusModel {
 		this.profileList = new ArrayList<SshProfileModel>();
 		this.topologyModel = new TopologyModel();
 		this.compositionModel = new CompositionModel();
+		this.shimModel = new ShimModel();
 
 		this.setMininetRunning(new Boolean(false));
 		this.setServerControllerRunning(new Boolean(false));
@@ -189,6 +194,11 @@ public class UiStatusModel {
 	public void setTopologyModel(TopologyModel model) {
 		changes.firePropertyChange(Constants.TOPOLOGY_MODEL_PATH, this.topologyModel, this.topologyModel = model);
 	}
+	
+	public void setShimModel(ShimModel model) {
+		changes.firePropertyChange(Constants.SERVER_CONTROLLER_SELECTION, this.shimModel, this.shimModel = model);
+	}
+	
 
 	public TopologyModel getTopologyModel() {
 		return this.topologyModel;
@@ -282,6 +292,10 @@ public class UiStatusModel {
 	public CompositionModel getCompositionModel() {
 		return compositionModel;
 	}
+	
+	public ShimModel getShimModel() {
+		return shimModel;
+	}
 
 	public void addPropertyChangeListener(PropertyChangeListener l) {
 		changes.addPropertyChangeListener(l);
@@ -294,4 +308,6 @@ public class UiStatusModel {
 	public void removePropertyChangeListener(PropertyChangeListener l) {
 		changes.removePropertyChangeListener(l);
 	}
+	
+
 }

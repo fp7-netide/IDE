@@ -28,7 +28,6 @@ import java.util.ArrayList
 import java.util.HashMap
 import org.eclipse.core.resources.IFile
 import org.eclipse.core.resources.IResource
-import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.IJobChangeListener
@@ -39,30 +38,9 @@ import org.eclipse.xtend.lib.annotations.Accessors
 
 class ControllerManager {
 
-	private NetworkEnvironment ne;
-	private IResource file;
 	private IResource wbFile;
 	private UiStatusModel statusModel;
 	private DebuggerStarter debuggerStarter;
-
-	private static ControllerManager instance = null;
-
-	/**
-	 * @param topologyPath may be empty if starter has been initiated 
-	 */
-	public def static ControllerManager getStarter() {
-		if (instance == null) {
-			System.err.println("Starter has not been initiated with a topology.");
-		}
-
-		return instance;
-	}
-
-	public def static void initControllerManager(UiStatusModel statusModel, IFile file) {
-		if (instance == null) {
-			instance = new ControllerManager(statusModel, file);
-		}
-	}
 
 	public def createVagrantFile() {
 		var fsa2 = FSAProvider.get
@@ -75,7 +53,7 @@ class ControllerManager {
 
 	// private ArrayList<String> controllerName;
 //	private ConfigurationHelper configHelper;
-	private new(UiStatusModel statusModel, IFile file) {
+	new(UiStatusModel statusModel, IFile file) {
 		this.statusModel = statusModel
 
 		wbFile = file
@@ -120,9 +98,7 @@ class ControllerManager {
 				override protected run(IProgressMonitor monitor) {
 					vagrantManager = new VagrantManager(wbFile.project, monitor)
 					vagrantManager.init
-
 					vagrantManager.up
-
 					statusModel.vagrantRunning = true
 					return Status.OK_STATUS;
 				}
@@ -130,8 +106,6 @@ class ControllerManager {
 			};
 			vagrantJob.addJobChangeListener(listener);
 			vagrantJob.schedule
-
-		// Thread.sleep(2000)
 		}
 
 		return this.statusModel.vagrantRunning
@@ -189,9 +163,6 @@ class ControllerManager {
 					sshManager = new SshManager(wbFile.project, monitor, model.username, model.host, model.port,
 						model.sshIdFile)
 
-					// TODO: extra button 
-					// sshManager.provision
-					// TODO: add are u sure option
 					statusModel.sshRunning = true
 					return Status.OK_STATUS
 				}
@@ -199,7 +170,7 @@ class ControllerManager {
 			sshJob.addJobChangeListener(listener)
 			sshJob.schedule
 
-			this.statusModel.sshRunning
+			this.statusModel.sshRunning = true
 
 		}
 
@@ -207,21 +178,25 @@ class ControllerManager {
 
 	public def stopSSH() {
 		if (this.statusModel.sshRunning) {
-			// if (sshManager != null)
-			// sshManager.asyncHalt
-			this.statusModel.sshRunning = false
-			this.backend = null
-			val starter = configToStarter.values
+			reg.keys.forEach[k|reg.get(k).stop]
+			reg.clear
+			this.statusModel.coreRunning = false
+			this.statusModel.mininetRunning = false
+			this.statusModel.debuggerRunning = false
+			this.statusModel.serverControllerRunning = false
+			this.statusModel.modelList.forEach[m|m.running = false]
 
-			for (starterList : starter) {
-				for (s : starterList) {
-					s.backend = this.backend
-				}
-			}
-			mnstarter.backend = this.backend
-			serverControllerStarter.backend = this.backend
+			this.statusModel.sshRunning = false
+			this.updateBackend(null)
+			this.statusModel.sshRunning = false
 
 		}
+	}
+
+	private def updateBackend(Backend backend) {
+		this.backend = backend
+		if (reg != null)
+			reg.keys.forEach[k|reg.get(k).backend = this.backend]
 	}
 
 	public def boolean startVagrant() {
@@ -243,8 +218,11 @@ class ControllerManager {
 
 	public def stopMininet() {
 		this.statusModel.mininetRunning = false
-		if (mnstarter != null)
+		if (mnstarter != null) {
 			mnstarter.stop
+			reg.remove(mnstarter.safeName)
+			mnstarter = null
+		}
 	}
 
 	public def reattachMininet() {
@@ -255,8 +233,7 @@ class ControllerManager {
 	def reattachStarter() {
 		val config = this.statusModel.getModelAtIndex();
 		var re = configToStarter.get(config)
-		for (r : re)
-			r.reattach
+		re.reattach
 	}
 
 	public def reprovision() {
@@ -270,14 +247,14 @@ class ControllerManager {
 	public def stopStarter() {
 		val config = this.statusModel.getModelAtIndex();
 		config.running = false
-		var toStopList = configToStarter.get(config)
-		for (toStop : toStopList)
-			toStop.stop
+		var starter = configToStarter.get(config)
+		starter.stop
 	}
 
 	public def stopServerController() {
 		if (serverControllerStarter != null) {
 			serverControllerStarter.stop
+			reg.remove(serverControllerStarter.safeName)
 		}
 	}
 
@@ -296,8 +273,7 @@ class ControllerManager {
 				mnstarter.asyncStart
 			} else {
 
-				//val configuration = configHelper.topoConfiguration
-
+				// val configuration = configHelper.topoConfiguration
 				var jobMin = new Job("min Starter") {
 
 					override protected run(IProgressMonitor monitor) {
@@ -318,28 +294,25 @@ class ControllerManager {
 	private IStarter serverControllerStarter;
 
 	public def startServerController(String serverController) {
-		// create shim starter		
-//		for (c : ne.controllers) {
+
 		var job = new Job("Shim Server") {
 			override protected run(IProgressMonitor monitor) {
+				
+				var platform = statusModel.shimModel.shim
+				
+				serverControllerStarter = factory.createShimStarter(platform, NetIDEUtil.toPlatformUri(wbFile), 7733, monitor)
 
-				serverControllerStarter = new OdlShimStarter(
-					NetIDEUtil.toPlatformUri(wbFile),
-					7733,
-					monitor
-				)
 				serverControllerStarter.backend = backend
 				serverControllerStarter.asyncStart
+				reg.register(serverControllerStarter.safeName, serverControllerStarter)
 
 				return Status.OK_STATUS
 			}
 		}
 		job.schedule
-//		Thread.sleep(2000)
-//		}
 	}
 
-	private HashMap<LaunchConfigurationModel, ArrayList<IStarter>> configToStarter;
+	private HashMap<LaunchConfigurationModel, IStarter> configToStarter;
 
 	private IStarter backendStarter;
 
@@ -352,21 +325,6 @@ class ControllerManager {
 		val launchConfigurationModel = this.statusModel.modelAtIndex;
 		launchConfigurationModel.running = true
 
-		var tmpstarterList = configToStarter.get(launchConfigurationModel)
-
-		if (tmpstarterList == null) {
-			tmpstarterList = new ArrayList<IStarter>
-		} else {
-
-			for (starter : tmpstarterList) {
-
-				starter.setBackend(backend)
-				starter.asyncStart;
-			}
-			return;
-		}
-		val starterList = tmpstarterList
-
 		val controllerplatform = launchConfigurationModel.platform
 		val path = launchConfigurationModel.appPath
 		val port = Integer.parseInt(launchConfigurationModel.appPort)
@@ -376,9 +334,8 @@ class ControllerManager {
 				override run(IProgressMonitor monitor) {
 					backendStarter = factory.createBackendStarter(launchConfigurationModel.clientController, path, port,
 						monitor)
-					starterList.add(backendStarter)
 					backendStarter.backend = backend
-					configToStarter.put(launchConfigurationModel, starterList)
+					configToStarter.put(launchConfigurationModel, backendStarter)
 					reg.register(backendStarter.safeName, backendStarter)
 					backendStarter.syncStart
 					return Status.OK_STATUS
@@ -394,15 +351,13 @@ class ControllerManager {
 					starter = factory.createSingleControllerStarter(controllerplatform, path, port, monitor)
 					starter.setBackend(backend)
 					reg.register(starter.safeName, starter)
-					starterList.add(starter)
-					configToStarter.put(launchConfigurationModel, starterList)
+					configToStarter.put(launchConfigurationModel, starter)
 					starter.syncStart
 					return Status.OK_STATUS
 				}
 
 			};
 			jobSingle.schedule();
-		// Thread.sleep(2000)
 		}
 
 		Thread.sleep(2000)
@@ -421,19 +376,6 @@ class ControllerManager {
 		ga.run(null)
 	}
 
-	private def getIFile(String s) {
-
-		var resSet = new ResourceSetImpl
-		var res = resSet.getResource(URI.createURI(s), true)
-
-		var eUri = res.getURI()
-		if (eUri.isPlatformResource()) {
-			var platformString = eUri.toPlatformString(true)
-			return ResourcesPlugin.getWorkspace().getRoot().findMember(platformString)
-		}
-		return null
-	}
-
 	private Job startDebuggerJob;
 
 	public def startDebugger() {
@@ -441,6 +383,7 @@ class ControllerManager {
 			override protected run(IProgressMonitor monitor) {
 				if (debuggerStarter == null) {
 					debuggerStarter = new DebuggerStarter(backend, NetIDEUtil.toPlatformUri(wbFile), monitor)
+					reg.register(debuggerStarter.safeName, debuggerStarter)
 				}
 				if (!statusModel.debuggerRunning) {
 					startDebuggerJob.schedule
@@ -464,6 +407,7 @@ class ControllerManager {
 	public def stopDebugger() {
 		if (debuggerStarter != null && statusModel.debuggerRunning) {
 			debuggerStarter.stop
+			reg.remove(debuggerStarter.safeName)
 			statusModel.debuggerRunning = false
 		}
 	}
@@ -489,6 +433,7 @@ class ControllerManager {
 //					coreStarter = factory.createCoreStarter(configHelper.getTopoConfiguration, monitor)
 					coreStarter = new CoreStarter(backend,
 						URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString, monitor)
+					reg.register(coreStarter.safeName, coreStarter)
 				}
 				if (!statusModel.coreRunning)
 					startCoreJob.schedule
@@ -516,6 +461,7 @@ class ControllerManager {
 
 		if (coreStarter != null && statusModel.coreRunning) {
 			coreStarter.stop
+			reg.remove(coreStarter.safeName)
 			statusModel.coreRunning = false
 		}
 	}
@@ -532,8 +478,8 @@ class ControllerManager {
 		val compositionJob = new Job("CompositionJob") {
 			override protected run(IProgressMonitor monitor) {
 				// configuration needs to contain topology path !
-				compositionStarter = new CoreSpecificationStarter(statusModel.compositionModel.compositionPath,
-					backend, monitor);
+				compositionStarter = new CoreSpecificationStarter(statusModel.compositionModel.compositionPath, backend,
+					monitor);
 				compositionStarter.backend = backend;
 				compositionStarter.syncStart
 				return Status.OK_STATUS

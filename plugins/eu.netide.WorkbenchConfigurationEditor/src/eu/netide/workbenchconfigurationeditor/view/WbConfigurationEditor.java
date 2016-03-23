@@ -52,6 +52,8 @@ import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 import eu.netide.workbenchconfigurationeditor.model.TopologyModel;
 import eu.netide.workbenchconfigurationeditor.util.Constants;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.DisposeEvent;
 
 /**
  * 
@@ -70,6 +72,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	private ConfigurationShell tempShell;
 	private LaunchConfigurationModel tmpModel;
+	private ControllerManager controllerManager;
 
 	public WbConfigurationEditor() {
 		try {
@@ -86,8 +89,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		file = fileInput.getFile();
 		setSite(site);
 		setInput(input);
+		
 
-		setPartName("Workbench");
+		setPartName(file.getName());
+		
 	}
 
 	public IFile getFile() {
@@ -103,7 +108,21 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	public void createPartControl(Composite parent) {
 		createLayout(parent);
 		engine = new WorkbenchConfigurationEditorEngine(this);
+		controllerManager = new ControllerManager(engine.getStatusModel(), getFile());
 		addButtonListener();
+		if (sshProfileCombo.getSelectionIndex() != -1) {
+			//lblSShStatus.setText("Status: waiting");
+			noSwitch = true;
+
+			SshProfileModel model = engine.getStatusModel().getSshModelAtIndex();
+
+			if (model != null) {
+				controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb,
+						model);
+			}
+		} else {
+			showMessage("Please select / create a ssh Profile.");
+		}
 
 	}
 
@@ -112,7 +131,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		this.btnLoadTopo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().initTopo();
+				controllerManager.initTopo();
 			}
 		});
 
@@ -156,14 +175,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		this.startCoreBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().startCore();
+				controllerManager.startCore();
 			}
 		});
 
 		this.stopCoreBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().stopCore();
+				controllerManager.stopCore();
 			}
 		});
 
@@ -204,7 +223,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		this.loadCompositionBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().loadComposition();
+				controllerManager.loadComposition();
 			}
 		});
 	}
@@ -213,14 +232,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnMininetOn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().startMininet();
+				controllerManager.startMininet();
 			}
 		});
 
 		btnMininetOff.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().stopMininet();
+				controllerManager.stopMininet();
 			}
 		});
 	}
@@ -231,7 +250,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// TODO:
-				ControllerManager.getStarter().createVagrantFile();
+				controllerManager.createVagrantFile();
 			}
 		});
 
@@ -239,7 +258,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				noSwitch = true;
-				ControllerManager.getStarter().startVagrant(instanceWb);
+				controllerManager.startVagrant(instanceWb);
 			}
 		});
 
@@ -247,7 +266,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (table.getSelectionCount() > 0)
-					ControllerManager.getStarter().reattachStarter();
+					controllerManager.reattachStarter();
 			}
 		});
 
@@ -256,7 +275,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			public void widgetSelected(SelectionEvent e) {
 				noSwitch = false;
 				engine.getStatusModel().setVagrantRunning(false);
-				ControllerManager.getStarter().haltVagrant();
+				controllerManager.haltVagrant();
 			}
 		});
 	}
@@ -279,7 +298,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (table.getSelectionCount() > 0) {
-					ControllerManager.getStarter().stopStarter();
+					controllerManager.stopStarter();
 				}
 			}
 		});
@@ -289,7 +308,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			public void widgetSelected(SelectionEvent e) {
 				if ((engine.getStatusModel().getSshRunning() || engine.getStatusModel().getVagrantRunning())) {
 					if (table.getSelectionCount() > 0) {
-						ControllerManager.getStarter().startApp();
+						controllerManager.startApp();
 					} else {
 						showMessage("Make sure vagrant is running.");
 					}
@@ -371,13 +390,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnProvision_1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().reprovision();
+				controllerManager.reprovision();
 			}
 		});
 		btnProvision_2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().reprovision();
+				controllerManager.reprovision();
 			}
 		});
 	}
@@ -387,7 +406,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnCopyApps.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().copyApps();
+				controllerManager.copyApps();
 			}
 		});
 
@@ -414,7 +433,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					SshProfileModel model = engine.getStatusModel().getSshModelAtIndex();
 
 					if (model != null) {
-						ControllerManager.getStarter().startSSH(engine.getStatusModel().getModelList(), instanceWb,
+						controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb,
 								model);
 					}
 				} else {
@@ -427,9 +446,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnCloseSSH.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				lblSShStatus.setText("Status: offline");
-				ControllerManager.getStarter().stopSSH();
+				controllerManager.stopSSH();
 				noSwitch = false;
+				tabFolder.setEnabled(true);
 				for (Control c : tabFolder.getTabList()) {
 					c.setEnabled(true);
 
@@ -501,10 +520,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				String selection = engine.getStatusModel().getServerControllerSelection();
 				if (!engine.getStatusModel().getServerControllerRunning() && !selection.equals("")) {
 					// Create starter for selected server controller
-					ControllerManager.getStarter().startServerController(selection);
+					controllerManager.startServerController(selection);
 
 					engine.getStatusModel().setServerControllerRunning(true);
-					selectServerCombo.setEnabled(false);
 				}
 			}
 		});
@@ -514,7 +532,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			public void widgetSelected(SelectionEvent e) {
 				if (engine.getStatusModel().getServerControllerRunning()) {
 					// Stop starter
-					ControllerManager.getStarter().stopServerController();
+					controllerManager.stopServerController();
 					engine.getStatusModel().setServerControllerRunning(false);
 					selectServerCombo.setEnabled(true);
 				}
@@ -524,7 +542,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnImportTopology.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().importTopology();
+				controllerManager.importTopology();
 			}
 		});
 
@@ -572,6 +590,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		tabFolder.setLayoutData(gd_tabFolder);
 
 		sshTabItem = new TabItem(tabFolder, SWT.NONE);
+		sshTabItem.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+			}
+		});
 		sshTabItem.setText("SSH");
 
 		sshComposite = new Composite(tabFolder, SWT.NONE);
@@ -613,6 +635,26 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		composite.setLayout(new GridLayout(4, false));
 
 		sshProfileCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
+		sshProfileCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (sshProfileCombo.getSelectionIndex() != -1) {
+					lblSShStatus.setText("Status: waiting");
+					noSwitch = true;
+
+					SshProfileModel model = engine.getStatusModel().getSshModelAtIndex();
+
+					if (model != null) {
+						controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb,
+								model);
+					}
+				} else {
+					showMessage("Please select / create a ssh Profile.");
+				}
+
+			}
+
+		});
 
 		GridData gd_sshProfileCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_sshProfileCombo.widthHint = 161;
@@ -695,7 +737,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnReattachCore.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().reattachCore();
+				controllerManager.reattachCore();
 			}
 		});
 		btnReattachCore.setText("Reattach");
@@ -736,6 +778,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		lblServerControllerStatus.setText(Constants.LABEL_OFFLINE);
 
 		selectServerCombo = new Combo(grpServerController, SWT.BORDER | SWT.READ_ONLY);
+		selectServerCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setIsDirty(true);
+			}
+		});
 		GridData gd_selectServerCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_selectServerCombo.widthHint = 123;
 		selectServerCombo.setLayoutData(gd_selectServerCombo);
@@ -757,7 +805,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnReattachServer.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().reattachServerController();
+				controllerManager.reattachServerController();
 			}
 		});
 		btnReattachServer.setText("Reattach");
@@ -793,7 +841,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnReattachMininet.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().reattachMininet();
+				controllerManager.reattachMininet();
 			}
 		});
 		btnReattachMininet.setText("Reattach");
@@ -815,7 +863,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnDebuggerOn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().startDebugger();
+				controllerManager.startDebugger();
 			}
 		});
 		btnDebuggerOn.setText("On");
@@ -824,7 +872,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnDebuggerOff.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().stopDebugger();
+				controllerManager.stopDebugger();
 			}
 		});
 		btnDebuggerOff.setText("Off");
@@ -833,7 +881,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnDebuggerReattach.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ControllerManager.getStarter().reattachDebugger();
+				controllerManager.reattachDebugger();
 			}
 		});
 		btnDebuggerReattach.setText("Reattach");
@@ -1202,5 +1250,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	public Text getTopologyText() {
 		return this.topo_text;
+	}
+
+	public TabFolder getTabFolder() {
+		return tabFolder;
+	}
+	
+	public Combo getSelectServerCombo() {
+		return selectServerCombo;
 	}
 }

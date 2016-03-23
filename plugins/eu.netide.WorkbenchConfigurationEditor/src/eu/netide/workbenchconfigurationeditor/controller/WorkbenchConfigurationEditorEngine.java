@@ -21,12 +21,15 @@ import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.w3c.dom.Document;
 
 import eu.netide.workbenchconfigurationeditor.model.CompositionModel;
 import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
+import eu.netide.workbenchconfigurationeditor.model.ShimModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 import eu.netide.workbenchconfigurationeditor.model.TopologyModel;
 import eu.netide.workbenchconfigurationeditor.model.UiStatusModel;
@@ -66,7 +69,8 @@ public class WorkbenchConfigurationEditorEngine {
 			this.statusModel = new UiStatusModel();
 		}
 
-		ControllerManager.initControllerManager(this.statusModel, editor.getFile());
+		// ControllerManager.initControllerManager(this.statusModel,
+		// editor.getFile());
 	}
 
 	private void initDataBinding() {
@@ -97,6 +101,9 @@ public class WorkbenchConfigurationEditorEngine {
 
 		this.addButtonEnabledDataBinding(this.editor.getBtnCopyApps(), Constants.SSH_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnProvision_1(), Constants.SSH_RUNNING_MODEL);
+		
+		this.addComboDisabledDataBinding(this.editor.getSelectServerCombo(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
+		
 
 		this.addButtonDisabledDataBinding(this.editor.getStartServerController(),
 				Constants.SERVER_CONTROLLER_RUNNING_MODEL);
@@ -111,11 +118,27 @@ public class WorkbenchConfigurationEditorEngine {
 
 		this.addStatusLabelDataBinding(this.editor.getLblDebuggerStatus(), Constants.DEBUGGER_RUNNING_MODEL);
 
-		this.addComboDataBinding(this.statusModel.getProfileList());
+		this.addSshComboDataBinding(this.statusModel.getProfileList());
 		this.addServerControllerComboDataBinding();
 		this.addCompositionTextDataBinding(this.editor.getTextCompositionPath(), Constants.COMPOSITION_MODEL_PATH);
 		this.addTopologyTextDataBinding(this.editor.getTopologyText(), Constants.TOPOLOGY_MODEL_PATH);
 
+		this.addShimComboDataBinding(this.editor.getSelectServerCombo(), Constants.SERVER_COMBO_TEXT);
+		
+		// this.addTabFolderBinding(this.editor.getTabFolder().getTabList()[0],
+		// Constants.VAGRANT_RUNNING_MODEL);
+		// this.addTabFolderBinding(this.editor.getTabFolder().getTabList()[1],
+		// Constants.SSH_RUNNING_MODEL);
+
+	}
+
+	private void addTabFolderBinding(Control tabItem, String property) {
+		IObservableValue tfObs = WidgetProperties.enabled().observe(tabItem);
+		IObservableValue sshOn = BeanProperties.value(UiStatusModel.class, property).observe(this.statusModel);
+		UpdateValueStrategy modelToView = new UpdateValueStrategy();
+		modelToView.setConverter(new RunningBoolInverter(Boolean.class, Boolean.class));
+		UpdateValueStrategy viewToModel = new UpdateValueStrategy();
+		this.ctx.bindValue(tfObs, sshOn, viewToModel, modelToView);
 	}
 
 	private void addCompositionTextDataBinding(Text text, String property) {
@@ -132,7 +155,7 @@ public class WorkbenchConfigurationEditorEngine {
 		this.ctx.bindValue(textObs, pathObs);
 	}
 
-	private void addComboDataBinding(ArrayList<SshProfileModel> profileList) {
+	private void addSshComboDataBinding(ArrayList<SshProfileModel> profileList) {
 
 		// bind sshmodellist to combobox content
 		WritableList input = new WritableList(profileList, SshProfileModel.class);
@@ -154,6 +177,13 @@ public class WorkbenchConfigurationEditorEngine {
 		this.ctx.bindValue(modelValue, selection);
 	}
 
+	private void addShimComboDataBinding(Combo combo, String property) {
+		IObservableValue comboObs = WidgetProperties.text().observe(combo);
+		IObservableValue selObs = BeanProperties.value(ShimModel.class, property)
+				.observe(this.statusModel.getShimModel());
+		this.ctx.bindValue(comboObs, selObs);
+	}
+
 	private void addServerControllerComboDataBinding() {
 
 		ComboViewer cv = this.editor.getServerComboViewer();
@@ -171,9 +201,11 @@ public class WorkbenchConfigurationEditorEngine {
 		WritableList input = new WritableList(modelList, LaunchConfigurationModel.class);
 
 		this.statusModel.setWritableModelList(input);
-		ViewerSupport.bind(this.editor.getTableViewer(), input,
-				BeanProperties.values(new String[] {Constants.LaunchName, Constants.APP_NAME_MODEL, Constants.APP_RUNNING_MODEL,
-						Constants.PLATFORM_MODEL, Constants.CLIENT_CONTROLLER_MODEL, Constants.PORT_MODEL }));
+		ViewerSupport
+				.bind(this.editor.getTableViewer(), input,
+						BeanProperties.values(new String[] { Constants.LaunchName, Constants.APP_NAME_MODEL,
+								Constants.APP_RUNNING_MODEL, Constants.PLATFORM_MODEL,
+								Constants.CLIENT_CONTROLLER_MODEL, Constants.PORT_MODEL }));
 
 		// bind selectionIndex to model
 		// selectionIndex == profileListIndex, use it to match selection to
@@ -192,6 +224,24 @@ public class WorkbenchConfigurationEditorEngine {
 		IObservableValue widgetValue = WidgetProperties.enabled().observe(button);
 		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, property).observe(this.statusModel);
 		this.ctx.bindValue(widgetValue, modelValue);
+	}
+	
+	private void addComboEnabledDataBinding(Combo combo, String property) {
+
+		IObservableValue widgetValue = WidgetProperties.enabled().observe(combo);
+		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, property).observe(this.statusModel);
+		this.ctx.bindValue(widgetValue, modelValue);
+	}
+	
+	private void addComboDisabledDataBinding(Combo combo, String property) {
+
+		IObservableValue widgetValue = WidgetProperties.enabled().observe(combo);
+		IObservableValue modelValue = BeanProperties.value(UiStatusModel.class, property).observe(this.statusModel);
+		UpdateValueStrategy modelToView = new UpdateValueStrategy();
+		modelToView.setConverter(new RunningBoolInverter(Boolean.class, Boolean.class));
+		UpdateValueStrategy viewToModel = new UpdateValueStrategy();
+
+		this.ctx.bindValue(widgetValue, modelValue, viewToModel, modelToView);
 	}
 
 	private void addButtonDisabledDataBinding(Button button, String property) {
@@ -254,6 +304,8 @@ public class WorkbenchConfigurationEditorEngine {
 						model.setCompositionModel((CompositionModel) tmp);
 					} else if (tmp instanceof TopologyModel) {
 						model.setTopologyModel((TopologyModel) tmp);
+					} else if (tmp instanceof ShimModel) {
+						model.setShimModel((ShimModel) tmp);
 					} else if (tmp instanceof ArrayList<?>) {
 						ArrayList<?> a = (ArrayList<?>) tmp;
 						if (!a.isEmpty()) {
@@ -302,6 +354,7 @@ public class WorkbenchConfigurationEditorEngine {
 			encoder.writeObject(this.statusModel.getTopologyModel());
 			encoder.writeObject(this.statusModel.getModelList());
 			encoder.writeObject(this.statusModel.getProfileList());
+			encoder.writeObject(this.statusModel.getShimModel());
 
 			encoder.close();
 

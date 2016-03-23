@@ -21,7 +21,7 @@ class PoxShimStarter extends ControllerStarter {
 	override getCommandLine() {
 		return String.format(
 			"netide/pox/pox.py openflow.of_01 --port=%s pox_client",
-			controller.portNo)
+			port)
 	}
 
 }

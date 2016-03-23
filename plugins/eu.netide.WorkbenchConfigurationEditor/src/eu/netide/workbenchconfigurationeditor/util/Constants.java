@@ -30,6 +30,7 @@ public class Constants {
 	public static final String ELEMENT_TOPOLOGY_PATH = "topologyPath";
 
 	public static final String COMPOSITION_MODEL_PATH = "compositionPath";
+	public static final String SERVER_COMBO_TEXT = "shim";
 
 	// SSH Profile Model Constants
 	public static final String HOST_MODEL = "host";
