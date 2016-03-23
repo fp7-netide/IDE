@@ -211,6 +211,11 @@ class ControllerManager {
 		this.statusModel.vagrantRunning = false;
 		stopMininet
 		vagrantManager.asyncHalt()
+		this.statusModel.coreRunning = false
+		this.statusModel.mininetRunning = false
+		this.statusModel.debuggerRunning = false
+		this.statusModel.serverControllerRunning = false
+		this.statusModel.modelList.forEach[m|m.running = false]
 		this.statusModel.vagrantRunning = false;
 		this.statusModel.mininetRunning = false;
 
@@ -297,10 +302,11 @@ class ControllerManager {
 
 		var job = new Job("Shim Server") {
 			override protected run(IProgressMonitor monitor) {
-				
+
 				var platform = statusModel.shimModel.shim
-				
-				serverControllerStarter = factory.createShimStarter(platform, NetIDEUtil.toPlatformUri(wbFile), 7733, monitor)
+
+				serverControllerStarter = factory.createShimStarter(platform, NetIDEUtil.toPlatformUri(wbFile), 7733,
+					monitor)
 
 				serverControllerStarter.backend = backend
 				serverControllerStarter.asyncStart

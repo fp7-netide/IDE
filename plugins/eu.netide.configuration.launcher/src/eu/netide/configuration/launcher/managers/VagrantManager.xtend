@@ -77,9 +77,9 @@ class VagrantManager implements IManager {
 			Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
 				NetIDEPreferenceConstants.VAGRANT_PATH, "", null)).toOSString
 
-		var path = launch.launchConfiguration.attributes.get("topologymodel") as String
+		//var path = launch.launchConfiguration.attributes.get("topologymodel") as String
 
-		this.workingDirectory = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
+		this.workingDirectory = project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
 
 		this.project = project
 	}
