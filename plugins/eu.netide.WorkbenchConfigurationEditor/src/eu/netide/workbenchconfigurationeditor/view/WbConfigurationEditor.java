@@ -120,8 +120,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb,
 						model);
 			}
-		} else {
-			showMessage("Please select / create a ssh Profile.");
 		}
 
 	}
@@ -648,8 +646,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 						controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb,
 								model);
 					}
-				} else {
-					showMessage("Please select / create a ssh Profile.");
 				}
 
 			}

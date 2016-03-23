@@ -156,6 +156,9 @@ class NewNetIDEProjectWizard extends Wizard implements INewWizard {
 				var sysreqfile = project.getFile("requirements.sysreq")
 				sysreqfile.create(new ByteArrayInputStream(sysreqstring.getBytes("UTF-8")), false, monitor)
 			}
+			
+			var wbFile = project.getFile(projectName+".wb")
+			wbFile.create(new ByteArrayInputStream("".getBytes("UTF-8")), false, monitor)
 
 			return Status.OK_STATUS
 		}
