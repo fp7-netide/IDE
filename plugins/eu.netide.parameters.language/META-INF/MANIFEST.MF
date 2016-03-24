@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: eu.netide.parameters.language
-Bundle-Vendor: My Company
-Bundle-Version: 0.2.0.qualifier
+Bundle-Vendor: NetIDE Project
+Bundle-Version: 0.3.1.qualifier
 Bundle-SymbolicName: eu.netide.parameters.language; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,
@@ -12,20 +12,26 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.emf.codegen.ecore;resolution:=optional,
  org.eclipse.emf.mwe.utils;resolution:=optional,
  org.eclipse.emf.mwe2.launch;resolution:=optional,
- eu.netide.parameters,
  org.eclipse.xtext.util,
  org.eclipse.xtext.xbase.lib,
  org.antlr.runtime,
  org.eclipse.xtext.common.types,
- org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common
 Import-Package: org.apache.log4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: eu.netide.parameters.language,
+ eu.netide.parameters.language.formatting,
+ eu.netide.parameters.language.generator,
+ eu.netide.parameters.language.scoping,
+ eu.netide.parameters.language.validation,
  eu.netide.parameters.language.services,
+ eu.netide.parameters.language.paramschema,
+ eu.netide.parameters.language.paramschema.impl,
+ eu.netide.parameters.language.paramschema.util,
  eu.netide.parameters.language.serializer,
  eu.netide.parameters.language.parser.antlr,
- eu.netide.parameters.language.parser.antlr.internal,
- eu.netide.parameters.language.validation,
- eu.netide.parameters.language.scoping,
- eu.netide.parameters.language.generator,
- eu.netide.parameters.language.formatting
+ eu.netide.parameters.language.parser.antlr.internal
+

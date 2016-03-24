@@ -54,6 +54,10 @@ class NewNetIDEProjectWizardPage1 extends WizardPage {
 		return nametext.text
 	}
 	
+	def getComposition() {
+		true
+	}
+	
 	def getSysreq() {
 //		return sysreqcheck.selection
 		false
@@ -61,7 +65,7 @@ class NewNetIDEProjectWizardPage1 extends WizardPage {
 	
 	def getParameters() {
 //		return paramcheck.selection
-		false
+		true
 	}
 	
 }

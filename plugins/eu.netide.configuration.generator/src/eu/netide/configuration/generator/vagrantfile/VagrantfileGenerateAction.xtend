@@ -1,8 +1,7 @@
 package eu.netide.configuration.generator.vagrantfile
 
-import eu.netide.configuration.generator.fsa.FSAProvider
+import eu.netide.configuration.utils.fsa.FSAProvider
 import org.eclipse.core.resources.IResource
-import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
@@ -14,11 +13,9 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 class VagrantfileGenerateAction {
 
 	private IResource resource
-	private ILaunchConfiguration configuration
 	
-	new (IResource f, ILaunchConfiguration configuration) {
+	new (IResource f) {
 		this.resource = f
-		this.configuration = configuration
 	}
 
 	def run() {
@@ -32,9 +29,6 @@ class VagrantfileGenerateAction {
 		
 		var generator = new VagrantfileGenerator
 
-		var resset = new ResourceSetImpl
-		var res = resset.getResource(URI.createURI(resource.fullPath.toString), true)
-
-		generator.doGenerate(resource, res, configuration, fsa)
+		generator.doGenerate(resource, fsa)
 	}
 }

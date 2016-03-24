@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<viewpoint:DAnalysis xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style" xmi:id="_o7gcIHVrEeSp_Z-jKS26mQ" selectedViews="_o99TMHVrEeSp_Z-jKS26mQ _pUPFMHVrEeSp_Z-jKS26mQ _pUVy4HVrEeSp_Z-jKS26mQ _pWiyUHVrEeSp_Z-jKS26mQ" version="8.1.1">
+<viewpoint:DAnalysis xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style" xmi:id="_o7gcIHVrEeSp_Z-jKS26mQ" selectedViews="_o99TMHVrEeSp_Z-jKS26mQ _pUPFMHVrEeSp_Z-jKS26mQ _pUVy4HVrEeSp_Z-jKS26mQ _pWiyUHVrEeSp_Z-jKS26mQ" version="8.1.1">
   <models xmi:type="ecore:EPackage" href="Topology.ecore#/"/>
   <models xmi:type="ecore:EPackage" href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+  <models xmi:type="genmodel:GenModel" href="Topology.genmodel#/"/>
   <ownedViews xmi:type="viewpoint:DRepresentationContainer" xmi:id="_o99TMHVrEeSp_Z-jKS26mQ" initialized="true">
     <ownedRepresentations xmi:type="diagram:DSemanticDiagram" xmi:id="_pHmXYHVrEeSp_Z-jKS26mQ" name="Topology class diagram">
       <ownedAnnotationEntries xmi:type="description:AnnotationEntry" xmi:id="_pH1A4HVrEeSp_Z-jKS26mQ" source="GMF_DIAGRAMS">
@@ -639,7 +640,7 @@
           <foregroundColor xmi:type="viewpoint:RGBValues" xmi:id="_dE_aFBBLEeWLcrLBeQS3xQ" red="228" green="228" blue="228"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']"/>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_Q7UEwBBGEeWLcrLBeQS3xQ" name="ip : EString" tooltipText="&#xA;ERROR : The required feature 'eAttributeType' of 'org.eclipse.emf.ecore.impl.EAttributeImpl@1dbd7a90{platform:/resource/eu.netide.configuration/model/Topology.ecore#//NetworkElement/newAttribute}' must be set&#xA;ERROR : The typed element must have a type">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_Q7UEwBBGEeWLcrLBeQS3xQ" name="ip : EString" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="Topology.ecore#//NetworkElement/ip"/>
           <semanticElements xmi:type="ecore:EAttribute" href="Topology.ecore#//NetworkElement/ip"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_RoQDQBBGEeWLcrLBeQS3xQ" labelAlignment="LEFT">
@@ -650,7 +651,7 @@
           </ownedStyle>
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
         </ownedElements>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_iFcZABBHEeWLcrLBeQS3xQ" name="dpid : EInt = -1" tooltipText="&#xA;ERROR : The required feature 'eAttributeType' of 'org.eclipse.emf.ecore.impl.EAttributeImpl@f2c890f{platform:/resource/eu.netide.configuration/model/Topology.ecore#//NetworkElement/newAttribute}' must be set&#xA;ERROR : The typed element must have a type">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_iFcZABBHEeWLcrLBeQS3xQ" name="dpid : EInt = -1" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="Topology.ecore#//NetworkElement/dpid"/>
           <semanticElements xmi:type="ecore:EAttribute" href="Topology.ecore#//NetworkElement/dpid"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_kdt38BBHEeWLcrLBeQS3xQ" labelAlignment="LEFT">
@@ -661,7 +662,7 @@
           </ownedStyle>
           <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
         </ownedElements>
-        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_a-9hsBBLEeWLcrLBeQS3xQ" name="prefix : EInt = -1" tooltipText="&#xA;ERROR : The required feature 'eAttributeType' of 'org.eclipse.emf.ecore.impl.EAttributeImpl@7d7487ce{platform:/resource/eu.netide.configuration/model/Topology.ecore#//NetworkElement/newAttribute}' must be set&#xA;ERROR : The typed element must have a type">
+        <ownedElements xmi:type="diagram:DNodeListElement" xmi:id="_a-9hsBBLEeWLcrLBeQS3xQ" name="prefix : EInt = -1" tooltipText="">
           <target xmi:type="ecore:EAttribute" href="Topology.ecore#//NetworkElement/prefix"/>
           <semanticElements xmi:type="ecore:EAttribute" href="Topology.ecore#//NetworkElement/prefix"/>
           <ownedStyle xmi:type="diagram:BundledImage" xmi:id="_dFE5oBBLEeWLcrLBeQS3xQ" labelAlignment="LEFT">

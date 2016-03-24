@@ -1,7 +1,7 @@
 package eu.netide.configuration.generator
 
 import Topology.NetworkEnvironment
-import eu.netide.configuration.generator.fsa.FSAProvider
+import eu.netide.configuration.utils.fsa.FSAProvider
 import java.util.HashMap
 import java.util.Map
 import org.eclipse.core.resources.ResourcesPlugin

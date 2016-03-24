@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/eu.netide.feature_0.3.1.qualifier.jar" id="eu.netide.feature" version="0.3.1.qualifier">
+      <category name="eu.netide"/>
+   </feature>
+   <category-def name="eu.netide" label="NetIDE">
+      <description>
+         An IDE for SDN App development.
+      </description>
+   </category-def>
+   <repository-reference location="http://updatesite.netide.eu/dependencies/" enabled="true" />
+</site>

@@ -22,6 +22,7 @@ R.java
 *.dat
 *.lck
 *.ctrl
+plugin.xml_gen
 
 # ignore temporary Linux files
 *.swp

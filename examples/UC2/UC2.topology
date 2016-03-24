@@ -33,12 +33,12 @@
       <ports id="6" connector="//@networks.0/@connectors.22"/>
       <ports id="7" connector="//@networks.0/@connectors.25"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH1" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH1" dpid="11" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.5"/>
       <ports id="2" connector="//@networks.0/@connectors.6"/>
       <ports id="3" connector="//@networks.0/@connectors.1"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH4" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH4" dpid="14" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.11"/>
       <ports id="2" connector="//@networks.0/@connectors.12"/>
       <ports id="3" connector="//@networks.0/@connectors.4"/>
@@ -55,17 +55,17 @@
     <networkelements xsi:type="eu.netide.configuration:Host" name="H4" ip="10.0.1.14" prefix="24">
       <ports id="1" connector="//@networks.0/@connectors.4"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH3" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH3" dpid="13" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.2"/>
       <ports id="2" connector="//@networks.0/@connectors.7"/>
       <ports id="3" connector="//@networks.0/@connectors.8"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH2" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH2" dpid="12" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.3"/>
       <ports id="2" connector="//@networks.0/@connectors.9"/>
       <ports id="3" connector="//@networks.0/@connectors.10"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW2" dpid="2" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW2" ip="" dpid="2" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.11"/>
       <ports id="2" connector="//@networks.0/@connectors.21"/>
       <ports id="3" connector="//@networks.0/@connectors.9"/>
@@ -124,7 +124,7 @@
     <networkelements xsi:type="eu.netide.configuration:Host" name="H5" ip="10.0.1.15" prefix="24">
       <ports id="1" connector="//@networks.2/@connectors.0"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH5" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH5" dpid="15" controller="//@controllers.0">
       <ports id="1" connector="//@networks.1/@connectors.0"/>
       <ports id="2" connector="//@networks.2/@connectors.0"/>
       <ports id="3" connector="//@networks.2/@connectors.1"/>
