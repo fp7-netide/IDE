@@ -108,16 +108,16 @@ class VagrantfileGenerator {
 				«ENDIF»
 				
 				# Syncing the mininet configuration folder with the vm
-				config.vm.synced_folder "«res.project.location»/gen/mininet", "/home/vagrant/netide/mn-configs"
+				config.vm.synced_folder "«res.project.location»/gen/mininet", "/home/vagrant/netide/mn-configs", create:true
 			
 				# Syncing the debugger results folder with the vm
-				config.vm.synced_folder "«res.project.location»/results", "/home/vagrant/netide/debug_results"
+				config.vm.synced_folder "«res.project.location»/results", "/home/vagrant/netide/debug_results", create: true
 				
 				# Syncing the composition folder with the vm
-				config.vm.synced_folder "«res.project.location»/composition", "/home/vagrant/netide/composition"
+				config.vm.synced_folder "«res.project.location»/composition", "/home/vagrant/netide/composition", create: true
 				
 				# Syncing controller paths with the vm
-				config.vm.synced_folder "«res.project.location»/apps", "/home/vagrant/netide/apps"
+				config.vm.synced_folder "«res.project.location»/apps", "/home/vagrant/netide/apps", create:true
 
 				
 			end
