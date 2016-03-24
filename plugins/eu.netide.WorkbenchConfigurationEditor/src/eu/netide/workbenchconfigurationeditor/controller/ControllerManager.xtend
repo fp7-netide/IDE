@@ -273,27 +273,27 @@ class ControllerManager {
 
 	public def startMininet() {
 		if (!this.statusModel.mininetRunning) {
-			this.statusModel.mininetRunning = true
-			if (mnstarter != null) {
-				mnstarter.setBackend(backend)
-				mnstarter.asyncStart
-			} else {
+			
+//			if (mnstarter != null) {
+//				mnstarter.setBackend(backend)
+//				mnstarter.asyncStart
+//			} else {
+			// val configuration = configHelper.topoConfiguration
+			var jobMin = new Job("min Starter") {
 
-				// val configuration = configHelper.topoConfiguration
-				var jobMin = new Job("min Starter") {
+				override protected run(IProgressMonitor monitor) {
+					mnstarter = new MininetStarter(statusModel.topologyModel.topologyPath, backend, monitor)
+					mnstarter.setBackend(backend)
+					// Start Mininet. 
+					reg.register(mnstarter.safeName, mnstarter)
+					mnstarter.syncStart
+					statusModel.mininetRunning = true
+					return Status.OK_STATUS
+				}
 
-					override protected run(IProgressMonitor monitor) {
-						mnstarter = new MininetStarter(statusModel.topologyModel.topologyPath, backend, monitor)
-						mnstarter.setBackend(backend)
-						// Start Mininet. 
-						reg.register(mnstarter.safeName, mnstarter)
-						mnstarter.syncStart
-						return Status.OK_STATUS
-					}
-
-				};
-				jobMin.schedule();
-			}
+			};
+			jobMin.schedule();
+//			}
 		}
 	}
 
@@ -428,8 +428,7 @@ class ControllerManager {
 	@Accessors(PUBLIC_GETTER)
 	private IStarter coreStarter;
 
-	//private Job startCoreJob;
-
+	// private Job startCoreJob;
 	public def startCore() {
 
 		val coreJob = new Job("CoreManager") {
@@ -441,8 +440,9 @@ class ControllerManager {
 //					startCoreJob.schedule
 				coreStarter.backend = backend
 				coreStarter.asyncStart
+				statusModel.coreRunning = true
 				reg.register(coreStarter.safeName, coreStarter)
-					
+
 				return Status.OK_STATUS;
 			}
 
@@ -458,7 +458,6 @@ class ControllerManager {
 //			}
 //
 //		};
-
 		coreJob.schedule
 
 	}

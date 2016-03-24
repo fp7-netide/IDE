@@ -17,7 +17,7 @@ Typespec:
 
 Paramspec:
 	{Paramspec}
-	(parameters+=Keyval ("," parameters+=Keyval)*)?;
+	(parameters+=Keyval ("," parameters+=Keyval)*)? (",")?;
 
 NewType:
 	BasicType | CompositeType;

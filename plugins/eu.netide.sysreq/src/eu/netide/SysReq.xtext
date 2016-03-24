@@ -11,10 +11,10 @@ App:
 	'{'
 		'name' ':' name = STRING ','
 		'version' ':' version=STRING ','
-		(controller += Controller) ','
+		(controller += Controller) (','
 		((hardware += Hardware) ',')?
 		((network += Network) ',')?
-		((software += Software) ',')?
+		((software += Software) ',')?)?
 	'}'
 ;
 
