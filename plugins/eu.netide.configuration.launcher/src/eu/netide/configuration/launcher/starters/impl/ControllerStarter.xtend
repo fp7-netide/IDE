@@ -7,6 +7,8 @@ import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.xtend.lib.annotations.Accessors
 
 import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
+import eu.netide.configuration.launcher.starters.backends.VagrantBackend
+import org.eclipse.core.resources.ResourcesPlugin
 
 abstract class ControllerStarter extends Starter {
 
@@ -19,6 +21,10 @@ abstract class ControllerStarter extends Starter {
 	@Accessors(PROTECTED_GETTER)
 	private String controllerplatform
 
+	@Accessors(PUBLIC_GETTER,PUBLIC_SETTER)
+	private int port
+
+	@Deprecated
 	new(String name, ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
 		super(name, configuration, monitor)
 
@@ -34,6 +40,20 @@ abstract class ControllerStarter extends Starter {
 				absolutePath
 		else
 			null
+	}
+
+	new(String name, int port, String appPath, IProgressMonitor monitor) {
+		super(name, appPath, new VagrantBackend, monitor)
+
+		this.controller = controller
+
+		this.controllerplatform = ""
+
+		this.port = port
+
+		var tempAppPath = ResourcesPlugin.workspace.root.findMember(appPath.replaceFirst("platform:/resource", "")).projectRelativePath
+
+		this.appPath = tempAppPath
 	}
 
 }

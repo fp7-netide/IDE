@@ -7,6 +7,8 @@ if [ ! -d ~/pyretic ]; then
 
   sudo gem install jekyll
 
+  cd netide
+
   wget https://raw.github.com/frenetic-lang/pyretic/master/pyretic/backend/patch/asynchat.py
   sudo mv asynchat.py /usr/lib/python2.7/
   sudo chown root:root /usr/lib/python2.7/asynchat.py
@@ -18,7 +20,7 @@ if [ ! -d ~/pyretic ]; then
   popd
   rm -rf git
 
-  cd ~
+  cd ~/netide
   git clone https://github.com/frenetic-lang/pyretic.git
 
   echo "export PYTHONPATH=\$PYTHONPATH:~/pyretic" >> $HOME/.bashrc

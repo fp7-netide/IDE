@@ -1,24 +1,23 @@
 package eu.netide.configuration.launcher
 
-import org.eclipse.debug.ui.AbstractLaunchConfigurationTab
-import org.eclipse.swt.widgets.Composite
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy
 import org.eclipse.debug.internal.ui.SWTFactory
-import org.eclipse.swt.layout.GridData
-import org.eclipse.swt.widgets.Group
-import org.eclipse.swt.events.SelectionAdapter
-import org.eclipse.swt.events.SelectionEvent
-import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.Text
-import org.eclipse.swt.widgets.Button
-import org.eclipse.swt.events.SelectionListener
-import org.eclipse.swt.events.MouseAdapter
+import org.eclipse.debug.ui.AbstractLaunchConfigurationTab
 import org.eclipse.emf.common.ui.dialogs.ResourceDialog
-import org.eclipse.swt.events.MouseEvent
-import org.eclipse.swt.widgets.Display
-import org.eclipse.swt.events.ModifyListener
+import org.eclipse.swt.SWT
 import org.eclipse.swt.events.ModifyEvent
+import org.eclipse.swt.events.ModifyListener
+import org.eclipse.swt.events.MouseAdapter
+import org.eclipse.swt.events.MouseEvent
+import org.eclipse.swt.events.SelectionEvent
+import org.eclipse.swt.events.SelectionListener
+import org.eclipse.swt.layout.GridData
+import org.eclipse.swt.widgets.Button
+import org.eclipse.swt.widgets.Composite
+import org.eclipse.swt.widgets.Display
+import org.eclipse.swt.widgets.Group
+import org.eclipse.swt.widgets.Text
 
 class ControllerDeploymentTab3 extends AbstractLaunchConfigurationTab {
 
@@ -134,7 +133,7 @@ class ControllerDeploymentTab3 extends AbstractLaunchConfigurationTab {
 			}
 		})
 
-		val chooserbutton = createPushButton(group, "Choose Model", null)
+		val chooserbutton = createPushButton(group, "Choose File", null)
 		chooserbutton.addMouseListener(new MouseAdapter() {
 			override mouseUp(MouseEvent e) {
 				super.mouseUp(e)

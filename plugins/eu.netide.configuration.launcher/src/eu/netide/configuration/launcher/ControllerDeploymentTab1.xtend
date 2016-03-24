@@ -44,22 +44,21 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 
 	private Map<String, String> controllermap = newHashMap()
 
-	//	private Group 
+	// private Group 
 	override createControl(Composite parent) {
 		comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL)
 
-		comp.addDisposeListener(
-			new DisposeListener {
+		comp.addDisposeListener(new DisposeListener {
 
-				override widgetDisposed(DisposeEvent e) {
-					groups.clear
-					controllermap.clear
-				}
+			override widgetDisposed(DisposeEvent e) {
+				groups.clear
+				controllermap.clear
+			}
 
-			})
+		})
 
 		control = comp
-		val g = SWTFactory.createGroup(comp, "Topology Selection", 3, 1, GridData.FILL_HORIZONTAL) //new Group(comp, SWT.NONE)
+		val g = SWTFactory.createGroup(comp, "Topology Selection", 3, 1, GridData.FILL_HORIZONTAL) // new Group(comp, SWT.NONE)
 		g.createConfigurationChooser
 	}
 
@@ -69,31 +68,29 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 		SWTFactory.createLabel(c, "Topology Model:", 1)
 
 		textfield = SWTFactory.createSingleText(c, 1)
-		textfield.addModifyListener(
-			new ModifyListener() {
-				override modifyText(ModifyEvent event) {
+		textfield.addModifyListener(new ModifyListener() {
+			override modifyText(ModifyEvent event) {
 
-					groups.forEach[dispose]
-					groups.clear
+				groups.forEach[dispose]
+				groups.clear
 
-					if (textfield.text.isTopologyModelPath)
-						textfield.text.handleNewTopologyModel
+				if (textfield.text.isTopologyModelPath)
+					textfield.text.handleNewTopologyModel
 
-					scheduleUpdateJob
-				}
-			})
+				scheduleUpdateJob
+			}
+		})
 
 		val chooserbutton = createPushButton(c, "Choose Model", null)
-		chooserbutton.addMouseListener(
-			new MouseAdapter() {
-				override mouseUp(MouseEvent e) {
-					super.mouseUp(e)
-					var dialog = new ResourceDialog(Display.getDefault().getActiveShell(), "Title", SWT.SINGLE)
-					dialog.open();
-					textfield.text = dialog.URIText
+		chooserbutton.addMouseListener(new MouseAdapter() {
+			override mouseUp(MouseEvent e) {
+				super.mouseUp(e)
+				var dialog = new ResourceDialog(Display.getDefault().getActiveShell(), "Title", SWT.SINGLE)
+				dialog.open();
+				textfield.text = dialog.URIText
 
-				}
-			})
+			}
+		})
 	}
 
 	def isTopologyModelPath(String path) {
@@ -124,21 +121,20 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 		val label = SWTFactory.createLabel(c, "Select Platform:", 1)
 		val platformselector = SWTFactory.createCombo(c, SWT.READ_ONLY, 1,
 			newArrayList(NetIDE.CONTROLLER_RYU, NetIDE.CONTROLLER_POX, NetIDE.CONTROLLER_PYRETIC,
-				NetIDE.CONTROLLER_FLOODLIGHT, NetIDE.CONTROLLER_ODL, NetIDE.CONTROLLER_ENGINE))
+				NetIDE.CONTROLLER_FLOODLIGHT, NetIDE.CONTROLLER_ODL, NetIDE.CONTROLLER_CORE, NetIDE.CONTROLLER_ENGINE))
 
 		platformselector.select(0)
 		c.buildConfigurator(platformselector.text)
 
 		platformselector.setData("type", "platformselector")
-		platformselector.addSelectionListener(
-			new SelectionAdapter() {
-				override widgetSelected(SelectionEvent e) {
-					super.widgetSelected(e)
-					controllermap.put(String.format("controller_platform_%s", c.text), platformselector.text)
-					c.buildConfigurator(platformselector.text)
-					scheduleUpdateJob
-				}
-			})
+		platformselector.addSelectionListener(new SelectionAdapter() {
+			override widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e)
+				controllermap.put(String.format("controller_platform_%s", c.text), platformselector.text)
+				c.buildConfigurator(platformselector.text)
+				scheduleUpdateJob
+			}
+		})
 	}
 
 	def buildConfigurator(Group c, String text) {
@@ -150,13 +146,47 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 		} else if (text == NetIDE.CONTROLLER_PYRETIC) {
 			c.buildAppConfigurator("Pyretic App")
 		} else if (text == "OpenDaylight") {
+		} else if (text == NetIDE.CONTROLLER_CORE) {
+			c.buildCoreConfigurator("NetIDE Core")
 		} else if (text == NetIDE.CONTROLLER_ENGINE) {
-			c.buildCrossControllerConfigurator()
+			c.buildEngineConfigurator()
 		}
 		scheduleUpdateJob
 	}
 
-	def buildCrossControllerConfigurator(Group c) {
+	def buildCoreConfigurator(Group c, String labeltext) {
+		val comp = SWTFactory.createComposite(c, 3, 3, GridData.FILL_HORIZONTAL)
+		comp.setData("type", "configurator")
+		val label = SWTFactory.createLabel(comp, labeltext, 1)
+		val text = SWTFactory.createSingleText(comp, 1)
+
+		text.setData("type", "data")
+
+		val platform = controllermap.get(String.format("controller_platform_%s", c.text))
+		text.text = if (controllermap.get(String.format("controller_data_%s_%s", c.text, platform)) != null)
+			controllermap.get(String.format("controller_data_%s_%s", c.text, platform))
+		else
+			""
+		text.addModifyListener(new ModifyListener {
+			override modifyText(ModifyEvent e) {
+				controllermap.put(String.format("controller_data_%s_%s", c.text, platform), text.text)
+				scheduleUpdateJob
+			}
+		})
+
+		val chooserbutton = createPushButton(comp, "Choose Configuration", null)
+		chooserbutton.addMouseListener(new MouseAdapter() {
+			override mouseUp(MouseEvent e) {
+				super.mouseUp(e)
+				var dialog = new ResourceDialog(Display.getDefault().getActiveShell(), "Title", SWT.SINGLE)
+				dialog.open();
+				text.text = dialog.URIText ?: text.text
+
+			}
+		})
+	}
+
+	def buildEngineConfigurator(Group c) {
 		val comp = SWTFactory.createComposite(c, 3, 3, GridData.FILL_HORIZONTAL)
 		comp.setData("type", "configurator")
 
@@ -165,15 +195,13 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 			newArrayList(NetIDE.CONTROLLER_RYU, NetIDE.CONTROLLER_POX, NetIDE.CONTROLLER_PYRETIC,
 				NetIDE.CONTROLLER_FLOODLIGHT, NetIDE.CONTROLLER_ODL))
 		targetplatformselector.setData("type", "crossselector_target")
-		targetplatformselector.addSelectionListener(
-			new SelectionAdapter() {
-				override widgetSelected(SelectionEvent e) {
-					super.widgetSelected(e)
-					controllermap.put(String.format("controller_platform_target_%s", c.text),
-						targetplatformselector.text)
-					scheduleUpdateJob
-				}
-			})
+		targetplatformselector.addSelectionListener(new SelectionAdapter() {
+			override widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e)
+				controllermap.put(String.format("controller_platform_target_%s", c.text), targetplatformselector.text)
+				scheduleUpdateJob
+			}
+		})
 
 		val sourcelabel = SWTFactory.createLabel(comp, "Client Controller", 1)
 
@@ -187,16 +215,14 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 
 		sourceplatformselector.setData("type", "platformselector")
 		subcomp.buildConfigurator(sourceplatformselector.text)
-		sourceplatformselector.addSelectionListener(
-			new SelectionAdapter() {
-				override widgetSelected(SelectionEvent e) {
-					super.widgetSelected(e)
-					controllermap.put(String.format("controller_platform_source_%s", c.text),
-						sourceplatformselector.text)
-					subcomp.buildConfigurator(sourceplatformselector.text)
-					scheduleUpdateJob
-				}
-			})
+		sourceplatformselector.addSelectionListener(new SelectionAdapter() {
+			override widgetSelected(SelectionEvent e) {
+				super.widgetSelected(e)
+				controllermap.put(String.format("controller_platform_source_%s", c.text), sourceplatformselector.text)
+				subcomp.buildConfigurator(sourceplatformselector.text)
+				scheduleUpdateJob
+			}
+		})
 
 	}
 
@@ -213,25 +239,23 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 			controllermap.get(String.format("controller_data_%s_%s", c.text, platform))
 		else
 			""
-		text.addModifyListener(
-			new ModifyListener {
-				override modifyText(ModifyEvent e) {
-					controllermap.put(String.format("controller_data_%s_%s", c.text, platform), text.text)
-					scheduleUpdateJob
-				}
-			})
+		text.addModifyListener(new ModifyListener {
+			override modifyText(ModifyEvent e) {
+				controllermap.put(String.format("controller_data_%s_%s", c.text, platform), text.text)
+				scheduleUpdateJob
+			}
+		})
 
 		val chooserbutton = createPushButton(comp, "Choose App", null)
-		chooserbutton.addMouseListener(
-			new MouseAdapter() {
-				override mouseUp(MouseEvent e) {
-					super.mouseUp(e)
-					var dialog = new ResourceDialog(Display.getDefault().getActiveShell(), "Title", SWT.SINGLE)
-					dialog.open();
-					text.text = dialog.URIText ?: text.text
+		chooserbutton.addMouseListener(new MouseAdapter() {
+			override mouseUp(MouseEvent e) {
+				super.mouseUp(e)
+				var dialog = new ResourceDialog(Display.getDefault().getActiveShell(), "Title", SWT.SINGLE)
+				dialog.open();
+				text.text = dialog.URIText ?: text.text
 
-				}
-			})
+			}
+		})
 
 	}
 
@@ -243,14 +267,17 @@ class ControllerDeploymentTab1 extends AbstractLaunchConfigurationTab {
 
 		textfield.text = configuration.attributes.get("topologymodel") as String ?: ""
 
-		configuration.attributes.keySet.forEach[k|
-			if(k.startsWith("controller")) controllermap.put(k, configuration.attributes.get(k) as String)]
+		configuration.attributes.keySet.forEach [ k |
+			if(k.startsWith("controller")) controllermap.put(k, configuration.attributes.get(k) as String)
+		]
 
 		groups.filter[!disposed].forEach [ g |
 			var platform = configuration.attributes.get(String.format("controller_platform_%s", g.text))
-			for (t : g.children.filter(typeof(Composite)).filter(x|x.getData("type").equals("configurator")).map[
-				children.filter(typeof(Text))].flatten.filter(x|x.getData("type").equals("data"))) {
-				var text = configuration.attributes.get(String.format("controller_data_%s_%s", g.text, platform)) as String
+			for (t : g.children.filter(typeof(Composite)).filter(x|x.getData("type").equals("configurator")).map [
+				children.filter(typeof(Text))
+			].flatten.filter(x|x.getData("type").equals("data"))) {
+				var text = configuration.attributes.get(
+					String.format("controller_data_%s_%s", g.text, platform)) as String
 				t.text = if(text != null) text else ""
 			}
 			for (d : g.children.filter(typeof(Combo)).filter(x|x.getData("type").equals("platformselector"))) {

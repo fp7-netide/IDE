@@ -1,14 +1,12 @@
 package eu.netide.configuration.generator
 
 import Topology.NetworkEnvironment
-import eu.netide.configuration.generator.fsa.FSAProvider
+import eu.netide.configuration.utils.fsa.FSAProvider
+import java.util.HashMap
+import java.util.Map
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2
 import org.eclipse.xtext.generator.OutputConfiguration
-import java.util.Map
-import java.util.HashMap
-import org.eclipse.core.runtime.NullProgressMonitor
 
 /**
  * Sets up the necessary tools to generate a Vagrantfile

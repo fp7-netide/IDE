@@ -27,6 +27,18 @@ class StarterRegistry implements IStarterRegistry {
 		regmap.get(key)
 	}
 	
+	override remove(String key) {
+		regmap.remove(key)
+	}
+	
+	override getKeys() {
+		regmap.keySet
+	}
+	
+	override clear() {
+		regmap.clear
+	}
+	
 	
 	
 }

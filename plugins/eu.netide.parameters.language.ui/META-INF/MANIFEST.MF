@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: eu.netide.parameters.language.ui
 Bundle-Vendor: My Company
-Bundle-Version: 0.3.0.qualifier
+Bundle-Version: 0.3.1.qualifier
 Bundle-SymbolicName: eu.netide.parameters.language.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: eu.netide.parameters.language;visibility:=reexport,
@@ -18,9 +18,10 @@ Require-Bundle: eu.netide.parameters.language;visibility:=reexport,
  org.eclipse.xtext.ui.codetemplates.ui,
  org.eclipse.compare
 Import-Package: org.apache.log4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: eu.netide.parameters.language.ui.quickfix,
  eu.netide.parameters.language.ui.contentassist,
  eu.netide.parameters.language.ui.contentassist.antlr,
- eu.netide.parameters.language.ui.internal
+ eu.netide.parameters.language.ui.internal,
+ eu.netide.parameters.language.ui.contentassist.antlr.internal
 Bundle-Activator: eu.netide.parameters.language.ui.internal.NetIDEParametersActivator

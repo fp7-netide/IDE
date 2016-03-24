@@ -1,26 +1,33 @@
 #!/bin/bash
 if [ "$(which pip)" == "" ] || [ "$(pip list | grep ryu)" == "" ]; then
 
-  sudo apt-get --yes install python-pip python-dev python-repoze.lru libxml2-dev libxslt1-dev zlib1g-dev python-zmq python3-zmq
-  sudo -E pip install ecdsa
-  sudo -E pip install stevedore
-  sudo -E pip install greenlet
-  sudo -E pip install ryu
-  
+  if [ ! -d ~/netide/Engine ]; then
+    cd ~/netide
+    git clone -b demo-brussels https://github.com/fp7-netide/Engine
 
-  sudo cp -r Engine/ryu-backend/netide /usr/local/lib/python2.7/dist-packages/ryu/
-  sudo cp -r Engine/ryu-shim/netide /usr/local/lib/python2.7/dist-packages/ryu/
+  else
+   echo "Engine seems to be already installed. Skipping..."
+  fi
+
+  sudo apt-get --yes install python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev python-zmq python3-zmq
+  sudo -E pip install ryu
+  sudo -E pip install oslo.config
+  sudo -E pip install --upgrade ryu
+
+  cd ~/netide/
 
   mkdir -p ryu/ryu
-  cp -r Engine/ryu-backend/netide ryu/ryu
-  cp -r Engine/ryu-shim/netide ryu/ryu
+  cp -r Engine/libraries/netip/python ryu/ryu
+  mv ryu/ryu/python ryu/ryu/netide
 
-  #git clone git://github.com/osrg/ryu.git
-  #cd ryu
-  #sudo python ./setup.py install
-  
-  #echo "export PYTHONPATH=\$PYTHONPATH:$HOME/ryu:/usr/local/lib/python2.7/dist-packages/ryu" >> $HOME/.bashrc
-    
+  cp -r Engine/libraries/netip/python/netip.py Engine/ryu-backend
+  cp -r Engine/libraries/netip/python/netip.py Engine/ryu-shim
+
+  sudo cp -r ryu/ryu/netide /usr/local/lib/python2.7/dist-packages/ryu/
+  sudo cp -r ryu/ryu/netide /usr/local/lib/python2.7/dist-packages/ryu/
+
+  echo "export PYTHONPATH=\$PYTHONPATH:$HOME/ryu:/usr/local/lib/python2.7/dist-packages/ryu" >> $HOME/.bashrc
+
 else
   echo "Ryu already installed. Skipping..."
 fi

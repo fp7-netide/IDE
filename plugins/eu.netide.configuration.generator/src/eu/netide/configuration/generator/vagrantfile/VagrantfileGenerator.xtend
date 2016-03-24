@@ -2,20 +2,13 @@ package eu.netide.configuration.generator.vagrantfile
 
 import Topology.NetworkElement
 import Topology.NetworkEnvironment
-import eu.netide.configuration.utils.NetIDE
-import org.eclipse.core.resources.IResource
-import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.core.runtime.FileLocator
-import org.eclipse.core.runtime.Path
-import org.eclipse.core.runtime.Platform
-import org.eclipse.debug.core.ILaunchConfiguration
-import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.generator.IFileSystemAccess
-import eu.netide.configuration.utils.NetIDEUtil
-import Topology.Controller
-import java.net.URL
 import eu.netide.configuration.preferences.NetIDEPreferenceConstants
-import eu.netide.configuration.generator.fsa.FileSystemAccess
+import eu.netide.configuration.utils.NetIDE
+import eu.netide.configuration.utils.fsa.FileSystemAccess
+import java.net.URL
+import org.eclipse.core.resources.IResource
+import org.eclipse.core.runtime.FileLocator
+import org.eclipse.core.runtime.Platform
 
 /**
  * Generates and writes a Vagrantfile depending on required controller platforms and network applications.
@@ -24,20 +17,17 @@ import eu.netide.configuration.generator.fsa.FileSystemAccess
  */
 class VagrantfileGenerator {
 
-	private ILaunchConfiguration configuration
+	//private ILaunchConfiguration configuration
 
-	def doGenerate(IResource resource, Resource input, ILaunchConfiguration configuration, FileSystemAccess fsa) {
-		this.configuration = configuration
+	def doGenerate(IResource resource, FileSystemAccess fsa) {
 		var proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
 			NetIDEPreferenceConstants.PROXY_ON, false, null)
 		if (proxyOn)
 			fsa.generateFile(NetIDE.VAGRANTFILE_PATH + "proxyconf.sh", proxySetupScript)
-		fsa.generateFile(NetIDE.VAGRANTFILE_PATH + "Vagrantfile", input.compile(resource))
+		fsa.generateFile(NetIDE.VAGRANTFILE_PATH + "Vagrantfile", compile(resource))
 	}
 
-	def compile(Resource input, IResource res) {
-
-		var ne = input.allContents.filter(typeof(NetworkEnvironment)).next
+	def compile(IResource res) {
 
 		var projectName = res.fullPath.segment(0)
 		
@@ -54,49 +44,24 @@ class VagrantfileGenerator {
 		url = bundle.getEntry("scripts/install_ryu.sh")
 		var ryuscriptpath = scriptpath(url)
 
-		url = bundle.getEntry("scripts/install_pyretic.sh")
-		var pyreticscriptpath = scriptpath(url)
-
-		url = bundle.getEntry("scripts/install_pox.sh")
-		var poxscriptpath = scriptpath(url)
-
-		url = bundle.getEntry("scripts/install_odl.sh")
-		var odlscriptpath = scriptpath(url)
-
 		url = bundle.getEntry("scripts/install_engine.sh")
 		var netideenginescriptpath = scriptpath(url)
-
-		url = bundle.getEntry("scripts/install_logger_debugger.sh")
-		var logger_debuggerscriptpath = scriptpath(url)
-
+		
+		url = bundle.getEntry("scripts/install_core.sh")
+		var corescriptpath = scriptpath(url)
+		
+		url = bundle.getEntry("scripts/install_odl.sh")
+		var odlscriptpath = scriptpath(url)
+		
 		url = bundle.getEntry("scripts/install_floodlight.sh")
-		var floodlightscriptpath = scriptpath(url)
+		var flscriptpath = scriptpath(url)
+		
+		url = bundle.getEntry("scripts/install_tools.sh")
+		var toolscriptpath = scriptpath(url)
 
-		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map [ c |
-			String.format("controller_platform_%s", c.name)
-		]
-
-		var requiredPlatforms = controllerPlatformKeys.map[k|configuration.attributes.get(k) as String].toList
-
-		var crosscontrollers = ne.controllers.filter [
-			configuration.attributes.get("controller_platform_" + name) == NetIDE.CONTROLLER_ENGINE
-		]
-
-		var clientPlatforms = crosscontrollers.map [ c |
-			configuration.attributes.get("controller_platform_source_" + c.name) as String
-		].toList
-
-		var serverPlatforms = crosscontrollers.map [ c |
-			configuration.attributes.get("controller_platform_target_" + c.name) as String
-		].toList
-
-		requiredPlatforms.addAll(clientPlatforms)
-		requiredPlatforms.addAll(serverPlatforms)
-
-		var appPaths = ne.controllers.map [
-			var platform = configuration.attributes.get("controller_platform_" + name)
-			configuration.attributes.get(String.format("controller_data_%s_%s", name, platform)) as String
-		].toSet.map[e|NetIDEUtil.absolutePath(e)]
+//		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map [ c |
+//			String.format("controller_platform_%s", c.name)
+//		]
 
 		var proxyOn = Platform.getPreferencesService.getBoolean(NetIDEPreferenceConstants.ID,
 			NetIDEPreferenceConstants.PROXY_ON, false, null)
@@ -134,42 +99,26 @@ class VagrantfileGenerator {
 						config.vm.provision "shell", path: "proxyconf.sh", privileged: false
 					«ENDIF»
 					config.vm.provision "shell", path: "«mininetscriptpath»", privileged: false
-					«IF requiredPlatforms.contains(NetIDE.CONTROLLER_ENGINE)»
-						config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
-						config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
-						config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
-						config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
-						config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
-						config.vm.provision "shell", path: "«floodlightscriptpath»", privileged: false
-						config.vm.provision "shell", path: "«logger_debuggerscriptpath»", privileged: false
-					«ENDIF»
-					«IF requiredPlatforms.contains("Ryu")»
-						config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
-					«ENDIF»
-					«IF requiredPlatforms.contains("Pyretic")»
-						config.vm.provision "shell", path: "«pyreticscriptpath»", privileged: false
-					«ENDIF»
-					«IF requiredPlatforms.contains("POX")»
-						config.vm.provision "shell", path: "«poxscriptpath»", privileged: false
-					«ENDIF»
-					«IF requiredPlatforms.contains("OpenDaylight")»
-						config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
-					«ENDIF»
-					«IF requiredPlatforms.contains("Floodlight")»
-						config.vm.provision "shell", path: "«floodlightscriptpath»", privileged: false
-					«ENDIF»
+					config.vm.provision "shell", path: "«netideenginescriptpath»", privileged: false
+					config.vm.provision "shell", path: "«ryuscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«corescriptpath»", privileged: false
+					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«flscriptpath»", privileged: false
+					config.vm.provision "shell", path: "«toolscriptpath»", privileged: false
 				«ENDIF»
 				
 				# Syncing the mininet configuration folder with the vm
-				config.vm.synced_folder "«res.project.location»/gen/mininet", "/home/vagrant/mn-configs"
+				config.vm.synced_folder "«res.project.location»/gen/mininet", "/home/vagrant/netide/mn-configs", create:true
 			
 				# Syncing the debugger results folder with the vm
-				config.vm.synced_folder "«res.project.location»/results", "/home/vagrant/debug_results"
+				config.vm.synced_folder "«res.project.location»/results", "/home/vagrant/netide/debug_results", create: true
+				
+				# Syncing the composition folder with the vm
+				config.vm.synced_folder "«res.project.location»/composition", "/home/vagrant/netide/composition", create: true
 				
 				# Syncing controller paths with the vm
-				«FOR p : appPaths»
-					config.vm.synced_folder "«p.removeLastSegments(1)»", "/home/vagrant/controllers/«p.removeFileExtension.lastSegment»"
-				«ENDFOR»
+				config.vm.synced_folder "«res.project.location»/apps", "/home/vagrant/netide/apps", create:true
+
 				
 			end
 		'''

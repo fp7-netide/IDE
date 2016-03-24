@@ -1,43 +1,43 @@
 #!/bin/bash
 cd
-if [ ! -d ~/openflowplugin ]; then
-   
-   sudo apt-get --yes install maven openjdk-7-jdk openjdk-7-doc openjdk-7-jre-lib
-   git clone https://git.opendaylight.org/gerrit/openflowplugin
-   cd openflowplugin
-   git checkout release/helium-sr1.1
-   mvn clean install -DskipTests
-   cd ..
-   cd Engine/odl-shim
-   mv pom.xml pom_other_release.xml
-   mv pom_sr1.xml pom.xml
-   mvn clean install
+if [ ! -d ~/netide/openflowplugin ]; then
 
-   cd
-   cd ./openflowplugin/distribution/karaf/
-   mvn clean package
-   cd ./target/assembly/bin
+
+   cd netide
+   echo "Downloading OpenDaylight Karaf Distribution"
+   wget -q https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.4.0-Beryllium/distribution-karaf-0.4.0-Beryllium.tar.gz
+   tar -xzf distribution-karaf-0.4.0-Beryllium.tar.gz
+
+   cd distribution-karaf-0.4.0-Beryllium
+
+
+
+   cd bin
 
    chmod +x ./client ./start ./stop
    echo "Installing karaf dependencies for ODL shim"
    ./start
-   
+
    while [ $(./client test 2>&1 | grep "Failed to get the session." | wc -l) -eq 1 ]; do
 	echo "No Connection to Karaf server. Trying again..."
 	sleep 1
    done
-   
-   ./client "bundle:install -s mvn:com.googlecode.json-simple/json-simple/1.1.1"
-   ./client "bundle:install -s mvn:org.apache.commons/commons-lang3/3.3.2"
-   ./client "bundle:install -s mvn:org.opendaylight.openflowplugin/pyretic-odl/0.0.4-Helium-SR1.1"
-   ./client "feature:install odl-restconf"
+
+
+   ./client "feature:install odl-netide-rest"
+   ./client "feature:install odl-restconf-all"
    sleep 10
    ./stop
 
-   cd 
-   
+   cd ..
+
+   sed -i 's/44444/44445/g' etc/org.apache.karaf.management.cfg
+   sed -i 's/1099/1098/g' etc/org.apache.karaf.management.cfg
+
+   cd
+
 else
 
    echo "ODL seems to be already installed. Skipping..."
-  
+
 fi

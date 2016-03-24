@@ -14,6 +14,8 @@ import eu.netide.configuration.launcher.starters.impl.PyreticStarter
 import eu.netide.configuration.launcher.starters.impl.RyuBackendStarter
 import eu.netide.configuration.launcher.starters.impl.RyuShimStarter
 import eu.netide.configuration.launcher.starters.impl.RyuStarter
+import eu.netide.configuration.launcher.starters.impl.CoreStarter
+import eu.netide.configuration.launcher.starters.impl.EmulatorStarter
 import eu.netide.configuration.utils.NetIDE
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
@@ -44,12 +46,56 @@ class StarterFactory {
 					starter = new RyuStarter(configuration, controller, monitor)
 				case NetIDE.CONTROLLER_PYRETIC:
 					starter = new PyreticStarter(configuration, controller, monitor)
+				case NetIDE.CONTROLLER_FLOODLIGHT:
+					starter = new FloodlightBackendStarter(configuration, controller, monitor)
 			}
 			starter.setBackend(backend)
 			return starter
 		}
 	}
 
+	public def IStarter createSingleControllerStarter(String platform, String appPath, int port,
+		IProgressMonitor monitor) {
+		var controllerplatform = platform
+
+		if (controllerplatform.equals(NetIDE.CONTROLLER_ENGINE)) {
+		} else {
+			var IStarter starter
+			switch controllerplatform {
+				case NetIDE.CONTROLLER_POX:
+					starter = new PoxStarter(port, appPath, monitor)
+				case NetIDE.CONTROLLER_RYU:
+					starter = new RyuStarter(port, appPath, monitor)
+				case NetIDE.CONTROLLER_PYRETIC:
+					starter = new PyreticStarter(port, appPath, monitor)
+			}
+			starter.setBackend(backend)
+			return starter
+		}
+	}
+
+//	public def IStarter createSingleControllerStarter(String platform, Controller controller,
+//		IProgressMonitor monitor) {
+//		var controllerplatform = platform
+//
+//		if (controllerplatform.equals(NetIDE.CONTROLLER_ENGINE)) {
+//		} else {
+//			var IStarter starter
+//			switch controllerplatform {
+//				case NetIDE.CONTROLLER_POX:
+//					starter = new PoxStarter(configuration, controller, monitor)
+//				case NetIDE.CONTROLLER_RYU:
+//					starter = new RyuStarter(configuration, controller, monitor)
+//				case NetIDE.CONTROLLER_PYRETIC:
+//					starter = new PyreticStarter(configuration, controller, monitor)
+//				case NetIDE.CONTROLLER_FLOODLIGHT:
+//					starter = new FloodlightBackendStarter(configuration, controller, monitor)
+//			}
+//			starter.setBackend(backend)
+//			return starter
+//		}
+//	}
+	@Deprecated
 	public def IStarter createShimStarter(ILaunchConfiguration configuration, Controller controller,
 		IProgressMonitor monitor) {
 
@@ -62,6 +108,23 @@ class StarterFactory {
 				starter = new RyuShimStarter(configuration, controller, monitor)
 			case NetIDE.CONTROLLER_ODL:
 				starter = new OdlShimStarter(configuration, controller, monitor)
+		}
+		starter.setBackend(backend)
+		return starter
+
+	}
+
+	public def IStarter createShimStarter(String platform, String appPath, int port, IProgressMonitor monitor) {
+
+		var serverplatform = platform
+		var IStarter starter
+		switch serverplatform {
+			case NetIDE.CONTROLLER_POX:
+				starter = new PoxShimStarter(appPath, port, monitor)
+			case NetIDE.CONTROLLER_RYU:
+				starter = new RyuShimStarter(appPath, port, monitor)
+			case NetIDE.CONTROLLER_ODL:
+				starter = new OdlShimStarter(appPath, port, monitor)
 		}
 		starter.setBackend(backend)
 		return starter
@@ -85,6 +148,22 @@ class StarterFactory {
 		return starter
 	}
 
+	public def IStarter createBackendStarter(String platform, String appPath, int port, IProgressMonitor monitor) {
+
+		var clientplatform = platform
+		var IStarter starter
+		switch clientplatform {
+			case NetIDE.CONTROLLER_FLOODLIGHT:
+				starter = new FloodlightBackendStarter(port, appPath, monitor)
+			case NetIDE.CONTROLLER_RYU:
+				starter = new RyuBackendStarter(port, appPath, monitor)
+			case NetIDE.CONTROLLER_PYRETIC:
+				starter = new PyreticBackendStarter(port, appPath, monitor)
+		}
+		starter.backend = backend
+		return starter
+	}
+
 	public def IStarter createMininetStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		var starter = new MininetStarter(configuration, monitor)
 		starter.backend = backend
@@ -93,6 +172,18 @@ class StarterFactory {
 
 	public def createDebuggerStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		var starter = new DebuggerStarter(configuration, monitor)
+		starter.backend = backend
+		return starter
+	}
+
+	public def createCoreStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
+		var starter = new CoreStarter(configuration, monitor)
+		starter.backend = backend
+		return starter
+	}
+
+	public def createEmulatorStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
+		var starter = new EmulatorStarter(configuration, monitor)
 		starter.backend = backend
 		return starter
 	}

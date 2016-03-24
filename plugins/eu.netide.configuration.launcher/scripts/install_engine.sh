@@ -1,11 +1,13 @@
 #!/bin/bash
 cd
 
-if [ ! -d ~/Engine ]; then
-  git clone -b pyretic_intermediate_protocol https://github.com/fp7-netide/Engine
+if [ ! -d ~/netide/Engine ]; then
+  cd netide
+  git clone -b demo-brussels https://github.com/fp7-netide/Engine
+  cd
 fi
 
-x="export PYTHONPATH=\$PYTHONPATH:~/Engine/libraries/netip/python"
+x="export PYTHONPATH=\$PYTHONPATH:~/netide/Engine/libraries/netip/python"
 
 echo "$x" >> $HOME/.bashrc
 echo "$x" >> $HOME/.profile

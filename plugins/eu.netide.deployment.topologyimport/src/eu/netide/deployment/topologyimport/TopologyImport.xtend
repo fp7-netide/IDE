@@ -1,5 +1,12 @@
 package eu.netide.deployment.topologyimport
 
+import Topology.Connector
+import Topology.Network
+import Topology.NetworkEnvironment
+import Topology.Port
+import Topology.Switch
+import Topology.TopologyFactory
+import eu.netide.deployment.topologyimport.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileNotFoundException
@@ -13,47 +20,26 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import Topology.Connector
-import Topology.Host
-import Topology.Network
-import Topology.NetworkEnvironment
-import Topology.Port
-import Topology.Switch
-/*import java.lang.reflect.InvocationTargetException;
- * import org.eclipse.emf.common.notify.Adapter;
- * import org.eclipse.emf.common.notify.Notification;
- * import org.eclipse.emf.common.util.EList;
- * import org.eclipse.emf.common.util.TreeIterator;
- * import org.eclipse.emf.ecore.EAnnotation;
- * import org.eclipse.emf.ecore.EClass;
- * import org.eclipse.emf.ecore.EDataType;
- * import org.eclipse.emf.ecore.EObject;
- * import org.eclipse.emf.ecore.EOperation;
- * import org.eclipse.emf.ecore.EPackage;
- * import org.eclipse.emf.ecore.EReference;
- * import org.eclipse.emf.ecore.EStructuralFeature;
- import org.eclipse.emf.ecore.resource.Resource; */
-import Topology.TopologyFactory
-import eu.netide.deployment.topologyimport.json.JSONObject
+import eu.netide.deployment.topologyimport.json.JSONException
 
 class TopologyImport {
 
 	def createTopologyModelFromString(String input, String filename) {
+
 		var jtopo = new JSONObject(input)
 
 		var ResourceSet resset = new ResourceSetImpl()
 		var Resource res = resset.createResource(URI::createURI(filename))
-
-		var nodes = jtopo.getJSONObject("network-topology").getJSONArray("topology").getJSONObject(0).
-			getJSONArray("node")
-		var links = jtopo.getJSONObject("network-topology").getJSONArray("topology").getJSONObject(0).
-			getJSONArray("link")
 
 		var ne = TopologyFactory.eINSTANCE.createNetworkEnvironment
 		ne.name = "Imported"
 		val network = TopologyFactory.eINSTANCE.createNetwork
 		network.name = "Imported"
 		network.networkenvironment = ne
+		
+		try {
+		var nodes = jtopo.getJSONObject("network-topology").getJSONArray("topology").getJSONObject(0).
+			getJSONArray("node")
 
 		nodes.forEach [ e |
 			var element = TopologyFactory.eINSTANCE.createSwitch
@@ -61,32 +47,42 @@ class TopologyImport {
 			network.networkelements.add(element)
 		]
 
-		links.forEach [ e |
-			val sourceName = '''s«(e as JSONObject).getJSONObject("source").getString("source-node").split(":").get(1)»'''
-			val destName = '''s«(e as JSONObject).getJSONObject("destination").getString("dest-node").split(":").get(1)»'''
+		if (jtopo.getJSONObject("network-topology").getJSONArray("topology").getJSONObject(0).has("link")) {
+			var links = jtopo.getJSONObject("network-topology").getJSONArray("topology").getJSONObject(0).
+				getJSONArray("link")
 
-			val source = network.networkelements.findFirst[name == sourceName]
-			val sourceport = TopologyFactory.eINSTANCE.createPort
-			val dest = network.networkelements.findFirst[name == destName]
-			val destport = TopologyFactory.eINSTANCE.createPort
+			links.forEach [ e |
+				val sourceName = '''s«(e as JSONObject).getJSONObject("source").getString("source-node").split(":").get(1)»'''
+				val destName = '''s«(e as JSONObject).getJSONObject("destination").getString("dest-node").split(":").get(1)»'''
 
-			if (!network.connectors.exists [ l |
-				l.connectedports.map[networkelement].containsAll(#[source, dest])
-			]) {
+				val source = network.networkelements.findFirst[name == sourceName]
+				val sourceport = TopologyFactory.eINSTANCE.createPort
+				val dest = network.networkelements.findFirst[name == destName]
+				val destport = TopologyFactory.eINSTANCE.createPort
 
-				sourceport.id = source.ports.size
-				sourceport.networkelement = source
+				if (!network.connectors.exists [ l |
+					l.connectedports.map[networkelement].containsAll(#[source, dest])
+				]) {
 
-				destport.id = dest.ports.size
-				destport.networkelement = dest
+					sourceport.id = source.ports.size
+					sourceport.networkelement = source
 
-				var link = TopologyFactory.eINSTANCE.createConnector
-				link.connectedports.add(sourceport)
-				link.connectedports.add(destport)
+					destport.id = dest.ports.size
+					destport.networkelement = dest
 
-				link.network = network
-			}
-		]
+					var link = TopologyFactory.eINSTANCE.createConnector
+					link.connectedports.add(sourceport)
+					link.connectedports.add(destport)
+
+					link.network = network
+				}
+			]
+
+		}
+		
+		} catch (JSONException e) {
+			
+		}
 
 		res.contents.add(ne)
 		res.save(null)

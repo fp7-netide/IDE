@@ -2,10 +2,15 @@ package eu.netide.configuration.launcher.managers
 
 import eu.netide.configuration.preferences.NetIDEPreferenceConstants
 import eu.netide.configuration.utils.NetIDE
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.util.ArrayList
+import java.util.Date
 import java.util.HashMap
 import java.util.Map
+import java.util.regex.Pattern
+import org.eclipse.core.resources.IProject
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.IProgressMonitor
@@ -13,23 +18,16 @@ import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Platform
 import org.eclipse.core.runtime.Status
+import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.debug.core.DebugPlugin
 import org.eclipse.debug.core.ILaunch
+import org.eclipse.debug.core.ILaunchConfiguration
+import org.eclipse.debug.core.ILaunchConfigurationType
+import org.eclipse.debug.core.Launch
 import org.eclipse.debug.core.RefreshUtil
 import org.eclipse.debug.core.model.IProcess
-import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.core.runtime.jobs.Job
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.util.regex.Pattern
-import org.eclipse.debug.core.Launch
-import org.eclipse.debug.core.ILaunchConfiguration
-import java.util.Date
-import org.eclipse.ui.internal.console.ConsoleManager
-import org.eclipse.debug.internal.core.LaunchManager
-import org.eclipse.core.resources.IProject
 import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.emf.common.util.URI
 
 class VagrantManager implements IManager {
 
@@ -40,18 +38,18 @@ class VagrantManager implements IManager {
 	private File workingDirectory
 
 	private IProgressMonitor monitor
-	
+
 	@Accessors(PUBLIC_GETTER)
 	private IProject project
 
+	@Deprecated
 	new(ILaunchConfiguration launchConfiguration, IProgressMonitor monitor) {
 
-		this.launch = new Launch(launchConfiguration, "debug", null)
+		this.launch = new Launch(launchConfiguration, "run", null)
 		this.launch.setAttribute("org.eclipse.debug.core.capture_output", "true")
 		this.launch.setAttribute("org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING", "UTF-8")
 		this.launch.setAttribute("org.eclipse.debug.core.launch.timestamp", new Date().time + "")
 		DebugPlugin.getDefault().getLaunchManager().addLaunch(this.launch)
-
 		this.monitor = monitor
 
 		this.vagrantpath = new Path(
@@ -61,9 +59,43 @@ class VagrantManager implements IManager {
 		var path = launch.launchConfiguration.attributes.get("topologymodel") as String
 
 		this.workingDirectory = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
-		
+
 		var topofile = launchConfiguration.getAttribute("topologymodel", "").IFile
 		this.project = topofile.project
+	}
+
+	new(IProject project, IProgressMonitor monitor) {
+		var conf = launchConfigType.newInstance(null, "Vagrant Session")
+		this.launch = new Launch(conf, "run", null)
+		this.launch.setAttribute("org.eclipse.debug.core.capture_output", "true")
+		this.launch.setAttribute("org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING", "UTF-8")
+		this.launch.setAttribute("org.eclipse.debug.core.launch.timestamp", new Date().time + "")
+		DebugPlugin.getDefault().getLaunchManager().addLaunch(this.launch)
+		this.monitor = monitor
+
+		this.vagrantpath = new Path(
+			Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
+				NetIDEPreferenceConstants.VAGRANT_PATH, "", null)).toOSString
+
+		//var path = launch.launchConfiguration.attributes.get("topologymodel") as String
+
+		this.workingDirectory = project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
+
+		this.project = project
+	}
+
+	public def getLaunchConfigType() {
+		var m = DebugPlugin.getDefault().getLaunchManager();
+
+		for (ILaunchConfigurationType l : m.getLaunchConfigurationTypes()) {
+
+			if (l.getName().equals("NetIDE Controller Deployment")) {
+
+				return l;
+			}
+
+		}
+		return null;
 	}
 
 	def up() {
@@ -145,7 +177,7 @@ class VagrantManager implements IManager {
 		p.waitFor
 		return output
 	}
-	
+
 	override execWithReturn(String cmd) {
 		var p = DebugPlugin.exec(newArrayList(vagrantpath, "ssh", "-c", cmd), workingDirectory, null)
 		var br = new BufferedReader(new InputStreamReader(p.getInputStream()))
@@ -159,7 +191,6 @@ class VagrantManager implements IManager {
 		}
 		return output
 	}
-
 
 	def startProcess(ArrayList<String> cmdline) {
 
@@ -210,16 +241,10 @@ class VagrantManager implements IManager {
 	}
 
 	def getIFile(String s) {
-
-		var resSet = new ResourceSetImpl
-		var res = resSet.getResource(URI.createURI(s), true)
-
-		var eUri = res.getURI()
-		if (eUri.isPlatformResource()) {
-			var platformString = eUri.toPlatformString(true)
-			return ResourcesPlugin.getWorkspace().getRoot().findMember(platformString)
-		}
-		return null
+		var uri = URI.createURI(s)
+		var path = new Path(uri.path)
+		var file = ResourcesPlugin.getWorkspace().getRoot().findMember(path.removeFirstSegments(1));
+		return file
 	}
 
 	def generateCommandLine(String[] commandLine) {
@@ -262,7 +287,6 @@ class VagrantManager implements IManager {
 			cmd,
 			"--",
 			"-tt"
-			
 		))
 	}
 

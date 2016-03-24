@@ -5,12 +5,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
-import eu.netide.configuration.generator.CommonConfigurationModule;
 
 import Topology.NetworkEnvironment;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * Invokes the generation of a mininet configuration file from the context menu.
