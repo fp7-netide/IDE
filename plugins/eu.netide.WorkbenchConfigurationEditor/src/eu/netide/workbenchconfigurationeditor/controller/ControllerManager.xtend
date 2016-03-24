@@ -260,6 +260,7 @@ class ControllerManager {
 		if (serverControllerStarter != null) {
 			serverControllerStarter.stop
 			reg.remove(serverControllerStarter.safeName)
+			serverControllerStarter = null
 		}
 	}
 
@@ -427,37 +428,36 @@ class ControllerManager {
 	@Accessors(PUBLIC_GETTER)
 	private IStarter coreStarter;
 
-	private Job startCoreJob;
+	//private Job startCoreJob;
 
 	public def startCore() {
 
 		val coreJob = new Job("CoreManager") {
-
 			override protected run(IProgressMonitor monitor) {
 
-				if (coreStarter == null) {
-//					coreStarter = factory.createCoreStarter(configHelper.getTopoConfiguration, monitor)
-					coreStarter = new CoreStarter(backend,
-						URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString, monitor)
-					reg.register(coreStarter.safeName, coreStarter)
-				}
-				if (!statusModel.coreRunning)
-					startCoreJob.schedule
-				return Status.OK_STATUS;
-			}
-
-		};
-
-		startCoreJob = new Job("StartCoreManager") {
-
-			override protected run(IProgressMonitor monitor) {
+				coreStarter = new CoreStarter(backend,
+					URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString, monitor)
+//				if (!statusModel.coreRunning)
+//					startCoreJob.schedule
 				coreStarter.backend = backend
-				coreStarter.syncStart
-				statusModel.coreRunning = true
+				coreStarter.asyncStart
+				reg.register(coreStarter.safeName, coreStarter)
+					
 				return Status.OK_STATUS;
 			}
 
 		};
+
+//		startCoreJob = new Job("StartCoreManager") {
+//
+//			override protected run(IProgressMonitor monitor) {
+//				coreStarter.backend = backend
+//				coreStarter.syncStart
+//				statusModel.coreRunning = true
+//				return Status.OK_STATUS;
+//			}
+//
+//		};
 
 		coreJob.schedule
 
@@ -469,6 +469,7 @@ class ControllerManager {
 			coreStarter.stop
 			reg.remove(coreStarter.safeName)
 			statusModel.coreRunning = false
+			coreStarter = null
 		}
 	}
 
