@@ -42,9 +42,7 @@
 		<module>../../plugins/eu.netide.configuration.generator</module>
 		<module>../../plugins/eu.netide.configuration.launcher</module>
 		<module>../../plugins/eu.netide.deployment.topologyimport</module>
-		<module>
-			../../plugins/eu.netide.configuration.preferences
-		</module>
+		<module>../../plugins/eu.netide.configuration.preferences</module>
 		<module>../../plugins/eu.netide.newproject</module>
 		<module>../../plugins/eu.netide.profile</module>
 		<module>../../plugins/eu.netide.debug</module>
@@ -54,11 +52,11 @@
 		<module>../../plugins/eu.netide.parameters.language</module>
 		<module>../../plugins/eu.netide.parameters.language.ui</module>
 		<module>../../plugins/eu.netide.parameters.templates</module>
-		<module>
-			../../plugins/eu.netide.WorkbenchConfigurationEditor
-		</module>
+		<module>../../eu.netide.zmq.hub</module>
+		<module>../../plugins/eu.netide.WorkbenchConfigurationEditor</module>
 		<module>../eu.netide.feature</module>
 		<module>../eu.netide.product</module>
+		
 	</modules>
 
 	<build>
