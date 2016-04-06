@@ -13,11 +13,15 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
 import eu.netide.zmq.hub.server.ZmqHub;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.swt.widgets.TableColumn;
 
 public class ZmqLogDialog extends TitleAreaDialog {
 
 	ZmqHub hub;
-	ListViewer listViewer;
+	private Table table;
 
 	public ZmqLogDialog(Shell parentShell, ZmqHub hub) {
 		super(parentShell);
@@ -28,12 +32,24 @@ public class ZmqLogDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite area = (Composite) super.createDialogArea(parent);
-
-		listViewer = new ListViewer(area, SWT.BORDER | SWT.V_SCROLL);
-		List list = listViewer.getList();
-		list.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		
-		ViewerSupport.bind(listViewer, hub.getLog(), BeanProperties.value("msg"));
+		TableViewer tableViewer = new TableViewer(area, SWT.BORDER | SWT.FULL_SELECTION);
+		table = tableViewer.getTable();
+		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
+		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		
+		TableColumn tblColumnDate = new TableColumn(table, SWT.NONE);
+		tblColumnDate.setWidth(150);
+		tblColumnDate.setText("Date");
+		
+		TableColumn tblColumnMsg = new TableColumn(table, SWT.NONE);
+		tblColumnMsg.setWidth(300);
+		tblColumnMsg.setText("Message");
+		
+		ViewerSupport.bind(tableViewer, hub.getLog(), BeanProperties.values(new String[] {"date", "msg"}));
+		
+
 				
 		setHelpAvailable(false);
 		setTitle("Message Log");

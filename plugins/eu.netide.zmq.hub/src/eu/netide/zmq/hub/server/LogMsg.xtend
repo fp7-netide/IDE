@@ -5,18 +5,21 @@ import java.beans.PropertyChangeListener
 
 class LogMsg {
 	private String msg
+	private String date
 	private PropertyChangeSupport changes
 
 	new() {
-		this("")
+		this("", "")
 	}
 
-	new(String msg) {
+	new(String date, String msg) {
+		this.date = date
 		this.msg = msg
 		changes = new PropertyChangeSupport(this)
 	}
 
 	public def getMsg() { msg }
+	public def getDate() { date }
 
 	public def void addPropertyChangeListener(PropertyChangeListener l) {
 		changes.addPropertyChangeListener(l);

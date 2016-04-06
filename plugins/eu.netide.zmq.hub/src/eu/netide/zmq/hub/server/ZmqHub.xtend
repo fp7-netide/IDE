@@ -10,6 +10,9 @@ import org.zeromq.ZMQ
 import org.zeromq.ZMQ.Context
 import org.zeromq.ZMQ.Socket
 import org.zeromq.ZMQException
+import java.util.Date
+import java.text.DateFormat.Field
+import java.text.SimpleDateFormat
 
 class ZmqHub implements IZmqHub, Runnable {
 
@@ -51,7 +54,9 @@ class ZmqHub implements IZmqHub, Runnable {
 					listeners.forEach[update(received)]
 					log.realm.asyncExec(new Runnable() {
 						override run() {
-							log.add(new LogMsg(b.toString))
+							var date = new Date()
+							var ft = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+							log.add(new LogMsg(ft.format(date), b.toString))
 						}
 					})
 				}
