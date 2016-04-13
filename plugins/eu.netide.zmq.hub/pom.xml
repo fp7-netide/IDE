@@ -4,18 +4,18 @@
 	<groupId>eu.netide.zmq.hub</groupId>
 	<artifactId>eu.netide.zmq.hub</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <parent>
-  	<groupId>eu.netide.parent</groupId>
-  	<artifactId>eu.netide.parent</artifactId>
-  	<version>0.3.1-SNAPSHOT</version>
-  	<relativePath>../../releng/eu.netide.parent/pom.xml</relativePath>
-  </parent>
-  <build>
-   <plugins>
-	<plugin>
-	 <groupId>org.eclipse.xtend</groupId>
-	 <artifactId>xtend-maven-plugin</artifactId>
-	</plugin>
-   </plugins>
-  </build>
+	<parent>
+		<groupId>eu.netide.parent</groupId>
+		<artifactId>eu.netide.parent</artifactId>
+		<version>0.3.1-SNAPSHOT</version>
+		<relativePath>../../releng/eu.netide.parent/pom.xml</relativePath>
+	</parent>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.xtend</groupId>
+				<artifactId>xtend-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>
