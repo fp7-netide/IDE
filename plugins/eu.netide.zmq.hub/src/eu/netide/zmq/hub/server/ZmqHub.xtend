@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.List
 import org.eclipse.core.databinding.observable.list.WritableList
-import org.eclipse.xtend.lib.annotations.Accessors
 import org.zeromq.ZMQ
 import org.zeromq.ZMQ.Context
 import org.zeromq.ZMQ.Socket
@@ -23,9 +22,9 @@ class ZmqHub implements IZmqHub, Runnable {
 	var Socket sub
 	var Context ctx
 
-	@Accessors(PUBLIC_GETTER)
+	
 	private String address
-	@Accessors(PUBLIC_GETTER)
+	
 	private String name
 
 	new(String name, String address) {
@@ -82,7 +81,7 @@ class ZmqHub implements IZmqHub, Runnable {
 		listeners.remove(listener)
 	}
 
-	public def getRunning() {
+	public override getRunning() {
 		return if(this.thread != null) this.thread.alive else false
 	}
 
@@ -90,15 +89,23 @@ class ZmqHub implements IZmqHub, Runnable {
 		return log
 	}
 	
-	public def setName(String name) {
+	public override getName() {
+		return name
+	}
+	
+	public override setName(String name) {
 		changes.firePropertyChange("name", this.name, this.name = name)
 	}
 	
-	public def setAddress(String address) {
+	public override getAddress() {
+		return address
+	}
+	
+	public override setAddress(String address) {
 		changes.firePropertyChange("address", this.address, this.address = address)
 	}
 
-	public def setRunning(Boolean running) {
+	override setRunning(Boolean running) {
 		if (running && !this.getRunning()) {
 			this.thread = new Thread(this)
 			this.thread.start
