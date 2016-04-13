@@ -6,7 +6,6 @@
          point="org.eclipse.ui.views">
       <view
             name="ZMQ Listeners"
-            icon="icons/sample.gif"
             category="eu.netide.views"
             class="eu.netide.zmq.hub.ui.views.ZmqHubView"
             id="eu.netide.zmq.hub.ui.views.SampleView">

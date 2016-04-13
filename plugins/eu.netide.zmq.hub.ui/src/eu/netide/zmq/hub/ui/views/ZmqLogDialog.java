@@ -52,7 +52,7 @@ public class ZmqLogDialog extends TitleAreaDialog {
 
 				
 		setHelpAvailable(false);
-		setTitle("Message Log");
+		setTitle(hub.getName());
 		setMessage(hub.getAddress());
 
 		return area;

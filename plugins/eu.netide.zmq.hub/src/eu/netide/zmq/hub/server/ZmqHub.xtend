@@ -3,6 +3,8 @@ package eu.netide.zmq.hub.server
 import eu.netide.zmq.hub.client.IZmqHubListener
 import java.beans.PropertyChangeListener
 import java.beans.PropertyChangeSupport
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.List
 import org.eclipse.core.databinding.observable.list.WritableList
 import org.eclipse.xtend.lib.annotations.Accessors
@@ -10,9 +12,6 @@ import org.zeromq.ZMQ
 import org.zeromq.ZMQ.Context
 import org.zeromq.ZMQ.Socket
 import org.zeromq.ZMQException
-import java.util.Date
-import java.text.DateFormat.Field
-import java.text.SimpleDateFormat
 
 class ZmqHub implements IZmqHub, Runnable {
 
@@ -24,13 +23,20 @@ class ZmqHub implements IZmqHub, Runnable {
 	var Socket sub
 	var Context ctx
 
-	@Accessors(PUBLIC_GETTER, PUBLIC_SETTER)
+	@Accessors(PUBLIC_GETTER)
 	private String address
+	@Accessors(PUBLIC_GETTER)
+	private String name
 
-	new(String address) {
+	new(String name, String address) {
+		this.name = name
 		this.address = address
 		changes = new PropertyChangeSupport(this)
 		log = WritableList.withElementType(typeof(StringBuilder))
+	}
+	
+	new (String address) {
+		this("", address)
 	}
 
 	override void run() {
@@ -47,7 +53,7 @@ class ZmqHub implements IZmqHub, Runnable {
 					b.append("[");
 					for (byte r : received) {
 						b.append(Integer.toHexString(r))
-						b.append(",")
+						b.append(":")
 					}
 					b.deleteCharAt(b.length() - 1);
 					b.append("]");
@@ -66,6 +72,7 @@ class ZmqHub implements IZmqHub, Runnable {
 		}
 
 	}
+	
 
 	override register(IZmqHubListener listener) {
 		listeners.add(listener)
@@ -81,6 +88,14 @@ class ZmqHub implements IZmqHub, Runnable {
 
 	public def getLog() {
 		return log
+	}
+	
+	public def setName(String name) {
+		changes.firePropertyChange("name", this.name, this.name = name)
+	}
+	
+	public def setAddress(String address) {
+		changes.firePropertyChange("address", this.address, this.address = address)
 	}
 
 	public def setRunning(Boolean running) {

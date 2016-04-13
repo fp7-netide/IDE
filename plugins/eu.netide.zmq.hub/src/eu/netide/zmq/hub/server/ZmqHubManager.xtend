@@ -13,12 +13,15 @@ class ZmqHubManager {
 	}
 	
 	public def getHub(String address) {
-		if (reg.exists[h|(h as ZmqHub).address.equals(address)]) {
-			return reg.findFirst[h|(h as ZmqHub).address.equals(address)]
+		getHub("", address)
+	}
+	
+	public def getHub(String name, String address) {
+		if (reg.exists[h|(h as ZmqHub).address.equals(address) && (h as ZmqHub).name.equals(address)]) {
+			return reg.findFirst[h|(h as ZmqHub).address.equals(address) && (h as ZmqHub).address.equals(address)]
 		} else {
-			var hub = new ZmqHub(address)
+			var hub = new ZmqHub(name, address)
 			reg.add(hub)
-			// changes.firePropertyChange("hubs", reg.values.toList, reg.values.toList)
 			return hub
 		}
 	}

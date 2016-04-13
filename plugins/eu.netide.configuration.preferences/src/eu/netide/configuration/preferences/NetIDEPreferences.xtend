@@ -54,19 +54,19 @@ public class NetIDEPreferences extends FieldEditorPreferencePage implements IWor
 		addField(new ListEditor(NetIDEPreferenceConstants.ZMQ_LIST, "ZeroMQ Sockets", fieldEditorParent) {
 
 			override protected createList(String[] items) {
-				return items.reduce[p1, p2| p1 + "," + p2]
+				return items.reduce[p1, p2|p1 + ";" + p2]
 			}
 
 			override protected getNewInputObject() {
 				var dialog = new ZmqAddressDialog(shell)
 				dialog.create
 				if (dialog.open == Window.OK)
-					return dialog.address
+					return String.format("%s,%s", dialog.name, dialog.address)
 				return null
 			}
 
 			override protected parseString(String stringList) {
-				return stringList.split(",")
+				return stringList.split(";")
 			}
 
 		})

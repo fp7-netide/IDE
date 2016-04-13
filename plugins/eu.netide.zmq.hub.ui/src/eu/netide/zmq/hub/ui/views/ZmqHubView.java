@@ -55,6 +55,9 @@ public class ZmqHubView extends ViewPart {
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
 		column.getColumn().setWidth(150);
+		column.getColumn().setText("Name");
+		column = new TableViewerColumn(tableViewer, SWT.NONE);
+		column.getColumn().setWidth(150);
 		column.getColumn().setText("Address");
 		column = new TableViewerColumn(tableViewer, SWT.NONE);
 		column.getColumn().setWidth(100);
@@ -75,7 +78,7 @@ public class ZmqHubView extends ViewPart {
 		});
 		itemToggle.setText("Toggle");
 
-		ViewerSupport.bind(tableViewer, hubManager.getHubs(), BeanProperties.values(new String[] { "address", "running" }));
+		ViewerSupport.bind(tableViewer, hubManager.getHubs(), BeanProperties.values(new String[] { "name", "address", "running" }));
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
