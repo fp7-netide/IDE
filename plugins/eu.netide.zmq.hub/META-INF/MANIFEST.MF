@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Testzmq
+Bundle-SymbolicName: eu.netide.zmq.hub;singleton:=true
+Bundle-Version: 0.3.1.qualifier
+Bundle-Activator: eu.netide.zmq.hub.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.zeromq.jeromq;bundle-version="0.3.5",
+ com.google.guava,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtend.lib,
+ org.eclipse.xtend.lib.macro,
+ org.eclipse.core.databinding.observable;bundle-version="1.5.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Export-Package: eu.netide.zmq.hub.client,
+ eu.netide.zmq.hub.server
+

@@ -15,6 +15,6 @@ public class NetIDEPreferenceConstants {
 	public static final String PROXY_ON = "proxyOn"
 	public static final String CUSTOM_BOX = "customBox"
 	public static final String CUSTOM_BOX_NAME = "customBoxName"
-	
+	public static final String ZMQ_LIST = "zmqList"
 
 }

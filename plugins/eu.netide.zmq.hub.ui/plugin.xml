@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="ZMQ Listeners"
+            category="eu.netide.views"
+            class="eu.netide.zmq.hub.ui.views.ZmqHubView"
+            id="eu.netide.zmq.hub.ui.views.SampleView">
+      </view>
+   </extension>
+
+</plugin>

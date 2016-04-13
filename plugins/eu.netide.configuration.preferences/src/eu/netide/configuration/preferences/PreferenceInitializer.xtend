@@ -41,5 +41,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 				case Platform.OS_WIN32: ""
 			}
 		)
+		store.setDefault(
+			NetIDEPreferenceConstants.ZMQ_LIST,
+			"tcp://localhost:5557"
+		)
 	}
 }
