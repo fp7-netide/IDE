@@ -50,6 +50,7 @@ public class SShShell extends Shell {
 
 	private void openShell(Display display) {
 		try {
+			this.pack();
 			this.open();
 			this.layout();
 			if (edit) {
@@ -100,8 +101,6 @@ public class SShShell extends Shell {
 		this.useDoubleTunneL = false;
 		Composite composite = new Composite(this, SWT.NONE);
 		GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_composite.heightHint = 200;
-		gd_composite.widthHint = 425;
 		composite.setLayoutData(gd_composite);
 		composite.setLayout(new GridLayout(2, false));
 
@@ -367,8 +366,7 @@ public class SShShell extends Shell {
 	 * Create contents of the shell.
 	 */
 	protected void createContents() {
-		setText("SWT Application");
-		setSize(475, 379);
+		setText("SSH Profile");
 
 	}
 
