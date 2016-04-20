@@ -59,6 +59,9 @@ class VagrantfileGenerator {
 		url = bundle.getEntry("scripts/install_tools.sh")
 		var toolscriptpath = scriptpath(url)
 
+                url = bundle.getEntry("scripts/install_onos.sh")
+                var onosscriptpath = scriptpath(url)
+
 //		var controllerPlatformKeys = input.allContents.filter(typeof(Controller)).map [ c |
 //			String.format("controller_platform_%s", c.name)
 //		]
@@ -107,6 +110,7 @@ class VagrantfileGenerator {
 					config.vm.provision "shell", path: "«odlscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«flscriptpath»", privileged: false
 					config.vm.provision "shell", path: "«toolscriptpath»", privileged: false
+                                        config.vm.provision "shell", path: "«onosscriptpath»", privileged: false
 				«ENDIF»
 				
 				# Syncing the mininet configuration folder with the vm

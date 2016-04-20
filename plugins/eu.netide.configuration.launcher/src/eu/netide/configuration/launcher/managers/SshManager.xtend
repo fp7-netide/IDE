@@ -198,6 +198,7 @@ class SshManager implements IManager {
 			"scripts/install_odl.sh",
 			"scripts/install_logger_debugger.sh",
 			"scripts/install_floodlight.sh"
+                        "scripts/install_onos.sh"
 		)
 
 		val fullScripts = newArrayList()
