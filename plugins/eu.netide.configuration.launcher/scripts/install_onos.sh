@@ -32,7 +32,7 @@ export ONOS_APPS=\"drivers,openflow,proxyarp,mobility\"
 # the Mininet VM (if you have one)
 #export OCN=\"192.168.56.102\"
 
-# pattern to specify which address to use for inter-ONOS node communication (not used with single-instance $
+# pattern to specify which address to use for inter-ONOS node communication (not used with single-instance core)
 export ONOS_NIC=\"192.168.56.*\"
 
 export ONOS_USER=karaf
