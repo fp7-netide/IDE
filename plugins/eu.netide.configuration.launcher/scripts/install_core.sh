@@ -44,9 +44,8 @@ if [ ! -d ~/core_engine ]; then
   sleep 15
   ./stop
 
-  cd
-
 #  mv apache-karaf-3.0.6-SNAPSHOT apache-karaf
 # cd apache-karaf-3.0.6-SNAPSHOT/bin
-
-
+else
+  echo "Engine seems to be already installed. Skipping..."
+fi   
