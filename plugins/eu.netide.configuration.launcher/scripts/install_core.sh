@@ -9,6 +9,7 @@ if [ ! -d ~/core_engine ]; then
   sudo apt-get --yes install oracle-java8-installer
   sudo apt-get --yes install oracle-java8-set-default
 
+  cd
   cd netide
   git clone -b demo-brussels https://github.com/fp7-netide/Engine
 
@@ -35,7 +36,7 @@ if [ ! -d ~/core_engine ]; then
 
   while [ $(./client test 2>&1 | grep "Failed to get the session." | wc -l) -eq 1 ]; do
     echo "No Connection to Karaf server. Trying again..."
-	sleep 1
+        sleep 1
   done
 
   ./client "feature:repo-add mvn:eu.netide.core/core/1.0.0.0-SNAPSHOT/xml/features"
@@ -49,6 +50,3 @@ if [ ! -d ~/core_engine ]; then
 # cd apache-karaf-3.0.6-SNAPSHOT/bin
 
 
-else
-   echo "Engine seems to be already installed. Skipping..."
-fi
