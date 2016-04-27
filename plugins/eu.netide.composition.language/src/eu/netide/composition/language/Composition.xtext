@@ -1,0 +1,61 @@
+grammar eu.netide.composition.language.Composition with org.eclipse.xtext.common.Terminals
+
+generate composition "http://www.netide.eu/composition/language/Composition"
+
+CompositionSpecification:
+	{CompositionSpecification}
+	(modules+=Module (NEWLINE modules+=Module)*)?
+	(NEWLINE
+	(composition=Composition)?
+	NEWLINE?)?;
+
+Module:
+	{Module}
+	"module" name=ID ":" loaderIdentification=STRING ("," (noFenceSupport?="noFence" | "fence"))?
+	("{"
+	(conditions+=Condition (conditions+=Condition)*)?
+	NEWLINE?
+	"}")?;
+
+Condition:
+	{Condition}
+	"cond" (
+		"datapaths" "=" "{" (dpids+=INT ("," dpids+=INT)*)? "}" |
+		"events" "=" "{" (events+=STRING ("," events+=STRING)*)? "}" |
+		"ethDst" "=" ethDst=STRING |
+		"ethSrc" "=" ethSrc=STRING |
+		"ethType" "=" ethType=STRING |
+		"inPort" "=" inPort=INT |
+		"ipv4Dst" "=" ipv4Dst=STRING |
+		"ipv4Src" "=" ipv4Src=STRING |
+		"ipv6Dst" "=" ipv6Dst=STRING |
+		"ipv6Src" "=" ipv6Src=STRING |
+		"ipProto" "=" ipProto=STRING |
+		"tcpDst" "=" tcpDst=INT |
+		"tcpSrc" "=" tcpSrc=INT |
+		"udpDst" "=" udpDst=INT |
+		"udpSrc" "=" udpSrc=INT 
+	)*;
+	
+	
+Composition:
+	{Composition}
+	"comp" rule=Sequential;
+	
+Sequential returns Rule:
+	Parallel ({Sequential.left=current} '>>' right=Parallel)*;
+	
+Parallel returns Rule:
+	Atom ({Parallel.left=current} "|" right=Atom)*;
+	
+Atom returns Rule:
+	{Atom}
+	val=[Module] (allowVetoResult?="!")? ('(' priority=INT ')')? | '(' Sequential ')' | Branch;
+
+Branch returns Rule:
+	{Branch}
+	"if" "(" condition=Condition ")" "then" then=Sequential ("else" else=Sequential)? "endif"
+;
+
+terminal NEWLINE:
+	((' ' | '\t' | '\r')? '\n')+;

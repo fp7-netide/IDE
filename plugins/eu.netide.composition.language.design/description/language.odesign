@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" name="Composition" version="10.1.3.201511131800">
+  <ownedViewpoints name="eu.netide.composition.language" label="Composition Language" modelFileExtension="comp">
+    <ownedRepresentations xsi:type="description_1:DiagramDescription" name="compspec" initialisation="true" domainClass="CompositionSpecification" enablePopupBars="true">
+      <metamodel href="http://www.netide.eu/composition/language/Composition#/"/>
+      <defaultLayer name="Default">
+        <nodeMappings name="ModuleNode" domainClass="Atom">
+          <style xsi:type="style:SquareDescription" showIcon="false" labelExpression="[self.val.name /]" labelPosition="node" resizeKind="NSEW" width="8" height="4">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_yellow']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="ParallelStartNode" semanticCandidatesExpression="[eAllContents()->selectByType(Parallel)->select(ancestors()->at(1).oclIsKindOf(Sequential) or ancestors()->at(1).oclIsKindOf(RuleEntry)) /]" domainClass="Parallel">
+          <style xsi:type="style:SquareDescription" showIcon="false" labelExpression="" labelPosition="node" width="5" height="1">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='green']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="Start" domainClass="RuleEntry">
+          <style xsi:type="style:DotDescription" showIcon="false" labelExpression="[ \]" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="ParallelEndNode" domainClass="Parallel">
+          <style xsi:type="style:SquareDescription" showIcon="false" labelExpression="" labelPosition="node" width="5" height="1">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='orange']"/>
+          </style>
+        </nodeMappings>
+        <edgeMappings name="ParLine" sourceMapping="//@ownedViewpoints[name='eu.netide.composition.language']/@ownedRepresentations[name='compspec']/@defaultLayer/@nodeMappings[name='ParallelStartNode']" targetMapping="//@ownedViewpoints[name='eu.netide.composition.language']/@ownedRepresentations[name='compspec']/@defaultLayer/@nodeMappings[name='ModuleNode']" targetFinderExpression="[self.eContents(Atom)->union(self.eContents(Parallel)) /]">
+          <style sizeComputationExpression="2" routingStyle="tree">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <edgeMappings name="SeqLine" sourceMapping="//@ownedViewpoints[name='eu.netide.composition.language']/@ownedRepresentations[name='compspec']/@defaultLayer/@nodeMappings[name='ModuleNode'] //@ownedViewpoints[name='eu.netide.composition.language']/@ownedRepresentations[name='compspec']/@defaultLayer/@nodeMappings[name='ParallelEndNode']" targetMapping="//@ownedViewpoints[name='eu.netide.composition.language']/@ownedRepresentations[name='compspec']/@defaultLayer/@nodeMappings[name='ModuleNode'] //@ownedViewpoints[name='eu.netide.composition.language']/@ownedRepresentations[name='compspec']/@defaultLayer/@nodeMappings[name='ParallelEndNode']" targetFinderExpression="[self.right /]" sourceFinderExpression="[self.left /]" domainClass="Sequential" useDomainElement="true">
+          <style sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+      </defaultLayer>
+    </ownedRepresentations>
+  </ownedViewpoints>
+</description:Group>

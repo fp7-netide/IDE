@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: eu.netide.composition.language
+Bundle-Vendor: NetIDE Project
+Bundle-Version: 0.3.1.qualifier
+Bundle-SymbolicName: eu.netide.composition.language; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext,
+ org.eclipse.xtext.xbase,
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.emf.ecore,
+ org.eclipse.xtext.xbase.lib,
+ org.antlr.runtime,
+ org.eclipse.xtext.util,
+ org.eclipse.xtend.lib,
+ org.eclipse.emf.common
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: eu.netide.composition.language.services,
+ eu.netide.composition.language.parser.antlr.internal,
+ eu.netide.composition.language.composition.impl,
+ eu.netide.composition.language.composition.util,
+ eu.netide.composition.language.validation,
+ eu.netide.composition.language,
+ eu.netide.composition.language.composition,
+ eu.netide.composition.language.parser.antlr,
+ eu.netide.composition.language.scoping,
+ eu.netide.composition.language.generator,
+ eu.netide.composition.language.serializer
+Import-Package: org.apache.log4j
