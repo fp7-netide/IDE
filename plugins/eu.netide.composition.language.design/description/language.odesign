@@ -3,6 +3,7 @@
   <ownedViewpoints name="eu.netide.composition.language" label="Composition Language" modelFileExtension="comp">
     <ownedRepresentations xsi:type="description_1:DiagramDescription" name="compspec" initialisation="true" domainClass="CompositionSpecification" enablePopupBars="true">
       <metamodel href="http://www.netide.eu/composition/language/Composition#/"/>
+      <layout xsi:type="description_1:OrderedTreeLayout" childrenExpression="[self.eAllContents()->filter(typeof(Atom)) /]" nodeMapping="//@ownedViewpoints[name='eu.netide.composition.language']/@ownedRepresentations[name='compspec']/@defaultLayer/@nodeMappings[name='ModuleNode'] //@ownedViewpoints[name='eu.netide.composition.language']/@ownedRepresentations[name='compspec']/@defaultLayer/@nodeMappings[name='ParallelEndNode'] //@ownedViewpoints[name='eu.netide.composition.language']/@ownedRepresentations[name='compspec']/@defaultLayer/@nodeMappings[name='ParallelStartNode'] //@ownedViewpoints[name='eu.netide.composition.language']/@ownedRepresentations[name='compspec']/@defaultLayer/@nodeMappings[name='Start']"/>
       <defaultLayer name="Default">
         <nodeMappings name="ModuleNode" domainClass="Atom">
           <style xsi:type="style:SquareDescription" showIcon="false" labelExpression="[self.val.name /]" labelPosition="node" resizeKind="NSEW" width="8" height="4">

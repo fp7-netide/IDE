@@ -46,11 +46,11 @@ Sequential returns Rule:
 	Parallel ({Sequential.left=current} '>>' right=Parallel)*;
 	
 Parallel returns Rule:
-	Atom ({Parallel.left=current} "|" right=Atom)*;
+	Atom ({Parallel.left=current} "+" right=Atom)*;
 	
 Atom returns Rule:
 	{Atom}
-	val=[Module] (allowVetoResult?="!")? ('(' priority=INT ')')? | '(' Sequential ')' | Branch;
+	val=[Module] ('(' priority=INT ')')? (allowVetoResult?="!")? | '(' Sequential ')' | Branch;
 
 Branch returns Rule:
 	{Branch}
