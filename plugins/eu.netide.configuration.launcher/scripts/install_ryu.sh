@@ -3,7 +3,7 @@ if [ "$(which pip)" == "" ] || [ "$(pip list | grep ryu)" == "" ]; then
 
   if [ ! -d ~/netide/Engine ]; then
     cd ~/netide
-    git clone -b demo-brussels https://github.com/fp7-netide/Engine
+    git clone https://github.com/fp7-netide/Engine
 
   else
    echo "Engine seems to be already installed. Skipping..."

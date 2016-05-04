@@ -1,6 +1,6 @@
 #!/bin/bash
 cd
-if [ ! -d ~/netide/openflowplugin ]; then
+if [ ! -d ~/netide/distribution-karaf-0.4.0-Beryllium ]; then
 
 
    cd netide
