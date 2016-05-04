@@ -7,8 +7,21 @@
 	<version>0.3.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>eu.netide.dependencies</name>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>reficio</id>
+			<url>http://repo.reficio.org/maven/</url>
+		</pluginRepository>
+	</pluginRepositories>
 
+	<repositories>
+		<repository>
+			<id>sonatype</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
+
+	<name>eu.netide.dependencies</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,6 +48,10 @@
 									<id>org.zeromq:jeromq:0.3.5</id>
 									<source>true</source>
 								</artifact>
+								<artifact>
+									<id>eu.netide.lib:netip:1.1.0-SNAPSHOT</id>
+									<source>true</source>
+								</artifact>
 							</artifacts>
 							<compressSite>true</compressSite>
 						</configuration>
@@ -45,10 +62,5 @@
 	</build>
 
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>reficio</id>
-			<url>http://repo.reficio.org/maven/</url>
-		</pluginRepository>
-	</pluginRepositories>
+
 </project>
