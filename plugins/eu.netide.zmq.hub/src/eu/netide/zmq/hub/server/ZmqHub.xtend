@@ -11,6 +11,8 @@ import org.zeromq.ZMQ
 import org.zeromq.ZMQ.Context
 import org.zeromq.ZMQ.Socket
 import org.zeromq.ZMQException
+import eu.netide.lib.netip.NetIPConverter
+import com.google.common.hash.Funnels
 
 class ZmqHub implements IZmqHub, Runnable {
 
@@ -22,9 +24,8 @@ class ZmqHub implements IZmqHub, Runnable {
 	var Socket sub
 	var Context ctx
 
-	
 	private String address
-	
+
 	private String name
 
 	new(String name, String address) {
@@ -33,8 +34,8 @@ class ZmqHub implements IZmqHub, Runnable {
 		changes = new PropertyChangeSupport(this)
 		log = WritableList.withElementType(typeof(StringBuilder))
 	}
-	
-	new (String address) {
+
+	new(String address) {
 		this("", address)
 	}
 
@@ -45,6 +46,7 @@ class ZmqHub implements IZmqHub, Runnable {
 		sub.subscribe("".bytes)
 
 		try {
+			var funnel = Funnels.integerFunnel
 			while (!this.thread.interrupted) {
 				val received = sub.recv(0)
 				if (received != null) {
@@ -61,9 +63,15 @@ class ZmqHub implements IZmqHub, Runnable {
 						override run() {
 							var date = new Date()
 							var ft = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-							log.add(new LogMsg(ft.format(date), b.toString))
+							try {
+								log.add(new LogMsg(ft.format(date), NetIPConverter.parseConcreteMessage(received).toString))
+							} catch (IllegalArgumentException e) {
+								log.add(new LogMsg(ft.format(date), b.toString))
+							}
 						}
+
 					})
+
 				}
 			}
 		} catch (ZMQException e) {
@@ -71,7 +79,6 @@ class ZmqHub implements IZmqHub, Runnable {
 		}
 
 	}
-	
 
 	override register(IZmqHubListener listener) {
 		listeners.add(listener)
@@ -88,19 +95,19 @@ class ZmqHub implements IZmqHub, Runnable {
 	public def getLog() {
 		return log
 	}
-	
+
 	public override getName() {
 		return name
 	}
-	
+
 	public override setName(String name) {
 		changes.firePropertyChange("name", this.name, this.name = name)
 	}
-	
+
 	public override getAddress() {
 		return address
 	}
-	
+
 	public override setAddress(String address) {
 		changes.firePropertyChange("address", this.address, this.address = address)
 	}
