@@ -93,6 +93,7 @@ class ParameterConfigurationShell extends Shell {
 
 			override widgetSelected(SelectionEvent e) { save() }
 		})
+		shell.pack
 
 	}
 

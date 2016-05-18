@@ -49,6 +49,16 @@
 									<source>true</source>
 								</artifact>
 								<artifact>
+									<id>io.netty:netty:3.9.2.Final</id>
+								</artifact>
+								<artifact>
+									<id>org.onosproject:openflowj:0.9.2.onos</id>
+									<override>true</override>
+									<instructions>
+										<Require-Bundle>com.google.guava;bundle-version="15.0.0"</Require-Bundle>
+									</instructions>
+								</artifact>
+								<artifact>
 									<id>eu.netide.lib:netip:1.1.0-SNAPSHOT</id>
 									<source>true</source>
 								</artifact>
