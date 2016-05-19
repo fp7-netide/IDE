@@ -35,7 +35,7 @@ if [ ! -d ~/netide/Engine ]; then
         sleep 1
   done
 
-  ./client "feature:repo-add mvn:eu.netide.core/core/1.1.0-SNAPSHOT/xml/features"
+  ./client "feature:repo-add mvn:eu.netide.core/core.features/1.1.0-SNAPSHOT/xml/features"
   ./client "feature:install core"
   sleep 15
   ./stop
