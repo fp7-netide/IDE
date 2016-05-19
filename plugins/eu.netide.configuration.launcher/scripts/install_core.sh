@@ -19,7 +19,7 @@ if [ ! -d ~/netide/Engine ]; then
 
   cd
   cd ~/netide/Engine/core
-  mvn clean install
+  mvn clean install -Dgpg.skip=true
 
   cd
   echo "Downloading Karaf..."
