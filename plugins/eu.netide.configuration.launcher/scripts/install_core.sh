@@ -11,7 +11,7 @@ if [ ! -d ~/core_engine ]; then
 
   cd
   cd netide
-  git clone -b demo-brussels https://github.com/fp7-netide/Engine
+  git clone -b https://github.com/fp7-netide/Engine
 
   cd Engine/libraries/netip/java
   mvn clean install -Dgpg.skip=true
@@ -39,8 +39,8 @@ if [ ! -d ~/core_engine ]; then
         sleep 1
   done
 
-  ./client "feature:repo-add mvn:eu.netide.core/core/1.0.0.0-SNAPSHOT/xml/features"
-  ./client "feature:install netide-core"
+  ./client "feature:repo-add mvn:eu.netide.core/core/1.1.0-SNAPSHOT/xml/features"
+  ./client "feature:install core"
   sleep 15
   ./stop
 
@@ -48,4 +48,4 @@ if [ ! -d ~/core_engine ]; then
 # cd apache-karaf-3.0.6-SNAPSHOT/bin
 else
   echo "Engine seems to be already installed. Skipping..."
-fi   
+fi
