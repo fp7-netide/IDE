@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ ! -d ~/core_engine ]; then
+if [ ! -d ~/netide/Engine ]; then
 
   sudo apt-get --yes update
   sudo apt-get --yes install maven
@@ -10,20 +10,16 @@ if [ ! -d ~/core_engine ]; then
   sudo apt-get --yes install oracle-java8-set-default
 
   cd
-  cd netide
-  git clone -b https://github.com/fp7-netide/Engine
+  mkdir -p netide
+  cd ~/netide
+  git clone https://github.com/fp7-netide/Engine
 
-  cd Engine/libraries/netip/java
+  cd ~/netide/Engine/libraries/netip/java
   mvn clean install -Dgpg.skip=true
 
   cd
-  cd netide/Engine/core
+  cd ~/netide/Engine/core
   mvn clean install
-  cd tools/emulator
-  mvn clean install -Dgpg.skip=true
-  cd target
-  cp emulator-1.0-jar-with-dependencies.jar ~/netide/composition/
-
 
   cd
   echo "Downloading Karaf..."
