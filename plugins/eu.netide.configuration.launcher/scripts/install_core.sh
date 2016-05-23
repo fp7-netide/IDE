@@ -14,9 +14,6 @@ if [ ! -d ~/netide/Engine ]; then
   cd ~/netide
   git clone https://github.com/fp7-netide/Engine
 
-  cd ~/netide/Engine/libraries/netip/java
-  mvn clean install -Dgpg.skip=true
-
   cd
   cd ~/netide/Engine/core
   mvn clean install -Dgpg.skip=true
