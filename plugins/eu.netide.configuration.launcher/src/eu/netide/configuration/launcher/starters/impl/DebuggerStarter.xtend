@@ -14,6 +14,10 @@ class DebuggerStarter extends Starter {
 		super("Debugger", path, backend, monitor)
 	}
 	
+	override getEnvironmentVariables() {
+		return String.format("PYTHONPATH=$PYTHONPATH:netide/Engine/libraries/netip/python:netide/ryu/ryu/")
+	}
+	
 	override getCommandLine() {
 		String.format("python ~/netide/Tools/debugger/Core/debugger.py -o ~/netide/debug_results")
 	}
