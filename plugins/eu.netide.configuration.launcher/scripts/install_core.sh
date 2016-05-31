@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ ! -d ~/netide/Engine ]; then
+if [ ! -d ~/.m2/repository/eu/netide/core/ ]; then
 
   sudo apt-get --yes update
   sudo apt-get --yes install maven
