@@ -785,6 +785,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		selectServerCombo.setLayoutData(gd_selectServerCombo);
 		selectServerCombo.add(NetIDE.CONTROLLER_POX);
 		selectServerCombo.add(NetIDE.CONTROLLER_ODL);
+		selectServerCombo.add(NetIDE.CONTROLLER_RYU);
 
 		serverComboViewer = new ComboViewer(selectServerCombo);
 

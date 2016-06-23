@@ -21,7 +21,7 @@ class RyuShimStarter extends ControllerStarter {
 
 	override getCommandLine() {
 		return String.format(
-			"sudo ryu-manager --ofp-tcp-listen-port=%s netide/Engine/ryu-shim/ryu_shim.py", controller.portNo)
+			"sudo ryu-manager --ofp-tcp-listen-port %s netide/Engine/ryu-shim/ryu-shim.py", port)
 	}
 
 }

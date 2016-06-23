@@ -306,7 +306,7 @@ class ControllerManager {
 
 				var platform = statusModel.shimModel.shim
 
-				serverControllerStarter = factory.createShimStarter(platform, NetIDEUtil.toPlatformUri(wbFile), 7733,
+				serverControllerStarter = factory.createShimStarter(platform, NetIDEUtil.toPlatformUri(wbFile), 6644,
 					monitor)
 
 				serverControllerStarter.backend = backend
