@@ -2,6 +2,8 @@
 
 if [ ! -d netide/floodlight ]; then
 
+ sudo apt-get install --yes ant
+
  cd netide/
  git clone https://github.com/floodlight/floodlight.git
  cd floodlight

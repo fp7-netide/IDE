@@ -1,6 +1,6 @@
 <<<<<<< HEAD
 #!/bin/bash
-if [ ! -d ~/core_engine ]; then
+if [ ! -d ~/.m2/repository/eu/netide/core/ ]; then
 
   sudo apt-get --yes update
   sudo apt-get --yes install maven
@@ -11,20 +11,13 @@ if [ ! -d ~/core_engine ]; then
   sudo apt-get --yes install oracle-java8-set-default
 
   cd
-  cd netide
-  git clone -b demo-brussels https://github.com/fp7-netide/Engine
-
-  cd Engine/libraries/netip/java
-  mvn clean install -Dgpg.skip=true
+  mkdir -p netide
+  cd ~/netide
+  git clone https://github.com/fp7-netide/Engine
 
   cd
-  cd netide/Engine/core
-  mvn clean install
-  cd tools/emulator
+  cd ~/netide/Engine/core
   mvn clean install -Dgpg.skip=true
-  cd target
-  cp emulator-1.0-jar-with-dependencies.jar ~/netide/composition/
-
 
   cd
   echo "Downloading Karaf..."
@@ -40,8 +33,8 @@ if [ ! -d ~/core_engine ]; then
         sleep 1
   done
 
-  ./client "feature:repo-add mvn:eu.netide.core/core/1.0.0.0-SNAPSHOT/xml/features"
-  ./client "feature:install netide-core"
+  ./client "feature:repo-add mvn:eu.netide.core/core.features/1.1.0-SNAPSHOT/xml/features"
+  ./client "feature:install core"
   sleep 15
   ./stop
 
@@ -49,7 +42,7 @@ if [ ! -d ~/core_engine ]; then
 # cd apache-karaf-3.0.6-SNAPSHOT/bin
 else
   echo "Engine seems to be already installed. Skipping..."
-fi   
+fi
 =======
 #!/bin/bash
 if [ ! -d ~/core_engine ]; then

@@ -9,6 +9,8 @@ if [ "$(which pip)" == "" ] || [ "$(pip list | grep ryu)" == "" ]; then
    echo "Engine seems to be already installed. Skipping..."
   fi
 
+  cd ~/netide/
+  git clone https://github.com/osrg/ryu.git
   sudo apt-get --yes install python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev python-zmq python3-zmq
   sudo -E pip install ryu
   sudo -E pip install oslo.config
