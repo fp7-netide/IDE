@@ -24,7 +24,7 @@ class CoreSpecificationStarter extends Starter{
 		var fullpath = file.fullPath
 		var guestPath = "$HOME/netide/" + fullpath.removeFirstSegments(1)
 		
-		String.format("~/apache-karaf-3.0.6/bin/client netide:loadcomposition %s", guestPath)
+		String.format("bash -c \'cd ~/apache-karaf-3.0.7/bin/ && ./client netide:loadcomposition %s\'", guestPath)
 	}
 	
 }
