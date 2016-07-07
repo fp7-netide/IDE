@@ -20,9 +20,9 @@ if [ ! -d ~/.m2/repository/eu/netide/core/ ]; then
 
   cd
   echo "Downloading Karaf..."
-  wget -q http://ftp.fau.de/apache/karaf/3.0.6/apache-karaf-3.0.6.tar.gz
-  tar xzf apache-karaf-3.0.6.tar.gz
-  cd apache-karaf-3.0.6/bin
+  wget -q http://ftp.fau.de/apache/karaf/3.0.7/apache-karaf-3.0.7.tar.gz
+  tar xzf apache-karaf-3.0.7.tar.gz
+  cd apache-karaf-3.0.7/bin
   chmod +x ./client ./start ./stop
   echo "Installing karaf dependencies for core"
   ./start
