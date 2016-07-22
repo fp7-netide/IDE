@@ -2,8 +2,6 @@ package eu.netide.configuration.generator.vagrantfile
 
 import eu.netide.configuration.utils.fsa.FSAProvider
 import org.eclipse.core.resources.IResource
-import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
 /**
  * Sets up the necessary tools to generate a Vagrantfile

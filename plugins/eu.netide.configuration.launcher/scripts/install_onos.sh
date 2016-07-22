@@ -11,6 +11,8 @@ if [ ! -d ~/netide/onos ]; then
 
   cd ~/netide/
   git clone https://gerrit.onosproject.org/onos
+  sleep 5
+  git clone https://gerrit.onosproject.org/onos
   cd onos
   git checkout onos-1.4
   mvn clean install

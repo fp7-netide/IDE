@@ -24,6 +24,7 @@ Controller:
 	'{'
 		'name' ':' name=STRING ','
 		('version' ':' version=STRING ',')?
+		('port' ':' port=STRING ',')?
 		('entrypoint' ':' entrypoint=STRING ',')?
 		('features' ':' '[' features+=STRING (',' features+=STRING)* ']' ',')?
 	'}'

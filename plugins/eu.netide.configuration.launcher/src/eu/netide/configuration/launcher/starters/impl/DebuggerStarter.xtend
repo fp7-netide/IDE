@@ -19,7 +19,7 @@ class DebuggerStarter extends Starter {
 	}
 	
 	override getCommandLine() {
-		String.format("python ~/netide/Tools/debugger/Core/debugger.py -o ~/netide/debug_results")
+		String.format("bash -c \'cd ~/netide/Tools/debugger/Core/ && python ./debugger.py -o ~/netide/debug_results\'")
 	}
 	
 }
