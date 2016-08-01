@@ -15,6 +15,7 @@
 	</pluginRepositories>
 
 	<repositories>
+	
 		<repository>
 			<id>sonatype</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
@@ -36,6 +37,8 @@
 				<executions>
 					<execution>
 						<id>default-cli</id>
+						<phase>package</phase>
+						<goals><goal>site</goal></goals>
 						<configuration>
 							<artifacts>
 								<artifact>
