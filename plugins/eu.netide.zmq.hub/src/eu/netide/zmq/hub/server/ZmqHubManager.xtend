@@ -6,7 +6,7 @@ class ZmqHubManager {
 
 	public static val instance = new ZmqHubManager
 
-	var WritableList reg
+	var WritableList<ZmqHub> reg
 	
 	new() {
 		reg = WritableList.withElementType(typeof(ZmqHub))
