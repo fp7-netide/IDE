@@ -107,7 +107,7 @@ class ZmqHub implements IZmqHub, Runnable {
 	}
 
 	override remove(IZmqNetIpListener listener) {
-		rawListeners.remove(listener)
+		netIpListeners.remove(listener)
 	}
 
 	public override getRunning() {

@@ -91,7 +91,7 @@ public class ZmqHubView extends ViewPart {
 				ZmqAddressDialog dialog = new ZmqAddressDialog(shell);
 				dialog.create();
 				if (dialog.open() == Window.OK) {
-					hubManager.getHub(dialog.getAddress());
+					hubManager.getHub(dialog.getName(), dialog.getAddress());
 				}
 			}
 		});
