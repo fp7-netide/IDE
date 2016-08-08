@@ -80,6 +80,7 @@ class VagrantfileGenerator {
 			
 			Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			
+				config.vm.network "forwarded_port", guest: 5556, host: 5556
 				config.vm.network "forwarded_port", guest: 5557, host: 5557
 			
 				# We use a relatively new Ubuntu box

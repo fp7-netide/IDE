@@ -1,5 +1,6 @@
 package eu.netide.zmq.hub.client
 
+@Deprecated
 interface IZmqHubListener {
 	
 	/**
