@@ -20,7 +20,7 @@ class ZmqHub implements IZmqHub, Runnable {
 	private List<IZmqNetIpListener> netIpListeners = newArrayList
 	private PropertyChangeSupport changes
 	private Thread thread;
-	private WritableList<LogMsg> log;
+	private WritableList log;
 
 	var Socket sub
 	var Context ctx
