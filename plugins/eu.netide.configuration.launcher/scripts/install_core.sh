@@ -20,7 +20,7 @@ if [ ! -d ~/.m2/repository/eu/netide/core/ ]; then
 
   cd
   echo "Downloading Karaf..."
-  wget -q http://www-eu.apache.org/dist/karaf/3.0.8/apache-karaf-3.0.8.tar.gz
+  wget -q http://archive.apache.org/dist/karaf/3.0.8/apache-karaf-3.0.8.tar.gz
   tar xzf apache-karaf-3.0.8.tar.gz
   mv apache-karaf-3.0.8 netide/core-karaf
   cd netide/core-karaf/bin
