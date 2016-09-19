@@ -17,6 +17,15 @@ public class SshProfileModel {
 	private String secondHost;
 	private String secondUsername;
 	
+	private String vagrantBox;
+	private String odl;
+	private String engine;
+	private String core;
+	private String topology;
+	private String tools;
+	private String appFolder;
+	private String composite;
+
 	private String id;
 
 	private PropertyChangeSupport changes;
@@ -75,6 +84,70 @@ public class SshProfileModel {
 
 	public void setProfileName(String profileName) {
 		this.changes.firePropertyChange(Constants.PROFILE_NAME_MODEL, this.profileName, this.profileName = profileName);
+	}
+	
+	public String getVagrantBox() {
+		return vagrantBox;
+	}
+
+	public void setVagrantBox(String vagrantBox) {
+		this.changes.firePropertyChange(Constants.VAGRANT_BOX, this.vagrantBox, this.vagrantBox = vagrantBox);
+	}
+
+	public String getOdl() {
+		return odl;
+	}
+
+	public void setOdl(String odl) {
+		this.changes.firePropertyChange(Constants.ODL_SHIM, this.odl, this.odl = odl);
+	}
+
+	public String getEngine() {
+		return engine;
+	}
+
+	public void setEngine(String engine) {
+		this.changes.firePropertyChange(Constants.ENGINE, this.engine, this.engine = engine);
+	}
+
+	public String getCore() {
+		return core;
+	}
+
+	public void setCore(String core) {
+		this.changes.firePropertyChange(Constants.CORE, this.core, this.core = core);
+	}
+
+	public String getTopology() {
+		return topology;
+	}
+
+	public void setTopology(String topology) {
+		this.changes.firePropertyChange(Constants.TOPOLOGY, this.topology, this.topology = topology);
+	}
+
+	public String getTools() {
+		return tools;
+	}
+
+	public void setTools(String tools) {
+		this.changes.firePropertyChange(Constants.TOOLS, this.tools, this.tools = tools);
+	}
+
+	public String getAppFolder() {
+		return appFolder;
+	}
+
+	public void setAppFolder(String appFolder) {
+		this.changes.firePropertyChange(Constants.APP_FOLDER, this.appFolder, this.appFolder = appFolder);
+	}
+
+	public String getComposite() {
+		return composite;
+	}
+
+	public void setComposite(String composite) {
+		this.changes.firePropertyChange(Constants.COMPOSITE_FILE, this.composite, this.composite = composite);
 	}
 
 	public String getHost() {

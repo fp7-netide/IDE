@@ -41,6 +41,15 @@ public class Constants {
 	public static final String SECOND_PORT = "secondPort";
 	public static final String SECOND_USERNAME = "secondUsername";
 	public static final String SECOND_HOST = "secondHost";
+	
+	public static final String APP_FOLDER = "appFolder";
+	public static final String COMPOSITE_FILE = "compositeFile";
+	public static final String ODL_SHIM = "odlShim";
+	public static final String ENGINE = "engine";
+	public static final String CORE = "core";
+	public static final String VAGRANT_BOX = "vagrantBox";
+	public static final String TOOLS = "tools";
+	public static final String TOPOLOGY = "topology";
 
 	// UI Constants
 	public static final String LABEL_RUNNING = "running";

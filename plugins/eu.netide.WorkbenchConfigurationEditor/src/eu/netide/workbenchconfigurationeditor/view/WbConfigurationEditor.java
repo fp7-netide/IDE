@@ -89,10 +89,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		file = fileInput.getFile();
 		setSite(site);
 		setInput(input);
-		
 
 		setPartName(file.getName());
-		
+
 	}
 
 	public IFile getFile() {
@@ -111,14 +110,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		controllerManager = new ControllerManager(engine.getStatusModel(), getFile());
 		addButtonListener();
 		if (sshProfileCombo.getSelectionIndex() != -1) {
-			//lblSShStatus.setText("Status: waiting");
+			// lblSShStatus.setText("Status: waiting");
 			noSwitch = true;
 
 			SshProfileModel model = engine.getStatusModel().getSshModelAtIndex();
 
 			if (model != null) {
-				controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb,
-						model);
+				controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb, model);
 			}
 		}
 
@@ -431,8 +429,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					SshProfileModel model = engine.getStatusModel().getSshModelAtIndex();
 
 					if (model != null) {
-						controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb,
-								model);
+						controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb, model);
 					}
 				} else {
 					showMessage("Please select / create a ssh Profile.");
@@ -459,23 +456,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			public void widgetSelected(SelectionEvent e) {
 				SShShell sshShell = new SShShell(container.getDisplay());
 				sshShell.openShell(null);
-				String[] result = sshShell.getResult();
+				SshProfileModel result = sshShell.getResult();
 				if (result != null) {
 
-					SshProfileModel model = new SshProfileModel();
-					model.setHost(result[0]);
-					model.setPort(result[1]);
-					model.setSshIdFile(result[2]);
-					model.setUsername(result[3]);
-					model.setProfileName(result[4]);
+					engine.getStatusModel().addEntryToSSHList(result);
 
-					model.setSecondUsername(result[5]);
-					model.setSecondHost(result[6]);
-					model.setSecondPort(result[7]);
-
-					engine.getStatusModel().addEntryToSSHList(model);
-
-					sshProfileCombo.select(engine.getStatusModel().getProfileList().indexOf(model));
+					sshProfileCombo.select(engine.getStatusModel().getProfileList().indexOf(result));
 					setIsDirty(true);
 				}
 
@@ -643,8 +629,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					SshProfileModel model = engine.getStatusModel().getSshModelAtIndex();
 
 					if (model != null) {
-						controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb,
-								model);
+						controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb, model);
 					}
 				}
 
@@ -1252,7 +1237,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	public TabFolder getTabFolder() {
 		return tabFolder;
 	}
-	
+
 	public Combo getSelectServerCombo() {
 		return selectServerCombo;
 	}

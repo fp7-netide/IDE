@@ -72,8 +72,18 @@ public class SShShell extends Shell {
 						txt_SecondPort.setText(profile.getSecondPort());
 						txt_SecondHost.setText(profile.getSecondHost());
 						btnCheckButton.setSelection(true);
+
 					}
 				}
+				checkModelStringEmpty(profile.getAppFolder(), text_app, btnCheckButtonAppFolder);
+				checkModelStringEmpty(profile.getComposite(), text_composite, btnCheckComposite);
+				checkModelStringEmpty(profile.getCore(), text_core, btnCheckCore);
+				checkModelStringEmpty(profile.getEngine(), text_engine, btnCheckEngine);
+				checkModelStringEmpty(profile.getOdl(), text_odl, this.btnCheckODL);
+				checkModelStringEmpty(profile.getTools(), text_tools, btnCheckTools);
+				checkModelStringEmpty(profile.getTopology(), text_topology, btnCheckTopo);
+				checkModelStringEmpty(profile.getVagrantBox(), this.text_vagrant, this.btnCheckBox);
+
 			}
 			while (!this.isDisposed()) {
 				if (!display.readAndDispatch()) {
@@ -82,6 +92,15 @@ public class SShShell extends Shell {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void checkModelStringEmpty(String modelContent, Text text, Button button) {
+
+		if (!modelContent.equals("")) {
+			button.setSelection(true);
+			text.setEnabled(true);
+			text.setText(modelContent);
 		}
 	}
 
@@ -95,13 +114,13 @@ public class SShShell extends Shell {
 	 */
 	public SShShell(Display display) {
 		super(display, SWT.SHELL_TRIM);
+		setSize(564, 601);
 		shell = this;
 		this.display = display;
 		setLayout(new GridLayout(1, false));
 		this.useDoubleTunneL = false;
 		Composite composite = new Composite(this, SWT.NONE);
-		GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		composite.setLayoutData(gd_composite);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		composite.setLayout(new GridLayout(2, false));
 
 		Label lblNewLabel = new Label(composite, SWT.NONE);
@@ -225,6 +244,98 @@ public class SShShell extends Shell {
 			}
 		});
 
+		composite_2 = new Composite(this, SWT.NONE);
+		composite_2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		composite_2.setLayout(new GridLayout(3, false));
+
+		lblNewLabel_5 = new Label(composite_2, SWT.NONE);
+		lblNewLabel_5.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblNewLabel_5.setText("App Folder");
+
+		text_app = new Text(composite_2, SWT.BORDER);
+		text_app.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		btnCheckButtonAppFolder = new Button(composite_2, SWT.CHECK);
+		btnCheckButtonAppFolder.setText("Enable");
+		btnCheckButtonAppFolder.addSelectionListener(new BrowseAdapter(text_app));
+
+		lblCompositeFile = new Label(composite_2, SWT.NONE);
+		lblCompositeFile.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblCompositeFile.setText("Composite File");
+
+		text_composite = new Text(composite_2, SWT.BORDER);
+		text_composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		btnCheckComposite = new Button(composite_2, SWT.CHECK);
+		btnCheckComposite.setText("Enable");
+		btnCheckComposite.addSelectionListener(new BrowseAdapter(text_composite));
+
+		lblKarafcore = new Label(composite_2, SWT.NONE);
+		lblKarafcore.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblKarafcore.setText("Karaf (Core)");
+
+		text_core = new Text(composite_2, SWT.BORDER);
+		text_core.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		btnCheckCore = new Button(composite_2, SWT.CHECK);
+		btnCheckCore.setText("Enable");
+		btnCheckCore.addSelectionListener(new BrowseAdapter(text_core));
+
+		lblOdlShim = new Label(composite_2, SWT.NONE);
+		lblOdlShim.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblOdlShim.setText("ODL Shim");
+
+		text_odl = new Text(composite_2, SWT.BORDER);
+		text_odl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		btnCheckODL = new Button(composite_2, SWT.CHECK);
+		btnCheckODL.setText("Enable");
+		btnCheckODL.addSelectionListener(new BrowseAdapter(text_odl));
+
+		lblEngine = new Label(composite_2, SWT.NONE);
+		lblEngine.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblEngine.setText("Engine");
+
+		text_engine = new Text(composite_2, SWT.BORDER);
+		text_engine.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		btnCheckEngine = new Button(composite_2, SWT.CHECK);
+		btnCheckEngine.setText("Enable");
+		btnCheckEngine.addSelectionListener(new BrowseAdapter(text_engine));
+
+		lblVagrantBoxRoot = new Label(composite_2, SWT.NONE);
+		lblVagrantBoxRoot.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblVagrantBoxRoot.setText("Vagrant Box Root");
+
+		text_vagrant = new Text(composite_2, SWT.BORDER);
+		text_vagrant.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		btnCheckBox = new Button(composite_2, SWT.CHECK);
+		btnCheckBox.setText("Enable");
+		btnCheckBox.addSelectionListener(new BrowseAdapter(text_vagrant));
+
+		lblTools = new Label(composite_2, SWT.NONE);
+		lblTools.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblTools.setText("Tools");
+
+		text_tools = new Text(composite_2, SWT.BORDER);
+		text_tools.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		btnCheckTools = new Button(composite_2, SWT.CHECK);
+		btnCheckTools.setText("Enable");
+		btnCheckTools.addSelectionListener(new BrowseAdapter(text_tools));
+
+		lblTopology = new Label(composite_2, SWT.NONE);
+		lblTopology.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblTopology.setText("Topology");
+
+		text_topology = new Text(composite_2, SWT.BORDER);
+		text_topology.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		btnCheckTopo = new Button(composite_2, SWT.CHECK);
+		btnCheckTopo.setText("Enable");
+		btnCheckTopo.addSelectionListener(new BrowseAdapter(text_topology));
+
 		doubleTunnelComposite = new Composite(this, SWT.NONE);
 		GridData gd_doubleTunnelComposite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
 		gd_doubleTunnelComposite.heightHint = 92;
@@ -306,9 +417,7 @@ public class SShShell extends Shell {
 		cancleButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String[] tmpResult = { profile.getHost(), profile.getPort(), profile.getSshIdFile(),
-						profile.getUsername(), profile.getProfileName() };
-				result = tmpResult;
+				finish = false;
 				delete = false;
 				shell.dispose();
 			}
@@ -319,20 +428,11 @@ public class SShShell extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (edit) {
-					profile.setHost(txt_host.getText());
-					profile.setPort(txt_port.getText());
-					profile.setProfileName(txt_profileName.getText());
-					profile.setSshIdFile(txt_sshidfile.getText());
-					profile.setUsername(txt_username.getText());
-					if (useDoubleTunneL) {
-						profile.setSecondHost(txt_SecondHost.getText());
-						profile.setSecondPort(txt_SecondPort.getText());
-						profile.setSecondUsername(txt_secondUsername.getText());
-					} else {
-						profile.setSecondHost("");
-						profile.setSecondPort("");
-						profile.setSecondUsername("");
-					}
+					setProfileEntry(profile);
+				}
+				else {
+					resultModel = new SshProfileModel();
+					setProfileEntry(resultModel);
 				}
 				shell.dispose();
 			}
@@ -354,6 +454,56 @@ public class SShShell extends Shell {
 		btnDeleteProfile.setText("Delete Profile");
 		createContents();
 
+	}
+
+	private void setProfileEntry(SshProfileModel profile) {
+		profile.setHost(txt_host.getText());
+		profile.setPort(txt_port.getText());
+		profile.setProfileName(txt_profileName.getText());
+		profile.setSshIdFile(txt_sshidfile.getText());
+		profile.setUsername(txt_username.getText());
+		if (useDoubleTunneL) {
+			profile.setSecondHost(txt_SecondHost.getText());
+			profile.setSecondPort(txt_SecondPort.getText());
+			profile.setSecondUsername(txt_secondUsername.getText());
+		} else {
+			profile.setSecondHost("");
+			profile.setSecondPort("");
+			profile.setSecondUsername("");
+		}
+
+		if (btnCheckButtonAppFolder.getSelection())
+			profile.setAppFolder(text_app.getText());
+		else
+			profile.setAppFolder("");
+		if (btnCheckComposite.getSelection())
+			profile.setComposite(text_composite.getText());
+		else
+			profile.setComposite("");
+		if (btnCheckCore.getSelection())
+			profile.setCore(text_core.getText());
+		else
+			profile.setCore("");
+		if (btnCheckEngine.getSelection())
+			profile.setEngine(text_engine.getText());
+		else
+			profile.setEngine("");
+		if (btnCheckODL.getSelection())
+			profile.setOdl(text_odl.getText());
+		else
+			profile.setOdl("");
+		if (btnCheckTools.getSelection())
+			profile.setTools(text_tools.getText());
+		else
+			profile.setTools("");
+		if (btnCheckBox.getSelection())
+			profile.setVagrantBox(text_vagrant.getText());
+		else
+			profile.setVagrantBox("");
+		if (btnCheckTopo.getSelection())
+			profile.setTopology(text_topology.getText());
+		else
+			profile.setTopology("");
 	}
 
 	private Button btnDeleteProfile;
@@ -381,43 +531,65 @@ public class SShShell extends Shell {
 	boolean secondUsernameSet;
 
 	private void checkForFinish() {
+
 		if (hostSet && portSet && usernameSet && sshFileSet && profileNameSet) {
 			if (!useDoubleTunneL) {
 				saveBTN.setEnabled(true);
-
-				String[] tmpResult = { txt_host.getText(), txt_port.getText(), txt_sshidfile.getText(),
-						txt_username.getText(), txt_profileName.getText(), "", "", "" };
-				result = tmpResult;
+				this.finish = true;
 			} else if (secondHostSet && secondPortSet && secondUsernameSet) {
 				saveBTN.setEnabled(true);
-
-				String[] tmpResult = { txt_host.getText(), txt_port.getText(), txt_sshidfile.getText(),
-						txt_username.getText(), txt_profileName.getText(), txt_secondUsername.getText(),
-						txt_SecondHost.getText(), txt_SecondPort.getText() };
-				result = tmpResult;
+				this.finish = true;
 			} else {
 				saveBTN.setEnabled(false);
-				result = null;
+				this.finish = false;
 			}
 		} else {
 			saveBTN.setEnabled(false);
-			result = null;
+			this.finish = false;
 		}
 
 	}
 
-	private String[] result;
 	private Text txt_SecondPort;
 	private Text txt_SecondHost;
 	private Composite doubleTunnelComposite;
+	private Composite composite_2;
+	private Label lblNewLabel_5;
+	private Label lblOdlShim;
+	private Label lblTools;
+	private Label lblTopology;
+	private Label lblVagrantBoxRoot;
+	private Label lblKarafcore;
+	private Label lblEngine;
+	private Label lblCompositeFile;
+	private Text text_app;
+	private Text text_composite;
+	private Text text_core;
+	private Text text_odl;
+	private Text text_engine;
+	private Text text_vagrant;
+	private Text text_tools;
+	private Text text_topology;
+	private Button btnCheckButtonAppFolder;
+	private Button btnCheckComposite;
+	private Button btnCheckCore;
+	private Button btnCheckODL;
+	private Button btnCheckEngine;
+	private Button btnCheckBox;
+	private Button btnCheckTools;
+	private Button btnCheckTopo;
+	private boolean finish;
 
+	private SshProfileModel resultModel;
 	/**
 	 * 
-	 * @return host, port, sshidfile, username, profilename, secondHop null if
-	 *         action canceled by user
+	 * @return SSH Profile according to entries of ssh shell
 	 */
-	public String[] getResult() {
-		return result;
+	public SshProfileModel getResult() {
+		if (finish) {
+			return resultModel;
+		} else
+			return null;
 	}
 
 	public boolean isDoubleTunnel() {
@@ -428,4 +600,26 @@ public class SShShell extends Shell {
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
+
+	protected class BrowseAdapter extends SelectionAdapter {
+		private Text text;
+
+		public BrowseAdapter(Text correspondingTextField) {
+			super();
+			this.text = correspondingTextField;
+			this.text.setEnabled(false);
+		}
+
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			Button sender = (Button) e.getSource();
+
+			if (sender.getSelection() == true) {
+				this.text.setEnabled(true);
+			} else {
+				this.text.setEnabled(false);
+			}
+		}
+	}
+
 }
