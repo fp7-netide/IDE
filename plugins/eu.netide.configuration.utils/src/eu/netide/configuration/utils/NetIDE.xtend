@@ -14,6 +14,11 @@ class NetIDE {
 	public static val LAUNCHER_PLUGIN = "eu.netide.configuration.launcher"
 
 	public static val GENERATOR_PLUGIN = "eu.netide.configuration.generator"
+	
+	public static val ENGINE_PATH ="~/netide/Engine/"
+	public static val CORE_KARAF = "~/netide/core-karaf/bin/"
+	public static val APP_FOLDER = "~/netide/apps/"
+	public static val ODL_PATH = "~/netide/distribution-karaf-0.4.0-Beryllium/bin/karaf"
 
 	public static val CONTROLLER_POX = "POX"
 	public static val CONTROLLER_RYU = "Ryu"

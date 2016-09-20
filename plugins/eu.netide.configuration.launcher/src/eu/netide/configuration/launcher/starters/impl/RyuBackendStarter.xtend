@@ -3,6 +3,7 @@ package eu.netide.configuration.launcher.starters.impl
 import Topology.Controller
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
+import eu.netide.configuration.utils.NetIDE
 
 class RyuBackendStarter extends ControllerStarter {
 
@@ -13,19 +14,27 @@ class RyuBackendStarter extends ControllerStarter {
 	}
 	
 	new (int port, String appPath, IProgressMonitor monitor) {
+		this(port, appPath, monitor, null)
+	}
+	
+	new (int port, String appPath, IProgressMonitor monitor, String enginePath) {
 		super("Ryu Backend", port, appPath, monitor)
 		name = String.format("%s (%s)", name, this.appPath.lastSegment)
+		if(enginePath != null && enginePath != ""){
+			this.enginePath = enginePath;
+		}
 	}
 
 	override getEnvironmentVariables() {
-		"PYTHONPATH=$PYTHONPATH:netide/Engine/ryu-backend:netide/Engine/libraries/netip/python"
+		
+		String.format("PYTHONPATH=$PYTHONPATH:%sryu-backend:%slibraries/netip/python", this.enginePath, this.enginePath)
 	}
-	
+	private String enginePath = NetIDE.ENGINE_PATH;
 	override getCommandLine() {
 		
 		return String.format(
-			"sudo ryu-manager --ofp-tcp-listen-port %s ~/netide/Engine/ryu-backend/ryu-backend.py ~/netide/apps/%s",
-			port, appPath.removeFirstSegments(1))
+			"sudo ryu-manager --ofp-tcp-listen-port %s %sryu-backend/ryu-backend.py ~/netide/apps/%s",
+			port, this.enginePath, appPath.removeFirstSegments(1))
 	}
 
 }

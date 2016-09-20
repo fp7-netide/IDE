@@ -4,6 +4,7 @@ import Topology.Controller
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.xtend.lib.annotations.Accessors
+import eu.netide.configuration.utils.NetIDE
 
 class RyuStarter extends ControllerStarter {
 	
@@ -22,7 +23,7 @@ class RyuStarter extends ControllerStarter {
 		//TODO: validate appFolderPath format
 			this.appFolderPath = appFolderPath
 		else
-			this.appFolderPath = "~/netide/apps/"
+			this.appFolderPath = NetIDE.APP_FOLDER
 			
 		name = String.format("%s (%s)", name, this.appPath.lastSegment)
 	}

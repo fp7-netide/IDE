@@ -3,6 +3,7 @@ package eu.netide.configuration.launcher.starters.impl
 import eu.netide.configuration.launcher.starters.backends.Backend
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
+import eu.netide.configuration.utils.NetIDE
 
 class CoreStarter extends Starter {
 	@Deprecated
@@ -21,7 +22,7 @@ class CoreStarter extends Starter {
 			this.coreKarafPath = coreKarafPath
 	}
 	
-	private String coreKarafPath = "~/netide/core-karaf/bin/";
+	private String coreKarafPath = NetIDE.CORE_KARAF;
 	override getCommandLine() {
 		String.format("bash -c \'cd %s && ./karaf\'", coreKarafPath)
 	}
