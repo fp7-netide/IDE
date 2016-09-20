@@ -14,8 +14,16 @@ class CoreStarter extends Starter {
 		super("Core", project, backend, monitor)
 	}
 	
+	new (Backend backend, String project, IProgressMonitor monitor, String coreKarafPath){
+		super("Core", project, backend, monitor)
+		//TODO: validate coreKarafPath format
+		if(coreKarafPath != null && coreKarafPath != "")
+			this.coreKarafPath = coreKarafPath
+	}
+	
+	private String coreKarafPath = "~/netide/core-karaf/bin/";
 	override getCommandLine() {
-		String.format("bash -c \'cd ~/netide/core-karaf/bin/ && ./karaf\'")
+		String.format("bash -c \'cd %s && ./karaf\'", coreKarafPath)
 	}
 	
 }
