@@ -68,14 +68,23 @@ abstract class Starter implements IStarter {
 	}
 
 	new(String name, String path, Backend backend, IProgressMonitor monitor) {
+		this(name, path, backend, monitor, null)
+	}
+
+	new(String name, String path, Backend backend, IProgressMonitor monitor, String vagrantFilePath) {
 		this.name = name
 		// this.configuration = configuration
 		this.monitor = monitor
 
-//		this.vagrantpath = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
-//			NetIDEPreferenceConstants.VAGRANT_PATH, "", null)
-		// configuration.attributes.get("topologymodel") as String
-		this.workingDir = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
+		if(vagrantFilePath != null && vagrantFilePath != ""){
+		var uri = URI.createURI(vagrantFilePath)
+		var pathVagrant = new Path(uri.path)
+		
+		this.workingDir = pathVagrant.toFile
+		}
+		else{
+			this.workingDir = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
+		}
 
 		this.id = "" + (Math.random * 10000) as int
 

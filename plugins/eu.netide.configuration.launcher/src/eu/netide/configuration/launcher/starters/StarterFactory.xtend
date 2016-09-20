@@ -32,6 +32,7 @@ class StarterFactory {
 		this.backend = backend
 	}
 
+	@Deprecated
 	public def IStarter createSingleControllerStarter(ILaunchConfiguration configuration, Controller controller,
 		IProgressMonitor monitor) {
 		var controllerplatform = configuration.attributes.get("controller_platform_" + controller.name) as String
@@ -56,6 +57,11 @@ class StarterFactory {
 
 	public def IStarter createSingleControllerStarter(String platform, String appPath, int port,
 		IProgressMonitor monitor) {
+		createSingleControllerStarter(platform, appPath, port, monitor, null)
+	}
+	
+	public def IStarter createSingleControllerStarter(String platform, String appPath, int port,
+		IProgressMonitor monitor, String appFolderPath) {
 		var controllerplatform = platform
 
 		if (controllerplatform.equals(NetIDE.CONTROLLER_ENGINE)) {
@@ -65,7 +71,7 @@ class StarterFactory {
 				case NetIDE.CONTROLLER_POX:
 					starter = new PoxStarter(port, appPath, monitor)
 				case NetIDE.CONTROLLER_RYU:
-					starter = new RyuStarter(port, appPath, monitor)
+					starter = new RyuStarter(port, appPath, monitor, appFolderPath)
 				case NetIDE.CONTROLLER_PYRETIC:
 					starter = new PyreticStarter(port, appPath, monitor)
 			}
