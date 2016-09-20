@@ -136,7 +136,8 @@ class StarterFactory {
 		return starter
 
 	}
-
+	
+	@Deprecated
 	public def IStarter createBackendStarter(ILaunchConfiguration configuration, Controller controller,
 		IProgressMonitor monitor) {
 

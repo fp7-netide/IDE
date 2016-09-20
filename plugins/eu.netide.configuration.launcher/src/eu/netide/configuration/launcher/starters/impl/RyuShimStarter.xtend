@@ -3,6 +3,7 @@ package eu.netide.configuration.launcher.starters.impl
 import Topology.Controller
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
+import eu.netide.configuration.utils.NetIDE
 
 class RyuShimStarter extends ControllerStarter {
 
@@ -12,16 +13,25 @@ class RyuShimStarter extends ControllerStarter {
 	}
 	
 	new(String appPath, int port, IProgressMonitor monitor) {
+		this(appPath, port, monitor, null)
+	}
+	
+	new(String appPath, int port, IProgressMonitor monitor, String enginePath) {
 		super("Ryu Shim", port, appPath, monitor)
+		if(enginePath != null && enginePath != ""){
+			this.enginePath = enginePath
+		}
 	}
 
 	override getEnvironmentVariables() {
 		return "PYTHONPATH=$PYTHONPATH:netide/Engine/ryu-shim"
 	}
-
+	
+	String enginePath = NetIDE.ENGINE_PATH;
+	
 	override getCommandLine() {
 		return String.format(
-			"sudo ryu-manager --ofp-tcp-listen-port %s netide/Engine/ryu-shim/ryu-shim.py", port)
+			"sudo ryu-manager --ofp-tcp-listen-port %s %sryu-shim/ryu-shim.py", port, this.enginePath)
 	}
 
 }
