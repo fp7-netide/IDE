@@ -8,7 +8,28 @@ import eu.netide.configuration.utils.NetIDE
 class DebuggerStarter extends Starter {
 	@Deprecated
 	new(ILaunchConfiguration configuration, IProgressMonitor monitor) {
+		this(configuration, null, monitor, null)
+	}
+
+	@Deprecated
+	new(ILaunchConfiguration configuration, IProgressMonitor monitor, String tools) {
+		this(configuration, null, monitor, tools)
+	}
+
+	@Deprecated
+	new(ILaunchConfiguration configuration, String engine, IProgressMonitor monitor) {
+		this(configuration, engine, monitor, null)
+	}
+
+	@Deprecated
+	new(ILaunchConfiguration configuration, String engine, IProgressMonitor monitor, String tools) {
 		super("Debugger", configuration, monitor)
+		if (engine != null && enginePath != "") {
+			this.enginePath = super.getValidPath(engine)
+		}
+		if (tools != null && tools != "") {
+			this.toolPath = super.getValidPath(tools)
+		}
 	}
 
 	new(Backend backend, String path, IProgressMonitor monitor) {
@@ -25,17 +46,17 @@ class DebuggerStarter extends Starter {
 
 	new(Backend backend, String path, String engine, IProgressMonitor monitor, String tools) {
 		super("Debugger", path, backend, monitor)
-		if(engine != null && enginePath != ""){
+		if (engine != null && enginePath != "") {
 			this.enginePath = super.getValidPath(engine)
 		}
-		if(tools != null && tools != ""){
+		if (tools != null && tools != "") {
 			this.toolPath = super.getValidPath(tools)
 		}
 	}
-	
+
 	String enginePath = NetIDE.ENGINE_PATH;
 	String toolPath = NetIDE.TOOL_PATH
-	
+
 	override getEnvironmentVariables() {
 		return String.format("PYTHONPATH=$PYTHONPATH:%slibraries/netip/python:netide/ryu/ryu/", this.enginePath)
 	}

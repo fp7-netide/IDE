@@ -8,23 +8,31 @@ import eu.netide.configuration.utils.NetIDE
 class CoreStarter extends Starter {
 	@Deprecated
 	new(ILaunchConfiguration configuration, IProgressMonitor monitor) {
+		this(configuration, monitor, null)
+	}
+
+	@Deprecated
+	new(ILaunchConfiguration configuration, IProgressMonitor monitor, String coreKarafPath) {
 		super("Core", configuration, monitor)
-	}
-	
-	new (Backend backend, String project, IProgressMonitor monitor) {
-		super("Core", project, backend, monitor)
-	}
-	
-	new (Backend backend, String project, IProgressMonitor monitor, String coreKarafPath){
-		super("Core", project, backend, monitor)
-		//TODO: validate coreKarafPath format
-		if(coreKarafPath != null && coreKarafPath != "")
+		if (coreKarafPath != null && coreKarafPath != "")
 			this.coreKarafPath = super.getValidPath(coreKarafPath)
 	}
-	
+
+	new(Backend backend, String project, IProgressMonitor monitor) {
+		super("Core", project, backend, monitor)
+	}
+
+	new(Backend backend, String project, IProgressMonitor monitor, String coreKarafPath) {
+		super("Core", project, backend, monitor)
+
+		if (coreKarafPath != null && coreKarafPath != "")
+			this.coreKarafPath = super.getValidPath(coreKarafPath)
+	}
+
 	private String coreKarafPath = NetIDE.CORE_KARAF;
+
 	override getCommandLine() {
 		String.format("bash -c \'cd %s && ./karaf\'", coreKarafPath)
 	}
-	
+
 }

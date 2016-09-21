@@ -28,13 +28,13 @@ import org.eclipse.debug.core.ILaunchConfigurationType
 import org.eclipse.debug.core.Launch
 import org.eclipse.debug.core.RefreshUtil
 import org.eclipse.debug.core.model.IProcess
+import org.eclipse.emf.common.util.URI
 import org.eclipse.tm.terminal.view.core.TerminalServiceFactory
 import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants
 import org.eclipse.xtend.lib.annotations.Accessors
 
 import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
-import org.eclipse.emf.common.util.URI
 
 class SshManager implements IManager {
 
@@ -90,7 +90,8 @@ class SshManager implements IManager {
 		this.workingDirectory = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
 	}
 
-	new(IProject project, IProgressMonitor monitor, String username, String hostname, String port, String idfile) {
+	new(IProject project, IProgressMonitor monitor, String username, String hostname, String port, String idfile,
+		String vagrantPath) {
 		var conf = launchConfigType.newInstance(null, "SSH Session")
 		this.launch = new Launch(conf, "debug", null)
 		this.launch.setAttribute("org.eclipse.debug.core.capture_output", "true")
@@ -115,8 +116,20 @@ class SshManager implements IManager {
 		this.scpPath = new Path(
 			Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
 				NetIDEPreferenceConstants.SCP_PATH, "", null)).toOSString
+				
+		if (vagrantPath != null && vagrantPath != "") {
+			var uri = URI.createURI(vagrantPath)
+			var pathVagrant = new Path(uri.path)
 
-		this.workingDirectory = project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
+			this.workingDirectory = pathVagrant.toFile
+			
+		} else {
+			this.workingDirectory = project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
+		}
+	}
+
+	new(IProject project, IProgressMonitor monitor, String username, String hostname, String port, String idfile) {
+		this(project, monitor, username, hostname, port, idfile, null)
 	}
 
 	private def getLaunchConfigType() {
