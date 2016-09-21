@@ -19,7 +19,7 @@ class CoreStarter extends Starter {
 	}
 
 	new(Backend backend, String project, IProgressMonitor monitor) {
-		super("Core", project, backend, monitor)
+		this(backend, project, monitor, null)
 	}
 
 	new(Backend backend, String project, IProgressMonitor monitor, String coreKarafPath) {
