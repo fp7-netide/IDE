@@ -19,12 +19,12 @@ class RyuShimStarter extends ControllerStarter {
 	new(String appPath, int port, IProgressMonitor monitor, String enginePath) {
 		super("Ryu Shim", port, appPath, monitor)
 		if(enginePath != null && enginePath != ""){
-			this.enginePath = enginePath
+			this.enginePath = super.getValidPath(enginePath)
 		}
 	}
 
 	override getEnvironmentVariables() {
-		return "PYTHONPATH=$PYTHONPATH:netide/Engine/ryu-shim"
+		return String.format("PYTHONPATH=$PYTHONPATH:%sryu-shim", this.enginePath)
 	}
 	
 	String enginePath = NetIDE.ENGINE_PATH;

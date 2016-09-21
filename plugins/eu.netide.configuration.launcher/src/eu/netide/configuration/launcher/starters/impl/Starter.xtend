@@ -196,6 +196,22 @@ abstract class Starter implements IStarter {
 				"Please set an SSH or Vagrant connection.")
 
 		}
+		
+			
+	/**
+	 * used by starter impl classes to check if the custom strings are in the format /path/.../to/
+	 * also checks if path is a valid directory and returns null if not
+	 */
+	protected def String getValidPath(String path){
+		var newPath = path
+		if(!path.endsWith("/")){
+			newPath = path + "/"
+		}
+		if(!new File(newPath).isDirectory()){
+			throw new IllegalArgumentException("Given Path is no valid directory. Used Path: " + newPath);
+		}
+		return newPath
+	}
 
 //	def startProcess(ArrayList<String> cmdline) {
 //

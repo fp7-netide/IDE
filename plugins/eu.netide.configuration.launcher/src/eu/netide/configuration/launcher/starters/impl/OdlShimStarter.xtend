@@ -18,7 +18,7 @@ class OdlShimStarter extends ControllerStarter {
 	new (String appPath, int port, IProgressMonitor monitor, String odlKarafPath) {
 		super("OpenDaylight Shim", port, appPath, monitor)
 		if(odlKarafPath != null && odlKarafPath != ""){
-			this.odlKarafPath = odlKarafPath
+			this.odlKarafPath = super.getValidPath(odlKarafPath)
 		}
 	}
 	String odlKarafPath = NetIDE.ODL_PATH

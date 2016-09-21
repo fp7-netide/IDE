@@ -19,7 +19,7 @@ class CoreStarter extends Starter {
 		super("Core", project, backend, monitor)
 		//TODO: validate coreKarafPath format
 		if(coreKarafPath != null && coreKarafPath != "")
-			this.coreKarafPath = coreKarafPath
+			this.coreKarafPath = super.getValidPath(coreKarafPath)
 	}
 	
 	private String coreKarafPath = NetIDE.CORE_KARAF;

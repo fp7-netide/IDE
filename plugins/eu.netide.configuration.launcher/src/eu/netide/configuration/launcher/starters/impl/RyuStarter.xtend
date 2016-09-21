@@ -21,7 +21,7 @@ class RyuStarter extends ControllerStarter {
 		super("Ryu", port, appPath, monitor)
 		if(appFolderPath != null && appFolderPath != "")
 		//TODO: validate appFolderPath format
-			this.appFolderPath = appFolderPath
+			this.appFolderPath = super.getValidPath(appFolderPath)
 		else
 			this.appFolderPath = NetIDE.APP_FOLDER
 			

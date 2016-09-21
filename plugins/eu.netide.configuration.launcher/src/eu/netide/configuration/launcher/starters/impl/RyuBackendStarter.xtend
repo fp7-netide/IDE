@@ -21,7 +21,7 @@ class RyuBackendStarter extends ControllerStarter {
 		super("Ryu Backend", port, appPath, monitor)
 		name = String.format("%s (%s)", name, this.appPath.lastSegment)
 		if(enginePath != null && enginePath != ""){
-			this.enginePath = enginePath;
+			this.enginePath = super.getValidPath(enginePath);
 		}
 	}
 

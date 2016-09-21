@@ -171,24 +171,28 @@ class StarterFactory {
 		return starter
 	}
 
+	@Deprecated
 	public def IStarter createMininetStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		var starter = new MininetStarter(configuration, monitor)
 		starter.backend = backend
 		return starter
 	}
-
+	
+	@Deprecated
 	public def createDebuggerStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		var starter = new DebuggerStarter(configuration, monitor)
 		starter.backend = backend
 		return starter
 	}
-
+	
+	@Deprecated
 	public def createCoreStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		var starter = new CoreStarter(configuration, monitor)
 		starter.backend = backend
 		return starter
 	}
 
+	@Deprecated
 	public def createEmulatorStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		var starter = new EmulatorStarter(configuration, monitor)
 		starter.backend = backend
