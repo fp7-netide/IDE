@@ -84,8 +84,8 @@ public class WorkbenchConfigurationEditorEngine {
 
 		this.addTableDataBinding(this.statusModel.getModelList());
 
-		this.addButtonDisabledDataBinding(this.editor.getSshUpButton(), Constants.SSH_RUNNING_MODEL);
-		this.addButtonEnabledDataBinding(this.editor.getSshDownButton(), Constants.SSH_RUNNING_MODEL);
+
+		//this.addButtonEnabledDataBinding(this.editor.getSshReloadButton(), Constants.SSH_RUNNING_MODEL);
 
 		this.addButtonDisabledDataBinding(this.editor.getBtnVagrantUp(), Constants.VAGRANT_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnProvision_2(), Constants.VAGRANT_RUNNING_MODEL);
@@ -100,6 +100,7 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addButtonEnabledDataBinding(this.editor.getBtnReattachCore(), Constants.CORE_RUNNING_MODEL);
 
 		this.addButtonEnabledDataBinding(this.editor.getBtnCopyApps(), Constants.SSH_RUNNING_MODEL);
+		this.addButtonEnabledDataBinding(this.editor.getTopologySSHButton(), Constants.SSH_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnProvision_1(), Constants.SSH_RUNNING_MODEL);
 		
 		this.addComboDisabledDataBinding(this.editor.getSelectServerCombo(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);

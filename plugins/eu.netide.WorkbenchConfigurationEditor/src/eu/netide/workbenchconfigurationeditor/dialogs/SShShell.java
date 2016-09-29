@@ -97,7 +97,7 @@ public class SShShell extends Shell {
 
 	private void checkModelStringEmpty(String modelContent, Text text, Button button) {
 
-		if (!modelContent.equals("")) {
+		if (modelContent != null && !modelContent.equals("")) {
 			button.setSelection(true);
 			text.setEnabled(true);
 			text.setText(modelContent);

@@ -419,9 +419,24 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 
-		btnSSH_Up.addSelectionListener(new SelectionAdapter() {
+		btnStopAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				controllerManager.stopSSH();
+				noSwitch = false;
+				tabFolder.setEnabled(true);
+				for (Control c : tabFolder.getTabList()) {
+					c.setEnabled(true);
+
+				}
+			}
+		});
+
+		btnReloadSSH.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				controllerManager.stopSSH();
+
 				if (sshProfileCombo.getSelectionIndex() != -1) {
 					lblSShStatus.setText("Status: waiting");
 					noSwitch = true;
@@ -433,20 +448,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					}
 				} else {
 					showMessage("Please select / create a ssh Profile.");
-				}
-
-			}
-		});
-
-		btnCloseSSH.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				controllerManager.stopSSH();
-				noSwitch = false;
-				tabFolder.setEnabled(true);
-				for (Control c : tabFolder.getTabList()) {
-					c.setEnabled(true);
-
 				}
 			}
 		});
@@ -594,11 +595,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		lblSShStatus.setLayoutData(gd_lblSShStatus);
 		lblSShStatus.setText("Status: Offline");
 
-		btnSSH_Up = new Button(composite_1, SWT.NONE);
-		btnSSH_Up.setText("On");
+		btnReloadSSH = new Button(composite_1, SWT.NONE);
+		btnReloadSSH.setText("Reload");
 
-		btnCloseSSH = new Button(composite_1, SWT.NONE);
-		btnCloseSSH.setText("Off");
+		btnStopAll = new Button(composite_1, SWT.NONE);
+
+		btnStopAll.setText("Stop All");
 
 		btnProvision_1 = new Button(composite_1, SWT.NONE);
 		btnProvision_1.setText("Provision");
@@ -610,7 +612,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		new Label(composite_1, SWT.NONE);
 		new Label(composite_1, SWT.NONE);
 		new Label(composite_1, SWT.NONE);
-		new Label(composite_1, SWT.NONE);
+
+		btnCopyTopology = new Button(composite_1, SWT.NONE);
+		btnCopyTopology.setText("Copy Topology");
 
 		composite = new Composite(sshComposite, SWT.NONE);
 		GridData gd_composite = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
@@ -1062,8 +1066,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Combo selectServerCombo;
 	private Button startServerController;
 	private Button btnMininetOn;
-	private Button btnSSH_Up;
-	private Button btnCloseSSH;
+	private Button btnReloadSSH;
 	private Composite container;
 	private Table table;
 	private Label lblSShStatus;
@@ -1109,6 +1112,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Text topo_text;
 	private Button btnBrowse_topo;
 	private Button btnLoadTopo;
+	private Button btnCopyTopology;
+	private Button btnStopAll;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;
@@ -1142,12 +1147,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		return this.serverComboViewer;
 	}
 
-	public Button getSshUpButton() {
-		return this.btnSSH_Up;
-	}
-
-	public Button getSshDownButton() {
-		return this.btnCloseSSH;
+	public Button getSshReloadButton() {
+		return this.btnReloadSSH;
 	}
 
 	public Button getBtnVagrantUp() {
@@ -1224,6 +1225,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	public Button getBtnDebuggerReattach() {
 		return btnDebuggerReattach;
+	}
+	
+	public Button getTopologySSHButton(){
+		return btnCopyTopology;
 	}
 
 	public Label getLblDebuggerStatus() {
