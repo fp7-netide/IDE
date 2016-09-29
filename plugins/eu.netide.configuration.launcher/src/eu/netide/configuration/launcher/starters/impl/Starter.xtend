@@ -207,9 +207,11 @@ abstract class Starter implements IStarter {
 		if(!path.endsWith("/")){
 			newPath = path + "/"
 		}
-		if(!new File(newPath).isDirectory()){
-			throw new IllegalArgumentException("Given Path is no valid directory. Used Path: " + newPath);
-		}
+		//TODO: Path cannot be checked that simple because it is no part of the local file system but is inside the virtual box
+		//if(!new File(newPath).isDirectory()){
+			
+			//throw new IllegalArgumentException("Given Path is no valid directory. Used Path: " + newPath);
+		//}
 		return newPath
 	}
 

@@ -18,7 +18,7 @@ class NetIDE {
 	public static val ENGINE_PATH ="~/netide/Engine/"
 	public static val CORE_KARAF = "~/netide/core-karaf/bin/"
 	public static val APP_FOLDER = "~/netide/apps/"
-	public static val ODL_PATH = "~/netide/distribution-karaf-0.4.0-Beryllium/bin/karaf"
+	public static val ODL_PATH = "~/netide/distribution-karaf-0.4.0-Beryllium/bin/"
 	public static val TOOL_PATH = "~/netide/Tools/"
 	public static val COMPOSITION_PATH = "/home/vagrant/composition/"
 
