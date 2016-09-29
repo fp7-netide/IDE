@@ -148,6 +148,10 @@ class ControllerManager {
 
 	private def startSshWithConfig(IJobChangeListener listener, SshProfileModel model) {
 		if (!this.statusModel.sshRunning) {
+			
+			if(!wbFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile.exists){
+				createVagrantFile();
+			}
 
 			sshJob = new Job("SshManager") {
 				override protected run(IProgressMonitor monitor) {
@@ -161,7 +165,7 @@ class ControllerManager {
 					}
 					sshManager = new SshManager(wbFile.project, monitor, model.username, model.host, model.port,
 						model.sshIdFile, model.vagrantBox)
-
+			
 					statusModel.sshRunning = true
 					return Status.OK_STATUS
 				}
