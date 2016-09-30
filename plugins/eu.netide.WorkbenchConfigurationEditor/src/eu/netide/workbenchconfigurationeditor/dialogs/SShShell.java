@@ -60,6 +60,7 @@ public class SShShell extends Shell {
 				txt_sshidfile.setText(profile.getSshIdFile());
 				txt_host.setText(profile.getHost());
 				txt_sshidfile.setText(profile.getSshIdFile());
+				text_vagrant.setText(profile.getVagrantBox());
 
 				if (profile.getSecondHost() != null && profile.getSecondPort() != null
 						&& profile.getSecondUsername() != null) {
@@ -82,7 +83,6 @@ public class SShShell extends Shell {
 				checkModelStringEmpty(profile.getOdl(), text_odl, this.btnCheckODL);
 				checkModelStringEmpty(profile.getTools(), text_tools, btnCheckTools);
 				checkModelStringEmpty(profile.getTopology(), text_topology, btnCheckTopo);
-				checkModelStringEmpty(profile.getVagrantBox(), this.text_vagrant, this.btnCheckBox);
 
 			}
 			while (!this.isDisposed()) {
@@ -209,6 +209,27 @@ public class SShShell extends Shell {
 
 		txt_host = new Text(composite, SWT.BORDER);
 		txt_host.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		lblVagrantBoxRoot = new Label(composite, SWT.NONE);
+		lblVagrantBoxRoot.setText("Vagrant Box Root");
+
+		text_vagrant = new Text(composite, SWT.BORDER);
+		text_vagrant.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		text_vagrant.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+
+				if (!text_vagrant.getText().equals("")) {
+					vagrantSet = true;
+				} else {
+					vagrantSet = false;
+				}
+				checkForFinish();
+
+			}
+		});
+
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
@@ -303,17 +324,6 @@ public class SShShell extends Shell {
 		btnCheckEngine.setText("Enable");
 		btnCheckEngine.addSelectionListener(new BrowseAdapter(text_engine));
 
-		lblVagrantBoxRoot = new Label(composite_2, SWT.NONE);
-		lblVagrantBoxRoot.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblVagrantBoxRoot.setText("Vagrant Box Root");
-
-		text_vagrant = new Text(composite_2, SWT.BORDER);
-		text_vagrant.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		btnCheckBox = new Button(composite_2, SWT.CHECK);
-		btnCheckBox.setText("Enable");
-		btnCheckBox.addSelectionListener(new BrowseAdapter(text_vagrant));
-
 		lblTools = new Label(composite_2, SWT.NONE);
 		lblTools.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblTools.setText("Tools");
@@ -323,7 +333,6 @@ public class SShShell extends Shell {
 
 		btnCheckTools = new Button(composite_2, SWT.CHECK);
 		btnCheckTools.setText("Enable");
-		btnCheckTools.addSelectionListener(new BrowseAdapter(text_tools));
 
 		lblTopology = new Label(composite_2, SWT.NONE);
 		lblTopology.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -334,6 +343,7 @@ public class SShShell extends Shell {
 
 		btnCheckTopo = new Button(composite_2, SWT.CHECK);
 		btnCheckTopo.setText("Enable");
+		btnCheckTools.addSelectionListener(new BrowseAdapter(text_tools));
 		btnCheckTopo.addSelectionListener(new BrowseAdapter(text_topology));
 
 		doubleTunnelComposite = new Composite(this, SWT.NONE);
@@ -429,8 +439,7 @@ public class SShShell extends Shell {
 			public void widgetSelected(SelectionEvent e) {
 				if (edit) {
 					setProfileEntry(profile);
-				}
-				else {
+				} else {
 					resultModel = new SshProfileModel();
 					setProfileEntry(resultModel);
 				}
@@ -462,6 +471,7 @@ public class SShShell extends Shell {
 		profile.setProfileName(txt_profileName.getText());
 		profile.setSshIdFile(txt_sshidfile.getText());
 		profile.setUsername(txt_username.getText());
+		profile.setVagrantBox(text_vagrant.getText());
 		if (useDoubleTunneL) {
 			profile.setSecondHost(txt_SecondHost.getText());
 			profile.setSecondPort(txt_SecondPort.getText());
@@ -496,10 +506,7 @@ public class SShShell extends Shell {
 			profile.setTools(text_tools.getText());
 		else
 			profile.setTools("");
-		if (btnCheckBox.getSelection())
-			profile.setVagrantBox(text_vagrant.getText());
-		else
-			profile.setVagrantBox("");
+
 		if (btnCheckTopo.getSelection())
 			profile.setTopology(text_topology.getText());
 		else
@@ -521,6 +528,7 @@ public class SShShell extends Shell {
 	}
 
 	Button saveBTN;
+	boolean vagrantSet;
 	boolean hostSet;
 	boolean portSet;
 	boolean usernameSet;
@@ -532,7 +540,7 @@ public class SShShell extends Shell {
 
 	private void checkForFinish() {
 
-		if (hostSet && portSet && usernameSet && sshFileSet && profileNameSet) {
+		if (hostSet && portSet && usernameSet && sshFileSet && profileNameSet && vagrantSet) {
 			if (!useDoubleTunneL) {
 				saveBTN.setEnabled(true);
 				this.finish = true;
@@ -575,12 +583,12 @@ public class SShShell extends Shell {
 	private Button btnCheckCore;
 	private Button btnCheckODL;
 	private Button btnCheckEngine;
-	private Button btnCheckBox;
 	private Button btnCheckTools;
 	private Button btnCheckTopo;
 	private boolean finish;
 
 	private SshProfileModel resultModel;
+
 	/**
 	 * 
 	 * @return SSH Profile according to entries of ssh shell
