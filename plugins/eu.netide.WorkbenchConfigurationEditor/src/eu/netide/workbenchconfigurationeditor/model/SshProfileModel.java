@@ -17,7 +17,6 @@ public class SshProfileModel {
 	private String secondHost;
 	private String secondUsername;
 	
-	private String vagrantBox;
 	private String odl;
 	private String engine;
 	private String core;
@@ -84,14 +83,6 @@ public class SshProfileModel {
 
 	public void setProfileName(String profileName) {
 		this.changes.firePropertyChange(Constants.PROFILE_NAME_MODEL, this.profileName, this.profileName = profileName);
-	}
-	
-	public String getVagrantBox() {
-		return vagrantBox;
-	}
-
-	public void setVagrantBox(String vagrantBox) {
-		this.changes.firePropertyChange(Constants.VAGRANT_BOX, this.vagrantBox, this.vagrantBox = vagrantBox);
 	}
 
 	public String getOdl() {

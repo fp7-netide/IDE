@@ -87,11 +87,10 @@ class SshManager implements IManager {
 
 		var path = launch.launchConfiguration.attributes.get("topologymodel") as String
 
-		this.workingDirectory = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
+		this.workingDirectory = path.getIFile.project.location.toFile
 	}
 
-	new(IProject project, IProgressMonitor monitor, String username, String hostname, String port, String idfile,
-		String vagrantPath) {
+	new(IProject project, IProgressMonitor monitor, String username, String hostname, String port, String idfile) {
 		var conf = launchConfigType.newInstance(null, "SSH Session")
 		this.launch = new Launch(conf, "debug", null)
 		this.launch.setAttribute("org.eclipse.debug.core.capture_output", "true")
@@ -117,19 +116,9 @@ class SshManager implements IManager {
 			Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
 				NetIDEPreferenceConstants.SCP_PATH, "", null)).toOSString
 				
-		if (vagrantPath != null && vagrantPath != "") {
-			var uri = URI.createURI(vagrantPath)
-			var pathVagrant = new Path(uri.path)
 
-			this.workingDirectory = pathVagrant.toFile
-			
-		} else {
-			this.workingDirectory = project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
-		}
-	}
+			this.workingDirectory = project.location.toFile
 
-	new(IProject project, IProgressMonitor monitor, String username, String hostname, String port, String idfile) {
-		this(project, monitor, username, hostname, port, idfile, null)
 	}
 
 	private def getLaunchConfigType() {

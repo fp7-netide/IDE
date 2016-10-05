@@ -60,7 +60,6 @@ public class SShShell extends Shell {
 				txt_sshidfile.setText(profile.getSshIdFile());
 				txt_host.setText(profile.getHost());
 				txt_sshidfile.setText(profile.getSshIdFile());
-				text_vagrant.setText(profile.getVagrantBox());
 
 				if (profile.getSecondHost() != null && profile.getSecondPort() != null
 						&& profile.getSecondUsername() != null) {
@@ -209,26 +208,6 @@ public class SShShell extends Shell {
 
 		txt_host = new Text(composite, SWT.BORDER);
 		txt_host.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		lblVagrantBoxRoot = new Label(composite, SWT.NONE);
-		lblVagrantBoxRoot.setText("Vagrant Box Root");
-
-		text_vagrant = new Text(composite, SWT.BORDER);
-		text_vagrant.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		text_vagrant.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(ModifyEvent e) {
-
-				if (!text_vagrant.getText().equals("")) {
-					vagrantSet = true;
-				} else {
-					vagrantSet = false;
-				}
-				checkForFinish();
-
-			}
-		});
 
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
@@ -471,7 +450,7 @@ public class SShShell extends Shell {
 		profile.setProfileName(txt_profileName.getText());
 		profile.setSshIdFile(txt_sshidfile.getText());
 		profile.setUsername(txt_username.getText());
-		profile.setVagrantBox(text_vagrant.getText());
+
 		if (useDoubleTunneL) {
 			profile.setSecondHost(txt_SecondHost.getText());
 			profile.setSecondPort(txt_SecondPort.getText());
@@ -528,7 +507,6 @@ public class SShShell extends Shell {
 	}
 
 	Button saveBTN;
-	boolean vagrantSet;
 	boolean hostSet;
 	boolean portSet;
 	boolean usernameSet;
@@ -540,7 +518,7 @@ public class SShShell extends Shell {
 
 	private void checkForFinish() {
 
-		if (hostSet && portSet && usernameSet && sshFileSet && profileNameSet && vagrantSet) {
+		if (hostSet && portSet && usernameSet && sshFileSet && profileNameSet) {
 			if (!useDoubleTunneL) {
 				saveBTN.setEnabled(true);
 				this.finish = true;
@@ -566,7 +544,6 @@ public class SShShell extends Shell {
 	private Label lblOdlShim;
 	private Label lblTools;
 	private Label lblTopology;
-	private Label lblVagrantBoxRoot;
 	private Label lblKarafcore;
 	private Label lblEngine;
 	private Label lblCompositeFile;
@@ -575,7 +552,6 @@ public class SShShell extends Shell {
 	private Text text_core;
 	private Text text_odl;
 	private Text text_engine;
-	private Text text_vagrant;
 	private Text text_tools;
 	private Text text_topology;
 	private Button btnCheckButtonAppFolder;

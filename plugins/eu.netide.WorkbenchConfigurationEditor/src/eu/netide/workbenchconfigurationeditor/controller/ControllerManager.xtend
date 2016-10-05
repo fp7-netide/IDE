@@ -164,7 +164,7 @@ class ControllerManager {
 							Integer.parseInt(model.secondPort), model.username, model.secondUsername, model.sshIdFile);
 					}
 					sshManager = new SshManager(wbFile.project, monitor, model.username, model.host, model.port,
-						model.sshIdFile, model.vagrantBox)
+						model.sshIdFile)
 			
 					statusModel.sshRunning = true
 					return Status.OK_STATUS
