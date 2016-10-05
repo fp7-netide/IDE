@@ -16,6 +16,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -28,6 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -52,8 +55,6 @@ import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 import eu.netide.workbenchconfigurationeditor.model.TopologyModel;
 import eu.netide.workbenchconfigurationeditor.util.Constants;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.DisposeEvent;
 
 /**
  * 
@@ -386,7 +387,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnProvision_1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				controllerManager.reprovision();
+		        MessageBox messageBox = new MessageBox(container.getShell(), SWT.ICON_QUESTION
+		                | SWT.YES | SWT.NO);
+		            messageBox.setMessage("Do you really want to use provision, it will take a long time?");
+		            messageBox.setText("Provision ");
+		            int response = messageBox.open();
+		            if (response == SWT.YES)
+		            	controllerManager.reprovision();
 			}
 		});
 		btnProvision_2.addSelectionListener(new SelectionAdapter() {
