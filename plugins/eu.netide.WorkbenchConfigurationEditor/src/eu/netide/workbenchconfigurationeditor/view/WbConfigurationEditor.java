@@ -399,6 +399,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnProvision_2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+		        MessageBox messageBox = new MessageBox(container.getShell(), SWT.ICON_QUESTION
+		                | SWT.YES | SWT.NO);
+		            messageBox.setMessage("Do you really want to use provision, it will take a long time?");
+		            messageBox.setText("Provision ");
+		            int response = messageBox.open();
+		            if (response == SWT.YES)
 				controllerManager.reprovision();
 			}
 		});
