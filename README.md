@@ -76,7 +76,7 @@ This error occurs if the projects in the `plugins`-folder have not been imported
 
 ### Compiler errors after pulling
 
-The code you just pulled may use a more recent version of the Topology meta-model. If you run into compiler errors, just repeat step 5 and 6 from the Installation guide. This generates new model code from the newest version of the meta-model.
+The code you just pulled may use a more recent version of the Topology meta-model. If you run into compiler errors, just repeat step 7 and 8 from the Installation guide. This generates new model code from the newest version of the meta-model.
 
 ### Large amounts of disk space used
 
