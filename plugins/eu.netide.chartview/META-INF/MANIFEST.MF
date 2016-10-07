@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ChartView
-Bundle-SymbolicName: eu.netide.ChartView;singleton:=true
+Bundle-SymbolicName: eu.netide.chartview;singleton:=true
 Bundle-Version: 0.3.1.qualifier
 Bundle-Vendor: NetIDE Project
 Require-Bundle: org.eclipse.core.runtime,
