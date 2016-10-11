@@ -151,13 +151,8 @@ public class SshProfileModel {
 	}
 
 	public String getSshIdFile() {
-		String idFile = this.sshIdFile;
-		if (idFile.contains(" ")) {
-			
-			idFile = "\"".concat(idFile.replace(" ", "\\ ")).concat("\"");
-			System.out.println(idFile);
-		}
-		return idFile;
+
+		return this.sshIdFile;
 	}
 
 	public String getUsername() {

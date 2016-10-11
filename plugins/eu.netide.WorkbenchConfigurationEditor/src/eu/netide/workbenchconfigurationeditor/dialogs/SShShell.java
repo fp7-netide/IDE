@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import eu.netide.configuration.utils.NetIDEUtil;
 import org.eclipse.swt.widgets.Text;
 
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
@@ -448,7 +449,7 @@ public class SShShell extends Shell {
 		profile.setHost(txt_host.getText());
 		profile.setPort(txt_port.getText());
 		profile.setProfileName(txt_profileName.getText());
-		profile.setSshIdFile(txt_sshidfile.getText());
+		profile.setSshIdFile(NetIDEUtil.formatPathWithSpaces(txt_sshidfile.getText()));
 		profile.setUsername(txt_username.getText());
 
 		if (useDoubleTunneL) {
