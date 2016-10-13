@@ -51,7 +51,7 @@ abstract class ControllerStarter extends Starter {
 
 		this.port = port
 
-		var tempAppPath = ResourcesPlugin.workspace.root.findMember(appPath.replaceFirst("platform:/resource", "")).projectRelativePath
+		var tempAppPath = getIFile(appPath).projectRelativePath
 
 		this.appPath = tempAppPath
 	}

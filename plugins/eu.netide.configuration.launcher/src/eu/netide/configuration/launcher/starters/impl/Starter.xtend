@@ -153,6 +153,7 @@ abstract class Starter implements IStarter {
 		}
 
 		def getIFile(String s) {
+
 			var uri = URI.createURI(s)
 			var path = new Path(uri.path)
 			
@@ -161,8 +162,10 @@ abstract class Starter implements IStarter {
 			var projectLocation = path.removeFirstSegments(1).removeLastSegments(1)
 
 			var root = ResourcesPlugin.getWorkspace().getRoot()
+			
+			var projectLocationBase = projectLocation.segment(0)
 
-			var myProject = root.getProject(projectLocation.toOSString);
+			var myProject = root.getProject(projectLocationBase);
 
 			if (myProject.exists() && !myProject.isOpen())
 				myProject.open(null);
