@@ -1,9 +1,8 @@
 package eu.netide.configuration.launcher.starters.impl
 
-import org.eclipse.debug.core.ILaunchConfiguration
-import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.core.resources.ResourcesPlugin
 import eu.netide.configuration.launcher.starters.backends.Backend
+import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.debug.core.ILaunchConfiguration
 
 class CoreSpecificationStarter extends Starter{
 	
@@ -20,11 +19,13 @@ class CoreSpecificationStarter extends Starter{
 	}
 	
 	override getCommandLine() {
-		var file = ResourcesPlugin.workspace.root.findMember(compositionPath.IFile.fullPath)
+		var file = compositionPath.IFile
 		var fullpath = file.fullPath
 		var guestPath = "$HOME/netide/" + fullpath.removeFirstSegments(1)
-		
-		String.format("bash -c \'cd ~/apache-karaf-3.0.7/bin/ && ./client netide:loadcomposition %s\'", guestPath)
+
+		var cmd = String.format("bash -c \'cd ~/netide/core-karaf/bin && ./client netide:loadcomposition %s\'", guestPath)
+
+		return cmd
 	}
 	
 }
