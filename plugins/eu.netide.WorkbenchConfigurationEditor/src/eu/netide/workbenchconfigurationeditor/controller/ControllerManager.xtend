@@ -121,7 +121,7 @@ class ControllerManager {
 
 	public def copyApps() {
 		if (sshManager != null) {
-			sshManager.copyApps
+			sshManager.copyApps(this.statusModel.sshModelAtIndex.appFolder)
 			sshManager.copyTopo
 		}
 	}

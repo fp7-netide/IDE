@@ -115,9 +115,8 @@ class SshManager implements IManager {
 		this.scpPath = new Path(
 			Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
 				NetIDEPreferenceConstants.SCP_PATH, "", null)).toOSString
-				
 
-			this.workingDirectory = project.location.toFile
+		this.workingDirectory = project.location.toFile
 
 	}
 
@@ -245,10 +244,16 @@ class SshManager implements IManager {
 	}
 
 	def copyApps() {
-		exec("rm -rf netide/apps")
+		copyApps("")
+	}
 
+	def copyApps(String source) {
+		exec("rm -rf netide/apps")
+		var sourceLocation = this.project.location + "/apps"
+		if(source != null && source != "")
+			sourceLocation = source
 		scp(
-			this.project.location + "/apps",
+			source,
 			"netide/apps"
 		)
 	}
