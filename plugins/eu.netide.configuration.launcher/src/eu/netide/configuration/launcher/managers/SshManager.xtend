@@ -253,7 +253,7 @@ class SshManager implements IManager {
 		if(source != null && source != "")
 			sourceLocation = source
 		scp(
-			source,
+			sourceLocation,
 			"netide/apps"
 		)
 	}
