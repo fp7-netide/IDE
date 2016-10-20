@@ -15,7 +15,7 @@ class CoreStarter extends Starter {
 	}
 	
 	override getCommandLine() {
-		String.format("bash -c \'cd ~/apache-karaf-3.0.7/bin/ && ./karaf\'")
+		String.format("bash -c \'cd ~/netide/core-karaf/bin/ && ./karaf\'")
 	}
 	
 }

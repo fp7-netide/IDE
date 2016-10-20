@@ -20,9 +20,10 @@ if [ ! -d ~/.m2/repository/eu/netide/core/ ]; then
 
   cd
   echo "Downloading Karaf..."
-  wget -q http://ftp.fau.de/apache/karaf/3.0.7/apache-karaf-3.0.7.tar.gz
-  tar xzf apache-karaf-3.0.7.tar.gz
-  cd apache-karaf-3.0.7/bin
+  wget -q http://archive.apache.org/dist/karaf/3.0.8/apache-karaf-3.0.8.tar.gz
+  tar xzf apache-karaf-3.0.8.tar.gz
+  mv apache-karaf-3.0.8 netide/core-karaf
+  cd netide/core-karaf/bin
   chmod +x ./client ./start ./stop
   echo "Installing karaf dependencies for core"
   ./start
@@ -37,8 +38,6 @@ if [ ! -d ~/.m2/repository/eu/netide/core/ ]; then
   sleep 15
   ./stop
 
-#  mv apache-karaf-3.0.6-SNAPSHOT apache-karaf
-# cd apache-karaf-3.0.6-SNAPSHOT/bin
 else
   echo "Engine seems to be already installed. Skipping..."
 fi

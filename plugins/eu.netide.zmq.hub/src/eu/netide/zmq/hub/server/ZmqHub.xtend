@@ -1,6 +1,5 @@
 package eu.netide.zmq.hub.server
 
-import eu.netide.zmq.hub.client.IZmqHubListener
 import java.beans.PropertyChangeListener
 import java.beans.PropertyChangeSupport
 import java.text.SimpleDateFormat
@@ -12,11 +11,13 @@ import org.zeromq.ZMQ.Context
 import org.zeromq.ZMQ.Socket
 import org.zeromq.ZMQException
 import eu.netide.lib.netip.NetIPConverter
-import com.google.common.hash.Funnels
+import eu.netide.zmq.hub.client.IZmqRawListener
+import eu.netide.zmq.hub.client.IZmqNetIpListener
 
 class ZmqHub implements IZmqHub, Runnable {
 
-	private List<IZmqHubListener> listeners = newArrayList
+	private List<IZmqRawListener> rawListeners = newArrayList
+	private List<IZmqNetIpListener> netIpListeners = newArrayList
 	private PropertyChangeSupport changes
 	private Thread thread;
 	private WritableList log;
@@ -46,7 +47,6 @@ class ZmqHub implements IZmqHub, Runnable {
 		sub.subscribe("".bytes)
 
 		try {
-			var funnel = Funnels.integerFunnel
 			while (!this.thread.interrupted) {
 				val received = sub.recv(0)
 				if (received != null) {
@@ -58,19 +58,22 @@ class ZmqHub implements IZmqHub, Runnable {
 					}
 					b.deleteCharAt(b.length() - 1);
 					b.append("]");
-					listeners.forEach[update(received)]
-					log.realm.asyncExec(new Runnable() {
-						override run() {
-							var date = new Date()
-							var ft = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-							try {
-								log.add(new LogMsg(ft.format(date), NetIPConverter.parseConcreteMessage(received).toString))
-							} catch (IllegalArgumentException e) {
-								log.add(new LogMsg(ft.format(date), b.toString))
+					send(received)
+					log.realm.asyncExec(
+						new Runnable() {
+							override run() {
+								var date = new Date()
+								var ft = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+								try {
+									log.add(
+										new LogMsg(ft.format(date),
+											NetIPConverter.parseConcreteMessage(received).toString))
+								} catch (IllegalArgumentException e) {
+									log.add(new LogMsg(ft.format(date), b.toString))
+								}
 							}
-						}
 
-					})
+						})
 
 				}
 			}
@@ -80,12 +83,31 @@ class ZmqHub implements IZmqHub, Runnable {
 
 	}
 
-	override register(IZmqHubListener listener) {
-		listeners.add(listener)
+	private def send(byte[] message) {
+		try {
+			val nipMessage = NetIPConverter.parseConcreteMessage(message)
+			netIpListeners.forEach[update(nipMessage)]
+		} catch (IllegalArgumentException e) {
+			
+		} finally {
+			rawListeners.forEach[update(message)]
+		}
 	}
 
-	override remove(IZmqHubListener listener) {
-		listeners.remove(listener)
+	override register(IZmqRawListener listener) {
+		rawListeners.add(listener)
+	}
+
+	override register(IZmqNetIpListener listener) {
+		netIpListeners.add(listener)
+	}
+
+	override remove(IZmqRawListener listener) {
+		rawListeners.remove(listener)
+	}
+
+	override remove(IZmqNetIpListener listener) {
+		netIpListeners.remove(listener)
 	}
 
 	public override getRunning() {

@@ -45,8 +45,6 @@ public class ZmqLogDialog extends TitleAreaDialog {
 		tblColumnMsg.setText("Message");
 		
 		ViewerSupport.bind(tableViewer, hub.getLog(), BeanProperties.values(new String[] {"date", "msg"}));
-		
-
 				
 		setHelpAvailable(false);
 		setTitle(hub.getName());
