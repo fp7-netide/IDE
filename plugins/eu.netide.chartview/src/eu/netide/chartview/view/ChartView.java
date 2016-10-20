@@ -141,9 +141,13 @@ public class ChartView extends ViewPart {
 		Button btnLoadTopo = new Button(TopoComposite, SWT.NONE);
 		btnLoadTopo.setText("Load Topology");
 
-		SwtLiveChartViewer lcv = new SwtLiveChartViewer(mainComposite, SWT.NO_BACKGROUND);
-		lcv.setLayoutData(new GridData(GridData.FILL_BOTH));
-		lcv.addPaintListener(lcv);
+//		SwtLiveChartViewer lcv = new SwtLiveChartViewer(mainComposite, SWT.NO_BACKGROUND);
+//		lcv.setLayoutData(new GridData(GridData.FILL_BOTH));
+//		lcv.addPaintListener(lcv);
+		
+		MessagesPerAppChartViewer mpa = new MessagesPerAppChartViewer(mainComposite, SWT.NO_BACKGROUND);
+		mpa.setLayoutData(new GridData(GridData.FILL_BOTH));
+		mpa.addPaintListener(mpa);
 
 	}
 }

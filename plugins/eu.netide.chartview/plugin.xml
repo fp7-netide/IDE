@@ -19,7 +19,7 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
+            targetID="eu.netide.perspective">
          <view
                ratio="0.5"
                relative="org.eclipse.ui.views.ProblemView"
