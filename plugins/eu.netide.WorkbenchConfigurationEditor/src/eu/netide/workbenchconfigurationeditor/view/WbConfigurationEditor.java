@@ -629,6 +629,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnCopyTopology = new Button(composite_1, SWT.NONE);
 		btnCopyTopology.setText("Copy Topology");
 
+		btnCopyTopology.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				controllerManager.copyTopology();
+			}
+		});
 		composite = new Composite(sshComposite, SWT.NONE);
 		GridData gd_composite = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd_composite.widthHint = 400;

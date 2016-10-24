@@ -250,7 +250,7 @@ class SshManager implements IManager {
 	def copyApps(String source) {
 		exec("rm -rf netide/apps")
 		var sourceLocation = this.project.location + "/apps"
-		if(source != null && source != "")
+		if (source != null && source != "")
 			sourceLocation = source
 		scp(
 			sourceLocation,
@@ -259,10 +259,19 @@ class SshManager implements IManager {
 	}
 
 	def copyTopo() {
-		exec("rm -rf mn-configs")
+		copyTopo("")
+	}
 
+	def copyTopo(String topoPath) {
+		exec("rm -rf mn-configs")
+		
+		var topoPathLocation = this.project.location + "/gen/mininet"
+		
+		if(topoPath != null && topoPath != "")
+			topoPathLocation = topoPath
+		
 		scp(
-			this.project.location + "/gen/mininet",
+			topoPathLocation,
 			"mn-configs"
 		)
 	}
@@ -286,7 +295,7 @@ class SshManager implements IManager {
 
 	def startProcess(ArrayList<String> cmdline) {
 		println(cmdline)
-		
+
 		var workingDir = this.workingDirectory
 		var location = new Path(sshPath)
 		var env = null

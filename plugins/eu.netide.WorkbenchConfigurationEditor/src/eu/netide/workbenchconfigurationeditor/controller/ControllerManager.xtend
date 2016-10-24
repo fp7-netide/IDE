@@ -122,8 +122,13 @@ class ControllerManager {
 	public def copyApps() {
 		if (sshManager != null) {
 			sshManager.copyApps(this.statusModel.sshModelAtIndex.appFolder)
-			sshManager.copyTopo
+
 		}
+	}
+	
+	public def copyTopology() {
+		if (sshManager != null)
+			sshManager.copyTopo(this.statusModel.sshModelAtIndex.topology)
 	}
 
 	public def importTopology() {
