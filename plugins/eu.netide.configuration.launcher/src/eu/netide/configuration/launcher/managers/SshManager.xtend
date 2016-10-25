@@ -263,7 +263,7 @@ class SshManager implements IManager {
 	}
 
 	def copyTopo(String topoPath) {
-		exec("rm -rf mn-configs")
+		exec("rm -rf netide/mn-configs")
 		
 		var topoPathLocation = this.project.location + "/gen/mininet"
 		

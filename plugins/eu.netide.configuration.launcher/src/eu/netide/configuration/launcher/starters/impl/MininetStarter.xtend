@@ -47,7 +47,7 @@ class MininetStarter extends Starter {
 			ne.name.replaceAll("[-/()]", "_") + "_run.py"
 		else
 			"NetworkEnvironment" + "_run.py"
-
+		println(mnpath)
 		return mnpath
 	}
 
