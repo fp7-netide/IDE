@@ -272,7 +272,7 @@ class SshManager implements IManager {
 		
 		scp(
 			topoPathLocation,
-			"mn-configs"
+			"netide/mn-configs"
 		)
 	}
 
