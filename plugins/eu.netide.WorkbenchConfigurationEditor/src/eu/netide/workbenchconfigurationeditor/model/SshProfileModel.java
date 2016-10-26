@@ -25,6 +25,11 @@ public class SshProfileModel {
 	private String appFolder;
 	private String composite;
 
+	private String appSource;
+	private String appTarget;
+	private String minConfigSource;
+	private String minConfigTarget;
+
 	private String id;
 
 	private PropertyChangeSupport changes;
@@ -193,6 +198,40 @@ public class SshProfileModel {
 
 	public void removePropertyChangeListener(PropertyChangeListener l) {
 		changes.removePropertyChangeListener(l);
+	}
+
+	public String getAppSource() {
+		return appSource;
+	}
+
+	public void setAppSource(String appSource) {
+		this.changes.firePropertyChange(Constants.APP_SOURCE, this.appSource, this.appSource = appSource);
+	}
+
+	public String getAppTarget() {
+		return appTarget;
+	}
+
+	public void setAppTarget(String appTarget) {
+		this.changes.firePropertyChange(Constants.APP_TARGET, this.appTarget, this.appTarget = appTarget);
+	}
+
+	public String getMinConfigSource() {
+		return minConfigSource;
+	}
+
+	public void setMinConfigSource(String minConfigSource) {
+		this.changes.firePropertyChange(Constants.MIN_CONFIG_SOURCE, this.minConfigSource,
+				this.minConfigSource = minConfigSource);
+	}
+
+	public String getMinConfigTarget() {
+		return minConfigTarget;
+	}
+
+	public void setMinConfigTarget(String minConfigTarget) {
+		this.changes.firePropertyChange(Constants.MIN_CONFIG_TARGET, this.minConfigTarget,
+				this.minConfigTarget = minConfigTarget);
 	}
 
 }

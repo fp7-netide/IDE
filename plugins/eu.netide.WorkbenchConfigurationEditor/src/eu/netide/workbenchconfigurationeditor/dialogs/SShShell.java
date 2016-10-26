@@ -16,6 +16,7 @@ import eu.netide.configuration.utils.NetIDEUtil;
 import org.eclipse.swt.widgets.Text;
 
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
+import org.eclipse.swt.widgets.Group;
 
 public class SShShell extends Shell {
 	private Text txt_profileName;
@@ -76,14 +77,23 @@ public class SShShell extends Shell {
 
 					}
 				}
-				checkModelStringEmpty(profile.getAppFolder(), text_app, btnCheckButtonAppFolder);
+				checkModelStringEmpty(profile.getAppFolder(), text_app, btnEnable_App);
 				checkModelStringEmpty(profile.getComposite(), text_composite, btnCheckComposite);
 				checkModelStringEmpty(profile.getCore(), text_core, btnCheckCore);
 				checkModelStringEmpty(profile.getEngine(), text_engine, btnCheckEngine);
 				checkModelStringEmpty(profile.getOdl(), text_odl, this.btnCheckODL);
 				checkModelStringEmpty(profile.getTools(), text_tools, btnCheckTools);
-				checkModelStringEmpty(profile.getTopology(), text_topology, btnCheckTopo);
+				checkModelStringEmpty(profile.getTopology(), text_topo, btnEnableTopo);
 
+
+				if (profile.getAppSource() != null && !profile.getAppSource().equals(""))
+					text_app_copy_source.setText(profile.getAppSource());
+				if (profile.getAppTarget() != null && !profile.getAppTarget().equals(""))
+					text_app_copy_target.setText(profile.getAppTarget());
+				if (profile.getMinConfigSource() != null && !profile.getMinConfigSource().equals(""))
+					text_min_source.setText(profile.getMinConfigSource());
+				if (profile.getMinConfigTarget() != null && !profile.getMinConfigTarget().equals(""))
+					text_min_target.setText(profile.getMinConfigTarget());
 			}
 			while (!this.isDisposed()) {
 				if (!display.readAndDispatch()) {
@@ -114,21 +124,27 @@ public class SShShell extends Shell {
 	 */
 	public SShShell(Display display) {
 		super(display, SWT.SHELL_TRIM);
-		setSize(564, 601);
+		setSize(480, 716);
 		shell = this;
 		this.display = display;
 		setLayout(new GridLayout(1, false));
 		this.useDoubleTunneL = false;
-		Composite composite = new Composite(this, SWT.NONE);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-		composite.setLayout(new GridLayout(2, false));
 
-		Label lblNewLabel = new Label(composite, SWT.NONE);
+		grpSshConnectionSettings = new Group(this, SWT.NONE);
+		grpSshConnectionSettings.setLayout(new GridLayout(2, false));
+		GridData gd_grpSshConnectionSettings = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_grpSshConnectionSettings.heightHint = 158;
+		grpSshConnectionSettings.setLayoutData(gd_grpSshConnectionSettings);
+		grpSshConnectionSettings.setText("ssh Connection Settings");
+
+		Label lblNewLabel = new Label(grpSshConnectionSettings, SWT.NONE);
 		lblNewLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblNewLabel.setText("Profile Name");
 
-		txt_profileName = new Text(composite, SWT.BORDER);
-		txt_profileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txt_profileName = new Text(grpSshConnectionSettings, SWT.BORDER);
+		GridData gd_txt_profileName = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_txt_profileName.widthHint = 288;
+		txt_profileName.setLayoutData(gd_txt_profileName);
 		txt_profileName.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -143,12 +159,12 @@ public class SShShell extends Shell {
 			}
 		});
 
-		Label lblNewLabel_1 = new Label(composite, SWT.NONE);
+		Label lblNewLabel_1 = new Label(grpSshConnectionSettings, SWT.NONE);
 		lblNewLabel_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblNewLabel_1.setText("Username");
 
-		txt_username = new Text(composite, SWT.BORDER);
-		txt_username.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txt_username = new Text(grpSshConnectionSettings, SWT.BORDER);
+		txt_username.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		txt_username.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -163,12 +179,12 @@ public class SShShell extends Shell {
 			}
 		});
 
-		Label lblNewLabel_2 = new Label(composite, SWT.NONE);
+		Label lblNewLabel_2 = new Label(grpSshConnectionSettings, SWT.NONE);
 		lblNewLabel_2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblNewLabel_2.setText("Port");
 
-		txt_port = new Text(composite, SWT.BORDER);
-		txt_port.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txt_port = new Text(grpSshConnectionSettings, SWT.BORDER);
+		txt_port.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		txt_port.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -183,12 +199,12 @@ public class SShShell extends Shell {
 			}
 		});
 
-		Label lblNewLabel_3 = new Label(composite, SWT.NONE);
+		Label lblNewLabel_3 = new Label(grpSshConnectionSettings, SWT.NONE);
 		lblNewLabel_3.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblNewLabel_3.setText("SSH ID File");
 
-		txt_sshidfile = new Text(composite, SWT.BORDER);
-		txt_sshidfile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txt_sshidfile = new Text(grpSshConnectionSettings, SWT.BORDER);
+		txt_sshidfile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		txt_sshidfile.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -203,19 +219,15 @@ public class SShShell extends Shell {
 			}
 		});
 
-		Label lblHost = new Label(composite, SWT.NONE);
+		Label lblHost = new Label(grpSshConnectionSettings, SWT.NONE);
 		lblHost.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblHost.setText("Host");
 
-		txt_host = new Text(composite, SWT.BORDER);
-		txt_host.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txt_host = new Text(grpSshConnectionSettings, SWT.BORDER);
+		txt_host.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		new Label(grpSshConnectionSettings, SWT.NONE);
 
-		new Label(composite, SWT.NONE);
-		new Label(composite, SWT.NONE);
-		new Label(composite, SWT.NONE);
-
-		btnCheckButton = new Button(composite, SWT.CHECK);
-		btnCheckButton.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false, 1, 1));
+		btnCheckButton = new Button(grpSshConnectionSettings, SWT.CHECK);
 
 		btnCheckButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -245,87 +257,181 @@ public class SShShell extends Shell {
 			}
 		});
 
-		composite_2 = new Composite(this, SWT.NONE);
-		composite_2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-		composite_2.setLayout(new GridLayout(3, false));
+		grpVirtualMachinePaths = new Group(this, SWT.NONE);
+		grpVirtualMachinePaths.setLayout(new GridLayout(3, false));
+		GridData gd_grpVirtualMachinePaths = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_grpVirtualMachinePaths.heightHint = 217;
+		grpVirtualMachinePaths.setLayoutData(gd_grpVirtualMachinePaths);
+		grpVirtualMachinePaths.setText("Custom Folder Location on VM ");
 
-		lblNewLabel_5 = new Label(composite_2, SWT.NONE);
-		lblNewLabel_5.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblNewLabel_5.setText("App Folder");
-
-		text_app = new Text(composite_2, SWT.BORDER);
-		text_app.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		btnCheckButtonAppFolder = new Button(composite_2, SWT.CHECK);
-		btnCheckButtonAppFolder.setText("Enable");
-		btnCheckButtonAppFolder.addSelectionListener(new BrowseAdapter(text_app));
-
-		lblCompositeFile = new Label(composite_2, SWT.NONE);
+		lblCompositeFile = new Label(grpVirtualMachinePaths, SWT.NONE);
 		lblCompositeFile.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblCompositeFile.setText("Composite File");
+		text_composite = new Text(grpVirtualMachinePaths, SWT.BORDER);
+		text_composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-		text_composite = new Text(composite_2, SWT.BORDER);
-		text_composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		btnCheckComposite = new Button(composite_2, SWT.CHECK);
+		btnCheckComposite = new Button(grpVirtualMachinePaths, SWT.CHECK);
 		btnCheckComposite.setText("Enable");
 		btnCheckComposite.addSelectionListener(new BrowseAdapter(text_composite));
 
-		lblKarafcore = new Label(composite_2, SWT.NONE);
+		lblKarafcore = new Label(grpVirtualMachinePaths, SWT.NONE);
 		lblKarafcore.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblKarafcore.setText("Karaf (Core)");
 
-		text_core = new Text(composite_2, SWT.BORDER);
-		text_core.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		text_core = new Text(grpVirtualMachinePaths, SWT.BORDER);
+		text_core.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-		btnCheckCore = new Button(composite_2, SWT.CHECK);
+		btnCheckCore = new Button(grpVirtualMachinePaths, SWT.CHECK);
 		btnCheckCore.setText("Enable");
 		btnCheckCore.addSelectionListener(new BrowseAdapter(text_core));
 
-		lblOdlShim = new Label(composite_2, SWT.NONE);
+		lblOdlShim = new Label(grpVirtualMachinePaths, SWT.NONE);
 		lblOdlShim.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblOdlShim.setText("ODL Shim");
 
-		text_odl = new Text(composite_2, SWT.BORDER);
-		text_odl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		text_odl = new Text(grpVirtualMachinePaths, SWT.BORDER);
+		text_odl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-		btnCheckODL = new Button(composite_2, SWT.CHECK);
+		btnCheckODL = new Button(grpVirtualMachinePaths, SWT.CHECK);
 		btnCheckODL.setText("Enable");
 		btnCheckODL.addSelectionListener(new BrowseAdapter(text_odl));
 
-		lblEngine = new Label(composite_2, SWT.NONE);
+		lblEngine = new Label(grpVirtualMachinePaths, SWT.NONE);
 		lblEngine.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblEngine.setText("Engine");
 
-		text_engine = new Text(composite_2, SWT.BORDER);
-		text_engine.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		text_engine = new Text(grpVirtualMachinePaths, SWT.BORDER);
+		text_engine.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-		btnCheckEngine = new Button(composite_2, SWT.CHECK);
+		btnCheckEngine = new Button(grpVirtualMachinePaths, SWT.CHECK);
 		btnCheckEngine.setText("Enable");
 		btnCheckEngine.addSelectionListener(new BrowseAdapter(text_engine));
 
-		lblTools = new Label(composite_2, SWT.NONE);
+		lblTools = new Label(grpVirtualMachinePaths, SWT.NONE);
 		lblTools.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblTools.setText("Tools");
 
-		text_tools = new Text(composite_2, SWT.BORDER);
-		text_tools.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		text_tools = new Text(grpVirtualMachinePaths, SWT.BORDER);
+		GridData gd_text_tools = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_text_tools.widthHint = 279;
+		text_tools.setLayoutData(gd_text_tools);
 
-		btnCheckTools = new Button(composite_2, SWT.CHECK);
+		btnCheckTools = new Button(grpVirtualMachinePaths, SWT.CHECK);
 		btnCheckTools.setText("Enable");
-
-		lblTopology = new Label(composite_2, SWT.NONE);
-		lblTopology.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblTopology.setText("Topology");
-
-		text_topology = new Text(composite_2, SWT.BORDER);
-		text_topology.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		btnCheckTopo = new Button(composite_2, SWT.CHECK);
-		btnCheckTopo.setText("Enable");
 		btnCheckTools.addSelectionListener(new BrowseAdapter(text_tools));
-		btnCheckTopo.addSelectionListener(new BrowseAdapter(text_topology));
 
+		topo = new Label(grpVirtualMachinePaths, SWT.NONE);
+		topo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		topo.setText("Mininet Config");
+
+		text_topo = new Text(grpVirtualMachinePaths, SWT.BORDER);
+		text_topo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		btnEnableTopo = new Button(grpVirtualMachinePaths, SWT.CHECK);
+		btnEnableTopo.setText("Enable");
+		btnEnableTopo.addSelectionListener(new BrowseAdapter(text_topo));
+
+		lblNewLabel_6 = new Label(grpVirtualMachinePaths, SWT.NONE);
+		lblNewLabel_6.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblNewLabel_6.setText("App Folder");
+
+		text_app = new Text(grpVirtualMachinePaths, SWT.BORDER);
+		text_app.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		btnEnable_App = new Button(grpVirtualMachinePaths, SWT.CHECK);
+		btnEnable_App.setText("Enable");
+		btnEnable_App.addSelectionListener(new BrowseAdapter(text_app));
+
+		grpScpCopyPaths = new Group(this, SWT.NONE);
+		grpScpCopyPaths.setLayout(new GridLayout(3, false));
+		grpScpCopyPaths.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		grpScpCopyPaths.setText("Custom Folder Location for scp");
+		new Label(grpScpCopyPaths, SWT.NONE);
+
+		lblSource = new Label(grpScpCopyPaths, SWT.NONE);
+		lblSource.setText("Source on local device");
+
+		lblTarget = new Label(grpScpCopyPaths, SWT.NONE);
+		lblTarget.setText("Target on VM");
+
+		lblTopology = new Label(grpScpCopyPaths, SWT.NONE);
+		lblTopology.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblTopology.setText("Mininet Config");
+
+		text_min_source = new Text(grpScpCopyPaths, SWT.BORDER);
+		GridData gd_text_min_source = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_text_min_source.widthHint = 149;
+		text_min_source.setLayoutData(gd_text_min_source);
+		text_min_source.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (!text_min_source.getText().equals("")) {
+					minCopyPathSource = true;
+				} else {
+					minCopyPathSource = false;
+				}
+				checkForFinish();
+
+			}
+		});
+
+		text_min_target = new Text(grpScpCopyPaths, SWT.BORDER);
+		GridData gd_text_min_target = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_text_min_target.widthHint = 150;
+		text_min_target.setLayoutData(gd_text_min_target);
+		text_min_target.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (!text_min_target.getText().equals("")) {
+					minCopyPathTarget = true;
+				} else {
+					minCopyPathTarget = false;
+				}
+				checkForFinish();
+
+			}
+		});
+		
+
+		lblNewLabel_5 = new Label(grpScpCopyPaths, SWT.NONE);
+		lblNewLabel_5.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblNewLabel_5.setText("App Folder");
+
+		text_app_copy_source = new Text(grpScpCopyPaths, SWT.BORDER);
+		text_app_copy_source.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		text_app_copy_source.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (!text_app_copy_source.getText().equals("")) {
+					appCopyPathSource = true;
+				} else {
+					appCopyPathSource = false;
+				}
+				checkForFinish();
+
+			}
+		});
+		
+
+		text_app_copy_target = new Text(grpScpCopyPaths, SWT.BORDER);
+		text_app_copy_target.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		text_app_copy_target.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (!text_app_copy_target.getText().equals("")) {
+					appCopyPathTarget = true;
+				} else {
+					appCopyPathTarget = false;
+				}
+				checkForFinish();
+
+			}
+		});
+		
 		doubleTunnelComposite = new Composite(this, SWT.NONE);
 		GridData gd_doubleTunnelComposite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
 		gd_doubleTunnelComposite.heightHint = 92;
@@ -462,7 +568,17 @@ public class SShShell extends Shell {
 			profile.setSecondUsername("");
 		}
 
-		if (btnCheckButtonAppFolder.getSelection())
+		if (appCopyPathSource == appCopyPathTarget) {
+			profile.setAppSource(text_app_copy_source.getText());
+			profile.setAppTarget(text_app_copy_target.getText());
+		}
+
+		if (minCopyPathTarget == minCopyPathSource) {
+			profile.setMinConfigSource(text_min_source.getText());
+			profile.setMinConfigTarget(text_min_target.getText());
+		}
+
+		if (btnEnable_App.getSelection())
 			profile.setAppFolder(text_app.getText());
 		else
 			profile.setAppFolder("");
@@ -487,8 +603,8 @@ public class SShShell extends Shell {
 		else
 			profile.setTools("");
 
-		if (btnCheckTopo.getSelection())
-			profile.setTopology(text_topology.getText());
+		if (btnEnableTopo.getSelection())
+			profile.setTopology(text_topo.getText());
 		else
 			profile.setTopology("");
 	}
@@ -517,15 +633,22 @@ public class SShShell extends Shell {
 	boolean secondPortSet;
 	boolean secondUsernameSet;
 
+	boolean appCopyPathSource;
+	boolean appCopyPathTarget;
+	boolean minCopyPathSource;
+	boolean minCopyPathTarget;
+
 	private void checkForFinish() {
 
 		if (hostSet && portSet && usernameSet && sshFileSet && profileNameSet) {
-			if (!useDoubleTunneL) {
-				saveBTN.setEnabled(true);
-				this.finish = true;
-			} else if (secondHostSet && secondPortSet && secondUsernameSet) {
-				saveBTN.setEnabled(true);
-				this.finish = true;
+			if (appCopyPathSource == appCopyPathTarget && minCopyPathSource == minCopyPathTarget) {
+				if (!useDoubleTunneL) {
+					saveBTN.setEnabled(true);
+					this.finish = true;
+				} else if (secondHostSet && secondPortSet && secondUsernameSet) {
+					saveBTN.setEnabled(true);
+					this.finish = true;
+				}
 			} else {
 				saveBTN.setEnabled(false);
 				this.finish = false;
@@ -540,7 +663,6 @@ public class SShShell extends Shell {
 	private Text txt_SecondPort;
 	private Text txt_SecondHost;
 	private Composite doubleTunnelComposite;
-	private Composite composite_2;
 	private Label lblNewLabel_5;
 	private Label lblOdlShim;
 	private Label lblTools;
@@ -548,23 +670,34 @@ public class SShShell extends Shell {
 	private Label lblKarafcore;
 	private Label lblEngine;
 	private Label lblCompositeFile;
-	private Text text_app;
+	private Text text_app_copy_source;
 	private Text text_composite;
 	private Text text_core;
 	private Text text_odl;
 	private Text text_engine;
 	private Text text_tools;
-	private Text text_topology;
-	private Button btnCheckButtonAppFolder;
+	private Text text_min_source;
 	private Button btnCheckComposite;
 	private Button btnCheckCore;
 	private Button btnCheckODL;
 	private Button btnCheckEngine;
 	private Button btnCheckTools;
-	private Button btnCheckTopo;
 	private boolean finish;
 
 	private SshProfileModel resultModel;
+	private Label lblSource;
+	private Label lblTarget;
+	private Text text_min_target;
+	private Text text_app_copy_target;
+	private Group grpScpCopyPaths;
+	private Group grpVirtualMachinePaths;
+	private Group grpSshConnectionSettings;
+	private Label topo;
+	private Text text_topo;
+	private Button btnEnableTopo;
+	private Text text_app;
+	private Label lblNewLabel_6;
+	private Button btnEnable_App;
 
 	/**
 	 * 

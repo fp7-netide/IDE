@@ -121,14 +121,15 @@ class ControllerManager {
 
 	public def copyApps() {
 		if (sshManager != null) {
-			sshManager.copyApps(this.statusModel.sshModelAtIndex.appFolder)
+			sshManager.copyApps(this.statusModel.sshModelAtIndex.appSource, this.statusModel.sshModelAtIndex.appTarget)
 
 		}
 	}
 
 	public def copyTopology() {
 		if (sshManager != null)
-			sshManager.copyTopo(this.statusModel.sshModelAtIndex.topology)
+			sshManager.copyTopo(this.statusModel.sshModelAtIndex.minConfigSource,
+				this.statusModel.sshModelAtIndex.minConfigTarget)
 	}
 
 	public def importTopology() {
@@ -284,6 +285,7 @@ class ControllerManager {
 			var jobMin = new Job("min Starter") {
 
 				override protected run(IProgressMonitor monitor) {
+					println(statusModel.topologyModel.topologyPath)
 					mnstarter = new MininetStarter(statusModel.topologyModel.topologyPath, backend, monitor)
 					mnstarter.setBackend(backend)
 					// Start Mininet. 
@@ -356,7 +358,7 @@ class ControllerManager {
 					}
 
 					backendStarter = factory.createBackendStarter(launchConfigurationModel.clientController, path, port,
-						monitor, engine, launchConfigurationModel.flag)
+						monitor, engine, launchConfigurationModel.flagBackend)
 					backendStarter.backend = backend
 					configToStarter.put(launchConfigurationModel, backendStarter)
 					reg.register(backendStarter.safeName, backendStarter)

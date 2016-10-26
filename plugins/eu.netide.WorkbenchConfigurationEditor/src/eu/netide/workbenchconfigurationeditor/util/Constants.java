@@ -11,7 +11,8 @@ public class Constants {
 	public static final String APP_NAME_MODEL = "appName";
 	public static final String APP_RUNNING_MODEL = "running";
 	public static final String LaunchName = "name";
-	public static final String FLAG = "flag";
+	public static final String FLAG_BACKEND = "flagBackend";
+	public static final String FLAG_APP = "flagApp";
 
 	// UI Status Model Constants
 	public static final String VAGRANT_RUNNING_MODEL = "vagrantRunning";
@@ -51,6 +52,11 @@ public class Constants {
 	public static final String VAGRANT_BOX = "vagrantBox";
 	public static final String TOOLS = "tools";
 	public static final String TOPOLOGY = "topology";
+	public static final String APP_SOURCE = "appSource";
+	public static final String APP_TARGET = "appTarget";
+	public static final String MIN_CONFIG_SOURCE = "minConfigSource";
+	public static final String MIN_CONFIG_TARGET = "minConfigTarget";
+
 
 	// UI Constants
 	public static final String LABEL_RUNNING = "running";

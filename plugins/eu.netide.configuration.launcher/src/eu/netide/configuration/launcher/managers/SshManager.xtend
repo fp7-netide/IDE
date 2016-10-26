@@ -244,35 +244,45 @@ class SshManager implements IManager {
 	}
 
 	def copyApps() {
-		copyApps("")
+		copyApps("", "")
 	}
 
-	def copyApps(String source) {
+	def copyApps(String source, String target) {
 		exec("rm -rf netide/apps")
 		var sourceLocation = this.project.location + "/apps"
 		if (source != null && source != "")
 			sourceLocation = source
+		var targetLocation = "netide/apps"
+
+		if (target != null && target != "")
+			targetLocation = target
+
 		scp(
 			sourceLocation,
-			"netide/apps"
+			targetLocation
 		)
 	}
 
 	def copyTopo() {
-		copyTopo("")
+		copyTopo("", "")
 	}
 
-	def copyTopo(String topoPath) {
+	def copyTopo(String topoPathSource, String topoPathTarget) {
 		exec("rm -rf netide/mn-configs")
-		
-		var topoPathLocation = this.project.location + "/gen/mininet"
-		
-		if(topoPath != null && topoPath != "")
-			topoPathLocation = topoPath
-		
+
+		var topoPathLocationSource = this.project.location + "/gen/mininet"
+
+		if (topoPathSource != null && topoPathSource != "")
+			topoPathLocationSource = topoPathSource
+
+		var topoPathLocationTarget = "netide/mn-configs"
+
+		if (topoPathTarget != null && topoPathTarget != "")
+			topoPathLocationTarget = topoPathTarget
+
 		scp(
-			topoPathLocation,
-			"netide/mn-configs"
+			topoPathLocationSource,
+			topoPathLocationTarget
 		)
 	}
 

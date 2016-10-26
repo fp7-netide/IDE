@@ -81,7 +81,7 @@ abstract class Starter implements IStarter {
 		if (vagrantFilePath != null && vagrantFilePath != "") {
 			var uri = URI.createURI(vagrantFilePath)
 			var pathVagrant = new Path(uri.path)
-			println("path to check: " +pathVagrant)
+			
 			this.workingDir = pathVagrant.toFile
 		} else {
 			this.workingDir = path.getIFile.project.location.toFile
@@ -153,7 +153,7 @@ abstract class Starter implements IStarter {
 		}
 
 		def getIFile(String s) {
-			println(s)
+			println("trying to derive file form string: " + s)
 			var uri = URI.createURI(s)
 			var path = new Path(uri.path)
 			
