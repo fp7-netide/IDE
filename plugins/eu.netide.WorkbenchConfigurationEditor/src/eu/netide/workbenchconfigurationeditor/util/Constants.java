@@ -11,6 +11,7 @@ public class Constants {
 	public static final String APP_NAME_MODEL = "appName";
 	public static final String APP_RUNNING_MODEL = "running";
 	public static final String LaunchName = "name";
+	public static final String FLAG = "flag";
 
 	// UI Status Model Constants
 	public static final String VAGRANT_RUNNING_MODEL = "vagrantRunning";

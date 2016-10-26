@@ -125,7 +125,7 @@ class ControllerManager {
 
 		}
 	}
-	
+
 	public def copyTopology() {
 		if (sshManager != null)
 			sshManager.copyTopo(this.statusModel.sshModelAtIndex.topology)
@@ -153,7 +153,6 @@ class ControllerManager {
 
 	private def startSshWithConfig(IJobChangeListener listener, SshProfileModel model) {
 		if (!this.statusModel.sshRunning) {
-			
 
 			sshJob = new Job("SshManager") {
 				override protected run(IProgressMonitor monitor) {
@@ -167,7 +166,7 @@ class ControllerManager {
 					}
 					sshManager = new SshManager(wbFile.project, monitor, model.username, model.host, model.port,
 						model.sshIdFile)
-			
+
 					statusModel.sshRunning = true
 					return Status.OK_STATUS
 				}
@@ -357,7 +356,7 @@ class ControllerManager {
 					}
 
 					backendStarter = factory.createBackendStarter(launchConfigurationModel.clientController, path, port,
-						monitor, engine)
+						monitor, engine, launchConfigurationModel.flag)
 					backendStarter.backend = backend
 					configToStarter.put(launchConfigurationModel, backendStarter)
 					reg.register(backendStarter.safeName, backendStarter)

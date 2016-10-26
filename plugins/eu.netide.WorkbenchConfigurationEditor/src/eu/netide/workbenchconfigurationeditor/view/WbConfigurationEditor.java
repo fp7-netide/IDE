@@ -317,31 +317,21 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				tmpModel = new LaunchConfigurationModel();
+				
 
 				tempShell = new ConfigurationShell(container.getDisplay());
 				tempShell.openShell(null);
 
-				String[] content = tempShell.getSelectedContent();
-				if (content != null) {
+				tmpModel = tempShell.getModel();
+				if (tmpModel != null) {
 					boolean complete = true;
-					if (content[1].equals("") || content[4].equals(""))
+					if (tmpModel.getPlatform().equals("") || tmpModel.getAppPath().equals(""))
 						complete = false;
 
 					if (complete) {
-						tmpModel.setPlatform(content[1]);
-						tmpModel.setClientController(content[2]);
-						tmpModel.setAppPort(content[3]);
-						tmpModel.setAppPath(content[4]);
-						tmpModel.setName(content[5]);
-						tmpModel.setRunning(false);
-						String[] tmp = content[4].split("/");
-						String appName = tmp[tmp.length - 1];
-						tmpModel.setAppName(appName);
-						tmpModel.setID(UUID.randomUUID().toString());
-						setIsDirty(true);
-
+						
 						engine.getStatusModel().addEntryToModelList(tmpModel);
+						setIsDirty(true);
 					}
 				}
 
@@ -358,22 +348,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					tempShell = new ConfigurationShell(container.getDisplay());
 					tempShell.openShell(model);
 
-					String[] content = tempShell.getSelectedContent();
-					if (content != null) {
+					model = tempShell.getModel();
+					if (model != null) {
 						boolean complete = true;
-						if (content[1].equals("") || content[4].equals(""))
+						if (model.getPlatform().equals("") || model.getAppPath().equals(""))
 							complete = false;
 
 						if (complete) {
-
-							model.setPlatform(content[1]);
-							model.setClientController(content[2]);
-							model.setAppPort(content[3]);
-							model.setAppPath(content[4]);
-							String[] tmp = content[4].split("/");
-							String appName = tmp[tmp.length - 1];
-							model.setAppName(appName);
-							model.setID(UUID.randomUUID().toString());
 
 							setIsDirty(true);
 						}
@@ -924,19 +905,23 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		TableColumn tc3 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc4 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc5 = new TableColumn(table, SWT.CENTER);
-
+		TableColumn tc6 = new TableColumn(table, SWT.CENTER);
+		
 		tc0.setText("Name");
 		tc1.setText("App Name");
 		tc2.setText("Active");
 		tc3.setText("Platform");
 		tc4.setText("Client");
 		tc5.setText("Port");
+		tc6.setText("Flags");
 		tc0.setWidth(100);
 		tc1.setWidth(120);
 		tc2.setWidth(80);
 		tc3.setWidth(100);
 		tc4.setWidth(100);
 		tc5.setWidth(100);
+		tc6.setWidth(120);
+		
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 

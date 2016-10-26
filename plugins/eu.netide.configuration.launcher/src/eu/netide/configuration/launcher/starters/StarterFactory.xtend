@@ -161,11 +161,11 @@ class StarterFactory {
 	}
 
 	public def IStarter createBackendStarter(String platform, String appPath, int port, IProgressMonitor monitor) {
-		createBackendStarter(platform, appPath, port, monitor, null)
+		createBackendStarter(platform, appPath, port, monitor, null, null)
 	}
 
 	public def IStarter createBackendStarter(String platform, String appPath, int port, IProgressMonitor monitor,
-		String engine) {
+		String engine, String flag) {
 
 		var clientplatform = platform
 		var IStarter starter
@@ -173,7 +173,7 @@ class StarterFactory {
 			case NetIDE.CONTROLLER_FLOODLIGHT:
 				starter = new FloodlightBackendStarter(port, appPath, monitor)
 			case NetIDE.CONTROLLER_RYU:
-				starter = new RyuBackendStarter(port, appPath, monitor, engine)
+				starter = new RyuBackendStarter(port, appPath, monitor, engine, flag)
 			case NetIDE.CONTROLLER_PYRETIC:
 				starter = new PyreticBackendStarter(port, appPath, monitor)
 		}

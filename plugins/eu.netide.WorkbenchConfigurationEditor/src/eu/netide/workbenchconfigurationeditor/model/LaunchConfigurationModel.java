@@ -18,6 +18,7 @@ public class LaunchConfigurationModel {
 	private String appPort;
 	private boolean running;
 	private String name;
+	private String flag;
 
 	public LaunchConfigurationModel() {
 		changes = new PropertyChangeSupport(this);
@@ -41,6 +42,14 @@ public class LaunchConfigurationModel {
 	
 	public String getPlatform() {
 		return this.platform;
+	}
+	
+	public String getFlag() {
+		return this.flag;
+	}
+	
+	public void setFlag(String flag){
+		changes.firePropertyChange(Constants.FLAG, this.flag, this.flag = flag);
 	}
 
 	public void setPlatform(String platform) {
