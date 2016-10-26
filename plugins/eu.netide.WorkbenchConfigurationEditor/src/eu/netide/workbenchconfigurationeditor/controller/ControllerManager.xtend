@@ -378,7 +378,7 @@ class ControllerManager {
 					if (statusModel.sshRunning)
 						appFolderPath = statusModel.sshModelAtIndex.appFolder
 					starter = factory.createSingleControllerStarter(controllerplatform, path, port, monitor,
-						appFolderPath)
+						appFolderPath, launchConfigurationModel.flagApp)
 					starter.setBackend(backend)
 					reg.register(starter.safeName, starter)
 					configToStarter.put(launchConfigurationModel, starter)

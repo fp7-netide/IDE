@@ -57,11 +57,11 @@ class StarterFactory {
 
 	public def IStarter createSingleControllerStarter(String platform, String appPath, int port,
 		IProgressMonitor monitor) {
-		createSingleControllerStarter(platform, appPath, port, monitor, null)
+		createSingleControllerStarter(platform, appPath, port, monitor, null, null)
 	}
 
 	public def IStarter createSingleControllerStarter(String platform, String appPath, int port,
-		IProgressMonitor monitor, String appFolderPath) {
+		IProgressMonitor monitor, String appFolderPath, String appFlag) {
 		var controllerplatform = platform
 
 		if (controllerplatform.equals(NetIDE.CONTROLLER_ENGINE)) {
@@ -71,7 +71,7 @@ class StarterFactory {
 				case NetIDE.CONTROLLER_POX:
 					starter = new PoxStarter(port, appPath, monitor)
 				case NetIDE.CONTROLLER_RYU:
-					starter = new RyuStarter(port, appPath, monitor, appFolderPath)
+					starter = new RyuStarter(port, appPath, monitor, appFolderPath, appFlag)
 				case NetIDE.CONTROLLER_PYRETIC:
 					starter = new PyreticStarter(port, appPath, monitor)
 			}

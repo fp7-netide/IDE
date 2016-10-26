@@ -906,6 +906,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		TableColumn tc4 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc5 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc6 = new TableColumn(table, SWT.CENTER);
+		TableColumn tc7 = new TableColumn(table, SWT.CENTER);
 		
 		tc0.setText("Name");
 		tc1.setText("App Name");
@@ -913,7 +914,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		tc3.setText("Platform");
 		tc4.setText("Client");
 		tc5.setText("Port");
-		tc6.setText("Flags");
+		tc6.setText("Flag Backend");
+		tc7.setText("Flag App");
 		tc0.setWidth(100);
 		tc1.setWidth(120);
 		tc2.setWidth(80);
@@ -921,6 +923,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		tc4.setWidth(100);
 		tc5.setWidth(100);
 		tc6.setWidth(120);
+		tc7.setWidth(100);
 		
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);

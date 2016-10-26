@@ -60,10 +60,13 @@ public class ConfigurationShell extends Shell {
 				}
 				this.platformSet = true;
 				
-				if(model.getFlag() == null)
-					model.setFlag("");
+				if(model.getFlagBackend() == null)
+					model.setFlagBackend("");
+				if(model.getFlagApp() == null)
+					model.setFlagApp("");
 				
-				flagText.setText(model.getFlag());
+				text_flag_app.setText(model.getFlagApp());
+				text_flag_backend.setText(model.getFlagBackend());
 				portText.setText(model.getAppPort());
 
 				checkForFinish();
@@ -117,7 +120,7 @@ public class ConfigurationShell extends Shell {
 
 		Group appGroup = new Group(this, SWT.NONE);
 		GridData gd_appGroup = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-		gd_appGroup.heightHint = 121;
+		gd_appGroup.heightHint = 155;
 		appGroup.setLayoutData(gd_appGroup);
 		appGroup.setLayout(new GridLayout(3, false));
 
@@ -210,10 +213,18 @@ public class ConfigurationShell extends Shell {
 
 		Label lblFlags = new Label(appGroup, SWT.NONE);
 		lblFlags.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblFlags.setText("Flags");
+		lblFlags.setText("Flag Backend");
 
-		flagText = new Text(appGroup, SWT.BORDER);
-		flagText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		text_flag_backend = new Text(appGroup, SWT.BORDER);
+		text_flag_backend.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(appGroup, SWT.NONE);
+		
+		Label lblFlagApp = new Label(appGroup, SWT.NONE);
+		lblFlagApp.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblFlagApp.setText("Flag App");
+		
+		text_flag_app = new Text(appGroup, SWT.BORDER);
+		text_flag_app.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(appGroup, SWT.NONE);
 
 		Group platform = new Group(this, SWT.NONE);
@@ -305,8 +316,8 @@ public class ConfigurationShell extends Shell {
 					model.setAppName(appName);
 					model.setName(textName.getText());
 
-					model.setFlag(flagText.getText());
-
+					model.setFlagBackend(text_flag_backend.getText());
+					model.setFlagApp(text_flag_app.getText());
 				}
 				shell.dispose();
 
@@ -330,7 +341,8 @@ public class ConfigurationShell extends Shell {
 	private Text appPathText;
 	private Text portText;
 	private Text textName;
-	private Text flagText;
+	private Text text_flag_backend;
+	private Text text_flag_app;
 
 	/**
 	 * 
@@ -355,7 +367,7 @@ public class ConfigurationShell extends Shell {
 	 */
 	protected void createContents() {
 		setText("Choose App Run Configuration");
-		setSize(396, 322);
+		setSize(396, 363);
 
 	}
 

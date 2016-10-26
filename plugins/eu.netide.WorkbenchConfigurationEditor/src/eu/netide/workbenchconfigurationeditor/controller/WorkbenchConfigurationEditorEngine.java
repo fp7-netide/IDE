@@ -206,7 +206,7 @@ public class WorkbenchConfigurationEditorEngine {
 				.bind(this.editor.getTableViewer(), input,
 						BeanProperties.values(new String[] { Constants.LaunchName, Constants.APP_NAME_MODEL,
 								Constants.APP_RUNNING_MODEL, Constants.PLATFORM_MODEL,
-								Constants.CLIENT_CONTROLLER_MODEL, Constants.PORT_MODEL, Constants.FLAG }));
+								Constants.CLIENT_CONTROLLER_MODEL, Constants.PORT_MODEL, Constants.FLAG_BACKEND, Constants.FLAG_APP }));
 
 		// bind selectionIndex to model
 		// selectionIndex == profileListIndex, use it to match selection to

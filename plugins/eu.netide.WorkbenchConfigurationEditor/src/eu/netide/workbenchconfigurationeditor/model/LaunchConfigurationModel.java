@@ -18,7 +18,8 @@ public class LaunchConfigurationModel {
 	private String appPort;
 	private boolean running;
 	private String name;
-	private String flag;
+	private String flagBackend;
+	private String flagApp;
 
 	public LaunchConfigurationModel() {
 		changes = new PropertyChangeSupport(this);
@@ -44,12 +45,12 @@ public class LaunchConfigurationModel {
 		return this.platform;
 	}
 	
-	public String getFlag() {
-		return this.flag;
+	public String getFlagBackend() {
+		return this.flagBackend;
 	}
-	
-	public void setFlag(String flag){
-		changes.firePropertyChange(Constants.FLAG, this.flag, this.flag = flag);
+
+	public void setFlagBackend(String flagBackend){
+		changes.firePropertyChange(Constants.FLAG_BACKEND, this.flagBackend, this.flagBackend = flagBackend);
 	}
 
 	public void setPlatform(String platform) {
@@ -134,6 +135,15 @@ public class LaunchConfigurationModel {
 
 	public void removePropertyChangeListener(PropertyChangeListener l) {
 		changes.removePropertyChangeListener(l);
+	}
+
+	public String getFlagApp() {
+		return flagApp;
+	}
+
+	public void setFlagApp(String flagApp) {
+		changes.firePropertyChange(Constants.FLAG_APP, this.flagApp,
+				this.flagApp = flagApp);
 	}
 
 }
