@@ -12,6 +12,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import eu.netide.configuration.utils.NetIDE;
 import eu.netide.configuration.utils.NetIDEUtil;
 import org.eclipse.swt.widgets.Text;
 
@@ -85,15 +87,22 @@ public class SShShell extends Shell {
 				checkModelStringEmpty(profile.getTools(), text_tools, btnCheckTools);
 				checkModelStringEmpty(profile.getTopology(), text_topo, btnEnableTopo);
 
-
 				if (profile.getAppSource() != null && !profile.getAppSource().equals(""))
 					text_app_copy_source.setText(profile.getAppSource());
-				if (profile.getAppTarget() != null && !profile.getAppTarget().equals(""))
+				if (profile.getAppTarget() != null && !profile.getAppTarget().equals("")) {
 					text_app_copy_target.setText(profile.getAppTarget());
+					if (profile.getAppTarget().equals(NetIDE.APP_TARGET_LOCATION)) {
+						btnCheckAppDefault.setSelection(true);
+					}
+				}
 				if (profile.getMinConfigSource() != null && !profile.getMinConfigSource().equals(""))
 					text_min_source.setText(profile.getMinConfigSource());
-				if (profile.getMinConfigTarget() != null && !profile.getMinConfigTarget().equals(""))
+				if (profile.getMinConfigTarget() != null && !profile.getMinConfigTarget().equals("")) {
 					text_min_target.setText(profile.getMinConfigTarget());
+					if (profile.getMinConfigTarget().equals(NetIDE.MN_CONFIG_TARGET_LOCATION)) {
+						btnCheckMinDefault.setSelection(true);
+					}
+				}
 			}
 			while (!this.isDisposed()) {
 				if (!display.readAndDispatch()) {
@@ -124,7 +133,7 @@ public class SShShell extends Shell {
 	 */
 	public SShShell(Display display) {
 		super(display, SWT.SHELL_TRIM);
-		setSize(480, 716);
+		setSize(568, 716);
 		shell = this;
 		this.display = display;
 		setLayout(new GridLayout(1, false));
@@ -343,7 +352,7 @@ public class SShShell extends Shell {
 		btnEnable_App.addSelectionListener(new BrowseAdapter(text_app));
 
 		grpScpCopyPaths = new Group(this, SWT.NONE);
-		grpScpCopyPaths.setLayout(new GridLayout(3, false));
+		grpScpCopyPaths.setLayout(new GridLayout(4, false));
 		grpScpCopyPaths.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		grpScpCopyPaths.setText("Custom Folder Location for scp");
 		new Label(grpScpCopyPaths, SWT.NONE);
@@ -353,6 +362,7 @@ public class SShShell extends Shell {
 
 		lblTarget = new Label(grpScpCopyPaths, SWT.NONE);
 		lblTarget.setText("Target on VM");
+		new Label(grpScpCopyPaths, SWT.NONE);
 
 		lblTopology = new Label(grpScpCopyPaths, SWT.NONE);
 		lblTopology.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -393,6 +403,10 @@ public class SShShell extends Shell {
 
 			}
 		});
+
+		btnCheckMinDefault = new Button(grpScpCopyPaths, SWT.CHECK);
+		btnCheckMinDefault.setText("Default Target");
+		btnCheckMinDefault.addSelectionListener(new DefaultLocationAdapter(text_min_target, NetIDE.MN_CONFIG_TARGET_LOCATION));
 		
 
 		lblNewLabel_5 = new Label(grpScpCopyPaths, SWT.NONE);
@@ -414,10 +428,14 @@ public class SShShell extends Shell {
 
 			}
 		});
-		
 
 		text_app_copy_target = new Text(grpScpCopyPaths, SWT.BORDER);
 		text_app_copy_target.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+
+		btnCheckAppDefault = new Button(grpScpCopyPaths, SWT.CHECK);
+		btnCheckAppDefault.setText("Default Target");
+		btnCheckAppDefault.addSelectionListener(new DefaultLocationAdapter(text_app_copy_target, NetIDE.APP_TARGET_LOCATION));
+		
 		text_app_copy_target.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -431,7 +449,7 @@ public class SShShell extends Shell {
 
 			}
 		});
-		
+
 		doubleTunnelComposite = new Composite(this, SWT.NONE);
 		GridData gd_doubleTunnelComposite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
 		gd_doubleTunnelComposite.heightHint = 92;
@@ -698,6 +716,8 @@ public class SShShell extends Shell {
 	private Text text_app;
 	private Label lblNewLabel_6;
 	private Button btnEnable_App;
+	private Button btnCheckMinDefault;
+	private Button btnCheckAppDefault;
 
 	/**
 	 * 
@@ -717,6 +737,28 @@ public class SShShell extends Shell {
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
+	}
+
+	protected class DefaultLocationAdapter extends SelectionAdapter {
+		private Text text;
+		private String defaultString;
+
+		public DefaultLocationAdapter(Text correspondingText, String defaultString) {
+			super();
+			this.text = correspondingText;
+			this.defaultString = defaultString;
+		}
+
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			Button sender = (Button) e.getSource();
+
+			if (sender.getSelection() == true) {
+				this.text.setText(this.defaultString);
+			} else {
+				this.text.setText("");
+			}
+		}
 	}
 
 	protected class BrowseAdapter extends SelectionAdapter {

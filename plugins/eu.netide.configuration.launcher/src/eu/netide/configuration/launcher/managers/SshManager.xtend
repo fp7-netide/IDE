@@ -252,7 +252,7 @@ class SshManager implements IManager {
 		var sourceLocation = this.project.location + "/apps"
 		if (source != null && source != "")
 			sourceLocation = source
-		var targetLocation = "netide/apps"
+		var targetLocation = NetIDE.APP_TARGET_LOCATION
 
 		if (target != null && target != "")
 			targetLocation = target
@@ -275,7 +275,7 @@ class SshManager implements IManager {
 		if (topoPathSource != null && topoPathSource != "")
 			topoPathLocationSource = topoPathSource
 
-		var topoPathLocationTarget = "netide/mn-configs"
+		var topoPathLocationTarget = NetIDE.MN_CONFIG_TARGET_LOCATION
 
 		if (topoPathTarget != null && topoPathTarget != "")
 			topoPathLocationTarget = topoPathTarget
