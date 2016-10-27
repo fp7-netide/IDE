@@ -1,85 +1,72 @@
-package eu.netide.chartview.view
+package eu.netide.chartview.view.charts
 
-import eu.netide.lib.netip.Message
 import eu.netide.zmq.hub.client.IZmqNetIpListener
-import eu.netide.zmq.hub.server.ZmqHubManager
 import java.util.Collections
 import java.util.Map
-import org.eclipse.birt.chart.api.ChartEngine
 import org.eclipse.birt.chart.device.IDeviceRenderer
 import org.eclipse.birt.chart.exception.ChartException
 import org.eclipse.birt.chart.factory.GeneratedChartState
 import org.eclipse.birt.chart.factory.Generator
 import org.eclipse.birt.chart.model.Chart
 import org.eclipse.birt.chart.model.ChartWithAxes
+import org.eclipse.birt.chart.model.attribute.ActionType
 import org.eclipse.birt.chart.model.attribute.AxisType
 import org.eclipse.birt.chart.model.attribute.Bounds
 import org.eclipse.birt.chart.model.attribute.IntersectionType
 import org.eclipse.birt.chart.model.attribute.LineAttributes
 import org.eclipse.birt.chart.model.attribute.LineStyle
-import org.eclipse.birt.chart.model.attribute.MarkerType
 import org.eclipse.birt.chart.model.attribute.Position
 import org.eclipse.birt.chart.model.attribute.RiserType
 import org.eclipse.birt.chart.model.attribute.TickStyle
+import org.eclipse.birt.chart.model.attribute.TriggerCondition
 import org.eclipse.birt.chart.model.attribute.impl.BoundsImpl
 import org.eclipse.birt.chart.model.attribute.impl.ColorDefinitionImpl
+import org.eclipse.birt.chart.model.attribute.impl.TooltipValueImpl
 import org.eclipse.birt.chart.model.component.Axis
 import org.eclipse.birt.chart.model.component.Series
 import org.eclipse.birt.chart.model.component.impl.SeriesImpl
 import org.eclipse.birt.chart.model.data.NumberDataSet
 import org.eclipse.birt.chart.model.data.SeriesDefinition
 import org.eclipse.birt.chart.model.data.TextDataSet
+import org.eclipse.birt.chart.model.data.impl.ActionImpl
 import org.eclipse.birt.chart.model.data.impl.NumberDataSetImpl
 import org.eclipse.birt.chart.model.data.impl.SeriesDefinitionImpl
 import org.eclipse.birt.chart.model.data.impl.TextDataSetImpl
+import org.eclipse.birt.chart.model.data.impl.TriggerImpl
 import org.eclipse.birt.chart.model.impl.ChartWithAxesImpl
 import org.eclipse.birt.chart.model.layout.Legend
 import org.eclipse.birt.chart.model.layout.Plot
 import org.eclipse.birt.chart.model.type.BarSeries
-import org.eclipse.birt.chart.model.type.LineSeries
 import org.eclipse.birt.chart.model.type.impl.BarSeriesImpl
-import org.eclipse.birt.chart.model.type.impl.LineSeriesImpl
-import org.eclipse.birt.core.framework.PlatformConfig
 import org.eclipse.swt.events.PaintEvent
 import org.eclipse.swt.events.PaintListener
-import org.eclipse.swt.events.SelectionListener
 import org.eclipse.swt.graphics.GC
 import org.eclipse.swt.graphics.Image
 import org.eclipse.swt.graphics.Rectangle
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.widgets.Display
+import eu.netide.lib.netip.Message
+import eu.netide.lib.netip.MessageType
 
-class MessagesPerAppChartViewer extends Composite implements IZmqNetIpListener, PaintListener {
-	IDeviceRenderer idr = null
-	Chart cm = null
-	GeneratedChartState gcs = null
+class MessagesPerAppChartViewer extends ChartViewer implements IZmqNetIpListener, PaintListener {
+	private Map<String, Integer> data
+	Image imgChart
+	GC gcImage
+	Bounds bo
+
 	/** 
 	 * Used in building the chart for the first time
 	 */
-	boolean bFirstPaint = true
-
-	// private static ILogger logger = Logger.getLogger(
-	// JavaScriptViewer.class.getName( ) );
-	/** 
-	 * Constructor
-	 */
 	new(Composite parent, int style) {
 		super(parent, style)
-		try {
-			var PlatformConfig config = new PlatformConfig()
-			idr = ChartEngine::instance(config).getRenderer("dv.SWT") // $NON-NLS-1$
-			var hub = ZmqHubManager.instance.getHub("tcp://localhost:5557")
-			hub.register(this)
-			hub.running = true
-
-		} catch (ChartException pex) {
-			System::err.println(pex)
-		}
-
-		cm = createLiveChart()
 	}
 
-	def static final Chart createLiveChart() {
+	override getName() {
+		return "Traversing Messages"
+	}
+
+	override final Chart createLiveChart() {
+		data = Collections.synchronizedMap(newHashMap())
 		var ChartWithAxes cwaBar = ChartWithAxesImpl::create()
 		// Plot
 		cwaBar.getBlock().setBackground(ColorDefinitionImpl::WHITE())
@@ -93,7 +80,7 @@ class MessagesPerAppChartViewer extends Composite implements IZmqNetIpListener, 
 		lg.getInsets().setLeft(10)
 		lg.getInsets().setRight(10)
 		// Title
-		cwaBar.getTitle().getLabel().getCaption().setValue("Network Flow")
+		cwaBar.getTitle().getLabel().getCaption().setValue("Traversing messages")
 		// $NON-NLS-1$
 		// X-Axis
 		var Axis xAxisPrimary = cwaBar.getPrimaryBaseAxes().get(0)
@@ -130,7 +117,12 @@ class MessagesPerAppChartViewer extends Composite implements IZmqNetIpListener, 
 		sdX.getSeries().add(seCategory)
 		// Y-Series (1)
 		var BarSeries bs1 = (BarSeriesImpl::create() as BarSeries)
-		bs1.setSeriesIdentifier("# Messages")
+//		bs1.setSeriesIdentifier("# Messages")
+		bs1.triggers.add(
+			TriggerImpl::create(TriggerCondition::ONMOUSEOVER_LITERAL,
+				ActionImpl::create(ActionType.SHOW_TOOLTIP_LITERAL,
+					TooltipValueImpl::create(0, bs1.dataPoint.components.get(0).toString))))
+
 		// $NON-NLS-1$
 		bs1.setRiserOutline(null)
 		bs1.setRiser(RiserType::RECTANGLE_LITERAL)
@@ -143,10 +135,23 @@ class MessagesPerAppChartViewer extends Composite implements IZmqNetIpListener, 
 		return cwaBar
 	}
 
-	def static final package void updateDataSet(ChartWithAxes cwaBar) {
+	override update(Message msg) {
+		if (msg.header.messageType == MessageType.OPENFLOW) {
+			synchronized (data) {
+				if (!data.containsKey("" + msg.header.moduleId)) {
+					data.put("" + msg.header.moduleId, 0)
+				}
+				var value = data.get("" + msg.header.moduleId)
+				data.put("" + msg.header.moduleId, value + 1)
+			}
+
+		}
+	}
+
+	override final void updateDataSet(ChartWithAxes cwaBar) {
 		var xarr = data.keySet.toList()
 		var yarr = data.values.toList()
-		
+
 		if (data.keySet.length == 0) {
 			xarr.add("0")
 			yarr.add(0)
@@ -172,22 +177,18 @@ class MessagesPerAppChartViewer extends Composite implements IZmqNetIpListener, 
 //	static final double[] da2 = #[20, 35, 59, 105, 150, -37, -65, -99, -145, -185]
 //	static final String[] sa = #["App1"]
 //	static final int[] da1 = #[1]
-	static final Map<String, Integer> data = Collections.synchronizedMap(newHashMap())
-	Image imgChart
-	GC gcImage
-	Bounds bo
-
-
-	override update(Message msg) {
-		synchronized (data) {
-			if (!data.containsKey(msg.header.moduleId)) {
-				data.put("" + msg.header.moduleId, 0)
-			}
-			var value = data.get("" + msg.header.moduleId)
-			data.put("" + msg.header.moduleId, value+1)
-		}
-	}
-
+//	override update(Message msg) {
+//		if (msg.header.messageType == MessageType.OPENFLOW) {
+//			synchronized (data) {
+//				if (!data.containsKey("" + msg.header.moduleId)) {
+//					data.put("" + msg.header.moduleId, 0)
+//				}
+//				var value = data.get("" + msg.header.moduleId)
+//				data.put("" + msg.header.moduleId, value + 1)
+//			}
+//
+//		}
+//	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -220,27 +221,6 @@ class MessagesPerAppChartViewer extends Composite implements IZmqNetIpListener, 
 
 		bFirstPaint = false
 		Display::getDefault().timerExec(500, ([|chartRefresh()] as Runnable))
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see SelectionListener#widgetDefaultSelected(org.
-	 * eclipse .swt.events.SelectionEvent)
-	 */
-	def private void chartRefresh() {
-		if (!isDisposed()) {
-			val Generator gr = Generator::instance()
-			updateDataSet((cm as ChartWithAxes))
-			// Refresh
-			try {
-				gr.refresh(gcs)
-			} catch (ChartException ex) {
-				ex.printStackTrace()
-			}
-
-			redraw()
-		}
 	}
 
 }
