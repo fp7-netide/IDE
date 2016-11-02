@@ -7,15 +7,15 @@ class ZmqHubManager {
 	public static val instance = new ZmqHubManager
 
 	var WritableList reg
-	
+
 	new() {
 		reg = WritableList.withElementType(typeof(ZmqHub))
 	}
-	
+
 	public def getHub(String address) {
 		getHub("", address)
 	}
-	
+
 	public def ZmqHub getHub(String name, String address) {
 		var hub = reg.findFirst[h|(h as ZmqHub).address.equals(address) && (h as ZmqHub).name.equals(name)] as ZmqHub
 		if (hub == null) {

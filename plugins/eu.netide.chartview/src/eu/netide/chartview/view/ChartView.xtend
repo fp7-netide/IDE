@@ -73,36 +73,37 @@ class ChartView extends ViewPart {
 		mainComposite.layoutData = new GridData(GridData.FILL_BOTH)
 		sc.setContent(mainComposite)
 
+		val Combo comboChartChooser = new Combo(mainComposite, SWT.READ_ONLY)
+		comboChartChooser.layoutData = new GridData(GridData.FILL_HORIZONTAL)
+		comboChartChooser.addSelectionListener(new SelectionListener() {
+
+			override widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e)
+			}
+
+			override widgetSelected(SelectionEvent e) {
+				viewerObjects.forEach[v | (v.layoutData as GridData).exclude = true]
+				var viewer = viewerObjects.findFirst [ v | v.name == comboChartChooser.text ]
+				(viewer.layoutData as GridData).exclude = false
+				viewer.redraw
+				mainComposite.layout()
+				mainComposite.redraw
+			}
+
+		})
 
 		if (viewerObjects.empty) {
 			viewerObjects.addAll(viewerClasses.map [ v |
 				var viewer = (v.constructors.get(0) as Constructor<ChartViewer>).newInstance(mainComposite,
 					SWT.NO_BACKGROUND) as ChartViewer
 				viewer.layoutData = new GridData(GridData.FILL_BOTH)
+				(viewer.layoutData as GridData).exclude = true
 				viewer.addPaintListener(viewer)
-				viewer.visible = false
 				return viewer
 			])
 		}
 
-		val Combo comboChartChooser = new Combo(mainComposite, SWT.READ_ONLY)
-		comboChartChooser.layoutData = new GridData(GridData.FILL_HORIZONTAL)
-		comboChartChooser.addSelectionListener(new SelectionListener() {
-
-			override widgetDefaultSelected(SelectionEvent e) {
-				throw new UnsupportedOperationException("TODO: auto-generated method stub")
-			}
-
-			override widgetSelected(SelectionEvent e) {
-				viewerObjects.forEach[v | (v.layoutData as GridData).exclude = true]
-				var viewer = viewerObjects.findFirst [ v |
-					v.name == comboChartChooser.text
-				]
-				(viewer.layoutData as GridData).exclude = false
-				viewer.parent.layout()
-			}
-
-		})
+		mainComposite.layout()
 
 		viewerObjects.forEach[v|comboChartChooser.add(v.name)]
 		comboChartChooser.select(0);

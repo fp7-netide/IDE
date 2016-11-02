@@ -108,7 +108,7 @@ class MessagesPerAppChartViewer extends ChartViewer implements IZmqNetIpListener
 		yAxisPrimary.setType(AxisType::LINEAR_LITERAL)
 		yAxisPrimary.getMajorGrid().setTickStyle(TickStyle::LEFT_LITERAL)
 		yAxisPrimary.getMajorGrid().getLineAttributes().setStyle(LineStyle::DOTTED_LITERAL)
-		yAxisPrimary.getMajorGrid().getLineAttributes().setColor(ColorDefinitionImpl::RED())
+		yAxisPrimary.getMajorGrid().getLineAttributes().setColor(ColorDefinitionImpl::BLUE())
 		yAxisPrimary.getMajorGrid().getLineAttributes().setVisible(true)
 		// X-Series
 		var Series seCategory = SeriesImpl::create()
@@ -144,7 +144,6 @@ class MessagesPerAppChartViewer extends ChartViewer implements IZmqNetIpListener
 				var value = data.get("" + msg.header.moduleId)
 				data.put("" + msg.header.moduleId, value + 1)
 			}
-
 		}
 	}
 
