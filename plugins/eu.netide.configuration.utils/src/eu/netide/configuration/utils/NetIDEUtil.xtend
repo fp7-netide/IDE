@@ -31,6 +31,22 @@ class NetIDEUtil {
 		}
 	}
 
+	static def formatPathWithSpaces(String path) {
+		var newPath = path
+		if (!newPath.startsWith("\"")) {
+			newPath = "\"".concat(newPath)
+		}
+		if (!newPath.endsWith("\"")) {
+			newPath = newPath.concat("\"")
+		}
+		if (newPath.contains(" ")) {
+			newPath = newPath.replace("\\ ", " ")
+			newPath = newPath.replace(" ", "\\ ")
+		}
+
+		return newPath
+	}
+
 	static def toPlatformUri(IResource file) {
 		return URI.createPlatformResourceURI(file.fullPath.toString, false).toString
 	}

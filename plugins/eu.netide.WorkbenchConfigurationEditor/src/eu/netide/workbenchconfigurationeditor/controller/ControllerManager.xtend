@@ -16,7 +16,6 @@ import eu.netide.configuration.launcher.starters.impl.CoreSpecificationStarter
 import eu.netide.configuration.launcher.starters.impl.CoreStarter
 import eu.netide.configuration.launcher.starters.impl.DebuggerStarter
 import eu.netide.configuration.launcher.starters.impl.MininetStarter
-import eu.netide.configuration.launcher.starters.impl.OdlShimStarter
 import eu.netide.configuration.utils.NetIDE
 import eu.netide.configuration.utils.NetIDEUtil
 import eu.netide.configuration.utils.fsa.FSAProvider
@@ -122,9 +121,15 @@ class ControllerManager {
 
 	public def copyApps() {
 		if (sshManager != null) {
-			sshManager.copyApps
-			sshManager.copyTopo
+			sshManager.copyApps(this.statusModel.sshModelAtIndex.appSource, this.statusModel.sshModelAtIndex.appTarget)
+
 		}
+	}
+
+	public def copyTopology() {
+		if (sshManager != null)
+			sshManager.copyTopo(this.statusModel.sshModelAtIndex.minConfigSource,
+				this.statusModel.sshModelAtIndex.minConfigTarget)
 	}
 
 	public def importTopology() {
@@ -169,7 +174,6 @@ class ControllerManager {
 			}
 			sshJob.addJobChangeListener(listener)
 			sshJob.schedule
-
 			this.statusModel.sshRunning = true
 
 		}
@@ -185,7 +189,6 @@ class ControllerManager {
 			this.statusModel.debuggerRunning = false
 			this.statusModel.serverControllerRunning = false
 			this.statusModel.modelList.forEach[m|m.running = false]
-
 			this.statusModel.sshRunning = false
 			this.updateBackend(null)
 			this.statusModel.sshRunning = false
@@ -273,7 +276,7 @@ class ControllerManager {
 
 	public def startMininet() {
 		if (!this.statusModel.mininetRunning) {
-			
+
 //			if (mnstarter != null) {
 //				mnstarter.setBackend(backend)
 //				mnstarter.asyncStart
@@ -282,6 +285,7 @@ class ControllerManager {
 			var jobMin = new Job("min Starter") {
 
 				override protected run(IProgressMonitor monitor) {
+					println(statusModel.topologyModel.topologyPath)
 					mnstarter = new MininetStarter(statusModel.topologyModel.topologyPath, backend, monitor)
 					mnstarter.setBackend(backend)
 					// Start Mininet. 
@@ -305,9 +309,15 @@ class ControllerManager {
 			override protected run(IProgressMonitor monitor) {
 
 				var platform = statusModel.shimModel.shim
+				var engine = ""
+				var odl = ""
 
+				if (statusModel.sshRunning) {
+					engine = statusModel.sshModelAtIndex.engine
+					odl = statusModel.sshModelAtIndex.odl
+				}
 				serverControllerStarter = factory.createShimStarter(platform, NetIDEUtil.toPlatformUri(wbFile), 6644,
-					monitor)
+					monitor, engine, odl)
 
 				serverControllerStarter.backend = backend
 				serverControllerStarter.asyncStart
@@ -339,8 +349,16 @@ class ControllerManager {
 		if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
 			var job = new Job("BackendStarter") {
 				override run(IProgressMonitor monitor) {
+
+					var engine = ""
+
+					if (statusModel.sshRunning) {
+						engine = statusModel.sshModelAtIndex.engine
+
+					}
+
 					backendStarter = factory.createBackendStarter(launchConfigurationModel.clientController, path, port,
-						monitor)
+						monitor, engine, launchConfigurationModel.flagBackend)
 					backendStarter.backend = backend
 					configToStarter.put(launchConfigurationModel, backendStarter)
 					reg.register(backendStarter.safeName, backendStarter)
@@ -355,7 +373,12 @@ class ControllerManager {
 			var jobSingle = new Job("single Starter") {
 
 				override protected run(IProgressMonitor monitor) {
-					starter = factory.createSingleControllerStarter(controllerplatform, path, port, monitor)
+
+					var appFolderPath = ""
+					if (statusModel.sshRunning)
+						appFolderPath = statusModel.sshModelAtIndex.appFolder
+					starter = factory.createSingleControllerStarter(controllerplatform, path, port, monitor,
+						appFolderPath, launchConfigurationModel.flagApp)
 					starter.setBackend(backend)
 					reg.register(starter.safeName, starter)
 					configToStarter.put(launchConfigurationModel, starter)
@@ -389,7 +412,11 @@ class ControllerManager {
 		val debuggerJob = new Job("Debugger") {
 			override protected run(IProgressMonitor monitor) {
 				if (debuggerStarter == null) {
-					debuggerStarter = new DebuggerStarter(backend, NetIDEUtil.toPlatformUri(wbFile), monitor)
+					var tools = ""
+					if (statusModel.sshRunning)
+						tools = statusModel.sshModelAtIndex.tools
+
+					debuggerStarter = new DebuggerStarter(backend, NetIDEUtil.toPlatformUri(wbFile), monitor, tools)
 					reg.register(debuggerStarter.safeName, debuggerStarter)
 				}
 				if (!statusModel.debuggerRunning) {
@@ -433,9 +460,11 @@ class ControllerManager {
 
 		val coreJob = new Job("CoreManager") {
 			override protected run(IProgressMonitor monitor) {
-
+				var core = ""
+				if (statusModel.sshRunning)
+					core = statusModel.sshModelAtIndex.core
 				coreStarter = new CoreStarter(backend,
-					URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString, monitor)
+					URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString, monitor, core)
 //				if (!statusModel.coreRunning)
 //					startCoreJob.schedule
 				coreStarter.backend = backend

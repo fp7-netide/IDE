@@ -8,8 +8,8 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>0.23.0</tycho-version>
-		<xtend-version>2.7.3</xtend-version>
+		<tycho-version>0.25.0</tycho-version>
+		<xtend-version>2.9.0</xtend-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -24,6 +24,11 @@
 			<id>eclipse-mars</id>
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/releases/mars</url>
+		</repository>
+		<repository>
+			<id>eclipse-neon</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/neon</url>
 		</repository>
 		<repository>
 			<id>netide-dependencies</id>
