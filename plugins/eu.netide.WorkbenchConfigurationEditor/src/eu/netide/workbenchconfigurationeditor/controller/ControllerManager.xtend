@@ -27,6 +27,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import org.eclipse.core.resources.IFile
 import org.eclipse.core.resources.IResource
+import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.IJobChangeListener
@@ -34,6 +35,7 @@ import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.core.runtime.Path
 
 class ControllerManager {
 
@@ -317,9 +319,9 @@ class ControllerManager {
 					odl = statusModel.sshModelAtIndex.odl
 				}
 				var portInt = 6644;
-				if(port != "")
+				if (port != "")
 					portInt = Integer.parseInt(port)
-					
+
 				serverControllerStarter = factory.createShimStarter(platform, NetIDEUtil.toPlatformUri(wbFile), portInt,
 					monitor, engine, odl)
 
@@ -516,6 +518,13 @@ class ControllerManager {
 	public def loadComposition() {
 		val compositionJob = new Job("CompositionJob") {
 			override protected run(IProgressMonitor monitor) {
+				if (sshManager != null) {
+					var file = statusModel.compositionModel.compositionPath.IFile
+					var fullpath = file.location
+
+					sshManager.copyComposition(fullpath.toString)
+				}
+
 				// configuration needs to contain topology path !
 				compositionStarter = new CoreSpecificationStarter(statusModel.compositionModel.compositionPath, backend,
 					monitor);
@@ -528,4 +537,26 @@ class ControllerManager {
 		compositionJob.schedule
 	}
 
+	def getIFile(String s) {
+
+		var uri = URI.createURI(s)
+		var path = new Path(uri.path)
+
+		var fileName = path.removeFirstSegments(2)
+
+		var projectLocation = path.removeFirstSegments(1).removeLastSegments(1)
+
+		var root = ResourcesPlugin.getWorkspace().getRoot()
+
+		var projectLocationBase = projectLocation.segment(0)
+
+		var myProject = root.getProject(projectLocationBase);
+
+		if (myProject.exists() && !myProject.isOpen())
+			myProject.open(null);
+
+		var file = myProject.getFile(fileName)
+
+		return file
+	}
 }
