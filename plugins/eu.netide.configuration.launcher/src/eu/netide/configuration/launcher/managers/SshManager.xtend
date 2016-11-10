@@ -257,7 +257,6 @@ class SshManager implements IManager {
 		var targetP = target
 		if (targetP == null || targetP == ""){
 			targetP = NetIDE.COMPOSITION_PATH
-			println(targetP)
 		}
 		scp(source, targetP)
 

@@ -287,7 +287,7 @@ class ControllerManager {
 			var jobMin = new Job("min Starter") {
 
 				override protected run(IProgressMonitor monitor) {
-					println(statusModel.topologyModel.topologyPath)
+					
 					mnstarter = new MininetStarter(statusModel.topologyModel.topologyPath, backend, monitor)
 					mnstarter.setBackend(backend)
 					// Start Mininet. 
