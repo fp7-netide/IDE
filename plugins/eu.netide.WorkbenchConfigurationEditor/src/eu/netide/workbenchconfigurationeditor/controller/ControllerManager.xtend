@@ -303,7 +303,7 @@ class ControllerManager {
 
 	private IStarter serverControllerStarter;
 
-	public def startServerController(String serverController) {
+	public def startServerController(String serverController, String port) {
 
 		var job = new Job("Shim Server") {
 			override protected run(IProgressMonitor monitor) {
@@ -316,7 +316,11 @@ class ControllerManager {
 					engine = statusModel.sshModelAtIndex.engine
 					odl = statusModel.sshModelAtIndex.odl
 				}
-				serverControllerStarter = factory.createShimStarter(platform, NetIDEUtil.toPlatformUri(wbFile), 6644,
+				var portInt = 6644;
+				if(port != "")
+					portInt = Integer.parseInt(port)
+					
+				serverControllerStarter = factory.createShimStarter(platform, NetIDEUtil.toPlatformUri(wbFile), portInt,
 					monitor, engine, odl)
 
 				serverControllerStarter.backend = backend

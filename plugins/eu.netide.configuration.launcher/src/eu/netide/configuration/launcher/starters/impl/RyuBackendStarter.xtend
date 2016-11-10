@@ -38,9 +38,11 @@ class RyuBackendStarter extends ControllerStarter {
 
 	override getCommandLine() {
 
-		return String.format(
-			"sudo ryu-manager %s --ofp-tcp-listen-port %s %sryu-backend/ryu-backend.py ~/netide/apps/%s", flags, port,
+		var cmd = String.format(
+			"sudo ryu-manager --ofp-tcp-listen-port %s %s %sryu-backend/ryu-backend.py ~/netide/apps/%s", port, flags,
 			this.enginePath, appPath.removeFirstSegments(1))
+		println(cmd);
+		return cmd;
 	}
 
 }
