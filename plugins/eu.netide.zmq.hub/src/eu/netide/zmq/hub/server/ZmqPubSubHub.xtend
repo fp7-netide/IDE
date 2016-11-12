@@ -14,7 +14,7 @@ import eu.netide.lib.netip.NetIPConverter
 import eu.netide.zmq.hub.client.IZmqRawListener
 import eu.netide.zmq.hub.client.IZmqNetIpListener
 
-class ZmqHub implements IZmqHub, Runnable {
+class ZmqPubSubHub implements IZmqPubSubHub, Runnable {
 
 	private List<IZmqRawListener> rawListeners = newArrayList
 	private List<IZmqNetIpListener> netIpListeners = newArrayList

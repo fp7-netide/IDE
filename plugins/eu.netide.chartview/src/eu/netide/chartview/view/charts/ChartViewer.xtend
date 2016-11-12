@@ -34,7 +34,7 @@ abstract class ChartViewer extends Composite implements IZmqNetIpListener, Paint
 		try {
 			var PlatformConfig config = new PlatformConfig()
 			idr = ChartEngine::instance(config).getRenderer("dv.SWT") // $NON-NLS-1$
-			var hub = ZmqHubManager.instance.getHub("LogPub", "tcp://localhost:5557")
+			var hub = ZmqHubManager.instance.getPubSubHub("LogPub", "tcp://localhost:5557")
 			hub.register(this)
 			hub.running = true
 

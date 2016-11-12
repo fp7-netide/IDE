@@ -1,11 +1,12 @@
 package eu.netide.chartview.view.charts
 
+import eu.netide.lib.netip.Message
+import eu.netide.lib.netip.MessageType
 import eu.netide.zmq.hub.client.IZmqNetIpListener
 import java.util.Collections
 import java.util.Map
 import org.eclipse.birt.chart.device.IDeviceRenderer
 import org.eclipse.birt.chart.exception.ChartException
-import org.eclipse.birt.chart.factory.GeneratedChartState
 import org.eclipse.birt.chart.factory.Generator
 import org.eclipse.birt.chart.model.Chart
 import org.eclipse.birt.chart.model.ChartWithAxes
@@ -45,8 +46,6 @@ import org.eclipse.swt.graphics.Image
 import org.eclipse.swt.graphics.Rectangle
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.widgets.Display
-import eu.netide.lib.netip.Message
-import eu.netide.lib.netip.MessageType
 
 class MessagesPerAppChartViewer extends ChartViewer implements IZmqNetIpListener, PaintListener {
 	private Map<String, Integer> data
