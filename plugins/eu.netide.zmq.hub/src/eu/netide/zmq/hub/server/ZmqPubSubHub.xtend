@@ -13,6 +13,8 @@ import org.zeromq.ZMQException
 import eu.netide.lib.netip.NetIPConverter
 import eu.netide.zmq.hub.client.IZmqRawListener
 import eu.netide.zmq.hub.client.IZmqNetIpListener
+import eu.netide.lib.netip.NetIDEProtocolVersion
+import eu.netide.lib.netip.MessageType
 
 class ZmqPubSubHub implements IZmqPubSubHub, Runnable {
 
@@ -65,9 +67,11 @@ class ZmqPubSubHub implements IZmqPubSubHub, Runnable {
 								var date = new Date()
 								var ft = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 								try {
+									var msg = NetIPConverter.parseConcreteMessage(received)
+									var stringmsg = if (msg.header.messageType == MessageType.MANAGEMENT) new String(msg.payload) else msg.toString  
 									log.add(
 										new LogMsg(ft.format(date),
-											NetIPConverter.parseConcreteMessage(received).toString))
+											stringmsg))
 								} catch (IllegalArgumentException e) {
 									log.add(new LogMsg(ft.format(date), b.toString))
 								}
@@ -88,7 +92,6 @@ class ZmqPubSubHub implements IZmqPubSubHub, Runnable {
 			val nipMessage = NetIPConverter.parseConcreteMessage(message)
 			netIpListeners.forEach[update(nipMessage)]
 		} catch (IllegalArgumentException e) {
-			
 		} finally {
 			rawListeners.forEach[update(message)]
 		}
