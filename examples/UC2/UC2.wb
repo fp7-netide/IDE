@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.8.0_111" class="java.beans.XMLDecoder">
+ <object class="eu.netide.workbenchconfigurationeditor.model.CompositionModel">
+  <void property="ID">
+   <string>69bb50c4-9993-4f93-9cfc-9d6559618c4f</string>
+  </void>
+  <void property="compositionPath">
+   <string>platform:/resource/UC2/composition/composition.xml</string>
+  </void>
+ </object>
+ <object class="eu.netide.workbenchconfigurationeditor.model.TopologyModel">
+  <void property="ID">
+   <string>e5ec2849-a00c-458d-a303-a0b64db66978</string>
+  </void>
+  <void property="topologyPath">
+   <string>platform:/resource/UC2/UC2.topology</string>
+  </void>
+ </object>
+ <object class="java.util.ArrayList">
+  <void method="add">
+   <object class="eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel">
+    <void property="ID">
+     <string>96ecab3c-cb42-46f5-856f-0f681575df84</string>
+    </void>
+    <void property="appName">
+     <string>IITS_NetManager.py</string>
+    </void>
+    <void property="appPath">
+     <string>platform:/resource/UC2/apps/IITS_NetManager.py</string>
+    </void>
+    <void property="appPort">
+     <string>7733</string>
+    </void>
+    <void property="clientController">
+     <string>Ryu</string>
+    </void>
+    <void property="flagApp">
+     <string></string>
+    </void>
+    <void property="flagBackend">
+     <string>--observe-links</string>
+    </void>
+    <void property="name">
+     <string>IITS_NetManager</string>
+    </void>
+    <void property="platform">
+     <string>Network Engine</string>
+    </void>
+    <void property="running">
+     <boolean>true</boolean>
+    </void>
+   </object>
+  </void>
+  <void method="add">
+   <object class="eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel">
+    <void property="ID">
+     <string>d5b6a924-19e7-4911-a6ba-2ba3dfcf43e5</string>
+    </void>
+    <void property="appName">
+     <string>IITS_NetManager_13.py</string>
+    </void>
+    <void property="appPath">
+     <string>platform:/resource/UC2/apps/IITS_NetManager_13.py</string>
+    </void>
+    <void property="appPort">
+     <string>7733</string>
+    </void>
+    <void property="clientController">
+     <string>Ryu</string>
+    </void>
+    <void property="flagApp">
+     <string></string>
+    </void>
+    <void property="flagBackend">
+     <string>--observe-links</string>
+    </void>
+    <void property="name">
+     <string>IITS_NetManager_13</string>
+    </void>
+    <void property="platform">
+     <string>Network Engine</string>
+    </void>
+   </object>
+  </void>
+ </object>
+ <object class="java.util.ArrayList">
+  <void method="add">
+   <object class="eu.netide.workbenchconfigurationeditor.model.SshProfileModel">
+    <void property="appFolder">
+     <string>/home/Juanma/apps</string>
+    </void>
+    <void property="appSource">
+     <string>/home/Juanma/apps</string>
+    </void>
+    <void property="appTarget">
+     <string>/home/netide/netide/apps</string>
+    </void>
+    <void property="composite">
+     <string>/home/netide/NetIDE/apache-karaf-3.0.5/CompositionFile-JavaCore.xml</string>
+    </void>
+    <void property="core">
+     <string>/home/netide/NetIDE/apache-karaf-3.0.5/bin</string>
+    </void>
+    <void property="engine">
+     <string>/home/netide/NetIDE/Engine-mixed</string>
+    </void>
+    <void property="host">
+     <string>192.168.1.112</string>
+    </void>
+    <void property="minConfigSource">
+     <string>/home/Juanma/mininet</string>
+    </void>
+    <void property="minConfigTarget">
+     <string>/home/netide/netide/mn-configs</string>
+    </void>
+    <void property="odl">
+     <string></string>
+    </void>
+    <void property="port">
+     <string>22</string>
+    </void>
+    <void property="profileName">
+     <string>NetIDE-Engine</string>
+    </void>
+    <void property="secondHost">
+     <string></string>
+    </void>
+    <void property="secondPort">
+     <string></string>
+    </void>
+    <void property="secondUsername">
+     <string></string>
+    </void>
+    <void property="sshIdFile">
+     <string>&quot;C:\Users\Juanma\Rsa_keys\Netide&quot;</string>
+    </void>
+    <void property="tools">
+     <string></string>
+    </void>
+    <void property="topology">
+     <string>/home/Juanma/mininet</string>
+    </void>
+    <void property="username">
+     <string>netide</string>
+    </void>
+   </object>
+  </void>
+ </object>
+ <object class="eu.netide.workbenchconfigurationeditor.model.ShimModel">
+  <void property="ID">
+   <string>8221b35b-5d89-4236-8e38-bf9ed62d9611</string>
+  </void>
+  <void property="shim">
+   <string>Ryu</string>
+  </void>
+ </object>
+</java>
