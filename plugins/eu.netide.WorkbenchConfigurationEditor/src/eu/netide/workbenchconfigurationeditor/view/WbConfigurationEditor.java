@@ -39,13 +39,16 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.EditorPart;
 
 import eu.netide.configuration.utils.NetIDE;
+import eu.netide.toolpanel.views.ToolPanel;
 import eu.netide.workbenchconfigurationeditor.controller.ControllerManager;
 import eu.netide.workbenchconfigurationeditor.controller.WorkbenchConfigurationEditorEngine;
 import eu.netide.workbenchconfigurationeditor.dialogs.ConfigurationShell;
@@ -704,7 +707,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		grpCore.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpCore.setText("Core");
-		grpCore.setLayout(new GridLayout(4, false));
+		grpCore.setLayout(new GridLayout(5, false));
 
 		lblCoreStatus = new Label(grpCore, SWT.NONE);
 		GridData gd_lblCoreStatus = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -833,8 +836,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnReattachMininet.setText("Reattach");
 
 		grpDebugger = new Group(composite_2, SWT.NONE);
-		GridData gd_grpDebugger = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_grpDebugger.heightHint = 44;
+		GridData gd_grpDebugger = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 2);
+		gd_grpDebugger.heightHint = 82;
 		grpDebugger.setLayoutData(gd_grpDebugger);
 		grpDebugger.setText("Debugger");
 		grpDebugger.setLayout(new GridLayout(4, false));
@@ -871,6 +874,28 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnDebuggerReattach.setText("Reattach");
+		
+		btnToolView = new Button(grpDebugger, SWT.NONE);
+		btnToolView.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("eu.netide.toolpanel.views.Toolpanel");
+					if (view instanceof ToolPanel) {
+						ToolPanel toolPanel = (ToolPanel) view;
+						toolPanel.setBackend(controllerManager.getBackend());
+						toolPanel.setFile(file);
+					}
+				} catch (PartInitException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnToolView.setText("Show Runtime Tools");
+		new Label(grpDebugger, SWT.NONE);
+		new Label(grpDebugger, SWT.NONE);
+		new Label(grpDebugger, SWT.NONE);
 
 		grpTopology = new Group(composite_2, SWT.NONE);
 		grpTopology.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
@@ -885,7 +910,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		btnLoadTopo = new Button(grpTopology, SWT.NONE);
 		btnLoadTopo.setText("Generate");
-		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 
 		grpConfigurationOverview = new Group(startAppComposite, SWT.NONE);
@@ -1121,6 +1145,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Button btnLoadTopo;
 	private Button btnCopyTopology;
 	private Button btnStopAll;
+	private Button btnToolView;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;

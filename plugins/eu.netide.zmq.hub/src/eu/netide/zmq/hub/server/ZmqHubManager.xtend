@@ -34,7 +34,7 @@ class ZmqHubManager {
 	}
 	
 	public def ZmqSendReceiveHub getSendReceiveHub(String name, String address) {
-		var hub = pubSubReg.findFirst[h|(h as ZmqSendReceiveHub).address.equals(address) && (h as ZmqSendReceiveHub).name.equals(name)] as ZmqSendReceiveHub
+		var hub = sendReceiveReg.findFirst[h|(h as ZmqSendReceiveHub).address.equals(address) && (h as ZmqSendReceiveHub).name.equals(name)] as ZmqSendReceiveHub
 		if (hub == null) {
 			hub = new ZmqSendReceiveHub(name, address)
 			sendReceiveReg.add(hub)

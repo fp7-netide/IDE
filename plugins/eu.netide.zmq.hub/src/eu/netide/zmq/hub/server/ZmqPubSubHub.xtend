@@ -98,11 +98,13 @@ class ZmqPubSubHub implements IZmqPubSubHub, Runnable {
 	}
 
 	override register(IZmqRawListener listener) {
-		rawListeners.add(listener)
+		if (!rawListeners.contains(listener))
+			rawListeners.add(listener)
 	}
 
 	override register(IZmqNetIpListener listener) {
-		netIpListeners.add(listener)
+		if (!netIpListeners.contains(listener))
+			netIpListeners.add(listener)
 	}
 
 	override remove(IZmqRawListener listener) {

@@ -29,6 +29,10 @@ class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 	new(String address) {
 		this("", address)
 	}
+	
+	override void send(String msg) {
+		send(msg, [x | ])
+	}
 
 	override void send(String msg, (String)=>void success) {
 		var t = new Thread() {
@@ -47,7 +51,6 @@ class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 				} catch (ZMQException e) {
 				} finally {
 					req.close
-					ctx.term
 				}
 			}
 

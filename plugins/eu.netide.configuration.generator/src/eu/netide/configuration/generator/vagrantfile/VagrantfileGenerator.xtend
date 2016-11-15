@@ -81,6 +81,7 @@ class VagrantfileGenerator {
 				config.vm.network "forwarded_port", guest: 5557, host: 5557
 				config.vm.network "forwarded_port", guest: 5561, host: 5561
 				config.vm.network "forwarded_port", guest: 5560, host: 5560
+				config.vm.network "forwarded_port", guest: 30556, host: 30556
 			
 				# We use a relatively new Ubuntu box
 				«IF !customBox»

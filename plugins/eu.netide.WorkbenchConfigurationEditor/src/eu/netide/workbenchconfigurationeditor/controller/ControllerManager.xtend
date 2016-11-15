@@ -82,6 +82,7 @@ class ControllerManager {
 
 	private Job sshJob
 
+	@Accessors(PUBLIC_GETTER)
 	private Backend backend;
 
 	/**
