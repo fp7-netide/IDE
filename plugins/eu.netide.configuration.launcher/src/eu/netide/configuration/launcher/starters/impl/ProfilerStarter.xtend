@@ -13,4 +13,8 @@ class ProfilerStarter extends Starter {
 		String.format("bash -c \'cd ~/netide/Tools/profiler/Network_Profiler && python network_profiler.py \'" )
 	}
 	
+	def checkSubclass() {
+		// Disable the check that prevents subclassing of SWT components
+	}
+	
 }

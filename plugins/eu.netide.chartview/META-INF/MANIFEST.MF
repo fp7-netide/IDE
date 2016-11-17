@@ -27,4 +27,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.xtend.lib.macro,
  eu.netide.zmq.hub;bundle-version="0.3.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: eu.netide.chartview.view.charts
 
