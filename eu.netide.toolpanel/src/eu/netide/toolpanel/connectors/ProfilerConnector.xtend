@@ -12,6 +12,10 @@ import eu.netide.zmq.hub.server.ZmqHubManager
 import eu.netide.zmq.hub.server.ZmqPubSubHub
 import org.eclipse.emf.transaction.RecordingCommand
 import org.eclipse.sirius.business.api.session.Session
+import RuntimeTopology.PortStatistics
+import RuntimeTopology.impl.PortStatisticsImpl
+import com.fasterxml.jackson.databind.DeserializationFeature
+import Topology.TopologyFactory
 
 class ProfilerConnector implements IZmqNetIpListener {
 
@@ -19,7 +23,7 @@ class ProfilerConnector implements IZmqNetIpListener {
 	private ObjectMapper mapper
 	private RuntimeModelManager manager
 	private Session session
-	
+
 	new() {
 		this.hub = ZmqHubManager.instance.getPubSubHub("Profiler", "tcp://localhost:5561")
 		this.hub.running = true
@@ -50,10 +54,37 @@ class ProfilerConnector implements IZmqNetIpListener {
 	}
 
 	override update(Message msg) {
+		var res = session.getSemanticResources().iterator().next();
 
+		val env = res.getContents().get(0) as NetworkEnvironment;
+		val rt = res.getContents().get(1) as RuntimeData;
+
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 		var stats = mapper.readTree(msg.payload).get("stats") as ArrayNode
+
 		for (node : stats) {
-			println(node)
+
+			var updateCommand = new RecordingCommand(session.getTransactionalEditingDomain()) {
+
+				override doExecute() {
+
+					val port = env.getNetworks().get(0).getNetworkelements().get(0).getPorts().get(0)
+					var PortStatistics ps = rt.portstatistics.findFirst[x|x.port.equals(port)]
+
+					if (ps == null) {
+						ps = RuntimeTopologyFactory.eINSTANCE.createPortStatistics
+						ps.setRuntimedata(rt);
+
+					}
+
+					ps.tx_bytes = node.get("tx_bytes").asInt
+					ps.rx_bytes = node.get("rx_bytes").asInt
+
+				}
+			};
+			session.getTransactionalEditingDomain().getCommandStack().execute(updateCommand);
+
 		}
+
 	}
 }

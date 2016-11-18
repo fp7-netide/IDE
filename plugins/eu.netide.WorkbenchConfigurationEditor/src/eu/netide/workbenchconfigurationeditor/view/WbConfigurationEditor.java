@@ -502,7 +502,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				String selection = engine.getStatusModel().getServerControllerSelection();
 				if (!engine.getStatusModel().getServerControllerRunning() && !selection.equals("")) {
 					// Create starter for selected server controller
-					controllerManager.startServerController(selection);
+					controllerManager.startServerController(selection, getShimPortText().getText());
 
 					engine.getStatusModel().setServerControllerRunning(true);
 				}
@@ -798,8 +798,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnReattachServer.setText("Reattach");
-		new Label(grpServerController, SWT.NONE);
-		new Label(grpServerController, SWT.NONE);
+		
+		lblPort = new Label(grpServerController, SWT.NONE);
+		lblPort.setText("Port");
+		
+		shimPortText = new Text(grpServerController, SWT.BORDER);
+		GridData gd_text_shim_port = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_text_shim_port.widthHint = 32;
+		shimPortText.setLayoutData(gd_text_shim_port);
 
 		btnImportTopology = new Button(grpServerController, SWT.NONE);
 		btnImportTopology.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
@@ -1146,6 +1152,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Button btnCopyTopology;
 	private Button btnStopAll;
 	private Button btnToolView;
+	private Text shimPortText;
+	private Label lblPort;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;
@@ -1277,5 +1285,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 	public Combo getSelectServerCombo() {
 		return selectServerCombo;
+	}
+
+	public Text getShimPortText() {
+		return this.shimPortText;
 	}
 }

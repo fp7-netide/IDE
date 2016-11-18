@@ -43,11 +43,14 @@ class MininetStarter extends Starter {
 	}
 
 	override getCommandLine() {
-		var mnpath = "sudo python ~/netide/mn-configs/" + if (ne.name != null && ne.name != "")
+
+		var mnpath = "sudo mn -c && sudo python ~/netide/mn-configs/" + if (ne.name != null && ne.name != "")
 			ne.name.replaceAll("[-/()]", "_") + "_run.py"
 		else
 			"NetworkEnvironment" + "_run.py"
 		println("mininet command line: " + mnpath)
+		
+		//var mnpath = "sudo mn -c && sudo python /home/vagrant/netide/mn-configs/Topology/UC2_IITSystem.py $1"
 		return mnpath
 	}
 

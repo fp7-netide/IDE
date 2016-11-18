@@ -153,7 +153,7 @@ abstract class Starter implements IStarter {
 		}
 
 		def getIFile(String s) {
-			println("trying to derive file form string: " + s)
+
 			var uri = URI.createURI(s)
 			var path = new Path(uri.path)
 			

@@ -247,6 +247,21 @@ class SshManager implements IManager {
 		copyApps("", "")
 	}
 
+	def copyComposition(String source) {
+		copyComposition(source, "")
+	}
+
+	def copyComposition(String source, String target) {
+		exec("rm -rf netide/composition")
+		exec("mkdir netide/composition")
+		var targetP = target
+		if (targetP == null || targetP == ""){
+			targetP = NetIDE.COMPOSITION_PATH
+		}
+		scp(source, targetP)
+
+	}
+
 	def copyApps(String source, String target) {
 		exec("rm -rf netide/apps")
 		var sourceLocation = this.project.location + "/apps"
