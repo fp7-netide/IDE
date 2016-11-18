@@ -33,6 +33,8 @@ public class Constants {
 
 	public static final String COMPOSITION_MODEL_PATH = "compositionPath";
 	public static final String SERVER_COMBO_TEXT = "shim";
+	
+	public static final String SHIM_PORT = "port";
 
 	// SSH Profile Model Constants
 	public static final String HOST_MODEL = "host";

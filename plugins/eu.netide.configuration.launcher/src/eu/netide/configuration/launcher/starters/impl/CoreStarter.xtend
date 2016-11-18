@@ -32,8 +32,9 @@ class CoreStarter extends Starter {
 	private String coreKarafPath = NetIDE.CORE_KARAF;
 
 	override getCommandLine() {
+
 		var cmd = String.format("bash -c \'cd %s && ./karaf\'", coreKarafPath)
-		
+
 		return cmd
 	}
 

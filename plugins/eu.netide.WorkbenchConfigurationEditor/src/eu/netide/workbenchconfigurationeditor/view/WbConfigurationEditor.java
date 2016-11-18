@@ -18,6 +18,8 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -246,7 +248,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnInitVagrantFile.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// TODO:
+
 				controllerManager.createVagrantFile();
 			}
 		});
@@ -499,7 +501,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				String selection = engine.getStatusModel().getServerControllerSelection();
 				if (!engine.getStatusModel().getServerControllerRunning() && !selection.equals("")) {
 					// Create starter for selected server controller
-					controllerManager.startServerController(selection, getShimPortText().getText());
+					controllerManager.startServerController(selection, engine.getStatusModel().getShimModel().getPort());
 
 					engine.getStatusModel().setServerControllerRunning(true);
 				}
@@ -738,7 +740,16 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		textCompositionPath = new Text(grpCompositionLoader, SWT.BORDER);
 
 		textCompositionPath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		textCompositionPath.addModifyListener(new ModifyListener(){
 
+			@Override
+			public void modifyText(ModifyEvent e) {
+				setIsDirty(true);
+			}
+			
+		});
+		
+		
 		browseCompositionBtn = new Button(grpCompositionLoader, SWT.NONE);
 		browseCompositionBtn.setText("Browse");
 
@@ -803,6 +814,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		GridData gd_text_shim_port = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_text_shim_port.widthHint = 32;
 		shimPortText.setLayoutData(gd_text_shim_port);
+		shimPortText.addModifyListener(new ModifyListener(){
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				setIsDirty(true);
+			}
+			
+		});
 
 		btnImportTopology = new Button(grpServerController, SWT.NONE);
 		btnImportTopology.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
@@ -885,7 +904,15 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		topo_text = new Text(grpTopology, SWT.BORDER);
 		topo_text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		topo_text.addModifyListener(new ModifyListener(){
 
+			@Override
+			public void modifyText(ModifyEvent e) {
+				setIsDirty(true);
+			}
+			
+		});
+		
 		btnBrowse_topo = new Button(grpTopology, SWT.NONE);
 		btnBrowse_topo.setText("Browse");
 
