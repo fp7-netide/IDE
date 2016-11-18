@@ -1,7 +1,5 @@
 package eu.netide.workbenchconfigurationeditor.view;
 
-import java.util.UUID;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -457,8 +455,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				if (result != null) {
 
 					engine.getStatusModel().addEntryToSSHList(result);
-
+					
 					sshProfileCombo.select(engine.getStatusModel().getProfileList().indexOf(result));
+					engine.getStatusModel().setSshComboSelectionIndex(engine.getStatusModel().getProfileList().indexOf(result));
+					
 					setIsDirty(true);
 				}
 
