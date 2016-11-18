@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
@@ -123,7 +124,10 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addServerControllerComboDataBinding();
 		this.addCompositionTextDataBinding(this.editor.getTextCompositionPath(), Constants.COMPOSITION_MODEL_PATH);
 		this.addTopologyTextDataBinding(this.editor.getTopologyText(), Constants.TOPOLOGY_MODEL_PATH);
+		
+		this.addShimPortTextDataBinding(this.editor.getShimPortText(), Constants.SHIM_PORT);
 
+		
 		this.addShimComboDataBinding(this.editor.getSelectServerCombo(), Constants.SERVER_COMBO_TEXT);
 		
 		// this.addTabFolderBinding(this.editor.getTabFolder().getTabList()[0],
@@ -143,14 +147,22 @@ public class WorkbenchConfigurationEditorEngine {
 	}
 
 	private void addCompositionTextDataBinding(Text text, String property) {
-		IObservableValue textObs = WidgetProperties.text().observe(text);
+		IObservableValue textObs = WidgetProperties.text(SWT.Modify).observe(text);
 		IObservableValue pathObs = BeanProperties.value(CompositionModel.class, property)
 				.observe(this.statusModel.getCompositionModel());
 		this.ctx.bindValue(textObs, pathObs);
 	}
+	
+	private void addShimPortTextDataBinding(Text text, String property) {
+		IObservableValue textObs = WidgetProperties.text(SWT.Modify).observe(text);
+		IObservableValue pathObs = BeanProperties.value(ShimModel.class, property)
+				.observe(this.statusModel.getShimModel());
+
+		this.ctx.bindValue(textObs, pathObs);
+	}
 
 	private void addTopologyTextDataBinding(Text text, String property) {
-		IObservableValue textObs = WidgetProperties.text().observe(text);
+		IObservableValue textObs = WidgetProperties.text(SWT.Modify).observe(text);
 		IObservableValue pathObs = BeanProperties.value(TopologyModel.class, property)
 				.observe(this.statusModel.getTopologyModel());
 		this.ctx.bindValue(textObs, pathObs);
