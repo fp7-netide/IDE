@@ -186,7 +186,7 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 				ProfilerStarter ps = new ProfilerStarter("Profiler Starter", NetIDEUtil.toPlatformUri(file), backend,
 						new NullProgressMonitor());
 				ps.syncStart();
-				profilerConnector = new ProfilerConnector();
+				profilerConnector = new ProfilerConnector(file);
 				
 			}
 		});
@@ -195,36 +195,14 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 		new Label(composite_3, SWT.NONE);
 		new Label(composite_3, SWT.NONE);
 
-		Button btnNewButton = new Button(composite_3, SWT.NONE);
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
+		Button btnRecordButton = new Button(composite_3, SWT.CHECK);
+		btnRecordButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				RuntimeModelManager manager = RuntimeModelManager.getInstance();
-				Session session = manager.getSession();
-
-				Resource res = session.getSemanticResources().iterator().next();
-				
-				NetworkEnvironment env = (NetworkEnvironment) res.getContents().get(0);
-				RuntimeData rt = (RuntimeData) res.getContents().get(1);
-
-
-
-				RecordingCommand updateCommand = new RecordingCommand(session.getTransactionalEditingDomain()) {
-					@Override
-					protected void doExecute() {
-						PortStatistics ps = RuntimeTopologyFactory.eINSTANCE.createPortStatistics();
-						ps.setPort(env.getNetworks().get(0).getNetworkelements().get(0).getPorts().get(0));
-						ps.setRx_bytes(5);
-						ps.setTx_bytes(10);
-						ps.setRuntimedata(rt);
-					
-					}
-				};
-				
-				session.getTransactionalEditingDomain().getCommandStack().execute(updateCommand);
+				profilerConnector.setRecording(btnRecordButton.getSelection());				
 			}
 		});
-		btnNewButton.setText("New Button");
+		btnRecordButton.setText("Record");
 
 		Group composite_2 = new Group(grpProfiler, SWT.NONE);
 		composite_2.setText("Port Statistics");
