@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="NetIDE Tools"
+            icon="icons/sample.gif"
+            category="eu.netide.views"
+            class="eu.netide.toolpanel.views.ToolPanel"
+            id="eu.netide.toolpanel.views.Toolpanel">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.ProblemView"
+               relationship="right"
+               id="eu.netide.toolpanel.views.Toolpanel">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="eu.netide.toolpanel.runtime.OpenRuntimeHandler"
+            id="eu.netide.toolpanel.runtimeload"
+            name="Open Runtime Model">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.sirius.ui.tools.views.model.explorer#PopupMenu">
+         <menu
+               id="eu.netide.toolpanel.runtime.contribution"
+               label="NetIDE Runtime">
+            <command
+                  commandId="eu.netide.toolpanel.runtimeload"
+                  id="eu.netide.toolpanel.runtime.open"
+                  label="Open Runtime Diagram"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeMenuSelection">
+                     <iterate
+                           ifEmpty="true"
+                           operator="or">
+                        <instanceof
+                              value="org.eclipse.core.resources.IFile">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+
+</plugin>
