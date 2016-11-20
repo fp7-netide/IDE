@@ -87,6 +87,7 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 	 * it.
 	 */
 	public void createPartControl(Composite parent) {
+		
 		String address = "localhost";
 		if (backend instanceof SshBackend) {
 			SshBackend sshBackend = (SshBackend) backend;
@@ -187,7 +188,6 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 						new NullProgressMonitor());
 				ps.syncStart();
 				profilerConnector = new ProfilerConnector(file);
-				
 			}
 		});
 		btnStartProfiler.setText("Start Profiler");

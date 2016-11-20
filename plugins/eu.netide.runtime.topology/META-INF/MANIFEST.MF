@@ -9,7 +9,10 @@ Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: RuntimeTopology,
  RuntimeTopology.impl,
- RuntimeTopology.util
+ RuntimeTopology.util,
+ Topology,
+ Topology.impl,
+ Topology.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  eu.netide.configuration;visibility:=reexport

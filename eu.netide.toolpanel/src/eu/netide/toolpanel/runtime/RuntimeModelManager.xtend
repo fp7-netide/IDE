@@ -20,6 +20,7 @@ import org.eclipse.emf.transaction.RecordingCommand
 import Topology.NetworkEnvironment
 import Topology.NetworkElement
 import RuntimeTopology.RuntimeTopologyFactory
+import RuntimeTopology.RuntimeData
 
 class RuntimeModelManager {
 
@@ -27,7 +28,7 @@ class RuntimeModelManager {
 
 	private Resource resource
 	private Session session
-	private NetworkEnvironment root
+	private RuntimeData root
 
 	private DRepresentation rep
 
@@ -43,10 +44,9 @@ class RuntimeModelManager {
 
 		var resourceset = new ResourceSetImpl
 		this.resource = resourceset.createResource(modelURI)
-		var ne = TopologyFactory.eINSTANCE.createNetworkEnvironment
 		var rm = RuntimeTopologyFactory.eINSTANCE.createRuntimeData
-		ne.name = "Runtime Topology"
-		this.resource.contents.add(ne)
+		var ne = TopologyFactory.eINSTANCE.createNetworkEnvironment
+		rm.networkenvironment = ne
 		this.resource.contents.add(rm)
 		this.resource.save(newHashMap())
 
@@ -61,7 +61,7 @@ class RuntimeModelManager {
 		var usersession = UserSession.from(this.session)
 		usersession.selectViewpoints(#["RuntimeTopology"])
 
-		this.root = this.session.getSemanticResources().iterator.next.getContents.get(0) as NetworkEnvironment
+		this.root = this.session.getSemanticResources().iterator.next.getContents.get(0) as RuntimeData
 
 		usersession.save(monitor)
 		this.session.open(monitor)
@@ -72,8 +72,7 @@ class RuntimeModelManager {
 		var desc = DialectManager.INSTANCE.getAvailableRepresentationDescriptions(viewpoints, root).iterator.next
 
 		// DialectManager.INSTANCE.createRepresentation(projectName, ne, desc, session, monitor)
-		var createViewCommand = new CreateRepresentationCommand(this.session, desc, root, "Runtime Topology",
-			monitor)
+		var createViewCommand = new CreateRepresentationCommand(this.session, desc, root, "Runtime Topology", monitor)
 		session.transactionalEditingDomain.getCommandStack().execute(createViewCommand)
 
 		session.createView(viewpoint, newHashSet(root), monitor)
@@ -97,15 +96,17 @@ class RuntimeModelManager {
 	public def saveResource() {
 		this.resource.save(newHashMap())
 	}
-	
+
 	public def getNetworkEnvironment() {
-		return this.root
+		return this.root.networkenvironment
 	}
 
 	public def from(NetworkEnvironment res) {
 		var command = new RecordingCommand(this.session.transactionalEditingDomain) {
 			override protected doExecute() {
-				root.networks.addAll(EcoreUtil.copyAll(res.networks))
+				var ne = EcoreUtil.copy(res)
+				ne.name = "Runtime Topology"
+				root.networkenvironment = ne
 			}
 		};
 		this.session.transactionalEditingDomain.commandStack.execute(command)

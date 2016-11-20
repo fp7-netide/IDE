@@ -26,7 +26,8 @@ class OpenRuntimeHandler extends AbstractHandler {
 		var firstElement = selection.getFirstElement() as IFile;
 
 		var resourceset = new ResourceSetImpl()
-		var resource = resourceset.getResource(URI.createPlatformResourceURI(firstElement.fullPath.toOSString, true), true)
+		var resource = resourceset.getResource(URI.createPlatformResourceURI(firstElement.fullPath.toOSString, true),
+			true)
 		var ne = resource.allContents.next as NetworkEnvironment
 
 		var job = new OpenDiagramJob(shell.display, "Open Runtime Topology", ne)
@@ -37,8 +38,8 @@ class OpenRuntimeHandler extends AbstractHandler {
 
 	static class OpenDiagramJob extends UIJob {
 
-		private NetworkEnvironment env 
-		
+		private NetworkEnvironment env
+
 		new(Display jobDisplay, String name, NetworkEnvironment ne) {
 			super(jobDisplay, name)
 			this.env = ne
@@ -47,10 +48,9 @@ class OpenRuntimeHandler extends AbstractHandler {
 		override runInUIThread(IProgressMonitor monitor) {
 
 			var manager = RuntimeModelManager.instance
-			
-			manager.open(monitor)
-
 			manager.from(env)
+
+			manager.open(monitor)
 
 			return Status.OK_STATUS
 		}

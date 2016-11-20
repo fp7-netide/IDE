@@ -8,7 +8,37 @@
   <foreignModel>RuntimeTopology.ecore</foreignModel>
   <genPackages prefix="RuntimeTopology" disposableProviderFactory="true" ecorePackage="RuntimeTopology.ecore#/">
     <genClasses ecoreClass="RuntimeTopology.ecore#//PortStatistics">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//PortStatistics/runtimedata"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/tx_bytes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/rx_bytes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/tx_packets"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/rx_packets"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/tx_errors"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/rx_errors"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/rx_over_err"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/rx_crc_err"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/tx_dropped"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/rx_dropped"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/collisions"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/rx_frame_err"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/changed"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//PortStatistics/port"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeTopology.ecore#//RuntimeData">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//RuntimeData/portstatistics"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//RuntimeData/flowstatistics"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeTopology.ecore#//FlowStatistics">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//FlowStatistics/runtimedata"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//FlowStatistics/duration_sec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//FlowStatistics/duration_nsec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//FlowStatistics/priority"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//FlowStatistics/idle_timeout"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//FlowStatistics/hard_timeout"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//FlowStatistics/cookie"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//FlowStatistics/packet_count"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//FlowStatistics/byte_count"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//FlowStatistics/switch"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

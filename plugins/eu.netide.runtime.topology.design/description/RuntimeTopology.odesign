@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" name="Configuration" version="11.0.0.201601261200">
   <ownedViewpoints name="RuntimeTopology" modelFileExtension="runtimetopology">
-    <ownedRepresentations xsi:type="description_1:DiagramDescription" name="NetworkEnvironment" domainClass="Topology.NetworkEnvironment">
+    <ownedRepresentations xsi:type="description_1:DiagramDescription" name="RuntimeTopology" domainClass="RuntimeTopology.RuntimeData">
       <metamodel href="../../eu.netide.runtime.topology/model/RuntimeTopology.ecore#/"/>
       <metamodel href="../../eu.netide.configuration/model/Topology.ecore#/"/>
       <defaultLayer name="Default">
@@ -14,21 +14,36 @@
           </style>
         </nodeMappings>
         <nodeMappings name="PortStatistics" domainClass="PortStatistics">
-          <style xsi:type="style:NoteDescription" labelExpression="['tx_bytes: ' + tx_bytes.toString() + '\nrx_bytes: ' + rx_bytes.toString() /]" sizeComputationExpression="10" labelPosition="node" resizeKind="NSEW">
+          <style xsi:type="style:NoteDescription" showIcon="false" labelExpression="['tx_bytes ' + tx_bytes.toString() + '\n' +'rx_bytes ' + rx_bytes.toString() + '\n' +'tx_packets ' + tx_packets.toString() + '\n' +'rx_packets ' + rx_packets.toString() + '\n' +'tx_errors ' + tx_errors.toString() + '\n' +'rx_errors ' + rx_errors.toString() + '\n' +'tx_dropped ' + tx_dropped.toString() + '\n' +'rx_dropped ' + rx_dropped.toString() + '\n' +'rx_over_err ' + rx_over_err.toString() + '\n' +'rx_crc_err ' + rx_crc_err.toString() + '\n' +'rx_frame_err ' + rx_frame_err.toString() + '\n' +'collisions ' + collisions.toString()/]" labelAlignment="LEFT" sizeComputationExpression="20" labelPosition="node" resizeKind="NSEW">
             <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='yellow']"/>
           </style>
         </nodeMappings>
-        <edgeMappings name="Connector" sourceMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort'] //@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']/@borderedNodeMappings[name='HostPort']" targetMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort'] //@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']/@borderedNodeMappings[name='HostPort']" targetFinderExpression="[connectedports->asSequence()->last() /]" sourceFinderExpression="[connectedports->asSequence()->first()/]" domainClass="Topology.Connector" useDomainElement="true">
+        <nodeMappings name="FlowStatistics" domainClass="FlowStatistics">
+          <style xsi:type="style:NoteDescription" showIcon="false" labelExpression="['duration_sec: ' + duration_sec.toString() + '\n' +'duration_nsec: ' + duration_nsec.toString() + '\n' +'priority: ' + priority.toString() + '\n' +'idle_timeout: ' + idle_timeout.toString() + '\n' +'hard_timeout: ' + hard_timeout.toString() + '\n' +'cookie: ' + cookie.toString() + '\n' +'packet_count: ' + packet_count.toString() + '\n' +'byte_count: ' + byte_count.toString()/]" labelAlignment="LEFT" sizeComputationExpression="20" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_orange']"/>
+          </style>
+        </nodeMappings>
+        <edgeMappings name="Connector" sourceMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort'] //@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']/@borderedNodeMappings[name='HostPort']" targetMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort'] //@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']/@borderedNodeMappings[name='HostPort']" targetFinderExpression="[connectedports->asSequence()->last() /]" sourceFinderExpression="[connectedports->asSequence()->first()/]" domainClass="Topology.Connector" useDomainElement="true">
           <style targetArrow="NoDecoration" sizeComputationExpression="2">
             <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
             <centerLabelStyleDescription>
               <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             </centerLabelStyleDescription>
           </style>
+          <conditionnalStyles predicateExpression="[self.ancestors(RuntimeData)->any(true).portstatistics->exists(x | x.changed and self.connectedports->exists(y | x.port = y)) /]">
+            <style targetArrow="NoDecoration" sizeComputationExpression="2">
+              <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='red']"/>
+              <centerLabelStyleDescription>
+                <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              </centerLabelStyleDescription>
+            </style>
+          </conditionnalStyles>
         </edgeMappings>
-        <edgeMappings name="ControllerConnector" sourceMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@nodeMappings[name='Controller']" targetMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']" targetFinderExpression="feature:switches">
+        <edgeMappings name="ControllerConnector" sourceMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='Controller']" targetMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']" targetFinderExpression="feature:switches">
           <style lineStyle="dash" sizeComputationExpression="2">
             <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_gray']"/>
             <centerLabelStyleDescription>
@@ -36,8 +51,16 @@
             </centerLabelStyleDescription>
           </style>
         </edgeMappings>
-        <edgeMappings name="PortStatisticsConnector" sourceMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@nodeMappings[name='PortStatistics']" targetMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='NetworkEnvironment']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort']" targetFinderExpression="[port /]">
-          <style lineStyle="dash" sizeComputationExpression="2">
+        <edgeMappings name="PortStatisticsConnector" sourceMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='PortStatistics']" targetMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort']" targetFinderExpression="[port /]">
+          <style lineStyle="dot" sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <edgeMappings name="FlowStatisticsConnector" sourceMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='FlowStatistics']" targetMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']" targetFinderExpression="feature:switch">
+          <style lineStyle="dot" sizeComputationExpression="2">
             <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
             <centerLabelStyleDescription>
               <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
