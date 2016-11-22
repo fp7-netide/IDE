@@ -1,7 +1,5 @@
 package eu.netide.workbenchconfigurationeditor.view;
 
-import java.util.UUID;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -16,6 +14,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -28,6 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -52,8 +55,6 @@ import eu.netide.workbenchconfigurationeditor.model.LaunchConfigurationModel;
 import eu.netide.workbenchconfigurationeditor.model.SshProfileModel;
 import eu.netide.workbenchconfigurationeditor.model.TopologyModel;
 import eu.netide.workbenchconfigurationeditor.util.Constants;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.DisposeEvent;
 
 /**
  * 
@@ -89,10 +90,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		file = fileInput.getFile();
 		setSite(site);
 		setInput(input);
-		
 
 		setPartName(file.getName());
-		
+
 	}
 
 	public IFile getFile() {
@@ -111,14 +111,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		controllerManager = new ControllerManager(engine.getStatusModel(), getFile());
 		addButtonListener();
 		if (sshProfileCombo.getSelectionIndex() != -1) {
-			//lblSShStatus.setText("Status: waiting");
-			noSwitch = true;
-
+			// lblSShStatus.setText("Status: waiting");
+			checkSwitch();
+			
 			SshProfileModel model = engine.getStatusModel().getSshModelAtIndex();
 
 			if (model != null) {
-				controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb,
-						model);
+				controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb, model);
 			}
 		}
 
@@ -247,7 +246,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnInitVagrantFile.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// TODO:
+
 				controllerManager.createVagrantFile();
 			}
 		});
@@ -255,8 +254,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnVagrantUp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				noSwitch = true;
 				controllerManager.startVagrant(instanceWb);
+				checkSwitch();
 			}
 		});
 
@@ -271,9 +270,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnVagrantHalt.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				noSwitch = false;
+			
 				engine.getStatusModel().setVagrantRunning(false);
 				controllerManager.haltVagrant();
+				checkSwitch();
 			}
 		});
 	}
@@ -318,31 +318,19 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				tmpModel = new LaunchConfigurationModel();
-
 				tempShell = new ConfigurationShell(container.getDisplay());
 				tempShell.openShell(null);
 
-				String[] content = tempShell.getSelectedContent();
-				if (content != null) {
+				tmpModel = tempShell.getModel();
+				if (tmpModel != null) {
 					boolean complete = true;
-					if (content[1].equals("") || content[4].equals(""))
+					if (tmpModel.getPlatform().equals("") || tmpModel.getAppPath().equals(""))
 						complete = false;
 
 					if (complete) {
-						tmpModel.setPlatform(content[1]);
-						tmpModel.setClientController(content[2]);
-						tmpModel.setAppPort(content[3]);
-						tmpModel.setAppPath(content[4]);
-						tmpModel.setName(content[5]);
-						tmpModel.setRunning(false);
-						String[] tmp = content[4].split("/");
-						String appName = tmp[tmp.length - 1];
-						tmpModel.setAppName(appName);
-						tmpModel.setID(UUID.randomUUID().toString());
-						setIsDirty(true);
 
 						engine.getStatusModel().addEntryToModelList(tmpModel);
+						setIsDirty(true);
 					}
 				}
 
@@ -359,22 +347,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 					tempShell = new ConfigurationShell(container.getDisplay());
 					tempShell.openShell(model);
 
-					String[] content = tempShell.getSelectedContent();
-					if (content != null) {
+					model = tempShell.getModel();
+					if (model != null) {
 						boolean complete = true;
-						if (content[1].equals("") || content[4].equals(""))
+						if (model.getPlatform().equals("") || model.getAppPath().equals(""))
 							complete = false;
 
 						if (complete) {
-
-							model.setPlatform(content[1]);
-							model.setClientController(content[2]);
-							model.setAppPort(content[3]);
-							model.setAppPath(content[4]);
-							String[] tmp = content[4].split("/");
-							String appName = tmp[tmp.length - 1];
-							model.setAppName(appName);
-							model.setID(UUID.randomUUID().toString());
 
 							setIsDirty(true);
 						}
@@ -388,13 +367,23 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnProvision_1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				controllerManager.reprovision();
+				MessageBox messageBox = new MessageBox(container.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+				messageBox.setMessage("Do you really want to use provision, it will take a long time?");
+				messageBox.setText("Provision ");
+				int response = messageBox.open();
+				if (response == SWT.YES)
+					controllerManager.reprovision();
 			}
 		});
 		btnProvision_2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				controllerManager.reprovision();
+				MessageBox messageBox = new MessageBox(container.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+				messageBox.setMessage("Do you really want to use provision, it will take a long time?");
+				messageBox.setText("Provision ");
+				int response = messageBox.open();
+				if (response == SWT.YES)
+					controllerManager.reprovision();
 			}
 		});
 	}
@@ -411,46 +400,46 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				checkSwitch();
+				
 				if (noSwitch) {
 					tabFolder.setSelection(currentPageIndex);
 				} else {
 					int newIndex = tabFolder.indexOf((TabItem) e.item);
 					tabFolder.setSelection(newIndex);
 					currentPageIndex = newIndex;
+					engine.getStatusModel().setSshRunning(false);
+					engine.getStatusModel().setVagrantRunning(false);
 				}
 			}
 		});
 
-		btnSSH_Up.addSelectionListener(new SelectionAdapter() {
+		btnStopAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				controllerManager.stopSSH();
+				checkSwitch();
+			}
+		});
+
+		btnReloadSSH.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				controllerManager.stopSSH();
+
 				if (sshProfileCombo.getSelectionIndex() != -1) {
 					lblSShStatus.setText("Status: waiting");
-					noSwitch = true;
+					
 
 					SshProfileModel model = engine.getStatusModel().getSshModelAtIndex();
 
 					if (model != null) {
-						controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb,
-								model);
+						controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb, model);
 					}
 				} else {
 					showMessage("Please select / create a ssh Profile.");
 				}
-
-			}
-		});
-
-		btnCloseSSH.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				controllerManager.stopSSH();
-				noSwitch = false;
-				tabFolder.setEnabled(true);
-				for (Control c : tabFolder.getTabList()) {
-					c.setEnabled(true);
-
-				}
+				checkSwitch();
 			}
 		});
 
@@ -459,23 +448,15 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			public void widgetSelected(SelectionEvent e) {
 				SShShell sshShell = new SShShell(container.getDisplay());
 				sshShell.openShell(null);
-				String[] result = sshShell.getResult();
+				SshProfileModel result = sshShell.getResult();
 				if (result != null) {
 
-					SshProfileModel model = new SshProfileModel();
-					model.setHost(result[0]);
-					model.setPort(result[1]);
-					model.setSshIdFile(result[2]);
-					model.setUsername(result[3]);
-					model.setProfileName(result[4]);
+					engine.getStatusModel().addEntryToSSHList(result);
 
-					model.setSecondUsername(result[5]);
-					model.setSecondHost(result[6]);
-					model.setSecondPort(result[7]);
+					sshProfileCombo.select(engine.getStatusModel().getProfileList().indexOf(result));
+					engine.getStatusModel()
+							.setSshComboSelectionIndex(engine.getStatusModel().getProfileList().indexOf(result));
 
-					engine.getStatusModel().addEntryToSSHList(model);
-
-					sshProfileCombo.select(engine.getStatusModel().getProfileList().indexOf(model));
 					setIsDirty(true);
 				}
 
@@ -518,7 +499,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				String selection = engine.getStatusModel().getServerControllerSelection();
 				if (!engine.getStatusModel().getServerControllerRunning() && !selection.equals("")) {
 					// Create starter for selected server controller
-					controllerManager.startServerController(selection);
+					controllerManager.startServerController(selection,
+							engine.getStatusModel().getShimModel().getPort());
 
 					engine.getStatusModel().setServerControllerRunning(true);
 				}
@@ -556,8 +538,37 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		addTopoButtonListener();
 
 	}
-
 	private boolean noSwitch = false;
+	
+	private void checkSwitch() {
+
+		boolean allControllerStopped = true;
+		if (engine.getStatusModel().getCoreRunning() || engine.getStatusModel().getMininetRunning()
+				|| engine.getStatusModel().getDebuggerRunning()
+				|| engine.getStatusModel().getServerControllerRunning()) {
+			allControllerStopped = false;
+		} else {
+			for (int i = 0; i < engine.getStatusModel().getModelList().size(); i++) {
+				if (engine.getStatusModel().getModelAtIndex(i).getRunning()) {
+					allControllerStopped = false;
+				}
+			}
+
+		}
+		if (allControllerStopped) {
+			noSwitch = false;
+			tabFolder.setEnabled(true);
+			for (Control c : tabFolder.getTabList()) {
+				c.setEnabled(true);
+
+			}
+		}
+		else{
+			noSwitch = true;
+		}
+	}
+
+
 	private int currentPageIndex;
 
 	private void showMessage(String msg) {
@@ -608,11 +619,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		lblSShStatus.setLayoutData(gd_lblSShStatus);
 		lblSShStatus.setText("Status: Offline");
 
-		btnSSH_Up = new Button(composite_1, SWT.NONE);
-		btnSSH_Up.setText("On");
+		btnReloadSSH = new Button(composite_1, SWT.NONE);
+		btnReloadSSH.setText("Reload");
 
-		btnCloseSSH = new Button(composite_1, SWT.NONE);
-		btnCloseSSH.setText("Off");
+		btnStopAll = new Button(composite_1, SWT.NONE);
+
+		btnStopAll.setText("Stop All");
 
 		btnProvision_1 = new Button(composite_1, SWT.NONE);
 		btnProvision_1.setText("Provision");
@@ -624,8 +636,16 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		new Label(composite_1, SWT.NONE);
 		new Label(composite_1, SWT.NONE);
 		new Label(composite_1, SWT.NONE);
-		new Label(composite_1, SWT.NONE);
 
+		btnCopyTopology = new Button(composite_1, SWT.NONE);
+		btnCopyTopology.setText("Copy Topology");
+
+		btnCopyTopology.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				controllerManager.copyTopology();
+			}
+		});
 		composite = new Composite(sshComposite, SWT.NONE);
 		GridData gd_composite = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd_composite.widthHint = 400;
@@ -638,14 +658,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			public void widgetSelected(SelectionEvent e) {
 				if (sshProfileCombo.getSelectionIndex() != -1) {
 					lblSShStatus.setText("Status: waiting");
-					noSwitch = true;
 
 					SshProfileModel model = engine.getStatusModel().getSshModelAtIndex();
 
 					if (model != null) {
-						controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb,
-								model);
+						controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb, model);
 					}
+					checkSwitch();
 				}
 
 			}
@@ -749,6 +768,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		textCompositionPath = new Text(grpCompositionLoader, SWT.BORDER);
 
 		textCompositionPath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		textCompositionPath.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				setIsDirty(true);
+			}
+
+		});
 
 		browseCompositionBtn = new Button(grpCompositionLoader, SWT.NONE);
 		browseCompositionBtn.setText("Browse");
@@ -806,8 +833,22 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnReattachServer.setText("Reattach");
-		new Label(grpServerController, SWT.NONE);
-		new Label(grpServerController, SWT.NONE);
+
+		lblPort = new Label(grpServerController, SWT.NONE);
+		lblPort.setText("Port");
+
+		shimPortText = new Text(grpServerController, SWT.BORDER);
+		GridData gd_text_shim_port = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_text_shim_port.widthHint = 32;
+		shimPortText.setLayoutData(gd_text_shim_port);
+		shimPortText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				setIsDirty(true);
+			}
+
+		});
 
 		btnImportTopology = new Button(grpServerController, SWT.NONE);
 		btnImportTopology.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
@@ -890,6 +931,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		topo_text = new Text(grpTopology, SWT.BORDER);
 		topo_text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		topo_text.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				setIsDirty(true);
+			}
+
+		});
 
 		btnBrowse_topo = new Button(grpTopology, SWT.NONE);
 		btnBrowse_topo.setText("Browse");
@@ -916,6 +965,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		TableColumn tc3 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc4 = new TableColumn(table, SWT.CENTER);
 		TableColumn tc5 = new TableColumn(table, SWT.CENTER);
+		TableColumn tc6 = new TableColumn(table, SWT.CENTER);
+		TableColumn tc7 = new TableColumn(table, SWT.CENTER);
 
 		tc0.setText("Name");
 		tc1.setText("App Name");
@@ -923,12 +974,17 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		tc3.setText("Platform");
 		tc4.setText("Client");
 		tc5.setText("Port");
+		tc6.setText("Flag Backend");
+		tc7.setText("Flag App");
 		tc0.setWidth(100);
 		tc1.setWidth(120);
 		tc2.setWidth(80);
 		tc3.setWidth(100);
 		tc4.setWidth(100);
 		tc5.setWidth(100);
+		tc6.setWidth(120);
+		tc7.setWidth(100);
+
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
@@ -1077,8 +1133,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Combo selectServerCombo;
 	private Button startServerController;
 	private Button btnMininetOn;
-	private Button btnSSH_Up;
-	private Button btnCloseSSH;
+	private Button btnReloadSSH;
 	private Composite container;
 	private Table table;
 	private Label lblSShStatus;
@@ -1124,6 +1179,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Text topo_text;
 	private Button btnBrowse_topo;
 	private Button btnLoadTopo;
+	private Button btnCopyTopology;
+	private Button btnStopAll;
+	private Text shimPortText;
+	private Label lblPort;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;
@@ -1157,12 +1216,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		return this.serverComboViewer;
 	}
 
-	public Button getSshUpButton() {
-		return this.btnSSH_Up;
-	}
-
-	public Button getSshDownButton() {
-		return this.btnCloseSSH;
+	public Button getSshReloadButton() {
+		return this.btnReloadSSH;
 	}
 
 	public Button getBtnVagrantUp() {
@@ -1241,6 +1296,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		return btnDebuggerReattach;
 	}
 
+	public Button getTopologySSHButton() {
+		return btnCopyTopology;
+	}
+
 	public Label getLblDebuggerStatus() {
 		return lblDebuggerStatus;
 	}
@@ -1252,8 +1311,12 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	public TabFolder getTabFolder() {
 		return tabFolder;
 	}
-	
+
 	public Combo getSelectServerCombo() {
 		return selectServerCombo;
+	}
+
+	public Text getShimPortText() {
+		return this.shimPortText;
 	}
 }

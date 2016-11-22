@@ -11,6 +11,8 @@ public class Constants {
 	public static final String APP_NAME_MODEL = "appName";
 	public static final String APP_RUNNING_MODEL = "running";
 	public static final String LaunchName = "name";
+	public static final String FLAG_BACKEND = "flagBackend";
+	public static final String FLAG_APP = "flagApp";
 
 	// UI Status Model Constants
 	public static final String VAGRANT_RUNNING_MODEL = "vagrantRunning";
@@ -31,6 +33,8 @@ public class Constants {
 
 	public static final String COMPOSITION_MODEL_PATH = "compositionPath";
 	public static final String SERVER_COMBO_TEXT = "shim";
+	
+	public static final String SHIM_PORT = "port";
 
 	// SSH Profile Model Constants
 	public static final String HOST_MODEL = "host";
@@ -41,6 +45,20 @@ public class Constants {
 	public static final String SECOND_PORT = "secondPort";
 	public static final String SECOND_USERNAME = "secondUsername";
 	public static final String SECOND_HOST = "secondHost";
+	
+	public static final String APP_FOLDER = "appFolder";
+	public static final String COMPOSITE_FILE = "compositeFile";
+	public static final String ODL_SHIM = "odlShim";
+	public static final String ENGINE = "engine";
+	public static final String CORE = "core";
+	public static final String VAGRANT_BOX = "vagrantBox";
+	public static final String TOOLS = "tools";
+	public static final String TOPOLOGY = "topology";
+	public static final String APP_SOURCE = "appSource";
+	public static final String APP_TARGET = "appTarget";
+	public static final String MIN_CONFIG_SOURCE = "minConfigSource";
+	public static final String MIN_CONFIG_TARGET = "minConfigTarget";
+
 
 	// UI Constants
 	public static final String LABEL_RUNNING = "running";

@@ -32,6 +32,7 @@ class StarterFactory {
 		this.backend = backend
 	}
 
+	@Deprecated
 	public def IStarter createSingleControllerStarter(ILaunchConfiguration configuration, Controller controller,
 		IProgressMonitor monitor) {
 		var controllerplatform = configuration.attributes.get("controller_platform_" + controller.name) as String
@@ -56,6 +57,11 @@ class StarterFactory {
 
 	public def IStarter createSingleControllerStarter(String platform, String appPath, int port,
 		IProgressMonitor monitor) {
+		createSingleControllerStarter(platform, appPath, port, monitor, null, null)
+	}
+
+	public def IStarter createSingleControllerStarter(String platform, String appPath, int port,
+		IProgressMonitor monitor, String appFolderPath, String appFlag) {
 		var controllerplatform = platform
 
 		if (controllerplatform.equals(NetIDE.CONTROLLER_ENGINE)) {
@@ -65,7 +71,7 @@ class StarterFactory {
 				case NetIDE.CONTROLLER_POX:
 					starter = new PoxStarter(port, appPath, monitor)
 				case NetIDE.CONTROLLER_RYU:
-					starter = new RyuStarter(port, appPath, monitor)
+					starter = new RyuStarter(port, appPath, monitor, appFolderPath, appFlag)
 				case NetIDE.CONTROLLER_PYRETIC:
 					starter = new PyreticStarter(port, appPath, monitor)
 			}
@@ -115,6 +121,11 @@ class StarterFactory {
 	}
 
 	public def IStarter createShimStarter(String platform, String appPath, int port, IProgressMonitor monitor) {
+		createShimStarter(platform, appPath, port, monitor, null, null)
+	}
+
+	public def IStarter createShimStarter(String platform, String appPath, int port, IProgressMonitor monitor,
+		String engine, String odlKaraf) {
 
 		var serverplatform = platform
 		var IStarter starter
@@ -122,15 +133,16 @@ class StarterFactory {
 			case NetIDE.CONTROLLER_POX:
 				starter = new PoxShimStarter(appPath, port, monitor)
 			case NetIDE.CONTROLLER_RYU:
-				starter = new RyuShimStarter(appPath, port, monitor)
+				starter = new RyuShimStarter(appPath, port, monitor, engine)
 			case NetIDE.CONTROLLER_ODL:
-				starter = new OdlShimStarter(appPath, port, monitor)
+				starter = new OdlShimStarter(appPath, port, monitor, odlKaraf)
 		}
 		starter.setBackend(backend)
 		return starter
 
 	}
 
+	@Deprecated
 	public def IStarter createBackendStarter(ILaunchConfiguration configuration, Controller controller,
 		IProgressMonitor monitor) {
 
@@ -149,6 +161,11 @@ class StarterFactory {
 	}
 
 	public def IStarter createBackendStarter(String platform, String appPath, int port, IProgressMonitor monitor) {
+		createBackendStarter(platform, appPath, port, monitor, null, null)
+	}
+
+	public def IStarter createBackendStarter(String platform, String appPath, int port, IProgressMonitor monitor,
+		String engine, String flag) {
 
 		var clientplatform = platform
 		var IStarter starter
@@ -156,7 +173,7 @@ class StarterFactory {
 			case NetIDE.CONTROLLER_FLOODLIGHT:
 				starter = new FloodlightBackendStarter(port, appPath, monitor)
 			case NetIDE.CONTROLLER_RYU:
-				starter = new RyuBackendStarter(port, appPath, monitor)
+				starter = new RyuBackendStarter(port, appPath, monitor, engine, flag)
 			case NetIDE.CONTROLLER_PYRETIC:
 				starter = new PyreticBackendStarter(port, appPath, monitor)
 		}
@@ -164,28 +181,48 @@ class StarterFactory {
 		return starter
 	}
 
+	@Deprecated
 	public def IStarter createMininetStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		var starter = new MininetStarter(configuration, monitor)
 		starter.backend = backend
 		return starter
 	}
 
+	@Deprecated
 	public def createDebuggerStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
-		var starter = new DebuggerStarter(configuration, monitor)
+		createDebuggerStarter(configuration, null, monitor, null)
+	}
+
+	@Deprecated
+	public def createDebuggerStarter(ILaunchConfiguration configuration, String engine, IProgressMonitor monitor,
+		String tools) {
+		var starter = new DebuggerStarter(configuration, engine, monitor, tools)
 		starter.backend = backend
 		return starter
 	}
 
+	@Deprecated
 	public def createCoreStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
-		var starter = new CoreStarter(configuration, monitor)
+		createCoreStarter(configuration, monitor, null)
+	}
+
+	@Deprecated
+	public def createCoreStarter(ILaunchConfiguration configuration, IProgressMonitor monitor, String karafPath) {
+		var starter = new CoreStarter(configuration, monitor, karafPath)
 		starter.backend = backend
 		return starter
 	}
 
-	public def createEmulatorStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
-		var starter = new EmulatorStarter(configuration, monitor)
+	@Deprecated
+	public def createEmulatorStarter(ILaunchConfiguration configuration, IProgressMonitor monitor, String composition) {
+		var starter = new EmulatorStarter(configuration, monitor, composition)
 		starter.backend = backend
 		return starter
+	}
+
+	@Deprecated
+	public def createEmulatorStarter(ILaunchConfiguration configuration, IProgressMonitor monitor) {
+		createEmulatorStarter(configuration, monitor, null)
 	}
 
 }
