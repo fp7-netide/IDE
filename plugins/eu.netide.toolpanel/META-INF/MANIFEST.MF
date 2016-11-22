@@ -24,7 +24,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.sirius.ui;bundle-version="4.0.1",
  org.eclipse.emf.transaction;bundle-version="1.9.0",
  org.eclipse.xtext.xbase;bundle-version="2.10.0",
- eu.netide.runtime.topology;bundle-version="1.0.0",
+ eu.netide.runtime.topology,
  com.fasterxml.jackson.core.jackson-core;bundle-version="2.7.2",
  com.fasterxml.jackson.core.jackson-databind;bundle-version="2.7.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

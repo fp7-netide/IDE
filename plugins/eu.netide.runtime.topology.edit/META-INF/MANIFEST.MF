@@ -10,8 +10,8 @@ Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: RuntimeTopology.provider
 Require-Bundle: org.eclipse.core.runtime,
- eu.netide.runtime.topology;visibility:=reexport,
  org.eclipse.emf.edit;visibility:=reexport,
  eu.netide.configuration;visibility:=reexport,
- eu.netide.configuration.edit;visibility:=reexport
+ eu.netide.configuration.edit;visibility:=reexport,
+ eu.netide.runtime.topology;bundle-version="0.3.1"
 Bundle-ActivationPolicy: lazy

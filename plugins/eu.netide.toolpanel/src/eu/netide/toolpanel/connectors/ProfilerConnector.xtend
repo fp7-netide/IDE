@@ -1,11 +1,10 @@
 package eu.netide.toolpanel.connectors
 
+import RuntimeTopology.FlowStatistics
 import RuntimeTopology.PortStatistics
 import RuntimeTopology.RuntimeData
 import RuntimeTopology.RuntimeTopologyFactory
-import Topology.NetworkEnvironment
 import Topology.Switch
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -16,21 +15,20 @@ import eu.netide.toolpanel.runtime.RuntimeModelManager
 import eu.netide.zmq.hub.client.IZmqNetIpListener
 import eu.netide.zmq.hub.server.ZmqHubManager
 import eu.netide.zmq.hub.server.ZmqPubSubHub
+import eu.netide.zmq.hub.server.ZmqSendReceiveHub
 import org.eclipse.core.resources.IFile
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.emf.transaction.RecordingCommand
 import org.eclipse.sirius.business.api.session.Session
-import RuntimeTopology.FlowStatistics
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl
-import org.eclipse.emf.ecore.xmi.XMIResource
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
-import org.eclipse.emf.ecore.EcoreFactory
+import org.eclipse.xtend.lib.annotations.Accessors
+import eu.netide.configuration.launcher.starters.impl.ProfilerStarter
 
 class ProfilerConnector implements IZmqNetIpListener {
 
 	private ZmqPubSubHub hub
+	private ZmqSendReceiveHub commandHub
 	private ObjectMapper mapper
 	private RuntimeModelManager manager
 	private Session session
@@ -41,11 +39,18 @@ class ProfilerConnector implements IZmqNetIpListener {
 	private ObjectNode log
 	private FileSystemAccess fsa
 
+	@Accessors(PUBLIC_GETTER, PUBLIC_SETTER)
+	private double pollInterval = -1
+
+	private PollThread pollJob
+
 	new(IFile file) {
 		this.hub = ZmqHubManager.instance.getPubSubHub("Profiler", "tcp://localhost:5561")
 		this.hub.running = false
 		this.hub.running = true
 		this.hub.register(this)
+		this.commandHub = ZmqHubManager.instance.getSendReceiveHub("Profiler Commands", "tcp://localhost:30557")
+
 		this.mapper = new ObjectMapper
 		this.file = file
 		this.recordLog = mapper.nodeFactory.objectNode
@@ -61,9 +66,29 @@ class ProfilerConnector implements IZmqNetIpListener {
 		this.manager = RuntimeModelManager.getInstance();
 		this.session = manager.getSession();
 
+		this.pollJob = new PollThread("Polling Profiler", this)
+
 	}
 
-	public def start() {
+	private static class PollThread extends Thread {
+		private ProfilerConnector connector
+		@Accessors(PUBLIC_SETTER)
+		private boolean cancel
+
+		new(String name, ProfilerConnector connector) {
+			super(name)
+			this.connector = connector
+			this.cancel = false
+		}
+
+		override run() {
+			super.run()
+			while (!cancel) {
+				Thread.sleep((1000.0 * connector.pollInterval) as int)
+				connector.poll()
+			}
+			this.cancel = true
+		}
 	}
 
 	override update(Message msg) {
@@ -166,7 +191,9 @@ class ProfilerConnector implements IZmqNetIpListener {
 								val size = (log.get("PortLog") as ArrayNode).size()
 
 								if (size > 2) {
-									val currentBytes = (log.get("PortLog") as ArrayNode).get(size - 2).findFirst[x | x.get("port").asInt == portno].get("tx_bytes").asInt
+									val currentBytes = (log.get("PortLog") as ArrayNode).get(size - 2).findFirst [ x |
+										x.get("port").asInt == portno
+									].get("tx_bytes").asInt
 									val newBytes = node.get("tx_bytes").asInt
 									ps.changed = currentBytes != newBytes
 								}
@@ -230,4 +257,26 @@ class ProfilerConnector implements IZmqNetIpListener {
 		}
 
 	}
+
+	public def startPolling(double interval) {
+		this.pollInterval = interval
+		pollJob.start
+	}
+
+	public def stopPolling() {
+		pollJob.setCancel(true)
+	}
+
+	public def poll() {
+		commandHub.send("1")
+	}
+
+	public def activatePortStatistics() {
+		commandHub.send("2")
+	}
+
+	public def activateFlowStatistics() {
+		commandHub.send("3")
+	}
+
 }

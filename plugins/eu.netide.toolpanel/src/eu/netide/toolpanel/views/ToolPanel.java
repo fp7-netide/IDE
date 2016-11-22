@@ -41,6 +41,8 @@ import eu.netide.zmq.hub.client.IZmqNetIpListener;
 import eu.netide.zmq.hub.server.IZmqPubSubHub;
 import eu.netide.zmq.hub.server.IZmqSendReceiveHub;
 import eu.netide.zmq.hub.server.ZmqHubManager;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.ModifyEvent;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -206,27 +208,59 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 
 		Group composite_2 = new Group(grpProfiler, SWT.NONE);
 		composite_2.setText("Port Statistics");
-		composite_2.setLayout(new GridLayout(6, false));
+		composite_2.setLayout(new GridLayout(7, false));
 		composite_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		Button btnShowGraph = new Button(composite_2, SWT.NONE);
-		btnShowGraph.addSelectionListener(new SelectionAdapter() {
+		new Label(composite_2, SWT.NONE);
+		new Label(composite_2, SWT.NONE);
+		new Label(composite_2, SWT.NONE);
+		new Label(composite_2, SWT.NONE);
+		new Label(composite_2, SWT.NONE);
+		new Label(composite_2, SWT.NONE);
+		new Label(composite_2, SWT.NONE);
+		
+		Button btnRadioButton = new Button(composite_2, SWT.RADIO);
+		btnRadioButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ChartShell cs = new ChartShell(composite.getDisplay());
-				cs.open();
+				profilerConnector.activatePortStatistics();
 			}
 		});
-		btnShowGraph.setText("Show Graph");
+		btnRadioButton.setText("Port Statistics");
+		
+		Button btnRadioButton_1 = new Button(composite_2, SWT.RADIO);
+		btnRadioButton_1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				profilerConnector.activateFlowStatistics();
+			}
+		});
+		btnRadioButton_1.setText("Flow Statistics");
+				
+						Label lblUpdateInterval = new Label(composite_2, SWT.NONE);
+						lblUpdateInterval.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+						lblUpdateInterval.setText("Update Interval:");
+		
+				text = new Text(composite_2, SWT.BORDER);
+				text.setText("1");
+				text.addModifyListener(new ModifyListener() {
+					public void modifyText(ModifyEvent e) {
+						profilerConnector.setPollInterval(Double.parseDouble(text.getText()));
+					}
+				});
+				text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(composite_2, SWT.NONE);
-
-		Label lblUpdateInterval = new Label(composite_2, SWT.NONE);
-		lblUpdateInterval.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblUpdateInterval.setText("Update Interval:");
-
-		text = new Text(composite_2, SWT.BORDER);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		new Label(composite_2, SWT.NONE);
+		
+		Button btnPollProfiler = new Button(composite_2, SWT.CHECK);
+		btnPollProfiler.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (btnPollProfiler.getSelection())
+					profilerConnector.startPolling(Double.parseDouble(text.getText()));
+				else
+					profilerConnector.stopPolling();
+			}
+		});
+		btnPollProfiler.setText("Poll Profiler");
 		new Label(composite_2, SWT.NONE);
 
 		Button btnCheckButton = new Button(composite_2, SWT.CHECK);
@@ -234,12 +268,13 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 
 		Button btnCheckButton_1 = new Button(composite_2, SWT.CHECK);
 		btnCheckButton_1.setText("tx_packets");
-
-		Button btnCheckButton_2 = new Button(composite_2, SWT.CHECK);
-		btnCheckButton_2.setText("rx_bytes");
-
-		Button btnTxbytes = new Button(composite_2, SWT.CHECK);
-		btnTxbytes.setText("tx_bytes");
+		
+				Button btnCheckButton_2 = new Button(composite_2, SWT.CHECK);
+				btnCheckButton_2.setText("rx_bytes");
+		
+				Button btnTxbytes = new Button(composite_2, SWT.CHECK);
+				btnTxbytes.setText("tx_bytes");
+		new Label(composite_2, SWT.NONE);
 
 		Button btnCheckButton_3 = new Button(composite_2, SWT.CHECK);
 		btnCheckButton_3.setText("rx_dropped");
@@ -252,12 +287,13 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 
 		Button btnTxerrors = new Button(composite_2, SWT.CHECK);
 		btnTxerrors.setText("tx_errors");
-
-		Button btnRxframeerrors = new Button(composite_2, SWT.CHECK);
-		btnRxframeerrors.setText("rx_frame_errors");
-
-		Button btnRxovererrors = new Button(composite_2, SWT.CHECK);
-		btnRxovererrors.setText("rx_over_errors");
+		
+				Button btnRxframeerrors = new Button(composite_2, SWT.CHECK);
+				btnRxframeerrors.setText("rx_frame_errors");
+		
+				Button btnRxovererrors = new Button(composite_2, SWT.CHECK);
+				btnRxovererrors.setText("rx_over_errors");
+		new Label(composite_2, SWT.NONE);
 
 		Button btnRxcrcerrors = new Button(composite_2, SWT.CHECK);
 		btnRxcrcerrors.setText("rx_crc_errors");
