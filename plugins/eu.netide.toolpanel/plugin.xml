@@ -5,30 +5,13 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="NetIDE Tools"
-            icon="icons/sample.gif"
             category="eu.netide.views"
             class="eu.netide.toolpanel.views.ToolPanel"
-            id="eu.netide.toolpanel.views.Toolpanel">
+            icon="icons/netide.png"
+            id="eu.netide.toolpanel.views.Toolpanel"
+            name="NetIDE Tools"
+            restorable="false">
       </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <view
-               ratio="0.5"
-               relative="org.eclipse.ui.views.ProblemView"
-               relationship="right"
-               id="eu.netide.toolpanel.views.Toolpanel">
-         </view>
-      </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

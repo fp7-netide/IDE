@@ -46,6 +46,8 @@ import org.eclipse.swt.graphics.Image
 import org.eclipse.swt.graphics.Rectangle
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.widgets.Display
+import org.eclipse.birt.chart.model.type.LineSeries
+import org.eclipse.birt.chart.model.type.impl.LineSeriesImpl
 
 class MessagesPerAppChartViewer extends ChartViewer implements IZmqNetIpListener, PaintListener {
 	private Map<String, Integer> data
@@ -115,20 +117,20 @@ class MessagesPerAppChartViewer extends ChartViewer implements IZmqNetIpListener
 		xAxisPrimary.getSeriesDefinitions().add(sdX)
 		sdX.getSeries().add(seCategory)
 		// Y-Series (1)
-		var BarSeries bs1 = (BarSeriesImpl::create() as BarSeries)
+//		var BarSeries bs1 = (BarSeriesImpl::create() as BarSeries)
+		var ls1 = LineSeriesImpl::create()
 //		bs1.setSeriesIdentifier("# Messages")
-		bs1.triggers.add(
+		ls1.triggers.add(
 			TriggerImpl::create(TriggerCondition::ONMOUSEOVER_LITERAL,
 				ActionImpl::create(ActionType.SHOW_TOOLTIP_LITERAL,
-					TooltipValueImpl::create(0, bs1.dataPoint.components.get(0).toString))))
+					TooltipValueImpl::create(0, ls1.dataPoint.components.get(0).toString))))
 
 		// $NON-NLS-1$
-		bs1.setRiserOutline(null)
-		bs1.setRiser(RiserType::RECTANGLE_LITERAL)
+
 		var SeriesDefinition sdY = SeriesDefinitionImpl::create()
 		yAxisPrimary.getSeriesDefinitions().add(sdY)
 		sdY.getSeriesPalette().shift(-1)
-		sdY.getSeries().add(bs1)
+		sdY.getSeries().add(ls1)
 		// Update data
 		updateDataSet(cwaBar)
 		return cwaBar

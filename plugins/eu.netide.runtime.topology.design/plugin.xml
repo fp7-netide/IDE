@@ -11,6 +11,12 @@
         point="org.eclipse.sirius.viewpointSpecificationModel">
      <definition
            path="description/RuntimeTopology.odesign">
+        <matcher
+              extension="eu.netide.runtime.topology.design.matcher1">
+        </matcher>
      </definition>
+  </extension>
+  <extension
+        point="org.eclipse.sirius.externalJavaAction">
   </extension>
 </plugin>
