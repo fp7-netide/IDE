@@ -40,7 +40,7 @@ Select NetIDE from the list and follow the instructions. After restarting Eclips
 
 ### Set up Eclipse
 
-1. Download Eclipse Mars or Luna Modeling Tools at www.eclipse.org.
+1. Download Eclipse Neon Modeling Tools [here](http://www.eclipse.org/downloads/packages/eclipse-modeling-tools/neon1a).
 2. From the window menu, select `Help -> Install Modeling Components`. Select and install Sirius and Xtext.
 3. Go to `Help -> Eclipse Marketplace...`, search for and install TM Terminal.
 4. Go to `Help -> Install New Software`, enter [http://updatesite.netide.eu/dependencies](http://updatesite.netide.eu/dependencies), and install the packages provided by this repository.
