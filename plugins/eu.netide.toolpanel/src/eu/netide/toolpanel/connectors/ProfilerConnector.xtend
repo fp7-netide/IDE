@@ -23,7 +23,8 @@ import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.emf.transaction.RecordingCommand
 import org.eclipse.sirius.business.api.session.Session
 import org.eclipse.xtend.lib.annotations.Accessors
-import eu.netide.configuration.launcher.starters.impl.ProfilerStarter
+import java.util.Timer
+import java.util.TimerTask
 
 class ProfilerConnector implements IZmqNetIpListener {
 
@@ -39,17 +40,21 @@ class ProfilerConnector implements IZmqNetIpListener {
 	private ObjectNode log
 	private FileSystemAccess fsa
 
+	private String address
+
 	@Accessors(PUBLIC_GETTER, PUBLIC_SETTER)
 	private double pollInterval = -1
 
-	private PollThread pollJob
+	private Timer pollJob
+	private PollTask pollTask
 
-	new(IFile file) {
-		this.hub = ZmqHubManager.instance.getPubSubHub("Profiler", "tcp://localhost:5561")
+	new(IFile file, String address) {
+		this.hub = ZmqHubManager.instance.getPubSubHub("Profiler", String.format("tcp://%s:5561", address))
 		this.hub.running = false
 		this.hub.running = true
 		this.hub.register(this)
-		this.commandHub = ZmqHubManager.instance.getSendReceiveHub("Profiler Commands", "tcp://localhost:30557")
+		this.commandHub = ZmqHubManager.instance.getSendReceiveHub("Profiler Commands",
+			String.format("tcp://%s:30557", address))
 
 		this.mapper = new ObjectMapper
 		this.file = file
@@ -66,28 +71,19 @@ class ProfilerConnector implements IZmqNetIpListener {
 		this.manager = RuntimeModelManager.getInstance();
 		this.session = manager.getSession();
 
-		this.pollJob = new PollThread("Polling Profiler", this)
-
+		this.pollTask = new PollTask(this)
 	}
 
-	private static class PollThread extends Thread {
+	private static class PollTask extends TimerTask {
 		private ProfilerConnector connector
-		@Accessors(PUBLIC_SETTER)
-		private boolean cancel
 
-		new(String name, ProfilerConnector connector) {
-			super(name)
+		new(ProfilerConnector connector) {
+			super()
 			this.connector = connector
-			this.cancel = false
 		}
 
 		override run() {
-			super.run()
-			while (!cancel) {
-				Thread.sleep((1000.0 * connector.pollInterval) as int)
-				connector.poll()
-			}
-			this.cancel = true
+			connector.poll()
 		}
 	}
 
@@ -260,11 +256,13 @@ class ProfilerConnector implements IZmqNetIpListener {
 
 	public def startPolling(double interval) {
 		this.pollInterval = interval
-		pollJob.start
+		this.pollTask = new PollTask(this)
+		this.pollJob = new Timer()
+		pollJob.schedule(pollTask, 0, (1000*interval) as long)
 	}
 
 	public def stopPolling() {
-		pollJob.setCancel(true)
+		pollJob.cancel
 	}
 
 	public def poll() {

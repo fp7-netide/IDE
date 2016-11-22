@@ -39,12 +39,17 @@ class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 				super.run()
 
 				try {
+					req.connect(address)
 					req.send(msg.bytes, 0)
 					val received = req.recv(0)
 					if (received != null) {
 						success.apply(new String(received))
 					}
-				} catch (ZMQException e) {}
+				} catch (ZMQException e) {
+					req = ctx.socket(ZMQ.REQ)
+				}
+				catch (ArrayIndexOutOfBoundsException e) {
+				}
 
 			}
 

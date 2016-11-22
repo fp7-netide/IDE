@@ -76,6 +76,7 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 	private Text textLoops;
 	private Text text;
 	private ProfilerConnector profilerConnector;
+	private String address;
 
 	/**
 	 * The constructor.
@@ -90,7 +91,7 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 	 */
 	public void createPartControl(Composite parent) {
 		
-		String address = "localhost";
+		address = "localhost";
 		if (backend instanceof SshBackend) {
 			SshBackend sshBackend = (SshBackend) backend;
 			address = sshBackend.getHostname();
@@ -189,7 +190,7 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 				ProfilerStarter ps = new ProfilerStarter("Profiler Starter", NetIDEUtil.toPlatformUri(file), backend,
 						new NullProgressMonitor());
 				ps.syncStart();
-				profilerConnector = new ProfilerConnector(file);
+				profilerConnector = new ProfilerConnector(file, address);
 			}
 		});
 		btnStartProfiler.setText("Start Profiler");
