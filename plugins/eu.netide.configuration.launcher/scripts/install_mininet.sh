@@ -1,6 +1,12 @@
 #!/bin/bash
+RELEASE=$(lsb-release -cs)
+
 cd
-if [ ! -d ~/netide/mininet ]; then
+
+if [ RELEASE == xenial ]; then
+	sudo apt-get install -y mininet
+
+elif [ ! -d ~/netide/mininet ]; then
   #sudo apt-get update -y
   #sudo apt-get install git -y
   #git clone git://github.com/mininet/mininet
