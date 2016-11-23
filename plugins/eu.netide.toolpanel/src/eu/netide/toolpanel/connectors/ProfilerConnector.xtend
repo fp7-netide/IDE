@@ -101,7 +101,15 @@ class ProfilerConnector implements IZmqNetIpListener {
 
 			override protected run(IProgressMonitor monitor) {
 
-				(log.get("FlowLog") as ArrayNode).add(flowStats)
+				val flowLog = log.get("PortLog") as ObjectNode
+				val dpid = flowStats.get(0).get("dpid").asText()
+
+				if (!flowLog.has(dpid))
+					flowLog.putArray(dpid)
+
+				val dpidLog = flowLog.get(dpid) as ArrayNode
+				dpidLog.add(flowStats)
+				
 				if (recording) {
 					(recordLog.get("FlowLog") as ArrayNode).add(flowStats)
 				}
@@ -151,11 +159,11 @@ class ProfilerConnector implements IZmqNetIpListener {
 			override protected run(IProgressMonitor monitor) {
 				val portLog = log.get("PortLog") as ObjectNode
 				val dpid = portStats.get(0).get("dpid").asText()
-				
+
 				if (!portLog.has(dpid))
 					portLog.putArray(dpid)
-					
-				val dpidLog = portLog.get(dpid) as ArrayNode		
+
+				val dpidLog = portLog.get(dpid) as ArrayNode
 				dpidLog.add(portStats)
 
 				if (recording) {
@@ -173,7 +181,6 @@ class ProfilerConnector implements IZmqNetIpListener {
 						var updateCommand = new RecordingCommand(session.getTransactionalEditingDomain()) {
 
 							override doExecute() {
-								
 
 								val portno = node.get("port").asInt
 

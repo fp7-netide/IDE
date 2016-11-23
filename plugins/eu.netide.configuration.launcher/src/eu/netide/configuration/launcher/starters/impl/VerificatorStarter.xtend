@@ -18,7 +18,7 @@ class VerificatorStarter extends Starter {
 	
 
 	override getCommandLine() {
-		String.format("bash -c \'cd ~/netide/Tools/debugger/Core && python verificator_runtime_ide.py \'" )
+		String.format("bash -c \'cd %s/debugger/Core && python verificator_runtime_ide.py \'", this.toolpath )
 	}
 	
 }
