@@ -60,8 +60,8 @@ class ProfilerConnector implements IZmqNetIpListener {
 		this.file = file
 		this.recordLog = mapper.nodeFactory.objectNode
 		this.log = mapper.nodeFactory.objectNode
-		this.log.putArray("FlowLog")
-		this.log.putArray("PortLog")
+		this.log.putObject("FlowLog")
+		this.log.putObject("PortLog")
 		this.recording = false
 
 		this.fsa = FSAProvider.get
@@ -149,8 +149,15 @@ class ProfilerConnector implements IZmqNetIpListener {
 		var job = new Job("Updating Runtime Model") {
 
 			override protected run(IProgressMonitor monitor) {
+				val portLog = log.get("PortLog") as ObjectNode
+				val dpid = portStats.get(0).get("dpid").asText()
+				
+				if (!portLog.has(dpid))
+					portLog.putArray(dpid)
+					
+				val dpidLog = portLog.get(dpid) as ArrayNode		
+				dpidLog.add(portStats)
 
-				(log.get("PortLog") as ArrayNode).add(portStats)
 				if (recording) {
 					(recordLog.get("log") as ArrayNode).add(portStats)
 				}
@@ -166,8 +173,8 @@ class ProfilerConnector implements IZmqNetIpListener {
 						var updateCommand = new RecordingCommand(session.getTransactionalEditingDomain()) {
 
 							override doExecute() {
+								
 
-								val dpid = node.get("dpid").asText
 								val portno = node.get("port").asInt
 
 								val sw = env.getNetworks().map[x|x.networkelements].flatten.filter [ x |
@@ -184,12 +191,14 @@ class ProfilerConnector implements IZmqNetIpListener {
 
 								}
 
-								val size = (log.get("PortLog") as ArrayNode).size()
+								val size = dpidLog.size()
 
 								if (size > 2) {
-									val currentBytes = (log.get("PortLog") as ArrayNode).get(size - 2).findFirst [ x |
+									val currentEntry = dpidLog.get(size - 2).findFirst [ x |
 										x.get("port").asInt == portno
-									].get("tx_bytes").asInt
+									]
+
+									val currentBytes = currentEntry.get("tx_bytes").asInt
 									val newBytes = node.get("tx_bytes").asInt
 									ps.changed = currentBytes != newBytes
 								}
@@ -258,7 +267,7 @@ class ProfilerConnector implements IZmqNetIpListener {
 		this.pollInterval = interval
 		this.pollTask = new PollTask(this)
 		this.pollJob = new Timer()
-		pollJob.schedule(pollTask, 0, (1000*interval) as long)
+		pollJob.schedule(pollTask, 0, (1000 * interval) as long)
 	}
 
 	public def stopPolling() {

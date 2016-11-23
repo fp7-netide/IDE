@@ -5,11 +5,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.sirius.business.api.session.Session;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -23,10 +22,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 
-import RuntimeTopology.PortStatistics;
-import RuntimeTopology.RuntimeData;
-import RuntimeTopology.RuntimeTopologyFactory;
-import Topology.NetworkEnvironment;
 import eu.netide.configuration.launcher.starters.backends.Backend;
 import eu.netide.configuration.launcher.starters.backends.SshBackend;
 import eu.netide.configuration.launcher.starters.impl.ProfilerStarter;
@@ -35,14 +30,10 @@ import eu.netide.configuration.utils.NetIDEUtil;
 import eu.netide.lib.netip.Message;
 import eu.netide.lib.netip.MessageType;
 import eu.netide.toolpanel.connectors.ProfilerConnector;
-import eu.netide.toolpanel.runtime.RuntimeModelManager;
-import eu.netide.toolpanel.shells.ChartShell;
 import eu.netide.zmq.hub.client.IZmqNetIpListener;
 import eu.netide.zmq.hub.server.IZmqPubSubHub;
 import eu.netide.zmq.hub.server.IZmqSendReceiveHub;
 import eu.netide.zmq.hub.server.ZmqHubManager;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.ModifyEvent;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -77,6 +68,7 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 	private Text text;
 	private ProfilerConnector profilerConnector;
 	private String address;
+	private String toolPath;
 
 	/**
 	 * The constructor.
@@ -129,7 +121,7 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				verifierOutputHub.setRunning(false);
-				VerificatorStarter vs = new VerificatorStarter(NetIDEUtil.toPlatformUri(file), backend,
+				VerificatorStarter vs = new VerificatorStarter(NetIDEUtil.toPlatformUri(file), backend, toolPath,
 						new NullProgressMonitor());
 				vs.syncStart();
 				verifierOutputHub.setRunning(true);
@@ -187,7 +179,7 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 		btnStartProfiler.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ProfilerStarter ps = new ProfilerStarter("Profiler Starter", NetIDEUtil.toPlatformUri(file), backend,
+				ProfilerStarter ps = new ProfilerStarter("Profiler Starter", NetIDEUtil.toPlatformUri(file), backend, toolPath,
 						new NullProgressMonitor());
 				ps.syncStart();
 				profilerConnector = new ProfilerConnector(file, address);
@@ -346,4 +338,10 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 			job.schedule();
 		}
 	}
+
+	public void setSshModel(String sshModelAtIndex) {
+		this.toolPath = sshModelAtIndex;
+		
+	}
+
 }

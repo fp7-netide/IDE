@@ -937,6 +937,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 						ToolPanel toolPanel = (ToolPanel) view;
 						toolPanel.setBackend(controllerManager.getBackend());
 						toolPanel.setFile(file);
+						String toolpath = null;
+//						if (engine.getStatusModel().getSshModelAtIndex().getTools())
+						toolPanel.setSshModel(engine.getStatusModel().getSshModelAtIndex(engine.getStatusModel().getSshComboSelectionIndex()).getTools());
 					}
 				} catch (PartInitException e1) {
 					// TODO Auto-generated catch block
