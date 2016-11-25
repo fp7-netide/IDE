@@ -83,19 +83,7 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 	 */
 	public void createPartControl(Composite parent) {
 		
-		address = "localhost";
-		if (backend instanceof SshBackend) {
-			SshBackend sshBackend = (SshBackend) backend;
-			address = sshBackend.getHostname();
-		}
-		verifierOutputHub = ZmqHubManager.instance.getPubSubHub("Verificator",
-				String.format("tcp://%s:%s", address, 5560));
-		verifierOutputHub.setRunning(false);
-		verifierOutputHub.setRunning(true);
-		verifierOutputHub.register(this);
 
-		verifierCommandSender = ZmqHubManager.instance.getSendReceiveHub("Verifier Command",
-				String.format("tcp://%s:%s", address, 30556));
 
 		composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -306,6 +294,19 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 
 	public void setBackend(Backend backend) {
 		this.backend = backend;
+		address = "localhost";
+		if (backend instanceof SshBackend) {
+			SshBackend sshBackend = (SshBackend) backend;
+			address = sshBackend.getHostname();
+		}
+		verifierOutputHub = ZmqHubManager.instance.getPubSubHub("Verificator",
+				String.format("tcp://%s:%s", address, 5560));
+		verifierOutputHub.setRunning(false);
+		verifierOutputHub.setRunning(true);
+		verifierOutputHub.register(this);
+
+		verifierCommandSender = ZmqHubManager.instance.getSendReceiveHub("Verifier Command",
+				String.format("tcp://%s:%s", address, 30556));
 	}
 
 	public void setFile(IFile file) {

@@ -13,5 +13,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.edit;visibility:=reexport,
  eu.netide.configuration;visibility:=reexport,
  eu.netide.configuration.edit;visibility:=reexport,
- eu.netide.runtime.topology;bundle-version="0.3.1"
+ eu.netide.runtime.topology;bundle-version="0.3.1";visibility:=reexport
 Bundle-ActivationPolicy: lazy
