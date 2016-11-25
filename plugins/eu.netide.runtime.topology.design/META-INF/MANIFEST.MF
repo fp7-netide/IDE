@@ -11,7 +11,13 @@ Require-Bundle: org.eclipse.ui,
  com.google.guava,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.xtend.lib,
- org.eclipse.xtend.lib.macro
+ org.eclipse.xtend.lib.macro,
+ eu.netide.runtime.topology;bundle-version="0.3.1",
+ eu.netide.configuration;bundle-version="0.3.1",
+ org.eclipse.sirius.diagram;bundle-version="4.0.1",
+ eu.netide.chartview;bundle-version="0.3.1",
+ eu.netide.toolpanel;bundle-version="0.3.1",
+ com.fasterxml.jackson.core.jackson-databind;bundle-version="2.7.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 

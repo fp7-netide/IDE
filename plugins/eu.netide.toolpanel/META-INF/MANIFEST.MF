@@ -26,7 +26,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.xtext.xbase;bundle-version="2.10.0",
  eu.netide.runtime.topology,
  com.fasterxml.jackson.core.jackson-core;bundle-version="2.7.2",
- com.fasterxml.jackson.core.jackson-databind;bundle-version="2.7.2"
+ com.fasterxml.jackson.core.jackson-databind;bundle-version="2.7.2",
+ org.eclipse.sirius.diagram;bundle-version="4.0.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: eu.netide.toolpanel.views
+Export-Package: eu.netide.toolpanel.providers,
+ eu.netide.toolpanel.views

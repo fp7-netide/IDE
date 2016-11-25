@@ -8,9 +8,7 @@ import org.zeromq.ZMQException
 
 class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 
-	var Socket req
-	var Context ctx
-
+//	var Context ctx
 	@Accessors(PUBLIC_GETTER, PUBLIC_SETTER)
 	private String address
 
@@ -20,9 +18,7 @@ class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 	new(String name, String address) {
 		this.name = name
 		this.address = address
-		ctx = ZMQ.context(1)
-		req = ctx.socket(ZMQ.REQ)
-		req.connect(address)
+
 	}
 
 	new(String address) {
@@ -37,18 +33,21 @@ class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 		var t = new Thread() {
 			override run() {
 				super.run()
-
+				var ctx = ZMQ.context(1)
+				var req = ctx.socket(ZMQ.REQ)
+				req.receiveTimeOut = 100
 				try {
 					req.connect(address)
 					req.send(msg.bytes, 0)
-					val received = req.recv(0)
+					val received = req.recv()
 					if (received != null) {
 						success.apply(new String(received))
 					}
 				} catch (ZMQException e) {
-					req = ctx.socket(ZMQ.REQ)
-				}
-				catch (ArrayIndexOutOfBoundsException e) {
+//					req = ctx.socket(ZMQ.REQ)
+				} catch (ArrayIndexOutOfBoundsException e) {
+				} finally {
+					req.close
 				}
 
 			}

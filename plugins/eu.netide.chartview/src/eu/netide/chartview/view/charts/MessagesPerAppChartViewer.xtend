@@ -48,9 +48,11 @@ import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.widgets.Display
 import org.eclipse.birt.chart.model.type.LineSeries
 import org.eclipse.birt.chart.model.type.impl.LineSeriesImpl
+import com.fasterxml.jackson.databind.node.ArrayNode
+import java.util.List
 
-class MessagesPerAppChartViewer extends ChartViewer implements IZmqNetIpListener, PaintListener {
-	private Map<String, Integer> data
+class MessagesPerAppChartViewer extends ChartViewer implements PaintListener {
+	private Map<Integer, Integer> data
 	Image imgChart
 	GC gcImage
 	Bounds bo
@@ -81,7 +83,7 @@ class MessagesPerAppChartViewer extends ChartViewer implements IZmqNetIpListener
 		lg.getInsets().setLeft(10)
 		lg.getInsets().setRight(10)
 		// Title
-		cwaBar.getTitle().getLabel().getCaption().setValue("Traversing messages")
+		cwaBar.getTitle().getLabel().getCaption().setValue("Other Stuff")
 		// $NON-NLS-1$
 		// X-Axis
 		var Axis xAxisPrimary = cwaBar.getPrimaryBaseAxes().get(0)
@@ -109,7 +111,7 @@ class MessagesPerAppChartViewer extends ChartViewer implements IZmqNetIpListener
 		yAxisPrimary.setType(AxisType::LINEAR_LITERAL)
 		yAxisPrimary.getMajorGrid().setTickStyle(TickStyle::LEFT_LITERAL)
 		yAxisPrimary.getMajorGrid().getLineAttributes().setStyle(LineStyle::DOTTED_LITERAL)
-		yAxisPrimary.getMajorGrid().getLineAttributes().setColor(ColorDefinitionImpl::BLUE())
+		yAxisPrimary.getMajorGrid().getLineAttributes().setColor(ColorDefinitionImpl::RED())
 		yAxisPrimary.getMajorGrid().getLineAttributes().setVisible(true)
 		// X-Series
 		var Series seCategory = SeriesImpl::create()
@@ -117,34 +119,34 @@ class MessagesPerAppChartViewer extends ChartViewer implements IZmqNetIpListener
 		xAxisPrimary.getSeriesDefinitions().add(sdX)
 		sdX.getSeries().add(seCategory)
 		// Y-Series (1)
-//		var BarSeries bs1 = (BarSeriesImpl::create() as BarSeries)
-		var ls1 = LineSeriesImpl::create()
+		var LineSeries bs1 = (LineSeriesImpl::create() as LineSeries)
 //		bs1.setSeriesIdentifier("# Messages")
-		ls1.triggers.add(
+		bs1.triggers.add(
 			TriggerImpl::create(TriggerCondition::ONMOUSEOVER_LITERAL,
 				ActionImpl::create(ActionType.SHOW_TOOLTIP_LITERAL,
-					TooltipValueImpl::create(0, ls1.dataPoint.components.get(0).toString))))
+					TooltipValueImpl::create(0, bs1.dataPoint.components.get(0).toString))))
 
 		// $NON-NLS-1$
-
+		//bs1.set(null)
+		//bs1.setRiser(RiserType::RECTANGLE_LITERAL)
 		var SeriesDefinition sdY = SeriesDefinitionImpl::create()
 		yAxisPrimary.getSeriesDefinitions().add(sdY)
 		sdY.getSeriesPalette().shift(-1)
-		sdY.getSeries().add(ls1)
+		sdY.getSeries().add(bs1)
 		// Update data
 		updateDataSet(cwaBar)
 		return cwaBar
 	}
 
-	override update(Message msg) {
-		if (msg.header.messageType == MessageType.OPENFLOW) {
-			synchronized (data) {
-				if (!data.containsKey("" + msg.header.moduleId)) {
-					data.put("" + msg.header.moduleId, 0)
-				}
-				var value = data.get("" + msg.header.moduleId)
-				data.put("" + msg.header.moduleId, value + 1)
-			}
+	override update(ArrayNode log, List<String> keys, int port) {
+		synchronized (data) {
+			data.clear
+			var map = log.map[filter[get("port").asInt == port].map[get("tx_bytes").asInt]].flatten
+			
+			map.forEach [ element, index |
+				data.put(index, element)
+			]
+
 		}
 	}
 
@@ -152,8 +154,8 @@ class MessagesPerAppChartViewer extends ChartViewer implements IZmqNetIpListener
 		var xarr = data.keySet.toList()
 		var yarr = data.values.toList()
 
-		if (data.keySet.length == 0) {
-			xarr.add("0")
+		if (data.empty) {
+			xarr.add(0)
 			yarr.add(0)
 		}
 

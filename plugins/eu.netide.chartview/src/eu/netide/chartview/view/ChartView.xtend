@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Combo
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.ui.part.ViewPart
 import eu.netide.chartview.view.charts.AnotherViewer
+import com.fasterxml.jackson.databind.node.ArrayNode
 
 /** 
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -35,16 +36,13 @@ class ChartView extends ViewPart {
 	 * The ID of the view as specified by the extension.
 	 */
 	public static final String ID = "chartview.views.ChartView"
-	private List<Class> viewerClasses
-	private List<ChartViewer> viewerObjects
+	public MessagesPerAppChartViewer viewer
 
 	/** 
 	 * The constructor.
 	 */
 	new() {
-		viewerClasses = newArrayList(MessagesPerAppChartViewer, AnotherViewer)
-		viewerObjects = newArrayList()
-
+		
 	}
 
 	/** 
@@ -70,43 +68,19 @@ class ChartView extends ViewPart {
 		sc.setExpandVertical(true)
 		val Composite mainComposite = new Composite(sc, SWT.BORDER)
 		mainComposite.setLayout(new GridLayout(1, false))
+		
 		mainComposite.layoutData = new GridData(GridData.FILL_BOTH)
 		sc.setContent(mainComposite)
 
-		val Combo comboChartChooser = new Combo(mainComposite, SWT.READ_ONLY)
-		comboChartChooser.layoutData = new GridData(GridData.FILL_HORIZONTAL)
-		comboChartChooser.addSelectionListener(new SelectionListener() {
-
-			override widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e)
-			}
-
-			override widgetSelected(SelectionEvent e) {
-				viewerObjects.forEach[v | (v.layoutData as GridData).exclude = true]
-				var viewer = viewerObjects.findFirst [ v | v.name == comboChartChooser.text ]
-				(viewer.layoutData as GridData).exclude = false
-				viewer.redraw
-				mainComposite.layout()
-				mainComposite.redraw
-			}
-
-		})
-
-		if (viewerObjects.empty) {
-			viewerObjects.addAll(viewerClasses.map [ v |
-				var viewer = (v.constructors.get(0) as Constructor<ChartViewer>).newInstance(mainComposite,
-					SWT.NO_BACKGROUND) as ChartViewer
-				viewer.layoutData = new GridData(GridData.FILL_BOTH)
-				(viewer.layoutData as GridData).exclude = true
-				viewer.addPaintListener(viewer)
-				return viewer
-			])
-		}
-
+				
+		viewer = new MessagesPerAppChartViewer(mainComposite, SWT.NONE)
+		viewer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		viewer.addPaintListener(viewer);
 		mainComposite.layout()
 
-		viewerObjects.forEach[v|comboChartChooser.add(v.name)]
-		comboChartChooser.select(0);
-
+	}
+	
+	def void update(ArrayNode log, Integer portId) {
+		viewer.update(log, newArrayList("tx_packets"), portId)
 	}
 }

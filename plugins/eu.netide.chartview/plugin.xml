@@ -9,11 +9,12 @@
             id="ChartView">
       </category>
       <view
-            name="Chart View"
-            icon="icons/sample.gif"
             category="ChartView"
             class="eu.netide.chartview.view.ChartView"
-            id="chartview.views.ChartView">
+            icon="icons/sample.gif"
+            id="eu.netide.chartview.views.ChartView"
+            name="Chart View"
+            restorable="false">
       </view>
    </extension>
    <extension

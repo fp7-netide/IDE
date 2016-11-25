@@ -25,6 +25,7 @@ import org.eclipse.sirius.business.api.session.Session
 import org.eclipse.xtend.lib.annotations.Accessors
 import java.util.Timer
 import java.util.TimerTask
+import eu.netide.toolpanel.providers.LogProvider
 
 class ProfilerConnector implements IZmqNetIpListener {
 
@@ -59,7 +60,11 @@ class ProfilerConnector implements IZmqNetIpListener {
 		this.mapper = new ObjectMapper
 		this.file = file
 		this.recordLog = mapper.nodeFactory.objectNode
-		this.log = mapper.nodeFactory.objectNode
+		this.log = LogProvider.instance.log
+		if (this.log.has("FlowLog") && this.log.has("PortLog")) {
+			this.log.remove("FlowLog")
+			this.log.remove("PortLog")
+		}
 		this.log.putObject("FlowLog")
 		this.log.putObject("PortLog")
 		this.recording = false
@@ -109,7 +114,7 @@ class ProfilerConnector implements IZmqNetIpListener {
 
 				val dpidLog = flowLog.get(dpid) as ArrayNode
 				dpidLog.add(flowStats)
-				
+
 				if (recording) {
 					(recordLog.get("FlowLog") as ArrayNode).add(flowStats)
 				}

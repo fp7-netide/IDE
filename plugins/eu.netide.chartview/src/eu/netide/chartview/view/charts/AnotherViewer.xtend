@@ -47,6 +47,8 @@ import org.eclipse.swt.widgets.Composite
 import org.eclipse.swt.widgets.Display
 import eu.netide.lib.netip.Message
 import eu.netide.lib.netip.MessageType
+import com.fasterxml.jackson.databind.node.ArrayNode
+import java.util.List
 
 class AnotherViewer extends ChartViewer implements IZmqNetIpListener, PaintListener {
 	private Map<String, Integer> data
@@ -221,6 +223,10 @@ class AnotherViewer extends ChartViewer implements IZmqNetIpListener, PaintListe
 
 		bFirstPaint = false
 		Display::getDefault().timerExec(500, ([|chartRefresh()] as Runnable))
+	}
+	
+	override update(ArrayNode log, List<String> keys, int port) {
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 
 }

@@ -18,5 +18,9 @@
   </extension>
   <extension
         point="org.eclipse.sirius.externalJavaAction">
+     <javaActions
+           actionClass="eu.netide.runtime.topology.design.actions.OpenGraphAction"
+           id="eu.netide.runtime.topology.design.actions.OpenGraphAction">
+     </javaActions>
   </extension>
 </plugin>

@@ -18,6 +18,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="rx_frame_err" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="changed" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="port" lowerBound="1" eType="ecore:EClass ../../eu.netide.configuration/model/Topology.ecore#//Port"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hidden" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="RuntimeData">
     <eStructuralFeatures xsi:type="ecore:EReference" name="portstatistics" upperBound="-1"
@@ -41,5 +43,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="byte_count" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="switch" lowerBound="1"
         eType="ecore:EClass ../../eu.netide.configuration/model/Topology.ecore#//Switch"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hidden" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
   </eClassifiers>
 </ecore:EPackage>

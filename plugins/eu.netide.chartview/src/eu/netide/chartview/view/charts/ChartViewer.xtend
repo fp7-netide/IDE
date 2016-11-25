@@ -1,7 +1,7 @@
 package eu.netide.chartview.view.charts
 
-import eu.netide.zmq.hub.client.IZmqNetIpListener
-import eu.netide.zmq.hub.server.ZmqHubManager
+import com.fasterxml.jackson.databind.node.ArrayNode
+import java.util.List
 import org.eclipse.birt.chart.api.ChartEngine
 import org.eclipse.birt.chart.device.IDeviceRenderer
 import org.eclipse.birt.chart.exception.ChartException
@@ -15,7 +15,7 @@ import org.eclipse.swt.events.PaintListener
 import org.eclipse.swt.events.SelectionListener
 import org.eclipse.swt.widgets.Composite
 
-abstract class ChartViewer extends Composite implements IZmqNetIpListener, PaintListener {
+abstract class ChartViewer extends Composite implements PaintListener {
 	protected IDeviceRenderer idr = null
 	protected Chart cm = null
 	protected GeneratedChartState gcs = null
@@ -34,10 +34,6 @@ abstract class ChartViewer extends Composite implements IZmqNetIpListener, Paint
 		try {
 			var PlatformConfig config = new PlatformConfig()
 			idr = ChartEngine::instance(config).getRenderer("dv.SWT") // $NON-NLS-1$
-			var hub = ZmqHubManager.instance.getPubSubHub("LogPub", "tcp://localhost:5557")
-			hub.register(this)
-			hub.running = true
-
 		} catch (ChartException pex) {
 			System::err.println(pex)
 		}
@@ -63,6 +59,8 @@ abstract class ChartViewer extends Composite implements IZmqNetIpListener, Paint
 	 * .PaintEvent)
 	 */
 	abstract override void paintControl(PaintEvent e)
+	
+	abstract def void update(ArrayNode log, List<String> keys, int port)
 
 	/*
 	 * (non-Javadoc)
