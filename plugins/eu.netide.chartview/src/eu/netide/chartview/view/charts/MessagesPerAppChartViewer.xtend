@@ -83,7 +83,7 @@ class MessagesPerAppChartViewer extends ChartViewer implements PaintListener {
 		lg.getInsets().setLeft(10)
 		lg.getInsets().setRight(10)
 		// Title
-		cwaBar.getTitle().getLabel().getCaption().setValue("Other Stuff")
+		cwaBar.getTitle().getLabel().getCaption().setValue("Port Statistics")
 		// $NON-NLS-1$
 		// X-Axis
 		var Axis xAxisPrimary = cwaBar.getPrimaryBaseAxes().get(0)
@@ -101,7 +101,7 @@ class MessagesPerAppChartViewer extends ChartViewer implements PaintListener {
 		xAxisPrimary.getMajorGrid().getLineAttributes().setVisible(true)
 		// Y-Axis
 		var Axis yAxisPrimary = cwaBar.getPrimaryOrthogonalAxis(xAxisPrimary)
-		yAxisPrimary.getLabel().getCaption().setValue("Price Axis")
+		yAxisPrimary.getLabel().getCaption().setValue("tx_bytes")
 		// $NON-NLS-1$
 		yAxisPrimary.getLabel().getCaption().getFont().setRotation(37)
 		yAxisPrimary.setLabelPosition(Position::LEFT_LITERAL)

@@ -1,9 +1,8 @@
 package eu.netide.zmq.hub.server
 
+import org.eclipse.ui.PlatformUI
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.zeromq.ZMQ
-import org.zeromq.ZMQ.Context
-import org.zeromq.ZMQ.Socket
 import org.zeromq.ZMQException
 
 class ZmqSendReceiveHub implements IZmqSendReceiveHub {
@@ -26,11 +25,24 @@ class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 	}
 
 	override void send(String msg) {
-		send(msg, [x | ])
+		var ctx = ZMQ.context(1)
+		var req = ctx.socket(ZMQ.REQ)
+		req.receiveTimeOut = 100
+		try {
+			req.connect(address)
+			req.send(msg.bytes, 0)
+			req.recv()
+		} catch (ZMQException e) {
+//					req = ctx.socket(ZMQ.REQ)
+		} catch (ArrayIndexOutOfBoundsException e) {
+		} finally {
+			req.close
+			ctx.close
+		}
 	}
 
 	override void send(String msg, (String)=>void success) {
-		var t = new Thread() {
+		var t = new Thread("Sending") {
 			override run() {
 				super.run()
 				var ctx = ZMQ.context(1)
@@ -53,7 +65,8 @@ class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 			}
 
 		}
-		t.start
+//		t.start
+		PlatformUI.workbench.activeWorkbenchWindow.shell.display.asyncExec(t)
 
 	}
 

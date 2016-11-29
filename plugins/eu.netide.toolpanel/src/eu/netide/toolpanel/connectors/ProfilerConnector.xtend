@@ -284,6 +284,7 @@ class ProfilerConnector implements IZmqNetIpListener {
 
 	public def stopPolling() {
 		pollJob.cancel
+		pollJob.purge
 	}
 
 	public def poll() {

@@ -161,7 +161,7 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 
 		Composite composite_3 = new Composite(grpProfiler, SWT.NONE);
 		composite_3.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		composite_3.setLayout(new GridLayout(5, false));
+		composite_3.setLayout(new GridLayout(1, false));
 
 		Button btnStartProfiler = new Button(composite_3, SWT.NONE);
 		btnStartProfiler.addSelectionListener(new SelectionAdapter() {
@@ -174,26 +174,13 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 			}
 		});
 		btnStartProfiler.setText("Start Profiler");
-		new Label(composite_3, SWT.NONE);
-		new Label(composite_3, SWT.NONE);
-		new Label(composite_3, SWT.NONE);
-
-		Button btnRecordButton = new Button(composite_3, SWT.CHECK);
-		btnRecordButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				profilerConnector.setRecording(btnRecordButton.getSelection());				
-			}
-		});
-		btnRecordButton.setText("Record");
 
 		Group composite_2 = new Group(grpProfiler, SWT.NONE);
 		composite_2.setText("Port Statistics");
-		composite_2.setLayout(new GridLayout(7, false));
+		GridLayout gl_composite_2 = new GridLayout(4, false);
+		gl_composite_2.marginWidth = 0;
+		composite_2.setLayout(gl_composite_2);
 		composite_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		new Label(composite_2, SWT.NONE);
-		new Label(composite_2, SWT.NONE);
-		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
@@ -207,6 +194,7 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 			}
 		});
 		btnRadioButton.setText("Port Statistics");
+		new Label(composite_2, SWT.NONE);
 		
 		Button btnRadioButton_1 = new Button(composite_2, SWT.RADIO);
 		btnRadioButton_1.addSelectionListener(new SelectionAdapter() {
@@ -216,10 +204,23 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 			}
 		});
 		btnRadioButton_1.setText("Flow Statistics");
+						
+						Button btnPollProfiler = new Button(composite_2, SWT.CHECK);
+						btnPollProfiler.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								if (btnPollProfiler.getSelection())
+									profilerConnector.startPolling(Double.parseDouble(text.getText()));
+								else
+									profilerConnector.stopPolling();
+							}
+						});
+						btnPollProfiler.setText("Poll Profiler");
 				
 						Label lblUpdateInterval = new Label(composite_2, SWT.NONE);
 						lblUpdateInterval.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 						lblUpdateInterval.setText("Update Interval:");
+				new Label(composite_2, SWT.NONE);
 		
 				text = new Text(composite_2, SWT.BORDER);
 				text.setText("1");
@@ -229,58 +230,15 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 					}
 				});
 				text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		new Label(composite_2, SWT.NONE);
-		
-		Button btnPollProfiler = new Button(composite_2, SWT.CHECK);
-		btnPollProfiler.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (btnPollProfiler.getSelection())
-					profilerConnector.startPolling(Double.parseDouble(text.getText()));
-				else
-					profilerConnector.stopPolling();
-			}
-		});
-		btnPollProfiler.setText("Poll Profiler");
-		new Label(composite_2, SWT.NONE);
-
-		Button btnCheckButton = new Button(composite_2, SWT.CHECK);
-		btnCheckButton.setText("rx_packets");
-
-		Button btnCheckButton_1 = new Button(composite_2, SWT.CHECK);
-		btnCheckButton_1.setText("tx_packets");
-		
-				Button btnCheckButton_2 = new Button(composite_2, SWT.CHECK);
-				btnCheckButton_2.setText("rx_bytes");
-		
-				Button btnTxbytes = new Button(composite_2, SWT.CHECK);
-				btnTxbytes.setText("tx_bytes");
-		new Label(composite_2, SWT.NONE);
-
-		Button btnCheckButton_3 = new Button(composite_2, SWT.CHECK);
-		btnCheckButton_3.setText("rx_dropped");
-
-		Button btnCheckButton_4 = new Button(composite_2, SWT.CHECK);
-		btnCheckButton_4.setText("tx_dropped");
-
-		Button btnRxErrors = new Button(composite_2, SWT.CHECK);
-		btnRxErrors.setText("rx_errors");
-
-		Button btnTxerrors = new Button(composite_2, SWT.CHECK);
-		btnTxerrors.setText("tx_errors");
-		
-				Button btnRxframeerrors = new Button(composite_2, SWT.CHECK);
-				btnRxframeerrors.setText("rx_frame_errors");
-		
-				Button btnRxovererrors = new Button(composite_2, SWT.CHECK);
-				btnRxovererrors.setText("rx_over_errors");
-		new Label(composite_2, SWT.NONE);
-
-		Button btnRxcrcerrors = new Button(composite_2, SWT.CHECK);
-		btnRxcrcerrors.setText("rx_crc_errors");
-
-		Button btnCollisions = new Button(composite_2, SWT.CHECK);
-		btnCollisions.setText("collisions");
+				
+						Button btnRecordButton = new Button(composite_2, SWT.CHECK);
+						btnRecordButton.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								profilerConnector.setRecording(btnRecordButton.getSelection());				
+							}
+						});
+						btnRecordButton.setText("Record");
 		scrolledComposite.setContent(composite_1);
 		scrolledComposite.setMinSize(composite_1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
