@@ -60,6 +60,7 @@ class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 				} catch (ArrayIndexOutOfBoundsException e) {
 				} finally {
 					req.close
+					ctx.close
 				}
 
 			}
