@@ -9,6 +9,8 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -277,6 +279,16 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 	}
+	
+	private void startApp(){
+		if ((engine.getStatusModel().getSshRunning() || engine.getStatusModel().getVagrantRunning())) {
+			if (table.getSelectionCount() > 0) {
+				controllerManager.startApp();
+			} else {
+				showMessage("Make sure vagrant is running or a ssh connection is established.");
+			}
+		}
+	}
 
 	private void addTestButtonListener() {
 		btnRemoveTest.addSelectionListener(new SelectionAdapter() {
@@ -300,17 +312,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				}
 			}
 		});
+		
+
 
 		startBTN.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if ((engine.getStatusModel().getSshRunning() || engine.getStatusModel().getVagrantRunning())) {
-					if (table.getSelectionCount() > 0) {
-						controllerManager.startApp();
-					} else {
-						showMessage("Make sure vagrant is running.");
-					}
-				}
+				startApp();
 			}
 		});
 
@@ -362,6 +370,15 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 				}
 			}
+		});
+		
+		tableViewer.addDoubleClickListener(new IDoubleClickListener(){
+
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				startApp();
+			}
+			
 		});
 
 		btnProvision_1.addSelectionListener(new SelectionAdapter() {
