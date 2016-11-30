@@ -16,17 +16,11 @@ import org.eclipse.sirius.business.api.dialect.command.CreateRepresentationComma
 import org.eclipse.sirius.business.api.query.URIQuery
 import org.eclipse.sirius.business.api.session.Session
 import org.eclipse.sirius.business.api.session.SessionManager
+import org.eclipse.sirius.diagram.DSemanticDiagram
 import org.eclipse.sirius.tools.api.command.semantic.AddSemanticResourceCommand
 import org.eclipse.sirius.ui.business.api.dialect.DialectUIManager
 import org.eclipse.sirius.ui.business.api.session.UserSession
-import org.eclipse.sirius.viewpoint.DRepresentation
-import org.eclipse.sirius.diagram.DDiagramElement
-import org.eclipse.sirius.diagram.HideFilter
-import org.eclipse.sirius.diagram.GraphicalFilter
-import org.eclipse.sirius.diagram.business.api.helper.graphicalfilters.HideFilterHelper
-import org.eclipse.sirius.viewpoint.DView
-import org.eclipse.sirius.diagram.DSemanticDiagram
-import org.eclipse.sirius.tools.internal.command.builders.CommandBuilder
+import org.eclipse.sirius.business.api.session.SessionListener
 
 class RuntimeModelManager {
 
@@ -45,6 +39,9 @@ class RuntimeModelManager {
 	}
 
 	private new() {
+	}
+
+	public def init() {
 		val modelURI = URI.createGenericURI(URIQuery.INMEMORY_URI_SCHEME, "file.runtimetopology", null);
 		val representationURI = URI.createGenericURI(URIQuery.INMEMORY_URI_SCHEME, "temp.aird", null);
 
@@ -88,13 +85,11 @@ class RuntimeModelManager {
 		var setFilterCommand = new RecordingCommand(session.transactionalEditingDomain, "Set Filter") {
 			override protected doExecute() {
 				var filters = rep.description.filters
-				rep.activatedFilters.add(filters.findFirst[x | x.name == "PortStatisticsFilter"])
-				rep.activatedFilters.add(filters.findFirst[x | x.name == "ControllerFilter"])
+				rep.activatedFilters.add(filters.findFirst[x|x.name == "PortStatisticsFilter"])
+				rep.activatedFilters.add(filters.findFirst[x|x.name == "ControllerFilter"])
 			}
 		}
 		session.transactionalEditingDomain.commandStack.execute(setFilterCommand)
-		
-
 	}
 
 	public def open(IProgressMonitor monitor) {
@@ -103,6 +98,10 @@ class RuntimeModelManager {
 
 	public def getResource() {
 		return this.resource
+	}
+	
+	public def getRuntimeData() {
+		return this.root
 	}
 
 	public def getSession() {
@@ -118,6 +117,12 @@ class RuntimeModelManager {
 	}
 
 	public def from(NetworkEnvironment res) {
+		if (this.session != null) {
+			this.session.close(new NullProgressMonitor)
+			this.session = null
+		}
+		this.init()
+
 		var command = new RecordingCommand(this.session.transactionalEditingDomain) {
 			override protected doExecute() {
 				var ne = EcoreUtil.copy(res)
@@ -126,6 +131,7 @@ class RuntimeModelManager {
 			}
 		};
 		this.session.transactionalEditingDomain.commandStack.execute(command)
+		
 	}
 
 }
