@@ -11,21 +11,19 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import eu.netide.configuration.utils.fsa.FSAProvider
 import eu.netide.configuration.utils.fsa.FileSystemAccess
 import eu.netide.lib.netip.Message
+import eu.netide.toolpanel.providers.LogProvider
 import eu.netide.toolpanel.runtime.RuntimeModelManager
 import eu.netide.zmq.hub.client.IZmqNetIpListener
 import eu.netide.zmq.hub.server.ZmqHubManager
 import eu.netide.zmq.hub.server.ZmqPubSubHub
 import eu.netide.zmq.hub.server.ZmqSendReceiveHub
-import org.eclipse.core.resources.IFile
-import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.core.runtime.Status
-import org.eclipse.core.runtime.jobs.Job
-import org.eclipse.emf.transaction.RecordingCommand
-import org.eclipse.sirius.business.api.session.Session
-import org.eclipse.xtend.lib.annotations.Accessors
 import java.util.Timer
 import java.util.TimerTask
-import eu.netide.toolpanel.providers.LogProvider
+import org.eclipse.core.resources.IFile
+import org.eclipse.emf.transaction.RecordingCommand
+import org.eclipse.sirius.business.api.session.Session
+import org.eclipse.ui.PlatformUI
+import org.eclipse.xtend.lib.annotations.Accessors
 
 class ProfilerConnector implements IZmqNetIpListener {
 
@@ -102,9 +100,10 @@ class ProfilerConnector implements IZmqNetIpListener {
 	}
 
 	def handleFlowStats(ArrayNode flowStats) {
-		var job = new Job("Updating Runtime Model") {
+		var job = new Thread("Updating Runtime Model") {
 
-			override protected run(IProgressMonitor monitor) {
+			override run() {
+				session = manager.session
 
 				val flowLog = log.get("PortLog") as ObjectNode
 				val dpid = flowStats.get(0).get("dpid").asText()
@@ -129,9 +128,13 @@ class ProfilerConnector implements IZmqNetIpListener {
 						var updateCommand = new RecordingCommand(session.getTransactionalEditingDomain()) {
 							override doExecute() {
 								val dpid = node.get("dpid").asText
+								val env = RuntimeModelManager.instance.runtimeData.networkenvironment
 								val sw = env.getNetworks().map[x|x.networkelements].flatten.filter(typeof(Switch)).
 									findFirst[x|x.dpid == dpid]
+								if (sw == null)
+									return
 								var FlowStatistics fs = rt.flowstatistics.findFirst[x|x.^switch.equals(sw)]
+
 								if (fs == null) {
 									fs = RuntimeTopologyFactory.eINSTANCE.createFlowStatistics
 									fs.^switch = sw
@@ -150,20 +153,22 @@ class ProfilerConnector implements IZmqNetIpListener {
 						session.transactionalEditingDomain.commandStack.execute(updateCommand)
 					}
 				}
-				return Status.OK_STATUS
-
+//				return Status.OK_STATUS
 			}
 
 		}
-		job.schedule
+		PlatformUI.workbench.display.asyncExec(job)
+	// job.schedule
 	}
 
 	private def void handlePortStats(ArrayNode portStats) {
-		var job = new Job("Updating Runtime Model") {
+		var job = new Thread("Updating Runtime Model") {
 
-			override protected run(IProgressMonitor monitor) {
+			override run() {
 				val portLog = log.get("PortLog") as ObjectNode
 				val dpid = portStats.get(0).get("dpid").asText()
+
+				session = manager.session
 
 				if (!portLog.has(dpid))
 					portLog.putArray(dpid)
@@ -175,10 +180,8 @@ class ProfilerConnector implements IZmqNetIpListener {
 					(recordLog.get("log") as ArrayNode).add(portStats)
 				}
 
-				var res = session.getSemanticResources().iterator().next();
-
-				val rt = res.getContents().get(0) as RuntimeData;
-				val env = rt.networkenvironment;
+				// var res = session.getSemanticResources().iterator().next();
+				val rt = RuntimeModelManager.instance.runtimeData;
 
 				for (node : portStats) {
 					if (node.get("port").asInt != 65534 && node.get("Type").asText.equals("Port Stats")) {
@@ -188,10 +191,13 @@ class ProfilerConnector implements IZmqNetIpListener {
 							override doExecute() {
 
 								val portno = node.get("port").asInt
+								val env = RuntimeModelManager.instance.runtimeData.networkenvironment
 
 								val sw = env.getNetworks().map[x|x.networkelements].flatten.filter [ x |
 									x instanceof Switch
 								].findFirst[x|x.dpid == dpid]
+								if (sw == null)
+									return
 								val port = sw.ports.get(portno - 1)
 
 								var PortStatistics ps = rt.portstatistics.findFirst[x|x.port.equals(port)]
@@ -227,7 +233,6 @@ class ProfilerConnector implements IZmqNetIpListener {
 								ps.rx_frame_err = node.get("rx_frame_err").asInt
 								ps.rx_crc_err = node.get("rx_crc_err").asInt
 								ps.collisions = node.get("collisions").asInt
-
 							}
 
 						};
@@ -235,12 +240,11 @@ class ProfilerConnector implements IZmqNetIpListener {
 					}
 
 				}
-				return Status.OK_STATUS
-
+			// return Status.OK_STATUS
 			}
 
 		}
-		job.schedule
+		PlatformUI.workbench.display.asyncExec(job)
 	}
 
 	public def clearPortStatistics() {

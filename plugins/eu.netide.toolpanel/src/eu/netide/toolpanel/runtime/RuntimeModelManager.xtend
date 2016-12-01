@@ -20,7 +20,6 @@ import org.eclipse.sirius.diagram.DSemanticDiagram
 import org.eclipse.sirius.tools.api.command.semantic.AddSemanticResourceCommand
 import org.eclipse.sirius.ui.business.api.dialect.DialectUIManager
 import org.eclipse.sirius.ui.business.api.session.UserSession
-import org.eclipse.sirius.business.api.session.SessionListener
 
 class RuntimeModelManager {
 
