@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
@@ -84,8 +85,8 @@ public class WorkbenchConfigurationEditorEngine {
 
 		this.addTableDataBinding(this.statusModel.getModelList());
 
-		this.addButtonDisabledDataBinding(this.editor.getSshUpButton(), Constants.SSH_RUNNING_MODEL);
-		this.addButtonEnabledDataBinding(this.editor.getSshDownButton(), Constants.SSH_RUNNING_MODEL);
+
+		//this.addButtonEnabledDataBinding(this.editor.getSshReloadButton(), Constants.SSH_RUNNING_MODEL);
 
 		this.addButtonDisabledDataBinding(this.editor.getBtnVagrantUp(), Constants.VAGRANT_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnProvision_2(), Constants.VAGRANT_RUNNING_MODEL);
@@ -100,6 +101,7 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addButtonEnabledDataBinding(this.editor.getBtnReattachCore(), Constants.CORE_RUNNING_MODEL);
 
 		this.addButtonEnabledDataBinding(this.editor.getBtnCopyApps(), Constants.SSH_RUNNING_MODEL);
+		this.addButtonEnabledDataBinding(this.editor.getTopologySSHButton(), Constants.SSH_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnProvision_1(), Constants.SSH_RUNNING_MODEL);
 		
 		this.addComboDisabledDataBinding(this.editor.getSelectServerCombo(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
@@ -122,7 +124,10 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addServerControllerComboDataBinding();
 		this.addCompositionTextDataBinding(this.editor.getTextCompositionPath(), Constants.COMPOSITION_MODEL_PATH);
 		this.addTopologyTextDataBinding(this.editor.getTopologyText(), Constants.TOPOLOGY_MODEL_PATH);
+		
+		this.addShimPortTextDataBinding(this.editor.getShimPortText(), Constants.SHIM_PORT);
 
+		
 		this.addShimComboDataBinding(this.editor.getSelectServerCombo(), Constants.SERVER_COMBO_TEXT);
 		
 		// this.addTabFolderBinding(this.editor.getTabFolder().getTabList()[0],
@@ -142,14 +147,22 @@ public class WorkbenchConfigurationEditorEngine {
 	}
 
 	private void addCompositionTextDataBinding(Text text, String property) {
-		IObservableValue textObs = WidgetProperties.text().observe(text);
+		IObservableValue textObs = WidgetProperties.text(SWT.Modify).observe(text);
 		IObservableValue pathObs = BeanProperties.value(CompositionModel.class, property)
 				.observe(this.statusModel.getCompositionModel());
 		this.ctx.bindValue(textObs, pathObs);
 	}
+	
+	private void addShimPortTextDataBinding(Text text, String property) {
+		IObservableValue textObs = WidgetProperties.text(SWT.Modify).observe(text);
+		IObservableValue pathObs = BeanProperties.value(ShimModel.class, property)
+				.observe(this.statusModel.getShimModel());
+
+		this.ctx.bindValue(textObs, pathObs);
+	}
 
 	private void addTopologyTextDataBinding(Text text, String property) {
-		IObservableValue textObs = WidgetProperties.text().observe(text);
+		IObservableValue textObs = WidgetProperties.text(SWT.Modify).observe(text);
 		IObservableValue pathObs = BeanProperties.value(TopologyModel.class, property)
 				.observe(this.statusModel.getTopologyModel());
 		this.ctx.bindValue(textObs, pathObs);
@@ -205,7 +218,7 @@ public class WorkbenchConfigurationEditorEngine {
 				.bind(this.editor.getTableViewer(), input,
 						BeanProperties.values(new String[] { Constants.LaunchName, Constants.APP_NAME_MODEL,
 								Constants.APP_RUNNING_MODEL, Constants.PLATFORM_MODEL,
-								Constants.CLIENT_CONTROLLER_MODEL, Constants.PORT_MODEL }));
+								Constants.CLIENT_CONTROLLER_MODEL, Constants.PORT_MODEL, Constants.FLAG_BACKEND, Constants.FLAG_APP }));
 
 		// bind selectionIndex to model
 		// selectionIndex == profileListIndex, use it to match selection to

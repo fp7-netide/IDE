@@ -5,10 +5,10 @@ if [ ! -d ~/netide/openflowplugin ]; then
 
    cd netide
    echo "Downloading OpenDaylight Karaf Distribution"
-   wget -q https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.4.0-Beryllium/distribution-karaf-0.4.0-Beryllium.tar.gz
-   tar -xzf distribution-karaf-0.4.0-Beryllium.tar.gz
+   wget -q https://nexus.opendaylight.org/content/groups/public/org/opendaylight/integration/distribution-karaf/0.5.0-Boron/distribution-karaf-0.5.0-Boron.tar.gz
+   tar -xzf distribution-karaf-0.5.0-Boron.tar.gz
 
-   cd distribution-karaf-0.4.0-Beryllium
+   cd distribution-karaf-0.5.0-Boron
 
 
 

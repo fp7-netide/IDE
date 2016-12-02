@@ -8,16 +8,16 @@ if [ ! -d ~/netide/mininet ]; then
   
   
   #sudo apt-get update -y
-  sudo apt-get install mininet -y
-  sudo service openvswitch-controller stop
-  sudo update-rc.d openvswitch-controller disable
-  sudo apt-get install openvswitch-datapath-dkms
-  sudo dpkg-reconfigure openvswitch-datapath-dkms
-  sudo service openflow-switch restart
+  #sudo apt-get install mininet -y
+  #sudo service openvswitch-controller stop
+  #sudo update-rc.d openvswitch-controller disable
+  #sudo apt-get install openvswitch-datapath-dkms
+  #sudo dpkg-reconfigure openvswitch-datapath-dkms
+  #sudo service openflow-switch restart
   
   cd netide
   git clone https://github.com/mininet/mininet
-  mininet/util/install.sh -fw
+  mininet/util/install.sh -a
   
   if [ ! -d ~/netide/controllers ]; then
     mkdir ~/netide/controllers

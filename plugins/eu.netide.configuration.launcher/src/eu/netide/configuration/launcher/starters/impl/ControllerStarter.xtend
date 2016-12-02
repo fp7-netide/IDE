@@ -1,14 +1,14 @@
 package eu.netide.configuration.launcher.starters.impl
 
 import Topology.Controller
+import eu.netide.configuration.launcher.starters.backends.VagrantBackend
+import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IPath
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.xtend.lib.annotations.Accessors
 
 import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
-import eu.netide.configuration.launcher.starters.backends.VagrantBackend
-import org.eclipse.core.resources.ResourcesPlugin
 
 abstract class ControllerStarter extends Starter {
 
@@ -51,7 +51,7 @@ abstract class ControllerStarter extends Starter {
 
 		this.port = port
 
-		var tempAppPath = ResourcesPlugin.workspace.root.findMember(appPath.replaceFirst("platform:/resource", "")).projectRelativePath
+		var tempAppPath = getIFile(appPath).projectRelativePath
 
 		this.appPath = tempAppPath
 	}

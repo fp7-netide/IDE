@@ -1,5 +1,7 @@
 package eu.netide.workbenchconfigurationeditor.dialogs;
 
+import java.util.UUID;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -57,8 +59,15 @@ public class ConfigurationShell extends Shell {
 					this.platformCombo.select(platformIndex);
 				}
 				this.platformSet = true;
-
-				this.portText.setText(model.getAppPort());
+				
+				if(model.getFlagBackend() == null)
+					model.setFlagBackend("");
+				if(model.getFlagApp() == null)
+					model.setFlagApp("");
+				
+				text_flag_app.setText(model.getFlagApp());
+				text_flag_backend.setText(model.getFlagBackend());
+				portText.setText(model.getAppPort());
 
 				checkForFinish();
 			}
@@ -111,16 +120,16 @@ public class ConfigurationShell extends Shell {
 
 		Group appGroup = new Group(this, SWT.NONE);
 		GridData gd_appGroup = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-		gd_appGroup.heightHint = 94;
+		gd_appGroup.heightHint = 155;
 		appGroup.setLayoutData(gd_appGroup);
 		appGroup.setLayout(new GridLayout(3, false));
-		
+
 		Label lblName = new Label(appGroup, SWT.NONE);
 		lblName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		lblName.setText("Name");
-		
+
 		textName = new Text(appGroup, SWT.BORDER);
-		
+
 		textName.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -173,11 +182,11 @@ public class ConfigurationShell extends Shell {
 					Object[] result = dialog.getResult();
 					if (result.length == 1) {
 						if (result[0] instanceof IFile) {
-							System.out.println("is file");
+
 							selectedFile = (IFile) result[0];
-							System.out.println(selectedFile.getFullPath());
+
 							path = selectedFile.getFullPath().toString();
-							System.out.println("to os string: " + path);
+
 						} else {
 							showMessage("Please select an app.");
 						}
@@ -200,6 +209,22 @@ public class ConfigurationShell extends Shell {
 
 		portText = new Text(appGroup, SWT.BORDER);
 		portText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(appGroup, SWT.NONE);
+
+		Label lblFlags = new Label(appGroup, SWT.NONE);
+		lblFlags.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblFlags.setText("Flag Backend");
+
+		text_flag_backend = new Text(appGroup, SWT.BORDER);
+		text_flag_backend.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(appGroup, SWT.NONE);
+		
+		Label lblFlagApp = new Label(appGroup, SWT.NONE);
+		lblFlagApp.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblFlagApp.setText("Flag App");
+		
+		text_flag_app = new Text(appGroup, SWT.BORDER);
+		text_flag_app.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(appGroup, SWT.NONE);
 
 		Group platform = new Group(this, SWT.NONE);
@@ -250,7 +275,7 @@ public class ConfigurationShell extends Shell {
 		btnCancle.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				content = null;
+				model = null;
 				shell.dispose();
 			}
 		});
@@ -262,24 +287,37 @@ public class ConfigurationShell extends Shell {
 		btnSaveConfig.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				content = new String[6];
+				if (!edit) {
+					model = new LaunchConfigurationModel();
+					model.setID(UUID.randomUUID().toString());
+				}
+
 				if (!appPathText.getText().equals("")) {
 
-					content[4] = appPathText.getText();
+					model.setAppPath(appPathText.getText());
 
 					if (platformCombo.getSelectionIndex() != -1) {
 
 						if (btnCheckButton.getSelection()) {
-							content[1] = NetIDE.CONTROLLER_ENGINE;
-							content[2] = platformCombo.getItem(platformCombo.getSelectionIndex());
+							model.setPlatform(NetIDE.CONTROLLER_ENGINE);
+							model.setClientController(platformCombo.getItem(platformCombo.getSelectionIndex()));
+
 						} else {
-							content[1] = platformCombo.getItem(platformCombo.getSelectionIndex());
-							content[2] = "";
+							model.setPlatform(platformCombo.getItem(platformCombo.getSelectionIndex()));
+							model.setClientController("");
 						}
 
 					}
-					content[3] = portText.getText();
-					content[5] = textName.getText();
+					model.setAppPort(portText.getText());
+
+				
+					String[] tmp = model.getAppPath().split("/");
+					String appName = tmp[tmp.length - 1];
+					model.setAppName(appName);
+					model.setName(textName.getText());
+
+					model.setFlagBackend(text_flag_backend.getText());
+					model.setFlagApp(text_flag_app.getText());
 				}
 				shell.dispose();
 
@@ -300,18 +338,19 @@ public class ConfigurationShell extends Shell {
 			btnSaveConfig.setEnabled(false);
 	}
 
-	private String[] content;
 	private Text appPathText;
 	private Text portText;
 	private Text textName;
+	private Text text_flag_backend;
+	private Text text_flag_app;
 
 	/**
 	 * 
 	 * @return 0 = topology, 1 = platform, 2 = clientController, 3 = appPort, 4
 	 *         = appPath, null if content wasn't set or an error occurred
 	 */
-	public String[] getSelectedContent() {
-		return this.content;
+	public LaunchConfigurationModel getModel() {
+		return this.model;
 	}
 
 	private void setComboboxContent(CCombo combo) {
@@ -328,7 +367,7 @@ public class ConfigurationShell extends Shell {
 	 */
 	protected void createContents() {
 		setText("Choose App Run Configuration");
-		setSize(396, 296);
+		setSize(396, 363);
 
 	}
 
