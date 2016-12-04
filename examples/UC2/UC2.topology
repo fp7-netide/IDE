@@ -120,7 +120,7 @@
     <connectors connectedports="//@networks.1/@networkelements.0/@ports.0 //@networks.2/@networkelements.1/@ports.0"/>
     <connectors connectedports="//@networks.1/@networkelements.0/@ports.1 //@networks.0/@networkelements.3/@ports.0"/>
   </networks>
-  <networks name="IN">
+  <networks name="pingall">
     <networkelements xsi:type="eu.netide.configuration:Host" name="H5" ip="10.0.1.15" prefix="24">
       <ports id="1" connector="//@networks.2/@connectors.0"/>
     </networkelements>
@@ -132,5 +132,5 @@
     <connectors connectedports="//@networks.2/@networkelements.1/@ports.1 //@networks.2/@networkelements.0/@ports.0"/>
     <connectors connectedports="//@networks.2/@networkelements.1/@ports.2 //@networks.1/@networkelements.1/@ports.0"/>
   </networks>
-  <controllers name="c1" switches="//@networks.2/@networkelements.1 //@networks.1/@networkelements.1 //@networks.1/@networkelements.0 //@networks.0/@networkelements.2 //@networks.0/@networkelements.3 //@networks.0/@networkelements.0 //@networks.0/@networkelements.1 //@networks.0/@networkelements.12 //@networks.0/@networkelements.13 //@networks.0/@networkelements.4 //@networks.0/@networkelements.10 //@networks.0/@networkelements.11 //@networks.0/@networkelements.5" ip="127.0.0.1" portNo="6633"/>
+  <controllers name="c1 " switches="//@networks.2/@networkelements.1 //@networks.1/@networkelements.1 //@networks.1/@networkelements.0 //@networks.0/@networkelements.2 //@networks.0/@networkelements.3 //@networks.0/@networkelements.0 //@networks.0/@networkelements.1 //@networks.0/@networkelements.12 //@networks.0/@networkelements.13 //@networks.0/@networkelements.4 //@networks.0/@networkelements.10 //@networks.0/@networkelements.11 //@networks.0/@networkelements.5" ip="127.0.0.1" portNo="6644"/>
 </eu.netide.configuration:NetworkEnvironment>

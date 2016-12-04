@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<CompositionSpecification
+        xmlns="http://netide.eu/schemas/compositionspecification/v1">
+    <Modules>
+        <Module id="IITS_NetManager" loaderIdentification="IITS_NetManager.py"
+                noFenceSupport="true">
+            <CallCondition events="packetIn" datapaths="1 2 3 4 5 6 7 8 11 12 13 14 15"/>
+        </Module>
+        <Module id="switches" loaderIdentification="switches.py"
+                noFenceSupport="true">
+            <CallCondition events="packetIn" ethertype="0x8cc" datapaths="1 2 3 4 5 6 7 8 11 12 13 14 15"/>
+        </Module>
+    </Modules>
+    <Composition>
+        <ParallelCall resolutionPolicy="priority">
+            <ModuleCall module="IITS_NetManager" priority="1"/>
+            <ModuleCall module="switches" priority="2"/>
+        </ParallelCall>
+    </Composition>
+</CompositionSpecification>
