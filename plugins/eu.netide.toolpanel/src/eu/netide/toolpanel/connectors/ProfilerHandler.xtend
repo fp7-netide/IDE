@@ -82,8 +82,9 @@ class ProfilerHandler {
 						}
 
 						val size = dpidLog.size()
+						ps.changed = false
 
-						if (size > 2) {
+						if (size >= 2) {
 							val currentEntry = dpidLog.get(size - 2).findFirst [ x |
 								x.get("port").asInt == portno
 							]

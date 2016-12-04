@@ -54,15 +54,14 @@ class LogConnector {
 		for (node : flowLog) {
 			this.handler.handleFlowStats(node.get(i - 1) as ArrayNode)
 		}
-		
+
 		for (node : portLog) {
-			val dpidLog = this.mapper.createArrayNode;			
+			val dpidLog = this.mapper.createArrayNode;
 			for (var j = 0; j < i; j++)
 				dpidLog.add(node.get(j))
-			
-			println(dpidLog)
-			
-			this.handler.handlePortStats(node.get(i-1) as ArrayNode, node as ArrayNode)
+				
+			this.handler.handlePortStats(node.get(i - 1) as ArrayNode, dpidLog as ArrayNode)
+
 		}
 	}
 

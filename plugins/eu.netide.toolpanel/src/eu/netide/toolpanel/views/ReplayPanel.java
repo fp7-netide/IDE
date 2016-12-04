@@ -130,6 +130,11 @@ public class ReplayPanel extends ViewPart {
 		bindingContext.bindValue(observeMaxScaleObserveWidget, sizeLogObserveValue, null,
 				new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE));
 		//
+		
+		IObservableValue observeMaxSpinnerObserveWidget = WidgetProperties.maximum().observe(spinner);
+//		IObservableValue sizeLogObserveValue = BeanProperties.value("size").observe(log);
+		bindingContext.bindValue(observeMaxSpinnerObserveWidget, sizeLogObserveValue, null,
+				new UpdateValueStrategy(UpdateValueStrategy.POLICY_UPDATE));
 		return bindingContext;
 	}
 }
