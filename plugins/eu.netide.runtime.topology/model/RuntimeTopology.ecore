@@ -29,6 +29,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="networkenvironment" lowerBound="1"
         eType="ecore:EClass ../../eu.netide.configuration/model/Topology.ecore#//NetworkEnvironment"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aggregatedstatistics" upperBound="-1"
+        eType="#//AggregatedStatistics" containment="true" eOpposite="#//AggregatedStatistics/runtimedata"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="FlowStatistics">
     <eStructuralFeatures xsi:type="ecore:EReference" name="runtimedata" lowerBound="1"
@@ -45,5 +47,16 @@
         eType="ecore:EClass ../../eu.netide.configuration/model/Topology.ecore#//Switch"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="hidden" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         defaultValueLiteral="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AggregatedStatistics">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="packet_count" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="byte_count" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="flow_count" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="switch" lowerBound="1"
+        eType="ecore:EClass ../../eu.netide.configuration/model/Topology.ecore#//Switch"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hidden" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="runtimedata" lowerBound="1"
+        eType="#//RuntimeData" eOpposite="#//RuntimeData/aggregatedstatistics"/>
   </eClassifiers>
 </ecore:EPackage>

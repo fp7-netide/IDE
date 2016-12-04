@@ -23,10 +23,13 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/rx_frame_err"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/changed"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//PortStatistics/port"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//PortStatistics/hidden"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeTopology.ecore#//RuntimeData">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//RuntimeData/portstatistics"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//RuntimeData/flowstatistics"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//RuntimeData/networkenvironment"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//RuntimeData/aggregatedstatistics"/>
     </genClasses>
     <genClasses ecoreClass="RuntimeTopology.ecore#//FlowStatistics">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//FlowStatistics/runtimedata"/>
@@ -39,6 +42,15 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//FlowStatistics/packet_count"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//FlowStatistics/byte_count"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//FlowStatistics/switch"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//FlowStatistics/hidden"/>
+    </genClasses>
+    <genClasses ecoreClass="RuntimeTopology.ecore#//AggregatedStatistics">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//AggregatedStatistics/packet_count"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//AggregatedStatistics/byte_count"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//AggregatedStatistics/flow_count"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//AggregatedStatistics/switch"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute RuntimeTopology.ecore#//AggregatedStatistics/hidden"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference RuntimeTopology.ecore#//AggregatedStatistics/runtimedata"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

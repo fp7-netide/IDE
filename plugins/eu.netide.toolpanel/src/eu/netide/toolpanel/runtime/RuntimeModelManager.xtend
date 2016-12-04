@@ -84,7 +84,7 @@ class RuntimeModelManager {
 		var setFilterCommand = new RecordingCommand(session.transactionalEditingDomain, "Set Filter") {
 			override protected doExecute() {
 				var filters = rep.description.filters
-				rep.activatedFilters.add(filters.findFirst[x|x.name == "PortStatisticsFilter"])
+				rep.activatedFilters.add(filters.findFirst[x|x.name == "StatisticsFilter"])
 				rep.activatedFilters.add(filters.findFirst[x|x.name == "ControllerFilter"])
 			}
 		}

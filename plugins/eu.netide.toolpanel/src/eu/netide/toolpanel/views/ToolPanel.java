@@ -74,7 +74,6 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 	 * The constructor.
 	 */
 	public ToolPanel() {
-
 	}
 
 	/**
@@ -177,10 +176,11 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 
 		Group composite_2 = new Group(grpProfiler, SWT.NONE);
 		composite_2.setText("Port Statistics");
-		GridLayout gl_composite_2 = new GridLayout(4, false);
+		GridLayout gl_composite_2 = new GridLayout(5, false);
 		gl_composite_2.marginWidth = 0;
 		composite_2.setLayout(gl_composite_2);
 		composite_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
@@ -195,15 +195,30 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 		});
 		btnRadioButton.setText("Port Statistics");
 		new Label(composite_2, SWT.NONE);
-		
-		Button btnRadioButton_1 = new Button(composite_2, SWT.RADIO);
-		btnRadioButton_1.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				profilerConnector.activateFlowStatistics();
-			}
-		});
-		btnRadioButton_1.setText("Flow Statistics");
+						
+								Label lblUpdateInterval = new Label(composite_2, SWT.NONE);
+								lblUpdateInterval.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+								lblUpdateInterval.setText("Update Interval:");
+						new Label(composite_2, SWT.NONE);
+						
+								text = new Text(composite_2, SWT.BORDER);
+								text.setText("1");
+								text.addModifyListener(new ModifyListener() {
+									public void modifyText(ModifyEvent e) {
+										profilerConnector.setPollInterval(Double.parseDouble(text.getText()));
+									}
+								});
+								text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+						
+						Button btnRadioButton_1 = new Button(composite_2, SWT.RADIO);
+						btnRadioButton_1.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								profilerConnector.activateFlowStatistics();
+							}
+						});
+						btnRadioButton_1.setText("Flow Statistics");
+						new Label(composite_2, SWT.NONE);
 						
 						Button btnPollProfiler = new Button(composite_2, SWT.CHECK);
 						btnPollProfiler.addSelectionListener(new SelectionAdapter() {
@@ -216,29 +231,29 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 							}
 						});
 						btnPollProfiler.setText("Poll Profiler");
-				
-						Label lblUpdateInterval = new Label(composite_2, SWT.NONE);
-						lblUpdateInterval.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-						lblUpdateInterval.setText("Update Interval:");
-				new Label(composite_2, SWT.NONE);
-		
-				text = new Text(composite_2, SWT.BORDER);
-				text.setText("1");
-				text.addModifyListener(new ModifyListener() {
-					public void modifyText(ModifyEvent e) {
-						profilerConnector.setPollInterval(Double.parseDouble(text.getText()));
-					}
-				});
-				text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-				
-						Button btnRecordButton = new Button(composite_2, SWT.CHECK);
-						btnRecordButton.addSelectionListener(new SelectionAdapter() {
+						new Label(composite_2, SWT.NONE);
+						
+								Button btnRecordButton = new Button(composite_2, SWT.CHECK);
+								btnRecordButton.addSelectionListener(new SelectionAdapter() {
+									@Override
+									public void widgetSelected(SelectionEvent e) {
+										profilerConnector.setRecording(btnRecordButton.getSelection());				
+									}
+								});
+								btnRecordButton.setText("Record");
+						
+						Button btnAggregatedStatistics = new Button(composite_2, SWT.RADIO);
+						btnAggregatedStatistics.addSelectionListener(new SelectionAdapter() {
 							@Override
 							public void widgetSelected(SelectionEvent e) {
-								profilerConnector.setRecording(btnRecordButton.getSelection());				
+								profilerConnector.activateAggregatedStatistics();
 							}
 						});
-						btnRecordButton.setText("Record");
+						btnAggregatedStatistics.setText("Aggregated Statistics");
+						new Label(composite_2, SWT.NONE);
+						new Label(composite_2, SWT.NONE);
+						new Label(composite_2, SWT.NONE);
+						new Label(composite_2, SWT.NONE);
 		scrolledComposite.setContent(composite_1);
 		scrolledComposite.setMinSize(composite_1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}

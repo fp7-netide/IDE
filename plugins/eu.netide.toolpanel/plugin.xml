@@ -12,6 +12,14 @@
             name="NetIDE Tools"
             restorable="false">
       </view>
+      <view
+            category="eu.netide.views"
+            class="eu.netide.toolpanel.views.ReplayPanel"
+            icon="icons/netide.png"
+            id="eu.netide.toolpanel.views.ReplayPanel"
+            name="Replay"
+            restorable="false">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

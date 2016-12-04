@@ -50,6 +50,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.EditorPart;
 
 import eu.netide.configuration.utils.NetIDE;
+import eu.netide.toolpanel.views.ReplayPanel;
 import eu.netide.toolpanel.views.ToolPanel;
 import eu.netide.workbenchconfigurationeditor.controller.ControllerManager;
 import eu.netide.workbenchconfigurationeditor.controller.WorkbenchConfigurationEditorEngine;
@@ -776,6 +777,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnReattachCore.setText("Reattach");
+		new Label(grpCore, SWT.NONE);
 
 		grpCompositionLoader = new Group(composite_3, SWT.NONE);
 		grpCompositionLoader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
@@ -906,7 +908,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		grpDebugger = new Group(composite_2, SWT.NONE);
 		GridData gd_grpDebugger = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 2);
-		gd_grpDebugger.heightHint = 82;
+		gd_grpDebugger.heightHint = 112;
 		grpDebugger.setLayoutData(gd_grpDebugger);
 		grpDebugger.setText("Debugger");
 		grpDebugger.setLayout(new GridLayout(4, false));
@@ -965,6 +967,29 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnToolView.setText("Show Runtime Tools");
+		new Label(grpDebugger, SWT.NONE);
+		new Label(grpDebugger, SWT.NONE);
+		new Label(grpDebugger, SWT.NONE);
+		
+		btnShowReplayView = new Button(grpDebugger, SWT.NONE);
+		btnShowReplayView.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("eu.netide.toolpanel.views.ReplayPanel");
+					if (view instanceof ReplayPanel) {
+						ReplayPanel replayPanel = (ReplayPanel) view;
+						replayPanel.setFile(file);
+						String toolpath = null;
+//						if (engine.getStatusModel().getSshModelAtIndex().getTools())
+					}
+				} catch (PartInitException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnShowReplayView.setText("Show Replay View");
 		new Label(grpDebugger, SWT.NONE);
 		new Label(grpDebugger, SWT.NONE);
 		new Label(grpDebugger, SWT.NONE);
@@ -1228,6 +1253,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Button btnToolView;
 	private Text shimPortText;
 	private Label lblPort;
+	private Button btnShowReplayView;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;
