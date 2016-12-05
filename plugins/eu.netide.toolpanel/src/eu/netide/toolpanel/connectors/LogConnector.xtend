@@ -1,16 +1,12 @@
 package eu.netide.toolpanel.connectors
 
 import com.fasterxml.jackson.databind.JsonNode
-import org.eclipse.emf.common.util.URI
-import java.beans.PropertyChangeSupport
-import java.io.File
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.beans.PropertyChangeListener
-import eu.netide.toolpanel.connectors.ProfilerConnector
-import eu.netide.toolpanel.connectors.ProfilerHandler
-import org.eclipse.core.resources.IFile
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import java.beans.PropertyChangeListener
+import java.beans.PropertyChangeSupport
+import org.eclipse.core.resources.IFile
 
 class LogConnector {
 

@@ -1,21 +1,14 @@
 package eu.netide.chartview.view
 
-import eu.netide.chartview.view.charts.ChartViewer
+import com.fasterxml.jackson.databind.node.ArrayNode
 import eu.netide.chartview.view.charts.MessagesPerAppChartViewer
-import java.lang.reflect.Constructor
-import java.util.List
 import org.eclipse.swt.SWT
 import org.eclipse.swt.custom.ScrolledComposite
-import org.eclipse.swt.events.SelectionEvent
-import org.eclipse.swt.events.SelectionListener
 import org.eclipse.swt.layout.FillLayout
 import org.eclipse.swt.layout.GridData
 import org.eclipse.swt.layout.GridLayout
-import org.eclipse.swt.widgets.Combo
 import org.eclipse.swt.widgets.Composite
 import org.eclipse.ui.part.ViewPart
-import eu.netide.chartview.view.charts.AnotherViewer
-import com.fasterxml.jackson.databind.node.ArrayNode
 
 /** 
  * This sample class demonstrates how to plug-in a new workbench view. The view

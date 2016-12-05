@@ -1,10 +1,6 @@
 package eu.netide.toolpanel.connectors
 
-import RuntimeTopology.FlowStatistics
-import RuntimeTopology.PortStatistics
 import RuntimeTopology.RuntimeData
-import RuntimeTopology.RuntimeTopologyFactory
-import Topology.Switch
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -24,7 +20,6 @@ import org.eclipse.emf.transaction.RecordingCommand
 import org.eclipse.sirius.business.api.session.Session
 import org.eclipse.ui.PlatformUI
 import org.eclipse.xtend.lib.annotations.Accessors
-import RuntimeTopology.AggregatedStatistics
 
 class ProfilerConnector implements IZmqNetIpListener {
 
