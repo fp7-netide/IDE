@@ -46,9 +46,6 @@
     <void property="platform">
      <string>Network Engine</string>
     </void>
-    <void property="running">
-     <boolean>true</boolean>
-    </void>
    </object>
   </void>
   <void method="add">
@@ -87,13 +84,13 @@
   <void method="add">
    <object class="eu.netide.workbenchconfigurationeditor.model.SshProfileModel">
     <void property="appFolder">
-     <string>/home/Juanma/apps</string>
+     <string></string>
     </void>
     <void property="appSource">
-     <string>/home/Juanma/apps</string>
+     <string></string>
     </void>
     <void property="appTarget">
-     <string>/home/netide/netide/apps</string>
+     <string></string>
     </void>
     <void property="composite">
      <string>/home/netide/NetIDE/apache-karaf-3.0.5/CompositionFile-JavaCore.xml</string>
@@ -105,16 +102,16 @@
      <string>/home/netide/NetIDE/Engine-mixed</string>
     </void>
     <void property="host">
-     <string>192.168.1.112</string>
+     <string>192.168.1.102</string>
     </void>
     <void property="minConfigSource">
-     <string>/home/Juanma/mininet</string>
+     <string></string>
     </void>
     <void property="minConfigTarget">
-     <string>/home/netide/netide/mn-configs</string>
+     <string></string>
     </void>
     <void property="odl">
-     <string></string>
+     <string>/home/netide/NetIDE/Engine-mixed/odl-shim/karaf/target/assembly/bin</string>
     </void>
     <void property="port">
      <string>22</string>
@@ -132,13 +129,13 @@
      <string></string>
     </void>
     <void property="sshIdFile">
-     <string>&quot;C:\Users\Juanma\Rsa_keys\Netide&quot;</string>
+     <string>&quot;C:\cygwin64\home\Juanma\.ssh\id_rsa&quot;</string>
     </void>
     <void property="tools">
-     <string></string>
+     <string>/home/netide/NetIDE/Tools</string>
     </void>
     <void property="topology">
-     <string>/home/Juanma/mininet</string>
+     <string></string>
     </void>
     <void property="username">
      <string>netide</string>
@@ -149,6 +146,9 @@
  <object class="eu.netide.workbenchconfigurationeditor.model.ShimModel">
   <void property="ID">
    <string>8221b35b-5d89-4236-8e38-bf9ed62d9611</string>
+  </void>
+  <void property="port">
+   <string>6644</string>
   </void>
   <void property="shim">
    <string>Ryu</string>

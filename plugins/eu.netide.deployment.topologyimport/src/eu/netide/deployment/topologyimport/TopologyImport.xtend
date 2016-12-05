@@ -25,7 +25,7 @@ import eu.netide.deployment.topologyimport.json.JSONException
 class TopologyImport {
 
 	def createTopologyModelFromString(String input, String filename) {
-
+		System.out.println(input)
 		var jtopo = new JSONObject(input)
 
 		var ResourceSet resset = new ResourceSetImpl()

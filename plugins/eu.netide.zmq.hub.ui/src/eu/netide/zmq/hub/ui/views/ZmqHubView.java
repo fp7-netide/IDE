@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.part.ViewPart;
 
-import eu.netide.zmq.hub.server.ZmqHub;
+import eu.netide.zmq.hub.server.ZmqPubSubHub;
 import eu.netide.zmq.hub.server.ZmqHubManager;
 
 public class ZmqHubView extends ViewPart {
@@ -44,7 +44,7 @@ public class ZmqHubView extends ViewPart {
 		tableViewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
 				IStructuredSelection selection = tableViewer.getStructuredSelection();
-				ZmqHub hub = (ZmqHub) selection.getFirstElement();
+				ZmqPubSubHub hub = (ZmqPubSubHub) selection.getFirstElement();
 
 				ZmqLogDialog logDialog = new ZmqLogDialog(shell, hub);
 				logDialog.create();
@@ -72,13 +72,13 @@ public class ZmqHubView extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection selection = tableViewer.getStructuredSelection();
-				ZmqHub hub = (ZmqHub) selection.getFirstElement();
+				ZmqPubSubHub hub = (ZmqPubSubHub) selection.getFirstElement();
 				hub.setRunning(!hub.getRunning());
 			}
 		});
 		itemToggle.setText("Toggle");
 
-		ViewerSupport.bind(tableViewer, hubManager.getHubs(), BeanProperties.values(new String[] { "name", "address", "running" }));
+		ViewerSupport.bind(tableViewer, hubManager.getPubSubHubs(), BeanProperties.values(new String[] { "name", "address", "running" }));
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
@@ -91,7 +91,7 @@ public class ZmqHubView extends ViewPart {
 				ZmqAddressDialog dialog = new ZmqAddressDialog(shell);
 				dialog.create();
 				if (dialog.open() == Window.OK) {
-					hubManager.getHub(dialog.getName(), dialog.getAddress());
+					hubManager.getPubSubHub(dialog.getName(), dialog.getAddress());
 				}
 			}
 		});
@@ -104,9 +104,9 @@ public class ZmqHubView extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 				if (!tableViewer.getSelection().isEmpty()) {
 					IStructuredSelection selection = tableViewer.getStructuredSelection();
-					ZmqHub hub = (ZmqHub) selection.getFirstElement();
+					ZmqPubSubHub hub = (ZmqPubSubHub) selection.getFirstElement();
 					hub.setRunning(false);
-					hubManager.removeHub(hub);
+					hubManager.removePubSubHub(hub);
 				}
 			}
 		});

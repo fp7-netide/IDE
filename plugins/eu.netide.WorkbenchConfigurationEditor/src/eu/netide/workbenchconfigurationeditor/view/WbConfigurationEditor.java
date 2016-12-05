@@ -9,6 +9,8 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -39,13 +41,17 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.EditorPart;
 
 import eu.netide.configuration.utils.NetIDE;
+import eu.netide.toolpanel.views.ReplayPanel;
+import eu.netide.toolpanel.views.ToolPanel;
 import eu.netide.workbenchconfigurationeditor.controller.ControllerManager;
 import eu.netide.workbenchconfigurationeditor.controller.WorkbenchConfigurationEditorEngine;
 import eu.netide.workbenchconfigurationeditor.dialogs.ConfigurationShell;
@@ -277,6 +283,16 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 	}
+	
+	private void startApp(){
+		if ((engine.getStatusModel().getSshRunning() || engine.getStatusModel().getVagrantRunning())) {
+			if (table.getSelectionCount() > 0) {
+				controllerManager.startApp();
+			} else {
+				showMessage("Make sure vagrant is running or a ssh connection is established.");
+			}
+		}
+	}
 
 	private void addTestButtonListener() {
 		btnRemoveTest.addSelectionListener(new SelectionAdapter() {
@@ -300,17 +316,13 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				}
 			}
 		});
+		
+
 
 		startBTN.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if ((engine.getStatusModel().getSshRunning() || engine.getStatusModel().getVagrantRunning())) {
-					if (table.getSelectionCount() > 0) {
-						controllerManager.startApp();
-					} else {
-						showMessage("Make sure vagrant is running.");
-					}
-				}
+				startApp();
 			}
 		});
 
@@ -362,6 +374,15 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 				}
 			}
+		});
+		
+		tableViewer.addDoubleClickListener(new IDoubleClickListener(){
+
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				startApp();
+			}
+			
 		});
 
 		btnProvision_1.addSelectionListener(new SelectionAdapter() {
@@ -734,7 +755,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		grpCore.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpCore.setText("Core");
-		grpCore.setLayout(new GridLayout(4, false));
+		grpCore.setLayout(new GridLayout(5, false));
 
 		lblCoreStatus = new Label(grpCore, SWT.NONE);
 		GridData gd_lblCoreStatus = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -756,6 +777,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnReattachCore.setText("Reattach");
+		new Label(grpCore, SWT.NONE);
 
 		grpCompositionLoader = new Group(composite_3, SWT.NONE);
 		grpCompositionLoader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
@@ -885,8 +907,8 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnReattachMininet.setText("Reattach");
 
 		grpDebugger = new Group(composite_2, SWT.NONE);
-		GridData gd_grpDebugger = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_grpDebugger.heightHint = 44;
+		GridData gd_grpDebugger = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 2);
+		gd_grpDebugger.heightHint = 112;
 		grpDebugger.setLayoutData(gd_grpDebugger);
 		grpDebugger.setText("Debugger");
 		grpDebugger.setLayout(new GridLayout(4, false));
@@ -923,6 +945,54 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnDebuggerReattach.setText("Reattach");
+		
+		btnToolView = new Button(grpDebugger, SWT.NONE);
+		btnToolView.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("eu.netide.toolpanel.views.Toolpanel");
+					if (view instanceof ToolPanel) {
+						ToolPanel toolPanel = (ToolPanel) view;
+						toolPanel.setBackend(controllerManager.getBackend());
+						toolPanel.setFile(file);
+						String toolpath = null;
+//						if (engine.getStatusModel().getSshModelAtIndex().getTools())
+						toolPanel.setSshModel(engine.getStatusModel().getSshModelAtIndex(engine.getStatusModel().getSshComboSelectionIndex()).getTools());
+					}
+				} catch (PartInitException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnToolView.setText("Show Runtime Tools");
+		new Label(grpDebugger, SWT.NONE);
+		new Label(grpDebugger, SWT.NONE);
+		new Label(grpDebugger, SWT.NONE);
+		
+		btnShowReplayView = new Button(grpDebugger, SWT.NONE);
+		btnShowReplayView.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("eu.netide.toolpanel.views.ReplayPanel");
+					if (view instanceof ReplayPanel) {
+						ReplayPanel replayPanel = (ReplayPanel) view;
+						replayPanel.setFile(file);
+						String toolpath = null;
+//						if (engine.getStatusModel().getSshModelAtIndex().getTools())
+					}
+				} catch (PartInitException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnShowReplayView.setText("Show Replay View");
+		new Label(grpDebugger, SWT.NONE);
+		new Label(grpDebugger, SWT.NONE);
+		new Label(grpDebugger, SWT.NONE);
 
 		grpTopology = new Group(composite_2, SWT.NONE);
 		grpTopology.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
@@ -945,7 +1015,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 
 		btnLoadTopo = new Button(grpTopology, SWT.NONE);
 		btnLoadTopo.setText("Generate");
-		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 
 		grpConfigurationOverview = new Group(startAppComposite, SWT.NONE);
@@ -1181,8 +1250,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 	private Button btnLoadTopo;
 	private Button btnCopyTopology;
 	private Button btnStopAll;
+	private Button btnToolView;
 	private Text shimPortText;
 	private Label lblPort;
+	private Button btnShowReplayView;
 
 	public Label getCoreStatusLabel() {
 		return this.lblCoreStatus;

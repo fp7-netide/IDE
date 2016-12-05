@@ -37,7 +37,7 @@ public class Activator extends AbstractUIPlugin {
 				NetIDEPreferenceConstants.ZMQ_LIST, "", null).split(";");
 		for (String socket : sockets) {
 			String[] data = socket.split(",");
-			ZmqHubManager.instance.getHub(data[0], data[1]);
+			ZmqHubManager.instance.getPubSubHub(data[0], data[1]);
 		}
 		plugin = this;
 	}

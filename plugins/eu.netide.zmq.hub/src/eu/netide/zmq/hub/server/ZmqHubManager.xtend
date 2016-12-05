@@ -6,32 +6,57 @@ class ZmqHubManager {
 
 	public static val instance = new ZmqHubManager
 
-	var WritableList reg
-	
+	var WritableList pubSubReg
+	var WritableList sendReceiveReg
+
+
 	new() {
-		reg = WritableList.withElementType(typeof(ZmqHub))
+		pubSubReg = WritableList.withElementType(typeof(ZmqPubSubHub))
+		sendReceiveReg = WritableList.withElementType(typeof(ZmqSendReceiveHub))
 	}
-	
-	public def getHub(String address) {
-		getHub("", address)
+
+	public def getPubSubHub(String address) {
+		return getPubSubHub("", address)
 	}
-	
-	public def ZmqHub getHub(String name, String address) {
-		if (reg.exists[h|(h as ZmqHub).address.equals(address) && (h as ZmqHub).name.equals(address)]) {
-			return reg.findFirst[h|(h as ZmqHub).address.equals(address) && (h as ZmqHub).name.equals(address)] as ZmqHub
-		} else {
-			var hub = new ZmqHub(name, address)
-			reg.add(hub)
+
+	public def ZmqPubSubHub getPubSubHub(String name, String address) {
+		var hub = pubSubReg.findFirst[h|(h as ZmqPubSubHub).address.equals(address) && (h as ZmqPubSubHub).name.equals(name)] as ZmqPubSubHub
+		if (hub == null) {
+			hub = new ZmqPubSubHub(name, address)
+			pubSubReg.add(hub)
 			return hub
 		}
+		return hub
+	}
+	
+	public def ZmqSendReceiveHub getSendReceiveHub(String address) {
+		return getSendReceiveHub("", address)
+	}
+	
+	public def ZmqSendReceiveHub getSendReceiveHub(String name, String address) {
+		var hub = sendReceiveReg.findFirst[h|(h as ZmqSendReceiveHub).address.equals(address) && (h as ZmqSendReceiveHub).name.equals(name)] as ZmqSendReceiveHub
+		if (hub == null) {
+			hub = new ZmqSendReceiveHub(name, address)
+			sendReceiveReg.add(hub)
+			return hub
+		}
+		return hub
 	}
 
-	public def getHubs() {
-		return reg
+	public def getPubSubHubs() {
+		return pubSubReg
+	}
+	
+	public def getSendReceiveHubs() {
+		return sendReceiveReg
+	}	
+
+	public def removePubSubHub(ZmqPubSubHub hub) {
+		pubSubReg.remove(hub)
 	}
 
-	public def removeHub(ZmqHub hub) {
-		reg.remove(hub)
+	public def removeSendReceiveHub(ZmqSendReceiveHub hub) {
+		sendReceiveReg.remove(hub)
 	}
 
 }
