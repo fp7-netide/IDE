@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="eu.netide.views"
+            class="eu.netide.toolpanel.views.ToolPanel"
+            icon="icons/netide.png"
+            id="eu.netide.toolpanel.views.Toolpanel"
+            name="NetIDE Tools"
+            restorable="false">
+      </view>
+      <view
+            category="eu.netide.views"
+            class="eu.netide.toolpanel.views.ReplayPanel"
+            icon="icons/netide.png"
+            id="eu.netide.toolpanel.views.ReplayPanel"
+            name="Replay"
+            restorable="false">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="eu.netide.toolpanel.runtime.OpenRuntimeHandler"
+            id="eu.netide.toolpanel.runtimeload"
+            name="Open Runtime Model">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.sirius.ui.tools.views.model.explorer#PopupMenu">
+         <menu
+               id="eu.netide.toolpanel.runtime.contribution"
+               label="NetIDE Runtime">
+            <command
+                  commandId="eu.netide.toolpanel.runtimeload"
+                  id="eu.netide.toolpanel.runtime.open"
+                  label="Open Runtime Diagram"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeMenuSelection">
+                     <iterate
+                           ifEmpty="true"
+                           operator="or">
+                        <instanceof
+                              value="org.eclipse.core.resources.IFile">
+                        </instanceof>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+
+</plugin>

@@ -8,7 +8,7 @@ import eu.netide.configuration.utils.NetIDE
 class OdlShimStarter extends ControllerStarter {
 	@Deprecated
 	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super("OpenDaylight Shim", configuration, controller, monitor)
+		super("OpenDaylight Shim",  configuration, controller, monitor)
 	}
 
 	new(String appPath, int port, IProgressMonitor monitor) {
@@ -29,8 +29,8 @@ class OdlShimStarter extends ControllerStarter {
 	String odlKarafPath = NetIDE.ODL_PATH
 
 	override getCommandLine() {
-		// var str = String.format("~/netide/Engine/odl-shim/karaf/target/assembly/bin/karaf")
-		var str = String.format(odlKarafPath + "/karaf")
-		return str
+		//var str = String.format("~/netide/Engine/odl-shim/karaf/target/assembly/bin/karaf")
+		var str = String.format("bash -c \'cd %s && ./karaf\'", odlKarafPath)
+		return str	
 	}
 }

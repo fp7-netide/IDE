@@ -44,6 +44,7 @@ Select NetIDE from the list and follow the instructions. After restarting Eclips
 2. From the window menu, select `Help -> Install Modeling Components`. Select and install Sirius and Xtext.
 3. Go to `Help -> Eclipse Marketplace...`, search for and install TM Terminal.
 4. Go to `Help -> Install New Software`, enter [http://updatesite.netide.eu/dependencies](http://updatesite.netide.eu/dependencies), and install the packages provided by this repository.
+4. Use the same UI to install the BIRT SDK.
 5. Start Eclipse and open the Git Perspective.
 6. Clone or add this git repository and import all projects from the "plugins"-folder into your workspace. To do so, enter to the folder "Working Directory", right-click on the folder "plugins" and select "Import Projects". Follow the steps in the wizard.
 7. Open the Plug-In Development perspective and open eu.netide.configuration/model/Topology.genmodel. Right-click the root element in the tree view and select `Generate All`

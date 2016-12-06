@@ -252,8 +252,8 @@ class SshManager implements IManager {
 	}
 
 	def copyComposition(String source, String target) {
-		exec("rm -rf netide/composition")
-		exec("mkdir netide/composition")
+//		exec("rm -rf netide/composition")
+//		exec("mkdir netide/composition")
 		var targetP = target
 		if (targetP == null || targetP == ""){
 			targetP = NetIDE.COMPOSITION_PATH
@@ -306,6 +306,10 @@ class SshManager implements IManager {
 	}
 
 	private def scp(String source, String target) {
+		var tmpsrc = source
+		if (this.scpPath.contains("cygwin")) {
+			tmpsrc = source.replace("C:", "/cygdrive/c")
+		}
 		startProcess(newArrayList(
 			scpPath,
 			"-i",
@@ -313,7 +317,7 @@ class SshManager implements IManager {
 			"-P",
 			sshPort,
 			"-r",
-			source,
+			tmpsrc,
 			String.format("%s@%s:%s", sshUsername, sshHostname, target)
 		))
 	}

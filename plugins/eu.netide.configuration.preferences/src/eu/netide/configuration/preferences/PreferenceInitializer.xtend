@@ -43,7 +43,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		)
 		store.setDefault(
 			NetIDEPreferenceConstants.ZMQ_LIST,
-			"LogPub,tcp://localhost:5557;Verificator,tcp://localhost:5560"
+			"Logpub,tcp://localhost:5557"
 		)
 	}
 }

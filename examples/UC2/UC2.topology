@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<eu.netide.configuration:NetworkEnvironment xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eu.netide.configuration="eu.netide.configuration.topology" ofVersion="OpenFlow13">
+<eu.netide.configuration:NetworkEnvironment xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eu.netide.configuration="eu.netide.configuration.topology">
   <networks name="I">
     <networkelements xsi:type="eu.netide.configuration:Switch" name="SW1" ip="" dpid="1" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.5"/>
@@ -120,7 +120,7 @@
     <connectors connectedports="//@networks.1/@networkelements.0/@ports.0 //@networks.2/@networkelements.1/@ports.0"/>
     <connectors connectedports="//@networks.1/@networkelements.0/@ports.1 //@networks.0/@networkelements.3/@ports.0"/>
   </networks>
-  <networks name="IN">
+  <networks name="pingall">
     <networkelements xsi:type="eu.netide.configuration:Host" name="H5" ip="10.0.1.15" prefix="24">
       <ports id="1" connector="//@networks.2/@connectors.0"/>
     </networkelements>

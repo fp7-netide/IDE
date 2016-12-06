@@ -1,3 +1,4 @@
 eu.netide.configuration.tests
+eu.netide.runtime.topology.tests
 !eu.netide.debug
 target
