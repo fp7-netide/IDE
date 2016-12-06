@@ -237,8 +237,9 @@ class ControllerManager {
 			if (mnstarter != null)
 				mnstarter.reattach
 			else {
-				if (sshManager != null) {
-					val runningSessions = sshManager.runningSessions;
+				var manager = if(sshManager != null) sshManager else if(vagrantManager != null) vagrantManager
+				if (manager != null) {
+					val runningSessions = manager.runningSessions;
 
 					for (String session : runningSessions) {
 						if (session.contains("Mininet")) {
@@ -268,9 +269,9 @@ class ControllerManager {
 			if (re != null)
 				re.reattach
 			else {
-				// Ryu_Backend + this.appPath.lastSegment.replace("\\.", "_").replaceAll("[ ()]", "_")
-				if (sshManager != null) {
-					val runningSessions = sshManager.runningSessions;
+				var manager = if(sshManager != null) sshManager else if(vagrantManager != null) vagrantManager
+				if (manager != null) {
+					val runningSessions = manager.runningSessions;
 					val launchConfigurationModel = this.statusModel.modelAtIndex;
 					launchConfigurationModel.running = true
 
@@ -341,7 +342,8 @@ class ControllerManager {
 					if (serverControllerStarter != null) {
 						serverControllerStarter.reattach
 					} else {
-						if (sshManager != null) {
+						var manager = if(sshManager != null) sshManager else if(vagrantManager != null) vagrantManager
+						if (manager != null) {
 							val runningSessions = sshManager.runningSessions;
 
 							for (String session : runningSessions) {
@@ -615,8 +617,9 @@ class ControllerManager {
 							if (coreStarter != null && statusModel.coreRunning) {
 								coreStarter.reattach
 							} else {
-								if (sshManager != null) {
-									val runningSessions = sshManager.runningSessions;
+								var manager = if(sshManager != null) sshManager else if(vagrantManager != null) vagrantManager
+								if (manager != null) {
+									val runningSessions = manager.runningSessions;
 
 									for (String session : runningSessions) {
 										if (session.contains("Core")) {
