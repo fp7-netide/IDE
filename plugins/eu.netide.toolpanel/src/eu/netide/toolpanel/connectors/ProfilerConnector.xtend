@@ -194,68 +194,10 @@ class ProfilerConnector implements IZmqNetIpListener {
 
 				if(manager.session == null) return
 
-				// var res = session.getSemanticResources().iterator().next();
 				val rt = RuntimeModelManager.instance.runtimeData;
 
 				profilerHandler.handlePortStats(portStats, dpidLog)
-//				for (node : portStats) {
-//					if (node.get("port").asInt != 65534 && node.get("Type").asText.equals("Port Stats")) {
-//
-//						var updateCommand = new RecordingCommand(session.getTransactionalEditingDomain()) {
-//
-//							override doExecute() {
-//
-//								val portno = node.get("port").asInt
-//								val env = RuntimeModelManager.instance.runtimeData.networkenvironment
-//
-//								val sw = env.getNetworks().map[x|x.networkelements].flatten.filter [ x |
-//									x instanceof Switch
-//								].findFirst[x|x.dpid == dpid]
-//								if (sw == null)
-//									return
-//								val port = sw.ports.get(portno - 1)
-//
-//								var PortStatistics ps = rt.portstatistics.findFirst[x|x.port.equals(port)]
-//
-//								if (ps == null) {
-//									ps = RuntimeTopologyFactory.eINSTANCE.createPortStatistics
-//									ps.port = port
-//									ps.setRuntimedata(rt);
-//
-//								}
-//
-//								val size = dpidLog.size()
-//
-//								if (size > 2) {
-//									val currentEntry = dpidLog.get(size - 2).findFirst [ x |
-//										x.get("port").asInt == portno
-//									]
-//
-//									val currentBytes = currentEntry.get("tx_bytes").asInt
-//									val newBytes = node.get("tx_bytes").asInt
-//									ps.changed = currentBytes != newBytes
-//								}
-//
-//								ps.tx_bytes = node.get("tx_bytes").asInt
-//								ps.rx_bytes = node.get("rx_bytes").asInt
-//								ps.tx_dropped = node.get("tx_dropped").asInt
-//								ps.rx_dropped = node.get("rx_dropped").asInt
-//								ps.tx_packets = node.get("tx_packets").asInt
-//								ps.rx_packets = node.get("rx_packets").asInt
-//								ps.tx_errors = node.get("tx_errors").asInt
-//								ps.rx_errors = node.get("rx_errors").asInt
-//								ps.rx_over_err = node.get("rx_over_err").asInt
-//								ps.rx_frame_err = node.get("rx_frame_err").asInt
-//								ps.rx_crc_err = node.get("rx_crc_err").asInt
-//								ps.collisions = node.get("collisions").asInt
-//							}
-//
-//						};
-//						session.transactionalEditingDomain.commandStack.execute(updateCommand)
-//					}
 
-//				}
-			// return Status.OK_STATUS
 			}
 
 		}
@@ -263,7 +205,6 @@ class ProfilerConnector implements IZmqNetIpListener {
 	}
 
 	def handleAggregatedStats(ObjectNode aggregatedStats) {
-		println(aggregatedStats)
 		var job = new Thread("Updating Runtime Model") {
 
 			override run() {
@@ -290,44 +231,16 @@ class ProfilerConnector implements IZmqNetIpListener {
 
 				var res = session.getSemanticResources().iterator().next();
 
-				val rt = res.getContents().get(0) as RuntimeData;
-				val env = rt.networkenvironment;
-				val node = aggregatedStats
+//				//val rt = res.getContents().get(0) as RuntimeData;
+//				val env = rt.networkenvironment;
+//				val node = aggregatedStats
 				
 				profilerHandler.handleAggregatedStats(aggregatedStats)
 
-//				if (node.get("Type").asText.equals("Aggregate Stats")) {
-//					var updateCommand = new RecordingCommand(session.getTransactionalEditingDomain()) {
-//						override doExecute() {
-//							val dpid = node.get("dpid").asText
-//							val env = RuntimeModelManager.instance.runtimeData.networkenvironment
-//							val sw = env.getNetworks().map[x|x.networkelements].flatten.filter(typeof(Switch)).findFirst [ x |
-//								x.dpid == dpid
-//							]
-//							if(sw == null) return
-//
-//							var AggregatedStatistics fs = rt.aggregatedstatistics.findFirst[x|x.^switch.equals(sw)]
-//
-//							if (fs == null) {
-//								fs = RuntimeTopologyFactory.eINSTANCE.createAggregatedStatistics
-//								fs.^switch = sw
-//								fs.setRuntimedata(rt);
-//							}
-//							fs.byte_count = node.get("byte_count").asInt
-//							fs.flow_count = node.get("flow_count").asInt
-//							fs.packet_count = node.get("packet_count").asInt
-//
-//						}
-//					};
-//					session.transactionalEditingDomain.commandStack.execute(updateCommand)
-//				}
-
-//				return Status.OK_STATUS
 			}
 
 		}
 		PlatformUI.workbench.display.asyncExec(job)
-	// job.schedule
 	}
 
 	public def clearPortStatistics() {
@@ -396,6 +309,10 @@ class ProfilerConnector implements IZmqNetIpListener {
 
 	public def activateAggregatedStatistics() {
 		commandHub.send("4")
+	}
+	
+	public def destroy() {
+		hub.remove(this)
 	}
 
 }

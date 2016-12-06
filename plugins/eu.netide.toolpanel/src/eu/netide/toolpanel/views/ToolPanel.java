@@ -166,6 +166,9 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 		btnStartProfiler.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (profilerConnector != null) {
+					profilerConnector.destroy();
+				}
 				ProfilerStarter ps = new ProfilerStarter("Profiler Starter", NetIDEUtil.toPlatformUri(file), backend, toolPath,
 						new NullProgressMonitor());
 				ps.syncStart();
@@ -176,7 +179,7 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 
 		Group composite_2 = new Group(grpProfiler, SWT.NONE);
 		composite_2.setText("Port Statistics");
-		GridLayout gl_composite_2 = new GridLayout(5, false);
+		GridLayout gl_composite_2 = new GridLayout(4, false);
 		gl_composite_2.marginWidth = 0;
 		composite_2.setLayout(gl_composite_2);
 		composite_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -184,16 +187,6 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
-		new Label(composite_2, SWT.NONE);
-		
-		Button btnRadioButton = new Button(composite_2, SWT.RADIO);
-		btnRadioButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				profilerConnector.activatePortStatistics();
-			}
-		});
-		btnRadioButton.setText("Port Statistics");
 		new Label(composite_2, SWT.NONE);
 						
 								Label lblUpdateInterval = new Label(composite_2, SWT.NONE);
@@ -209,15 +202,6 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 									}
 								});
 								text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-						
-						Button btnRadioButton_1 = new Button(composite_2, SWT.RADIO);
-						btnRadioButton_1.addSelectionListener(new SelectionAdapter() {
-							@Override
-							public void widgetSelected(SelectionEvent e) {
-								profilerConnector.activateFlowStatistics();
-							}
-						});
-						btnRadioButton_1.setText("Flow Statistics");
 						new Label(composite_2, SWT.NONE);
 						
 						Button btnPollProfiler = new Button(composite_2, SWT.CHECK);
@@ -241,19 +225,6 @@ public class ToolPanel extends ViewPart implements IZmqNetIpListener {
 									}
 								});
 								btnRecordButton.setText("Record");
-						
-						Button btnAggregatedStatistics = new Button(composite_2, SWT.RADIO);
-						btnAggregatedStatistics.addSelectionListener(new SelectionAdapter() {
-							@Override
-							public void widgetSelected(SelectionEvent e) {
-								profilerConnector.activateAggregatedStatistics();
-							}
-						});
-						btnAggregatedStatistics.setText("Aggregated Statistics");
-						new Label(composite_2, SWT.NONE);
-						new Label(composite_2, SWT.NONE);
-						new Label(composite_2, SWT.NONE);
-						new Label(composite_2, SWT.NONE);
 		scrolledComposite.setContent(composite_1);
 		scrolledComposite.setMinSize(composite_1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
