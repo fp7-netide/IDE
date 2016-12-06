@@ -245,7 +245,7 @@ class ControllerManager {
 
 							val splitSession = session.split("\\.");
 
-							val id = Integer.parseInt(splitSession.get(splitSession.size-1))
+							val id = Integer.parseInt(splitSession.get(splitSession.size - 1))
 
 							mnstarter = new MininetStarter(statusModel.topologyModel.topologyPath, backend,
 								new NullProgressMonitor, id)
@@ -262,7 +262,7 @@ class ControllerManager {
 		}
 
 		def reattachStarter() {
-			println(sshManager.runningSessions)
+
 			val config = this.statusModel.getModelAtIndex();
 			var re = configToStarter.get(config)
 			if (re != null)
@@ -274,413 +274,423 @@ class ControllerManager {
 					val launchConfigurationModel = this.statusModel.modelAtIndex;
 					launchConfigurationModel.running = true
 
-					val controllerplatform = launchConfigurationModel.platform
 					val path = launchConfigurationModel.appPath
 					val port = Integer.parseInt(launchConfigurationModel.appPort)
 
 					for (String session : runningSessions) {
 						val appPath = getIFile(this.statusModel.getModelAtIndex().appPath).projectRelativePath
-						println(("Ryu Backend  " + appPath.lastSegment.replace("\\.", "_")).replaceAll("[ ()]", "_"))
+
 						if (session.contains(
-							("Ryu Backend  " + appPath.lastSegment.replace("\\.", "_")).replaceAll("[ ()]", "_"))) {
-							
-							val splitSession = session.split("\\.");
+							("Ryu Backend  " + appPath.lastSegment.replace("\\.", "_")).replaceAll("[ ()]", "_")) ||
+							session.contains(
+								("Floodlight Backend" + appPath.lastSegment.replace("\\.", "_")).replaceAll("[ ()]",
+									"_")) || session.contains(
+									("Pyretic Backend" + appPath.lastSegment.replace("\\.", "_")).replaceAll("[ ()]",
+										"_"))) {
 
-							val id = Integer.parseInt(splitSession.get(splitSession.size-1))
-							var engine = ""
+								val splitSession = session.split("\\.");
 
-							if (statusModel.sshRunning) {
-								engine = statusModel.sshModelAtIndex.engine
+								val id = Integer.parseInt(splitSession.get(splitSession.size - 1))
+								var engine = ""
 
+								if (statusModel.sshRunning) {
+									engine = statusModel.sshModelAtIndex.engine
+
+								}
+
+								backendStarter = factory.createBackendStarter(launchConfigurationModel.clientController,
+									path, port, new NullProgressMonitor, engine, launchConfigurationModel.flagBackend,
+									id)
+									backendStarter.backend = backend
+									configToStarter.put(launchConfigurationModel, backendStarter)
+
+									reg.register(backendStarter.safeName, backendStarter)
+
+									backendStarter.reattach
+								}
 							}
-
-							backendStarter = factory.createBackendStarter(launchConfigurationModel.clientController,
-								path, port, new NullProgressMonitor, engine, launchConfigurationModel.flagBackend, id)
-							backendStarter.backend = backend
-							configToStarter.put(launchConfigurationModel, backendStarter)
-
-							reg.register(backendStarter.safeName, backendStarter)
-							
-							backendStarter.reattach
 						}
 					}
 				}
-			}
-		}
 
-		public def reprovision() {
-			if (vagrantManager != null) {
-				vagrantManager.asyncProvision
-			} else if (sshManager != null) {
-				sshManager.asyncProvision
-			}
-		}
-
-		public def stopStarter() {
-			val config = this.statusModel.getModelAtIndex();
-			config.running = false
-			var starter = configToStarter.get(config)
-			starter.stop
-		}
-
-		public def stopServerController() {
-			if (serverControllerStarter != null) {
-				serverControllerStarter.stop
-				reg.remove(serverControllerStarter.safeName)
-				serverControllerStarter = null
-			}
-		}
-
-		public def reattachServerController() {
-
-			if (serverControllerStarter != null) {
-				serverControllerStarter.reattach
-			} else {
-				if (sshManager != null) {
-					val runningSessions = sshManager.runningSessions;
-
-					for (String session : runningSessions) {
-						if (session.contains("Ryu_Shim") || session.contains("OpenDaylight_Shim") ||
-							session.contains("POX_Shim")) {
-
-							val splitSession = session.split("\\.");
-
-							val id = Integer.parseInt(splitSession.get(splitSession.size-1))
-
-							var platform = statusModel.shimModel.shim
-							var engine = ""
-							var odl = ""
-
-							if (statusModel.sshRunning) {
-								engine = statusModel.sshModelAtIndex.engine
-								odl = statusModel.sshModelAtIndex.odl
-							}
-							var port = statusModel.getShimModel().getPort()
-							var portInt = 6644;
-							if (port != "")
-								portInt = Integer.parseInt(port)
-
-							serverControllerStarter = factory.createShimStarter(platform,
-								NetIDEUtil.toPlatformUri(wbFile), portInt, new NullProgressMonitor, engine, odl, id)
-
-							serverControllerStarter.backend = backend
-
-							reg.register(serverControllerStarter.safeName, serverControllerStarter)
-
-							serverControllerStarter.reattach
-							statusModel.serverControllerRunning = true
-						}
+				public def reprovision() {
+					if (vagrantManager != null) {
+						vagrantManager.asyncProvision
+					} else if (sshManager != null) {
+						sshManager.asyncProvision
 					}
-				} else {
-					System.err.println("Can't reattach core. No running process");
 				}
-			}
 
-		}
+				public def stopStarter() {
+					val config = this.statusModel.getModelAtIndex();
+					config.running = false
+					var starter = configToStarter.get(config)
+					starter.stop
+				}
 
-		public def startMininet() {
-			if (!this.statusModel.mininetRunning) {
+				public def stopServerController() {
+					if (serverControllerStarter != null) {
+						serverControllerStarter.stop
+						reg.remove(serverControllerStarter.safeName)
+						serverControllerStarter = null
+					}
+				}
+
+				public def reattachServerController() {
+
+					if (serverControllerStarter != null) {
+						serverControllerStarter.reattach
+					} else {
+						if (sshManager != null) {
+							val runningSessions = sshManager.runningSessions;
+
+							for (String session : runningSessions) {
+								if (session.contains("Ryu_Shim") || session.contains("OpenDaylight_Shim") ||
+									session.contains("POX_Shim")) {
+
+									val splitSession = session.split("\\.");
+
+									val id = Integer.parseInt(splitSession.get(splitSession.size - 1))
+
+									var platform = statusModel.shimModel.shim
+									var engine = ""
+									var odl = ""
+
+									if (statusModel.sshRunning) {
+										engine = statusModel.sshModelAtIndex.engine
+										odl = statusModel.sshModelAtIndex.odl
+									}
+									var port = statusModel.getShimModel().getPort()
+									var portInt = 6644;
+									if (port != "")
+										portInt = Integer.parseInt(port)
+
+									serverControllerStarter = factory.createShimStarter(platform,
+										NetIDEUtil.toPlatformUri(wbFile), portInt, new NullProgressMonitor, engine, odl,
+										id)
+
+										serverControllerStarter.backend = backend
+
+										reg.register(serverControllerStarter.safeName, serverControllerStarter)
+
+										serverControllerStarter.reattach
+										statusModel.serverControllerRunning = true
+									}
+								}
+							} else {
+								System.err.println("Can't reattach core. No running process");
+							}
+						}
+
+					}
+
+					public def startMininet() {
+						if (!this.statusModel.mininetRunning) {
 
 //			if (mnstarter != null) {
 //				mnstarter.setBackend(backend)
 //				mnstarter.asyncStart
 //			} else {
-				// val configuration = configHelper.topoConfiguration
-				var jobMin = new Job("min Starter") {
+							// val configuration = configHelper.topoConfiguration
+							var jobMin = new Job("min Starter") {
 
-					override protected run(IProgressMonitor monitor) {
+								override protected run(IProgressMonitor monitor) {
 
-						mnstarter = new MininetStarter(statusModel.topologyModel.topologyPath, backend, monitor)
-						mnstarter.setBackend(backend)
-						// Start Mininet. 
-						reg.register(mnstarter.safeName, mnstarter)
-						mnstarter.syncStart
-						statusModel.mininetRunning = true
-						return Status.OK_STATUS
-					}
+									mnstarter = new MininetStarter(statusModel.topologyModel.topologyPath, backend,
+										monitor)
+									mnstarter.setBackend(backend)
+									// Start Mininet. 
+									reg.register(mnstarter.safeName, mnstarter)
+									mnstarter.syncStart
+									statusModel.mininetRunning = true
+									return Status.OK_STATUS
+								}
 
-				};
-				jobMin.schedule();
+							};
+							jobMin.schedule();
 //			}
-			}
-		}
-
-		private IStarter serverControllerStarter;
-
-		public def startServerController(
-			String serverController,
-			String port
-		) {
-
-			var job = new Job("Shim Server") {
-				override protected run(IProgressMonitor monitor) {
-
-					var platform = statusModel.shimModel.shim
-					var engine = ""
-					var odl = ""
-
-					if (statusModel.sshRunning) {
-						engine = statusModel.sshModelAtIndex.engine
-						odl = statusModel.sshModelAtIndex.odl
+						}
 					}
-					var portInt = 6644;
-					if (port != "")
-						portInt = Integer.parseInt(port)
 
-					serverControllerStarter = factory.createShimStarter(platform, NetIDEUtil.toPlatformUri(wbFile),
-						portInt, monitor, engine, odl)
+					private IStarter serverControllerStarter;
 
-					serverControllerStarter.backend = backend
-					serverControllerStarter.asyncStart
-					reg.register(serverControllerStarter.safeName, serverControllerStarter)
+					public def startServerController(
+						String serverController,
+						String port
+					) {
 
-					return Status.OK_STATUS
-				}
-			}
-			job.schedule
-		}
+						var job = new Job("Shim Server") {
+							override protected run(IProgressMonitor monitor) {
 
-		private HashMap<LaunchConfigurationModel, IStarter> configToStarter;
+								var platform = statusModel.shimModel.shim
+								var engine = ""
+								var odl = ""
 
-		private IStarter backendStarter;
+								if (statusModel.sshRunning) {
+									engine = statusModel.sshModelAtIndex.engine
+									odl = statusModel.sshModelAtIndex.odl
+								}
+								var portInt = 6644;
+								if (port != "")
+									portInt = Integer.parseInt(port)
 
-		private IStarter starter;
+								serverControllerStarter = factory.createShimStarter(platform,
+									NetIDEUtil.toPlatformUri(wbFile), portInt, monitor, engine, odl)
 
-		private IStarter mnstarter;
+								serverControllerStarter.backend = backend
+								serverControllerStarter.asyncStart
+								reg.register(serverControllerStarter.safeName, serverControllerStarter)
 
-		public def startApp() {
+								return Status.OK_STATUS
+							}
+						}
+						job.schedule
+					}
 
-			val launchConfigurationModel = this.statusModel.modelAtIndex;
-			launchConfigurationModel.running = true
+					private HashMap<LaunchConfigurationModel, IStarter> configToStarter;
 
-			val controllerplatform = launchConfigurationModel.platform
-			val path = launchConfigurationModel.appPath
-			val port = Integer.parseInt(launchConfigurationModel.appPort)
+					private IStarter backendStarter;
 
-			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
-				var job = new Job("BackendStarter") {
-					override run(IProgressMonitor monitor) {
+					private IStarter starter;
 
-						var engine = ""
+					private IStarter mnstarter;
 
-						if (statusModel.sshRunning) {
-							engine = statusModel.sshModelAtIndex.engine
+					public def startApp() {
 
+						val launchConfigurationModel = this.statusModel.modelAtIndex;
+						launchConfigurationModel.running = true
+
+						val controllerplatform = launchConfigurationModel.platform
+						val path = launchConfigurationModel.appPath
+						val port = Integer.parseInt(launchConfigurationModel.appPort)
+
+						if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
+							var job = new Job("BackendStarter") {
+								override run(IProgressMonitor monitor) {
+
+									var engine = ""
+
+									if (statusModel.sshRunning) {
+										engine = statusModel.sshModelAtIndex.engine
+
+									}
+
+									backendStarter = factory.createBackendStarter(
+										launchConfigurationModel.clientController, path, port, monitor, engine,
+										launchConfigurationModel.flagBackend)
+									backendStarter.backend = backend
+									configToStarter.put(launchConfigurationModel, backendStarter)
+									reg.register(backendStarter.safeName, backendStarter)
+									backendStarter.syncStart
+									return Status.OK_STATUS
+								}
+							}
+							job.schedule
+
+						} else {
+
+							var jobSingle = new Job("single Starter") {
+
+								override protected run(IProgressMonitor monitor) {
+
+									var appFolderPath = ""
+									if (statusModel.sshRunning)
+										appFolderPath = statusModel.sshModelAtIndex.appFolder
+									starter = factory.createSingleControllerStarter(controllerplatform, path, port,
+										monitor, appFolderPath, launchConfigurationModel.flagApp)
+									starter.setBackend(backend)
+									reg.register(starter.safeName, starter)
+									configToStarter.put(launchConfigurationModel, starter)
+									starter.syncStart
+									return Status.OK_STATUS
+								}
+
+							};
+							jobSingle.schedule();
 						}
 
-						backendStarter = factory.createBackendStarter(launchConfigurationModel.clientController, path,
-							port, monitor, engine, launchConfigurationModel.flagBackend)
-						backendStarter.backend = backend
-						configToStarter.put(launchConfigurationModel, backendStarter)
-						reg.register(backendStarter.safeName, backendStarter)
-						backendStarter.syncStart
-						return Status.OK_STATUS
-					}
-				}
-				job.schedule
+						Thread.sleep(2000)
 
-			} else {
-
-				var jobSingle = new Job("single Starter") {
-
-					override protected run(IProgressMonitor monitor) {
-
-						var appFolderPath = ""
-						if (statusModel.sshRunning)
-							appFolderPath = statusModel.sshModelAtIndex.appFolder
-						starter = factory.createSingleControllerStarter(controllerplatform, path, port, monitor,
-							appFolderPath, launchConfigurationModel.flagApp)
-						starter.setBackend(backend)
-						reg.register(starter.safeName, starter)
-						configToStarter.put(launchConfigurationModel, starter)
-						starter.syncStart
-						return Status.OK_STATUS
 					}
 
-				};
-				jobSingle.schedule();
-			}
+					private def generateConfiguration(String path) {
 
-			Thread.sleep(2000)
+						var resSet = new ResourceSetImpl
+						var resource = resSet.getResource(URI.createURI(path), true)
 
-		}
+						var env = resource.contents.get(0) as NetworkEnvironment
 
-		private def generateConfiguration(String path) {
-
-			var resSet = new ResourceSetImpl
-			var resource = resSet.getResource(URI.createURI(path), true)
-
-			var env = resource.contents.get(0) as NetworkEnvironment
-
-			var ga = new GenerateActionDelegate
-			ga.networkEnvironment = env
-			ga.run(null)
-		}
-
-		private Job startDebuggerJob;
-
-		public def startDebugger() {
-			val debuggerJob = new Job("Debugger") {
-				override protected run(IProgressMonitor monitor) {
-					if (debuggerStarter == null) {
-						var tools = ""
-						if (statusModel.sshRunning)
-							tools = statusModel.sshModelAtIndex.tools
-
-						debuggerStarter = new DebuggerStarter(backend, NetIDEUtil.toPlatformUri(wbFile), monitor, tools)
-						reg.register(debuggerStarter.safeName, debuggerStarter)
+						var ga = new GenerateActionDelegate
+						ga.networkEnvironment = env
+						ga.run(null)
 					}
-					if (!statusModel.debuggerRunning) {
-						startDebuggerJob.schedule
+
+					private Job startDebuggerJob;
+
+					public def startDebugger() {
+						val debuggerJob = new Job("Debugger") {
+							override protected run(IProgressMonitor monitor) {
+								if (debuggerStarter == null) {
+									var tools = ""
+									if (statusModel.sshRunning)
+										tools = statusModel.sshModelAtIndex.tools
+
+									debuggerStarter = new DebuggerStarter(backend, NetIDEUtil.toPlatformUri(wbFile),
+										monitor, tools)
+									reg.register(debuggerStarter.safeName, debuggerStarter)
+								}
+								if (!statusModel.debuggerRunning) {
+									startDebuggerJob.schedule
+								}
+								return Status.OK_STATUS
+							}
+						}
+
+						startDebuggerJob = new Job("Start Debugger") {
+							override protected run(IProgressMonitor monitor) {
+								debuggerStarter.backend = backend
+								debuggerStarter.syncStart
+								statusModel.debuggerRunning = true
+								return Status.OK_STATUS
+							}
+						}
+
+						debuggerJob.schedule
 					}
-					return Status.OK_STATUS
-				}
-			}
 
-			startDebuggerJob = new Job("Start Debugger") {
-				override protected run(IProgressMonitor monitor) {
-					debuggerStarter.backend = backend
-					debuggerStarter.syncStart
-					statusModel.debuggerRunning = true
-					return Status.OK_STATUS
-				}
-			}
+					public def stopDebugger() {
+						if (debuggerStarter != null && statusModel.debuggerRunning) {
+							debuggerStarter.stop
+							reg.remove(debuggerStarter.safeName)
+							statusModel.debuggerRunning = false
+						}
+					}
 
-			debuggerJob.schedule
-		}
+					public def reattachDebugger() {
+						if (debuggerStarter != null && statusModel.debuggerRunning) {
+							debuggerStarter.reattach
+						}
+					}
 
-		public def stopDebugger() {
-			if (debuggerStarter != null && statusModel.debuggerRunning) {
-				debuggerStarter.stop
-				reg.remove(debuggerStarter.safeName)
-				statusModel.debuggerRunning = false
-			}
-		}
-
-		public def reattachDebugger() {
-			if (debuggerStarter != null && statusModel.debuggerRunning) {
-				debuggerStarter.reattach
-			}
-		}
-
-		@Accessors(PUBLIC_GETTER)
-		private IStarter coreStarter;
+					@Accessors(PUBLIC_GETTER)
+					private IStarter coreStarter;
 
 // private Job startCoreJob;
-		public def startCore() {
+					public def startCore() {
 
-			val coreJob = new Job("CoreManager") {
-				override protected run(IProgressMonitor monitor) {
-					var core = ""
-					if (statusModel.sshRunning)
-						core = statusModel.sshModelAtIndex.core
-					coreStarter = new CoreStarter(backend,
-						URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString, monitor, core)
+						val coreJob = new Job("CoreManager") {
+							override protected run(IProgressMonitor monitor) {
+								var core = ""
+								if (statusModel.sshRunning)
+									core = statusModel.sshModelAtIndex.core
+								coreStarter = new CoreStarter(backend,
+									URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString, monitor,
+									core)
 
-					coreStarter.backend = backend
-					coreStarter.asyncStart
-					statusModel.coreRunning = true
-					reg.register(coreStarter.safeName, coreStarter)
+									coreStarter.backend = backend
+									coreStarter.asyncStart
+									statusModel.coreRunning = true
+									reg.register(coreStarter.safeName, coreStarter)
 
-					return Status.OK_STATUS;
-				}
+									return Status.OK_STATUS;
+								}
 
-			};
+							};
 
-			coreJob.schedule
+							coreJob.schedule
 
-		}
+						}
 
-		public def stopCore() {
+						public def stopCore() {
 
-			if (coreStarter != null && statusModel.coreRunning) {
-				coreStarter.stop
-				reg.remove(coreStarter.safeName)
-				statusModel.coreRunning = false
-				coreStarter = null
-			}
-		}
+							if (coreStarter != null && statusModel.coreRunning) {
+								coreStarter.stop
+								reg.remove(coreStarter.safeName)
+								statusModel.coreRunning = false
+								coreStarter = null
+							}
+						}
 
-		public def reattachCore() {
-			if (coreStarter != null && statusModel.coreRunning) {
-				coreStarter.reattach
-			} else {
-				if (sshManager != null) {
-					val runningSessions = sshManager.runningSessions;
+						public def reattachCore() {
+							if (coreStarter != null && statusModel.coreRunning) {
+								coreStarter.reattach
+							} else {
+								if (sshManager != null) {
+									val runningSessions = sshManager.runningSessions;
 
-					for (String session : runningSessions) {
-						if (session.contains("Core")) {
+									for (String session : runningSessions) {
+										if (session.contains("Core")) {
 
-							val splitSession = session.split("\\.");
+											val splitSession = session.split("\\.");
 
-							val id = Integer.parseInt(splitSession.get(splitSession.size-1))
+											val id = Integer.parseInt(splitSession.get(splitSession.size - 1))
 
-							var core = ""
-							if (statusModel.sshRunning)
-								core = statusModel.sshModelAtIndex.core
-							coreStarter = new CoreStarter(backend,
-								URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString,
-								new NullProgressMonitor, core, id)
+											var core = ""
+											if (statusModel.sshRunning)
+												core = statusModel.sshModelAtIndex.core
+											coreStarter = new CoreStarter(backend,
+												URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString,
+												new NullProgressMonitor, core, id)
 
-							coreStarter.backend = backend
+											coreStarter.backend = backend
 
-							statusModel.coreRunning = true
-							reg.register(coreStarter.safeName, coreStarter)
+											statusModel.coreRunning = true
+											reg.register(coreStarter.safeName, coreStarter)
 
-							coreStarter.reattach
+											coreStarter.reattach
+										}
+									}
+								} else {
+									System.err.println("Can't reattach core. No running process");
+								}
+							}
+						}
+
+						private CoreSpecificationStarter compositionStarter;
+
+						public def loadComposition() {
+							val compositionJob = new Job("CompositionJob") {
+								override protected run(IProgressMonitor monitor) {
+									if (sshManager != null) {
+										var file = statusModel.compositionModel.compositionPath.IFile
+										var fullpath = file.location
+
+										sshManager.copyComposition(fullpath.toString)
+									}
+
+									// configuration needs to contain topology path !
+									compositionStarter = new CoreSpecificationStarter(
+										statusModel.compositionModel.compositionPath, backend, monitor);
+									compositionStarter.backend = backend;
+									compositionStarter.syncStart
+									return Status.OK_STATUS
+								}
+							}
+
+							compositionJob.schedule
+						}
+
+						def getIFile(String s) {
+
+							var uri = URI.createURI(s)
+							var path = new Path(uri.path)
+
+							var fileName = path.removeFirstSegments(2)
+
+							var projectLocation = path.removeFirstSegments(1).removeLastSegments(1)
+
+							var root = ResourcesPlugin.getWorkspace().getRoot()
+
+							var projectLocationBase = projectLocation.segment(0)
+
+							var myProject = root.getProject(projectLocationBase);
+
+							if (myProject.exists() && !myProject.isOpen())
+								myProject.open(null);
+
+							var file = myProject.getFile(fileName)
+
+							return file
 						}
 					}
-				} else {
-					System.err.println("Can't reattach core. No running process");
-				}
-			}
-		}
-
-		private CoreSpecificationStarter compositionStarter;
-
-		public def loadComposition() {
-			val compositionJob = new Job("CompositionJob") {
-				override protected run(IProgressMonitor monitor) {
-					if (sshManager != null) {
-						var file = statusModel.compositionModel.compositionPath.IFile
-						var fullpath = file.location
-
-						sshManager.copyComposition(fullpath.toString)
-					}
-
-					// configuration needs to contain topology path !
-					compositionStarter = new CoreSpecificationStarter(statusModel.compositionModel.compositionPath,
-						backend, monitor);
-					compositionStarter.backend = backend;
-					compositionStarter.syncStart
-					return Status.OK_STATUS
-				}
-			}
-
-			compositionJob.schedule
-		}
-
-		def getIFile(String s) {
-
-			var uri = URI.createURI(s)
-			var path = new Path(uri.path)
-
-			var fileName = path.removeFirstSegments(2)
-
-			var projectLocation = path.removeFirstSegments(1).removeLastSegments(1)
-
-			var root = ResourcesPlugin.getWorkspace().getRoot()
-
-			var projectLocationBase = projectLocation.segment(0)
-
-			var myProject = root.getProject(projectLocationBase);
-
-			if (myProject.exists() && !myProject.isOpen())
-				myProject.open(null);
-
-			var file = myProject.getFile(fileName)
-
-			return file
-		}
-	}
-	
+					

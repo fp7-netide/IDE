@@ -181,11 +181,11 @@ class StarterFactory {
 		var IStarter starter
 		switch clientplatform {
 			case NetIDE.CONTROLLER_FLOODLIGHT:
-				starter = new FloodlightBackendStarter(port, appPath, monitor)
+				starter = new FloodlightBackendStarter(port, appPath, monitor, id)
 			case NetIDE.CONTROLLER_RYU:
 				starter = new RyuBackendStarter(port, appPath, monitor, engine, flag, id)
 			case NetIDE.CONTROLLER_PYRETIC:
-				starter = new PyreticBackendStarter(port, appPath, monitor)
+				starter = new PyreticBackendStarter(port, appPath, monitor, id)
 		}
 		starter.backend = backend
 		return starter
