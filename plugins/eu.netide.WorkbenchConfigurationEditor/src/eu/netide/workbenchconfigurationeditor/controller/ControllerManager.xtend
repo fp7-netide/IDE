@@ -29,13 +29,14 @@ import org.eclipse.core.resources.IFile
 import org.eclipse.core.resources.IResource
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.IJobChangeListener
 import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.xtend.lib.annotations.Accessors
-import org.eclipse.core.runtime.Path
+import org.eclipse.core.runtime.NullProgressMonitor
 
 class ControllerManager {
 
@@ -51,7 +52,6 @@ class ControllerManager {
 		var vgen = new VagrantfileGenerateAction(wbFile)
 		vgen.run
 	}
-
 
 	new(UiStatusModel statusModel, IFile file) {
 		this.statusModel = statusModel
@@ -183,7 +183,7 @@ class ControllerManager {
 		public def stopSSH() {
 			if (this.statusModel.sshRunning) {
 				reg.keys.forEach[k|reg.get(k).stop]
-				//reg.clear
+				// reg.clear
 				this.statusModel.coreRunning = false
 				this.statusModel.mininetRunning = false
 				this.statusModel.debuggerRunning = false
@@ -195,10 +195,10 @@ class ControllerManager {
 
 		private def updateBackend(Backend backend) {
 			this.backend = backend
-			if (reg != null){
+			if (reg != null) {
 				reg.clear
 				reg.keys.forEach[k|reg.get(k).backend = this.backend]
-				}
+			}
 		}
 
 		public def boolean startVagrant() {
@@ -235,12 +235,76 @@ class ControllerManager {
 		public def reattachMininet() {
 			if (mnstarter != null)
 				mnstarter.reattach
+			else {
+				if (sshManager != null) {
+					val runningSessions = sshManager.runningSessions;
+
+					for (String session : runningSessions) {
+						if (session.contains("Mininet")) {
+
+							val splitSession = session.split("\\.");
+
+							val id = Integer.parseInt(splitSession.get(splitSession.size-1))
+
+							mnstarter = new MininetStarter(statusModel.topologyModel.topologyPath, backend,
+								new NullProgressMonitor, id)
+							mnstarter.setBackend(backend)
+							// Start Mininet. 
+							reg.register(mnstarter.safeName, mnstarter)
+
+							statusModel.mininetRunning = true
+							mnstarter.reattach
+						}
+					}
+				}
+			}
 		}
 
 		def reattachStarter() {
+			println(sshManager.runningSessions)
 			val config = this.statusModel.getModelAtIndex();
 			var re = configToStarter.get(config)
-			re.reattach
+			if (re != null)
+				re.reattach
+			else {
+				// Ryu_Backend + this.appPath.lastSegment.replace("\\.", "_").replaceAll("[ ()]", "_")
+				if (sshManager != null) {
+					val runningSessions = sshManager.runningSessions;
+					val launchConfigurationModel = this.statusModel.modelAtIndex;
+					launchConfigurationModel.running = true
+
+					val controllerplatform = launchConfigurationModel.platform
+					val path = launchConfigurationModel.appPath
+					val port = Integer.parseInt(launchConfigurationModel.appPort)
+
+					for (String session : runningSessions) {
+						val appPath = getIFile(this.statusModel.getModelAtIndex().appPath).projectRelativePath
+						println(("Ryu Backend  " + appPath.lastSegment.replace("\\.", "_")).replaceAll("[ ()]", "_"))
+						if (session.contains(
+							("Ryu Backend  " + appPath.lastSegment.replace("\\.", "_")).replaceAll("[ ()]", "_"))) {
+							
+							val splitSession = session.split("\\.");
+
+							val id = Integer.parseInt(splitSession.get(splitSession.size-1))
+							var engine = ""
+
+							if (statusModel.sshRunning) {
+								engine = statusModel.sshModelAtIndex.engine
+
+							}
+
+							backendStarter = factory.createBackendStarter(launchConfigurationModel.clientController,
+								path, port, new NullProgressMonitor, engine, launchConfigurationModel.flagBackend, id)
+							backendStarter.backend = backend
+							configToStarter.put(launchConfigurationModel, backendStarter)
+
+							reg.register(backendStarter.safeName, backendStarter)
+							
+							backendStarter.reattach
+						}
+					}
+				}
+			}
 		}
 
 		public def reprovision() {
@@ -270,7 +334,47 @@ class ControllerManager {
 
 			if (serverControllerStarter != null) {
 				serverControllerStarter.reattach
+			} else {
+				if (sshManager != null) {
+					val runningSessions = sshManager.runningSessions;
+
+					for (String session : runningSessions) {
+						if (session.contains("Ryu_Shim") || session.contains("OpenDaylight_Shim") ||
+							session.contains("POX_Shim")) {
+
+							val splitSession = session.split("\\.");
+
+							val id = Integer.parseInt(splitSession.get(splitSession.size-1))
+
+							var platform = statusModel.shimModel.shim
+							var engine = ""
+							var odl = ""
+
+							if (statusModel.sshRunning) {
+								engine = statusModel.sshModelAtIndex.engine
+								odl = statusModel.sshModelAtIndex.odl
+							}
+							var port = statusModel.getShimModel().getPort()
+							var portInt = 6644;
+							if (port != "")
+								portInt = Integer.parseInt(port)
+
+							serverControllerStarter = factory.createShimStarter(platform,
+								NetIDEUtil.toPlatformUri(wbFile), portInt, new NullProgressMonitor, engine, odl, id)
+
+							serverControllerStarter.backend = backend
+
+							reg.register(serverControllerStarter.safeName, serverControllerStarter)
+
+							serverControllerStarter.reattach
+							statusModel.serverControllerRunning = true
+						}
+					}
+				} else {
+					System.err.println("Can't reattach core. No running process");
+				}
 			}
+
 		}
 
 		public def startMininet() {
@@ -302,7 +406,10 @@ class ControllerManager {
 
 		private IStarter serverControllerStarter;
 
-		public def startServerController(String serverController, String port) {
+		public def startServerController(
+			String serverController,
+			String port
+		) {
 
 			var job = new Job("Shim Server") {
 				override protected run(IProgressMonitor monitor) {
@@ -458,7 +565,7 @@ class ControllerManager {
 		@Accessors(PUBLIC_GETTER)
 		private IStarter coreStarter;
 
-		// private Job startCoreJob;
+// private Job startCoreJob;
 		public def startCore() {
 
 			val coreJob = new Job("CoreManager") {
@@ -496,6 +603,35 @@ class ControllerManager {
 		public def reattachCore() {
 			if (coreStarter != null && statusModel.coreRunning) {
 				coreStarter.reattach
+			} else {
+				if (sshManager != null) {
+					val runningSessions = sshManager.runningSessions;
+
+					for (String session : runningSessions) {
+						if (session.contains("Core")) {
+
+							val splitSession = session.split("\\.");
+
+							val id = Integer.parseInt(splitSession.get(splitSession.size-1))
+
+							var core = ""
+							if (statusModel.sshRunning)
+								core = statusModel.sshModelAtIndex.core
+							coreStarter = new CoreStarter(backend,
+								URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString,
+								new NullProgressMonitor, core, id)
+
+							coreStarter.backend = backend
+
+							statusModel.coreRunning = true
+							reg.register(coreStarter.safeName, coreStarter)
+
+							coreStarter.reattach
+						}
+					}
+				} else {
+					System.err.println("Can't reattach core. No running process");
+				}
 			}
 		}
 

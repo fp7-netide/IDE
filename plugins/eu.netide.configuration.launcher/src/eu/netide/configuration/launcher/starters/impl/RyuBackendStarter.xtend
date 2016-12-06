@@ -17,9 +17,9 @@ class RyuBackendStarter extends ControllerStarter {
 		this(port, appPath, monitor, null, null)
 	}
 
-	new(int port, String appPath, IProgressMonitor monitor, String enginePath, String flag) {
-		super("Ryu Backend", port, appPath, monitor)
-		name = String.format("%s (%s)", name, this.appPath.lastSegment)
+	new(int port, String appPath, IProgressMonitor monitor, String enginePath, String flag, int id) {
+		super("Ryu Backend", port, appPath, monitor, id)
+		name = String.format("%s (%s)", name, this.appPath.lastSegment.replace("\\.", "_"))
 		if (enginePath != null && enginePath != "") {
 			this.enginePath = super.getValidPath(enginePath);
 		}
@@ -27,6 +27,10 @@ class RyuBackendStarter extends ControllerStarter {
 			this.flags = flag;
 		}
 	}
+	
+		new(int port, String appPath, IProgressMonitor monitor, String enginePath, String flag){
+			this(port, appPath, monitor, enginePath, flag, -1)
+		}
 
 	override getEnvironmentVariables() {
 

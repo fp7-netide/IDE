@@ -123,19 +123,24 @@ class StarterFactory {
 	public def IStarter createShimStarter(String platform, String appPath, int port, IProgressMonitor monitor) {
 		createShimStarter(platform, appPath, port, monitor, null, null)
 	}
+	
+		public def IStarter createShimStarter(String platform, String appPath, int port, IProgressMonitor monitor,
+		String engine, String odlKaraf) {
+			createShimStarter(platform, appPath, port, monitor, engine, odlKaraf, -1)
+		}
 
 	public def IStarter createShimStarter(String platform, String appPath, int port, IProgressMonitor monitor,
-		String engine, String odlKaraf) {
+		String engine, String odlKaraf, int id) {
 
 		var serverplatform = platform
 		var IStarter starter
 		switch serverplatform {
 			case NetIDE.CONTROLLER_POX:
-				starter = new PoxShimStarter(appPath, port, monitor)
+				starter = new PoxShimStarter(appPath, port, monitor, id)
 			case NetIDE.CONTROLLER_RYU:
-				starter = new RyuShimStarter(appPath, port, monitor, engine)
+				starter = new RyuShimStarter(appPath, port, monitor, engine, id)
 			case NetIDE.CONTROLLER_ODL:
-				starter = new OdlShimStarter(appPath, port, monitor, odlKaraf)
+				starter = new OdlShimStarter(appPath, port, monitor, odlKaraf, id)
 		}
 		starter.setBackend(backend)
 		return starter
@@ -165,7 +170,12 @@ class StarterFactory {
 	}
 
 	public def IStarter createBackendStarter(String platform, String appPath, int port, IProgressMonitor monitor,
-		String engine, String flag) {
+		String engine, String flag){
+			createBackendStarter(platform, appPath, port, monitor, engine, flag, -1)
+		}
+
+	public def IStarter createBackendStarter(String platform, String appPath, int port, IProgressMonitor monitor,
+		String engine, String flag, int id) {
 
 		var clientplatform = platform
 		var IStarter starter
@@ -173,7 +183,7 @@ class StarterFactory {
 			case NetIDE.CONTROLLER_FLOODLIGHT:
 				starter = new FloodlightBackendStarter(port, appPath, monitor)
 			case NetIDE.CONTROLLER_RYU:
-				starter = new RyuBackendStarter(port, appPath, monitor, engine, flag)
+				starter = new RyuBackendStarter(port, appPath, monitor, engine, flag, id)
 			case NetIDE.CONTROLLER_PYRETIC:
 				starter = new PyreticBackendStarter(port, appPath, monitor)
 		}

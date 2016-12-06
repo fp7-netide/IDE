@@ -15,12 +15,14 @@ class RyuShimStarter extends ControllerStarter {
 	new(String appPath, int port, IProgressMonitor monitor) {
 		this(appPath, port, monitor, null)
 	}
-	
-	new(String appPath, int port, IProgressMonitor monitor, String enginePath) {
-		super("Ryu Shim", port, appPath, monitor)
+	new(String appPath, int port, IProgressMonitor monitor, String enginePath, int id){
+				super("Ryu Shim", port, appPath, monitor, id)
 		if(enginePath != null && enginePath != ""){
 			this.enginePath = super.getValidPath(enginePath)
 		}
+	}
+	new(String appPath, int port, IProgressMonitor monitor, String enginePath) {
+		this(appPath, port, monitor, enginePath, -1)
 	}
 
 	override getEnvironmentVariables() {

@@ -23,13 +23,17 @@ class MininetStarter extends Starter {
 		this.ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
 	}
 
-	new(String path, Backend backend, IProgressMonitor monitor) {
-		super("Mininet", path, backend, monitor)
+	new(String path, Backend backend, IProgressMonitor monitor, int id) {
+		super("Mininet", path, backend, monitor, id)
 
 		var resset = new ResourceSetImpl
 		var res = resset.getResource(URI.createURI(path), true)
 		this.ne = res.contents.filter(typeof(NetworkEnvironment)).get(0)
 	}
+	
+		new(String path, Backend backend, IProgressMonitor monitor) {
+			this(path, backend, monitor, -1)
+		}
 
 	override void stop() {
 		var job = new Job("Stop" + name) {
