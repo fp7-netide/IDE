@@ -1,7 +1,7 @@
 # Developed by Juan Manuel Sanchez, March 2016.
 
 """
-An OpenFlow 1.0 L2 static switching implementation.
+An OpenFlow 1.0 static switching implementation.
 """
 
 

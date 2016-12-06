@@ -24,7 +24,7 @@ class OdlShimStarter extends ControllerStarter {
 	String odlKarafPath = NetIDE.ODL_PATH
 	override getCommandLine() {
 		//var str = String.format("~/netide/Engine/odl-shim/karaf/target/assembly/bin/karaf")
-		var str = String.format(odlKarafPath + "/karaf")
+		var str = String.format("bash -c \'cd %s && ./karaf\'", odlKarafPath)
 		return str	
 	}
 }
