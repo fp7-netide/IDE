@@ -1,0 +1,13 @@
+To compile *.fto files the project needs
+- to be a Java Project (to find types like Integer)
+- Xtext Nature (to compile automagical)
+- and requires following bundles (typically convert project to plug-in project):
+   - eu.netide.configuration;bundle-version="0.3.1" (and depending)
+   - eu.netide.deployment.topologyvalidation;bundle-version="1.0.0"
+   - org.eclipse.core.runtime;bundle-version="3.12.0"
+   - org.eclipse.emf.codegen.ecore;bundle-version="2.13.0"
+   - org.eclipse.viatra.query.runtime.base.itc;bundle-version="1.4.1"
+   - org.eclipse.viatra.query.patternlanguage.emf;bundle-version="1.4.1"
+   - org.eclipse.xtext;bundle-version="2.10.0"
+   - org.eclipse.xtext.xbase;bundle-version="2.10.0"
+   - org.eclipse.xtext.xbase.lib;bundle-version="2.9.2"

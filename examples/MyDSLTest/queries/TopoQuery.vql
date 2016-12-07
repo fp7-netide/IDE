@@ -1,0 +1,561 @@
+import "eu.netide.configuration.topology"
+
+@QueryExplorer(checked = false)
+pattern core1_2080598234Constrain(sw : Switch) {
+
+	Switch.nebsVersion(sw, nebsVersion);
+
+	check(nebsVersion>1);
+}
+@QueryExplorer(checked = false)
+pattern connection_1879721881Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 50);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_57615622Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 50);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_893508156Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 50);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_162304008Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 50);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_725104683Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 50);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_1359310687Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 50);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_1781452665Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 50);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_133115620Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 50);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_1845278546Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 50);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_402211365Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 50);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_187695780Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 150);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_1976997160Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 150);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_2107177703Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 150);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_539850523Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 150);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_730035352Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 150);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_1782434581Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 150);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_1355303799Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 150);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_454454234Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 150);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_729934740Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 150);
+}
+
+@QueryExplorer(checked = false)
+pattern connection_794880146Constrain(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+
+	Connector.datarate(con, datarate);
+
+	check(datarate > 150);
+}
+
+@QueryExplorer(checked = false)
+pattern connected(S1 : Switch, S2 : Switch) {
+	Connector(con);
+	Switch.ports.connector(S1,con);
+	Switch.ports.connector(S2,con);
+}
+
+pattern matchTopology (core2_1660123716: Switch,
+
+core1_2080598234: Switch,
+
+edge1_2141765604: Switch,
+
+edge2_1017982420: Switch,
+
+agg2_1173700959: Switch,
+
+agg1_584557699: Switch,
+
+edge1_414873762: Switch,
+
+edge2_1303127532: Switch,
+
+agg2_574384831: Switch,
+
+agg1_1037050311: Switch,
+
+edge1_1994666423: Switch,
+
+edge2_1514928578: Switch,
+
+agg2_467863974: Switch,
+
+agg1_662822148: Switch,
+
+edge1_1891580362: Switch,
+
+edge2_1967086582: Switch,
+
+agg2_1980941006: Switch,
+
+agg1_1599228149: Switch,
+
+edge1_1454001084: Switch,
+
+edge2_1506101876: Switch,
+
+agg2_966911792: Switch,
+
+agg1_1962476817: Switch
+
+) {
+
+
+// define all Switches
+	core2_1660123716 != core1_2080598234;
+	core2_1660123716 != edge1_2141765604;
+	core2_1660123716 != edge2_1017982420;
+	core2_1660123716 != agg2_1173700959;
+	core2_1660123716 != agg1_584557699;
+	core2_1660123716 != edge1_414873762;
+	core2_1660123716 != edge2_1303127532;
+	core2_1660123716 != agg2_574384831;
+	core2_1660123716 != agg1_1037050311;
+	core2_1660123716 != edge1_1994666423;
+	core2_1660123716 != edge2_1514928578;
+	core2_1660123716 != agg2_467863974;
+	core2_1660123716 != agg1_662822148;
+	core2_1660123716 != edge1_1891580362;
+	core2_1660123716 != edge2_1967086582;
+	core2_1660123716 != agg2_1980941006;
+	core2_1660123716 != agg1_1599228149;
+	core2_1660123716 != edge1_1454001084;
+	core2_1660123716 != edge2_1506101876;
+	core2_1660123716 != agg2_966911792;
+	core2_1660123716 != agg1_1962476817;
+	core1_2080598234 != edge1_2141765604;
+	core1_2080598234 != edge2_1017982420;
+	core1_2080598234 != agg2_1173700959;
+	core1_2080598234 != agg1_584557699;
+	core1_2080598234 != edge1_414873762;
+	core1_2080598234 != edge2_1303127532;
+	core1_2080598234 != agg2_574384831;
+	core1_2080598234 != agg1_1037050311;
+	core1_2080598234 != edge1_1994666423;
+	core1_2080598234 != edge2_1514928578;
+	core1_2080598234 != agg2_467863974;
+	core1_2080598234 != agg1_662822148;
+	core1_2080598234 != edge1_1891580362;
+	core1_2080598234 != edge2_1967086582;
+	core1_2080598234 != agg2_1980941006;
+	core1_2080598234 != agg1_1599228149;
+	core1_2080598234 != edge1_1454001084;
+	core1_2080598234 != edge2_1506101876;
+	core1_2080598234 != agg2_966911792;
+	core1_2080598234 != agg1_1962476817;
+	edge1_2141765604 != edge2_1017982420;
+	edge1_2141765604 != agg2_1173700959;
+	edge1_2141765604 != agg1_584557699;
+	edge1_2141765604 != edge1_414873762;
+	edge1_2141765604 != edge2_1303127532;
+	edge1_2141765604 != agg2_574384831;
+	edge1_2141765604 != agg1_1037050311;
+	edge1_2141765604 != edge1_1994666423;
+	edge1_2141765604 != edge2_1514928578;
+	edge1_2141765604 != agg2_467863974;
+	edge1_2141765604 != agg1_662822148;
+	edge1_2141765604 != edge1_1891580362;
+	edge1_2141765604 != edge2_1967086582;
+	edge1_2141765604 != agg2_1980941006;
+	edge1_2141765604 != agg1_1599228149;
+	edge1_2141765604 != edge1_1454001084;
+	edge1_2141765604 != edge2_1506101876;
+	edge1_2141765604 != agg2_966911792;
+	edge1_2141765604 != agg1_1962476817;
+	edge2_1017982420 != agg2_1173700959;
+	edge2_1017982420 != agg1_584557699;
+	edge2_1017982420 != edge1_414873762;
+	edge2_1017982420 != edge2_1303127532;
+	edge2_1017982420 != agg2_574384831;
+	edge2_1017982420 != agg1_1037050311;
+	edge2_1017982420 != edge1_1994666423;
+	edge2_1017982420 != edge2_1514928578;
+	edge2_1017982420 != agg2_467863974;
+	edge2_1017982420 != agg1_662822148;
+	edge2_1017982420 != edge1_1891580362;
+	edge2_1017982420 != edge2_1967086582;
+	edge2_1017982420 != agg2_1980941006;
+	edge2_1017982420 != agg1_1599228149;
+	edge2_1017982420 != edge1_1454001084;
+	edge2_1017982420 != edge2_1506101876;
+	edge2_1017982420 != agg2_966911792;
+	edge2_1017982420 != agg1_1962476817;
+	agg2_1173700959 != agg1_584557699;
+	agg2_1173700959 != edge1_414873762;
+	agg2_1173700959 != edge2_1303127532;
+	agg2_1173700959 != agg2_574384831;
+	agg2_1173700959 != agg1_1037050311;
+	agg2_1173700959 != edge1_1994666423;
+	agg2_1173700959 != edge2_1514928578;
+	agg2_1173700959 != agg2_467863974;
+	agg2_1173700959 != agg1_662822148;
+	agg2_1173700959 != edge1_1891580362;
+	agg2_1173700959 != edge2_1967086582;
+	agg2_1173700959 != agg2_1980941006;
+	agg2_1173700959 != agg1_1599228149;
+	agg2_1173700959 != edge1_1454001084;
+	agg2_1173700959 != edge2_1506101876;
+	agg2_1173700959 != agg2_966911792;
+	agg2_1173700959 != agg1_1962476817;
+	agg1_584557699 != edge1_414873762;
+	agg1_584557699 != edge2_1303127532;
+	agg1_584557699 != agg2_574384831;
+	agg1_584557699 != agg1_1037050311;
+	agg1_584557699 != edge1_1994666423;
+	agg1_584557699 != edge2_1514928578;
+	agg1_584557699 != agg2_467863974;
+	agg1_584557699 != agg1_662822148;
+	agg1_584557699 != edge1_1891580362;
+	agg1_584557699 != edge2_1967086582;
+	agg1_584557699 != agg2_1980941006;
+	agg1_584557699 != agg1_1599228149;
+	agg1_584557699 != edge1_1454001084;
+	agg1_584557699 != edge2_1506101876;
+	agg1_584557699 != agg2_966911792;
+	agg1_584557699 != agg1_1962476817;
+	edge1_414873762 != edge2_1303127532;
+	edge1_414873762 != agg2_574384831;
+	edge1_414873762 != agg1_1037050311;
+	edge1_414873762 != edge1_1994666423;
+	edge1_414873762 != edge2_1514928578;
+	edge1_414873762 != agg2_467863974;
+	edge1_414873762 != agg1_662822148;
+	edge1_414873762 != edge1_1891580362;
+	edge1_414873762 != edge2_1967086582;
+	edge1_414873762 != agg2_1980941006;
+	edge1_414873762 != agg1_1599228149;
+	edge1_414873762 != edge1_1454001084;
+	edge1_414873762 != edge2_1506101876;
+	edge1_414873762 != agg2_966911792;
+	edge1_414873762 != agg1_1962476817;
+	edge2_1303127532 != agg2_574384831;
+	edge2_1303127532 != agg1_1037050311;
+	edge2_1303127532 != edge1_1994666423;
+	edge2_1303127532 != edge2_1514928578;
+	edge2_1303127532 != agg2_467863974;
+	edge2_1303127532 != agg1_662822148;
+	edge2_1303127532 != edge1_1891580362;
+	edge2_1303127532 != edge2_1967086582;
+	edge2_1303127532 != agg2_1980941006;
+	edge2_1303127532 != agg1_1599228149;
+	edge2_1303127532 != edge1_1454001084;
+	edge2_1303127532 != edge2_1506101876;
+	edge2_1303127532 != agg2_966911792;
+	edge2_1303127532 != agg1_1962476817;
+	agg2_574384831 != agg1_1037050311;
+	agg2_574384831 != edge1_1994666423;
+	agg2_574384831 != edge2_1514928578;
+	agg2_574384831 != agg2_467863974;
+	agg2_574384831 != agg1_662822148;
+	agg2_574384831 != edge1_1891580362;
+	agg2_574384831 != edge2_1967086582;
+	agg2_574384831 != agg2_1980941006;
+	agg2_574384831 != agg1_1599228149;
+	agg2_574384831 != edge1_1454001084;
+	agg2_574384831 != edge2_1506101876;
+	agg2_574384831 != agg2_966911792;
+	agg2_574384831 != agg1_1962476817;
+	agg1_1037050311 != edge1_1994666423;
+	agg1_1037050311 != edge2_1514928578;
+	agg1_1037050311 != agg2_467863974;
+	agg1_1037050311 != agg1_662822148;
+	agg1_1037050311 != edge1_1891580362;
+	agg1_1037050311 != edge2_1967086582;
+	agg1_1037050311 != agg2_1980941006;
+	agg1_1037050311 != agg1_1599228149;
+	agg1_1037050311 != edge1_1454001084;
+	agg1_1037050311 != edge2_1506101876;
+	agg1_1037050311 != agg2_966911792;
+	agg1_1037050311 != agg1_1962476817;
+	edge1_1994666423 != edge2_1514928578;
+	edge1_1994666423 != agg2_467863974;
+	edge1_1994666423 != agg1_662822148;
+	edge1_1994666423 != edge1_1891580362;
+	edge1_1994666423 != edge2_1967086582;
+	edge1_1994666423 != agg2_1980941006;
+	edge1_1994666423 != agg1_1599228149;
+	edge1_1994666423 != edge1_1454001084;
+	edge1_1994666423 != edge2_1506101876;
+	edge1_1994666423 != agg2_966911792;
+	edge1_1994666423 != agg1_1962476817;
+	edge2_1514928578 != agg2_467863974;
+	edge2_1514928578 != agg1_662822148;
+	edge2_1514928578 != edge1_1891580362;
+	edge2_1514928578 != edge2_1967086582;
+	edge2_1514928578 != agg2_1980941006;
+	edge2_1514928578 != agg1_1599228149;
+	edge2_1514928578 != edge1_1454001084;
+	edge2_1514928578 != edge2_1506101876;
+	edge2_1514928578 != agg2_966911792;
+	edge2_1514928578 != agg1_1962476817;
+	agg2_467863974 != agg1_662822148;
+	agg2_467863974 != edge1_1891580362;
+	agg2_467863974 != edge2_1967086582;
+	agg2_467863974 != agg2_1980941006;
+	agg2_467863974 != agg1_1599228149;
+	agg2_467863974 != edge1_1454001084;
+	agg2_467863974 != edge2_1506101876;
+	agg2_467863974 != agg2_966911792;
+	agg2_467863974 != agg1_1962476817;
+	agg1_662822148 != edge1_1891580362;
+	agg1_662822148 != edge2_1967086582;
+	agg1_662822148 != agg2_1980941006;
+	agg1_662822148 != agg1_1599228149;
+	agg1_662822148 != edge1_1454001084;
+	agg1_662822148 != edge2_1506101876;
+	agg1_662822148 != agg2_966911792;
+	agg1_662822148 != agg1_1962476817;
+	edge1_1891580362 != edge2_1967086582;
+	edge1_1891580362 != agg2_1980941006;
+	edge1_1891580362 != agg1_1599228149;
+	edge1_1891580362 != edge1_1454001084;
+	edge1_1891580362 != edge2_1506101876;
+	edge1_1891580362 != agg2_966911792;
+	edge1_1891580362 != agg1_1962476817;
+	edge2_1967086582 != agg2_1980941006;
+	edge2_1967086582 != agg1_1599228149;
+	edge2_1967086582 != edge1_1454001084;
+	edge2_1967086582 != edge2_1506101876;
+	edge2_1967086582 != agg2_966911792;
+	edge2_1967086582 != agg1_1962476817;
+	agg2_1980941006 != agg1_1599228149;
+	agg2_1980941006 != edge1_1454001084;
+	agg2_1980941006 != edge2_1506101876;
+	agg2_1980941006 != agg2_966911792;
+	agg2_1980941006 != agg1_1962476817;
+	agg1_1599228149 != edge1_1454001084;
+	agg1_1599228149 != edge2_1506101876;
+	agg1_1599228149 != agg2_966911792;
+	agg1_1599228149 != agg1_1962476817;
+	edge1_1454001084 != edge2_1506101876;
+	edge1_1454001084 != agg2_966911792;
+	edge1_1454001084 != agg1_1962476817;
+	edge2_1506101876 != agg2_966911792;
+	edge2_1506101876 != agg1_1962476817;
+	agg2_966911792 != agg1_1962476817;
+
+// define all Switch Constrains
+	find core1_2080598234Constrain(core1_2080598234);
+
+// define all Connections
+	find connection_1879721881Constrain(agg1_584557699, core1_2080598234);
+	find connection_57615622Constrain(agg2_1173700959, core1_2080598234);
+	find connection_893508156Constrain(agg1_1037050311, core1_2080598234);
+	find connection_162304008Constrain(agg2_574384831, core1_2080598234);
+	find connection_725104683Constrain(agg1_662822148, core1_2080598234);
+	find connection_1359310687Constrain(agg2_467863974, core1_2080598234);
+	find connection_1781452665Constrain(agg1_1599228149, core1_2080598234);
+	find connection_133115620Constrain(agg2_1980941006, core1_2080598234);
+	find connection_1845278546Constrain(agg1_1962476817, core1_2080598234);
+	find connection_402211365Constrain(agg2_966911792, core1_2080598234);
+	find connection_187695780Constrain(agg1_584557699, core2_1660123716);
+	find connection_1976997160Constrain(agg2_1173700959, core2_1660123716);
+	find connection_2107177703Constrain(agg1_1037050311, core2_1660123716);
+	find connection_539850523Constrain(agg2_574384831, core2_1660123716);
+	find connection_730035352Constrain(agg1_662822148, core2_1660123716);
+	find connection_1782434581Constrain(agg2_467863974, core2_1660123716);
+	find connection_1355303799Constrain(agg1_1599228149, core2_1660123716);
+	find connection_454454234Constrain(agg2_1980941006, core2_1660123716);
+	find connection_729934740Constrain(agg1_1962476817, core2_1660123716);
+	find connection_794880146Constrain(agg2_966911792, core2_1660123716);
+	find connected(agg1_584557699, edge1_2141765604);
+	find connected(agg1_584557699, edge2_1017982420);
+	find connected(agg2_1173700959, edge1_2141765604);
+	find connected(agg2_1173700959, edge2_1017982420);
+	find connected(agg1_1037050311, edge1_414873762);
+	find connected(agg1_1037050311, edge2_1303127532);
+	find connected(agg2_574384831, edge1_414873762);
+	find connected(agg2_574384831, edge2_1303127532);
+	find connected(agg1_662822148, edge1_1994666423);
+	find connected(agg1_662822148, edge2_1514928578);
+	find connected(agg2_467863974, edge1_1994666423);
+	find connected(agg2_467863974, edge2_1514928578);
+	find connected(agg1_1599228149, edge1_1891580362);
+	find connected(agg1_1599228149, edge2_1967086582);
+	find connected(agg2_1980941006, edge1_1891580362);
+	find connected(agg2_1980941006, edge2_1967086582);
+	find connected(agg1_1962476817, edge1_1454001084);
+	find connected(agg1_1962476817, edge2_1506101876);
+	find connected(agg2_966911792, edge1_1454001084);
+	find connected(agg2_966911792, edge2_1506101876);
+}
