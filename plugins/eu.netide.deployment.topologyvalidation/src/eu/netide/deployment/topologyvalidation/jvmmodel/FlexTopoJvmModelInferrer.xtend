@@ -121,18 +121,18 @@ class FlexTopoJvmModelInferrer extends AbstractModelInferrer {
 				]
 			]
 
-			members += element.toMethod("getParameterMap", typeRef(Map))[
-				static = true
-				body = [
-					append('''
-					Map<String, Class<?>> result = new HashMap<String, Class<?>>();
-					«FOR p: element.parameters »
-						result.put("«p.name»", «p.type»);
-					«ENDFOR»
-					return result;
-					''')
-				]
-			]
+//			members += element.toMethod("getParameterMap", typeRef(Map))[
+//				static = true
+//				body = [
+//					append('''
+//					Map<String, Class<?>> result = new HashMap<String, Class<?>>();
+//					«FOR p: element.parameters »
+//						result.put("«p.name»", «p.type»);
+//					«ENDFOR»
+//					return result;
+//					''')
+//				]
+//			]
 
 
 			// add parameters as fields
