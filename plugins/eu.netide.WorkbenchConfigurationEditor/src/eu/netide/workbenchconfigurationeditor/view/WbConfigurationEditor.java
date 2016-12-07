@@ -446,7 +446,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			public void widgetSelected(SelectionEvent e) {
 				// controllerManager.stopSSH();
 				if (engine.getStatusModel().getSshRunning()) {
-					controllerManager.reattachAll();
+					controllerManager.recreateAll();
 
 				} else {
 					if (sshProfileCombo.getSelectionIndex() != -1) {

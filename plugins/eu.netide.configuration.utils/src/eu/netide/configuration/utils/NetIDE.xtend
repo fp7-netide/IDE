@@ -14,8 +14,8 @@ class NetIDE {
 	public static val LAUNCHER_PLUGIN = "eu.netide.configuration.launcher"
 
 	public static val GENERATOR_PLUGIN = "eu.netide.configuration.generator"
-	
-	public static val ENGINE_PATH ="~/netide/Engine/"
+
+	public static val ENGINE_PATH = "~/netide/Engine/"
 	public static val CORE_KARAF = "~/netide/core-karaf/bin/"
 	public static val APP_FOLDER = "~/netide/apps/"
 	public static val ODL_PATH = "~/netide/odl-karaf/bin/"
@@ -32,6 +32,12 @@ class NetIDE {
 	public static val CONTROLLER_ENGINE = "Network Engine"
 	public static val CONTROLLER_CORE = "Core"
 	public static val CONTROLLER_ONOS = "ONOS"
+
+	public static val CONTROLLER_STARTER_NAME_CORE = "Core"
+	public static val CONTROLLER_STARTER_NAME_MININET = "Mininet"
+	public static val CONTROLLER_STARTER_NAME_SHIM = "Shim"
+	public static val CONTROLLER_STARTER_NAME_DEBUGGER = "Debugger"
+		public static val CONTROLLER_STARTER_NAME_APP_BACKEND = "Backend"
 
 	public static val CONTROLLERS = newArrayList(CONTROLLER_POX, CONTROLLER_RYU, CONTROLLER_FLOODLIGHT, CONTROLLER_ODL,
 		CONTROLLER_PYRETIC, CONTROLLER_ONOS)
