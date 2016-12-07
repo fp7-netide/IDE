@@ -47,20 +47,18 @@ class ProfilerHandler {
 				session.transactionalEditingDomain.commandStack.execute(updateCommand)
 			}
 		}
-//				return Status.OK_STATUS
 	}
 
-// job.schedule
 	def void handlePortStats(ArrayNode portStats, ArrayNode dpidLog) {
 		val session = RuntimeModelManager.instance.session
 		val rt = RuntimeModelManager.instance.runtimeData
 
-		for (node : portStats) {
-			if (node.get("port").asInt != 65534 && node.get("Type").asText.equals("Port Stats")) {
+		var updateCommand = new RecordingCommand(session.getTransactionalEditingDomain()) {
 
-				var updateCommand = new RecordingCommand(session.getTransactionalEditingDomain()) {
+			override doExecute() {
+				for (node : portStats) {
 
-					override doExecute() {
+					if (node.get("port").asInt != 65534 && node.get("Type").asText.equals("Port Stats")) {
 						val dpid = node.get("dpid").asText
 						val portno = node.get("port").asInt
 						val env = RuntimeModelManager.instance.runtimeData.networkenvironment
@@ -78,7 +76,6 @@ class ProfilerHandler {
 							ps = RuntimeTopologyFactory.eINSTANCE.createPortStatistics
 							ps.port = port
 							ps.setRuntimedata(rt);
-
 						}
 
 						val size = dpidLog.size()
@@ -106,14 +103,16 @@ class ProfilerHandler {
 						ps.rx_frame_err = node.get("rx_frame_err").asInt
 						ps.rx_crc_err = node.get("rx_crc_err").asInt
 						ps.collisions = node.get("collisions").asInt
+
 					}
 
-				};
-				session.transactionalEditingDomain.commandStack.execute(updateCommand)
+				}
+
 			}
 
-		}
-	// return Status.OK_STATUS
+		};
+		session.transactionalEditingDomain.commandStack.execute(updateCommand)
+
 	}
 
 	def handleAggregatedStats(ObjectNode aggregatedStats) {
@@ -147,8 +146,6 @@ class ProfilerHandler {
 			session.transactionalEditingDomain.commandStack.execute(updateCommand)
 		}
 
-//				return Status.OK_STATUS
 	}
 
-// job.schedule
 }
