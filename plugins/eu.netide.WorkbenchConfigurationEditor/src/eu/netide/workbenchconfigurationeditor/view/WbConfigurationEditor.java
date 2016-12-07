@@ -119,7 +119,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		if (sshProfileCombo.getSelectionIndex() != -1) {
 			// lblSShStatus.setText("Status: waiting");
 			checkSwitch();
-			
+
 			SshProfileModel model = engine.getStatusModel().getSshModelAtIndex();
 
 			if (model != null) {
@@ -276,15 +276,15 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnVagrantHalt.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-			
+
 				engine.getStatusModel().setVagrantRunning(false);
 				controllerManager.haltVagrant();
 				checkSwitch();
 			}
 		});
 	}
-	
-	private void startApp(){
+
+	private void startApp() {
 		if ((engine.getStatusModel().getSshRunning() || engine.getStatusModel().getVagrantRunning())) {
 			if (table.getSelectionCount() > 0) {
 				controllerManager.startApp();
@@ -316,8 +316,6 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				}
 			}
 		});
-		
-
 
 		startBTN.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -375,14 +373,14 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				}
 			}
 		});
-		
-		tableViewer.addDoubleClickListener(new IDoubleClickListener(){
+
+		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				startApp();
 			}
-			
+
 		});
 
 		btnProvision_1.addSelectionListener(new SelectionAdapter() {
@@ -422,7 +420,7 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				checkSwitch();
-				
+
 				if (noSwitch) {
 					tabFolder.setSelection(currentPageIndex);
 				} else {
@@ -446,21 +444,24 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		btnReloadSSH.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				controllerManager.stopSSH();
+				// controllerManager.stopSSH();
+				if (engine.getStatusModel().getSshRunning()) {
+					controllerManager.reattachAll();
 
-				if (sshProfileCombo.getSelectionIndex() != -1) {
-					lblSShStatus.setText("Status: waiting");
-					
-
-					SshProfileModel model = engine.getStatusModel().getSshModelAtIndex();
-
-					if (model != null) {
-						controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb, model);
-					}
 				} else {
-					showMessage("Please select / create a ssh Profile.");
+					if (sshProfileCombo.getSelectionIndex() != -1) {
+						lblSShStatus.setText("Status: waiting");
+
+						SshProfileModel model = engine.getStatusModel().getSshModelAtIndex();
+
+						if (model != null) {
+							controllerManager.startSSH(engine.getStatusModel().getModelList(), instanceWb, model);
+						}
+					} else {
+						showMessage("Please select / create a ssh Profile.");
+					}
+					checkSwitch();
 				}
-				checkSwitch();
 			}
 		});
 
@@ -559,8 +560,9 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		addTopoButtonListener();
 
 	}
+
 	private boolean noSwitch = false;
-	
+
 	private void checkSwitch() {
 
 		boolean allControllerStopped = true;
@@ -583,12 +585,10 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 				c.setEnabled(true);
 
 			}
-		}
-		else{
+		} else {
 			noSwitch = true;
 		}
 	}
-
 
 	private int currentPageIndex;
 
@@ -945,20 +945,23 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 			}
 		});
 		btnDebuggerReattach.setText("Reattach");
-		
+
 		btnToolView = new Button(grpDebugger, SWT.NONE);
 		btnToolView.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("eu.netide.toolpanel.views.Toolpanel");
+					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView("eu.netide.toolpanel.views.Toolpanel");
 					if (view instanceof ToolPanel) {
 						ToolPanel toolPanel = (ToolPanel) view;
 						toolPanel.setBackend(controllerManager.getBackend());
 						toolPanel.setFile(file);
 						String toolpath = null;
-//						if (engine.getStatusModel().getSshModelAtIndex().getTools())
-						toolPanel.setSshModel(engine.getStatusModel().getSshModelAtIndex(engine.getStatusModel().getSshComboSelectionIndex()).getTools());
+						// if
+						// (engine.getStatusModel().getSshModelAtIndex().getTools())
+						toolPanel.setSshModel(engine.getStatusModel()
+								.getSshModelAtIndex(engine.getStatusModel().getSshComboSelectionIndex()).getTools());
 					}
 				} catch (PartInitException e1) {
 					// TODO Auto-generated catch block
@@ -970,18 +973,20 @@ public class WbConfigurationEditor extends EditorPart implements IJobChangeListe
 		new Label(grpDebugger, SWT.NONE);
 		new Label(grpDebugger, SWT.NONE);
 		new Label(grpDebugger, SWT.NONE);
-		
+
 		btnShowReplayView = new Button(grpDebugger, SWT.NONE);
 		btnShowReplayView.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("eu.netide.toolpanel.views.ReplayPanel");
+					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView("eu.netide.toolpanel.views.ReplayPanel");
 					if (view instanceof ReplayPanel) {
 						ReplayPanel replayPanel = (ReplayPanel) view;
 						replayPanel.setFile(file);
 						String toolpath = null;
-//						if (engine.getStatusModel().getSshModelAtIndex().getTools())
+						// if
+						// (engine.getStatusModel().getSshModelAtIndex().getTools())
 					}
 				} catch (PartInitException e1) {
 					// TODO Auto-generated catch block

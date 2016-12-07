@@ -44,8 +44,24 @@ class DebuggerStarter extends Starter {
 		this(backend, path, engine, monitor, null)
 	}
 
+	new(Backend backend, String path, IProgressMonitor monitor, int id) {
+		this(backend, path, null, monitor, null, id)
+	}
+
+	new(Backend backend, String path, IProgressMonitor monitor, String tools, int id) {
+		this(backend, path, null, monitor, tools, id)
+	}
+
+	new(Backend backend, String path, String engine, IProgressMonitor monitor, int id) {
+		this(backend, path, engine, monitor, null, id)
+	}
+
 	new(Backend backend, String path, String engine, IProgressMonitor monitor, String tools) {
-		super("Debugger", path, backend, monitor)
+		this(backend, path, engine, monitor, tools, -1)
+	}
+
+	new(Backend backend, String path, String engine, IProgressMonitor monitor, String tools, int id) {
+		super("Debugger", path, backend, monitor, id)
 		if (engine != null && enginePath != "") {
 			this.enginePath = super.getValidPath(engine)
 		}

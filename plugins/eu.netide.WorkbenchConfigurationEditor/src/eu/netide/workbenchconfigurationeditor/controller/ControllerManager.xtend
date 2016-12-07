@@ -263,8 +263,15 @@ class ControllerManager {
 		}
 
 		def reattachStarter() {
+			reattachStarter(null)
+		}
 
-			val config = this.statusModel.getModelAtIndex();
+		private def reattachStarter(LaunchConfigurationModel m) {
+
+			var config = m
+			if (config == null)
+				config = this.statusModel.getModelAtIndex();
+
 			var re = configToStarter.get(config)
 			if (re != null)
 				re.reattach
@@ -272,14 +279,13 @@ class ControllerManager {
 				var manager = if(sshManager != null) sshManager else if(vagrantManager != null) vagrantManager
 				if (manager != null) {
 					val runningSessions = manager.runningSessions;
-					val launchConfigurationModel = this.statusModel.modelAtIndex;
-					launchConfigurationModel.running = true
+					val launchConfigurationModel = config
 
 					val path = launchConfigurationModel.appPath
 					val port = Integer.parseInt(launchConfigurationModel.appPort)
 
 					for (String session : runningSessions) {
-						val appPath = getIFile(this.statusModel.getModelAtIndex().appPath).projectRelativePath
+						val appPath = getIFile(config.appPath).projectRelativePath
 
 						if (session.contains(
 							("Ryu Backend  " + appPath.lastSegment.replace("\\.", "_")).replaceAll("[ ()]", "_")) ||
@@ -308,6 +314,8 @@ class ControllerManager {
 									reg.register(backendStarter.safeName, backendStarter)
 
 									backendStarter.reattach
+
+									launchConfigurationModel.running = true
 								}
 							}
 						}
@@ -571,6 +579,35 @@ class ControllerManager {
 					public def reattachDebugger() {
 						if (debuggerStarter != null && statusModel.debuggerRunning) {
 							debuggerStarter.reattach
+						} else {
+							var manager = if (sshManager != null)
+									sshManager
+								else if(vagrantManager != null) vagrantManager
+							if (manager != null) {
+								val runningSessions = manager.runningSessions;
+
+								for (String session : runningSessions) {
+									if (session.contains("Debugger")) {
+
+										val splitSession = session.split("\\.");
+
+										val id = Integer.parseInt(splitSession.get(splitSession.size - 1))
+
+										var tools = ""
+										tools = statusModel.sshModelAtIndex.tools
+
+										debuggerStarter = new DebuggerStarter(backend, NetIDEUtil.toPlatformUri(wbFile),
+											new NullProgressMonitor(), tools, id);
+
+										reg.register(debuggerStarter.safeName, debuggerStarter)
+
+										debuggerStarter.backend = backend
+
+										statusModel.debuggerRunning = true
+										debuggerStarter.reattach
+									}
+								}
+							}
 						}
 					}
 
@@ -613,11 +650,25 @@ class ControllerManager {
 							}
 						}
 
+						public def reattachAll() {
+							// attach all
+							this.reattachCore();
+							this.reattachMininet();
+							this.reattachServerController();
+							this.reattachDebugger();
+							for (LaunchConfigurationModel m : statusModel.getModelList()) {
+
+								this.reattachStarter(m);
+							}
+						}
+
 						public def reattachCore() {
 							if (coreStarter != null && statusModel.coreRunning) {
 								coreStarter.reattach
 							} else {
-								var manager = if(sshManager != null) sshManager else if(vagrantManager != null) vagrantManager
+								var manager = if (sshManager != null)
+										sshManager
+									else if(vagrantManager != null) vagrantManager
 								if (manager != null) {
 									val runningSessions = manager.runningSessions;
 
