@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: eu.netide.deployment.topologyvalidation.ui
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: eu.netide.deployment.topologyvalidation.ui; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: eu.netide.deployment.topologyvalidation,
+ eu.netide.deployment.topologyvalidation.ide,
+ org.eclipse.xtext.ui,
+ org.eclipse.xtext.ui.shared,
+ org.eclipse.xtext.ui.codetemplates.ui,
+ org.eclipse.ui.editors;bundle-version="3.5.0",
+ org.eclipse.ui.ide;bundle-version="3.5.0",
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtext.common.types.ui,
+ org.eclipse.xtend.lib;resolution:=optional,
+ org.eclipse.ui,
+ org.eclipse.xtext.xbase.ui,
+ org.eclipse.compare,
+ org.eclipse.xtext.builder,
+ org.eclipse.jdt.debug.ui
+Import-Package: org.apache.log4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: eu.netide.deployment.topologyvalidation.ui.quickfix,
+ eu.netide.deployment.topologyvalidation.ui.contentassist,
+ eu.netide.deployment.topologyvalidation.ui.internal
+Bundle-Activator: eu.netide.deployment.topologyvalidation.ui.internal.TopologyvalidationActivator
