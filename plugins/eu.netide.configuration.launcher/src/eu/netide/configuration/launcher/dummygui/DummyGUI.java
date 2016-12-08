@@ -139,7 +139,7 @@ public class DummyGUI extends ViewPart {
 						"curl -s -u admin:admin http://localhost:8181/restconf/operational/network-topology:network-topology/");
 				TopologyImport topoImport = TopologyImportFactory.instance.createTopologyImport();
 				
-				topoImport.createTopologyModelFromString(topo, manager.getProject().getFile("import.topology").getFullPath().toPortableString());
+//				topoImport.createTopologyModelFromString(topo, manager.getProject().getFile("import.topology").getFullPath().toPortableString());
 			}
 		});
 		btnGetTopology.setText("Get Topology");

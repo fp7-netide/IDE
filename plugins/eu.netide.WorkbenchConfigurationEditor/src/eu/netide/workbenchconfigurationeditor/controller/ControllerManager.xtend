@@ -52,7 +52,6 @@ class ControllerManager {
 		vgen.run
 	}
 
-
 	new(UiStatusModel statusModel, IFile file) {
 		this.statusModel = statusModel
 
@@ -132,12 +131,14 @@ class ControllerManager {
 	}
 
 	public def importTopology() {
-		var topo = execWithReturn(
-			"curl -s -u admin:admin http://localhost:8181/restconf/operational/network-topology:network-topology/");
+		var switches = execWithReturn("curl -s http://localhost:8080/v1.0/topology/switches");
+		var hosts = execWithReturn("curl -s http://localhost:8080/v1.0/topology/hosts")
+		var links = execWithReturn("curl -s http://localhost:8080/v1.0/topology/links");
+
 		var topoImport = TopologyImportFactory.instance.createTopologyImport();
 
 		var manager = if(sshManager != null) sshManager else if(vagrantManager != null) vagrantManager
-		topoImport.createTopologyModelFromString(topo,
+		topoImport.createTopologyModelFromString(switches, hosts, links,
 			manager.getProject().getFile("import.topology").getFullPath().toPortableString());
 	}
 
@@ -184,7 +185,7 @@ class ControllerManager {
 		public def stopSSH() {
 			if (this.statusModel.sshRunning) {
 				reg.keys.forEach[k|reg.get(k).stop]
-				//reg.clear
+				// reg.clear
 				this.statusModel.coreRunning = false
 				this.statusModel.mininetRunning = false
 				this.statusModel.debuggerRunning = false
@@ -196,10 +197,10 @@ class ControllerManager {
 
 		private def updateBackend(Backend backend) {
 			this.backend = backend
-			if (reg != null){
+			if (reg != null) {
 				reg.clear
 				reg.keys.forEach[k|reg.get(k).backend = this.backend]
-				}
+			}
 		}
 
 		public def boolean startVagrant() {
