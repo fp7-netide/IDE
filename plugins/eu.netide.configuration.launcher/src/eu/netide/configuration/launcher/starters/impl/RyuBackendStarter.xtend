@@ -9,7 +9,7 @@ class RyuBackendStarter extends ControllerStarter {
 
 	@Deprecated
 	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super("Ryu Backend", configuration, controller, monitor)
+		super(NetIDE.CONTROLLER_RYU + " " + NetIDE.CONTROLLER_APP_BACKEND, configuration, controller, monitor)
 		name = String.format("%s (%s)", name, appPath.lastSegment)
 	}
 
@@ -17,15 +17,23 @@ class RyuBackendStarter extends ControllerStarter {
 		this(port, appPath, monitor, null, null)
 	}
 
-	new(int port, String appPath, IProgressMonitor monitor, String enginePath, String flag) {
-		super("Ryu Backend", port, appPath, monitor)
-		name = String.format("%s (%s)", name, this.appPath.lastSegment)
+	new(int port, String appPath, IProgressMonitor monitor, String enginePath, String flag, int id) {
+		this("", port, appPath, monitor, enginePath, flag, id)
+	}
+
+	new(String appName, int port, String appPath, IProgressMonitor monitor, String enginePath, String flag, int id) {
+		super(NetIDE.CONTROLLER_RYU + " " + NetIDE.CONTROLLER_APP_BACKEND, port, appPath, monitor, id)
+		name = String.format("%s %s (%s)", appName, name, this.appPath.lastSegment.replace("\\.", "_"))
 		if (enginePath != null && enginePath != "") {
 			this.enginePath = super.getValidPath(enginePath);
 		}
 		if (flag != null && flag != "") {
 			this.flags = flag;
 		}
+	}
+
+	new(int port, String appPath, IProgressMonitor monitor, String enginePath, String flag) {
+		this(port, appPath, monitor, enginePath, flag, -1)
 	}
 
 	override getEnvironmentVariables() {

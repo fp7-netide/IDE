@@ -29,19 +29,50 @@ import org.eclipse.core.resources.IFile
 import org.eclipse.core.resources.IResource
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.core.runtime.NullProgressMonitor
+import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.IJobChangeListener
 import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.xtend.lib.annotations.Accessors
-import org.eclipse.core.runtime.Path
 
 class ControllerManager {
 
 	private IResource wbFile;
 	private UiStatusModel statusModel;
 	private DebuggerStarter debuggerStarter;
+
+	private IStarter serverControllerStarter;
+
+	private HashMap<LaunchConfigurationModel, IStarter> configToStarter;
+
+	private IStarter backendStarter;
+
+	private IStarter starter;
+
+	private IStarter mnstarter;
+
+	private StarterFactory factory
+
+	private IStarterRegistry reg
+
+	private VagrantManager vagrantManager;
+
+	private Job vagrantJob
+
+	private SshManager sshManager
+
+	private Job sshJob
+
+	@Accessors(PUBLIC_GETTER)
+	private Backend backend;
+
+	private CoreSpecificationStarter compositionStarter;
+
+	@Accessors(PUBLIC_GETTER)
+	private IStarter coreStarter;
 
 	public def createVagrantFile() {
 		var fsa2 = FSAProvider.get
@@ -67,21 +98,6 @@ class ControllerManager {
 	public def initTopo() {
 		generateConfiguration(this.statusModel.topologyModel.topologyPath)
 	}
-
-	private StarterFactory factory
-
-	private IStarterRegistry reg
-
-	private VagrantManager vagrantManager;
-
-	private Job vagrantJob
-
-	private SshManager sshManager
-
-	private Job sshJob
-
-	@Accessors(PUBLIC_GETTER)
-	private Backend backend;
 
 	/**
 	 * listener may be null
@@ -225,6 +241,25 @@ class ControllerManager {
 
 		}
 
+		public def startMininet() {
+			if (!this.statusModel.mininetRunning) {
+
+				var jobMin = new Job("min Starter") {
+
+					override protected run(IProgressMonitor monitor) {
+
+						createMininet(-1)
+						mnstarter.syncStart
+
+						return Status.OK_STATUS
+					}
+
+				};
+				jobMin.schedule();
+
+			}
+		}
+
 		public def stopMininet() {
 			this.statusModel.mininetRunning = false
 			if (mnstarter != null) {
@@ -235,14 +270,131 @@ class ControllerManager {
 		}
 
 		public def reattachMininet() {
+			if (mnstarter == null)
+				recreateStarter(NetIDE.CONTROLLER_MININET)
 			if (mnstarter != null)
 				mnstarter.reattach
 		}
 
+		private def createMininet(int id) {
+			createMininet(id, new NullProgressMonitor)
+		}
+
+		private def createMininet(int id, IProgressMonitor monitor) {
+			mnstarter = new MininetStarter(statusModel.topologyModel.topologyPath, backend, monitor, id)
+			mnstarter.setBackend(backend)
+			// Start Mininet. 
+			reg.register(mnstarter.safeName, mnstarter)
+
+			statusModel.mininetRunning = true
+
+		}
+
+		public def startApp() {
+
+			val launchConfigurationModel = this.statusModel.modelAtIndex;
+
+			val controllerplatform = launchConfigurationModel.platform
+
+			var job = new Job("BackendStarter") {
+				override run(IProgressMonitor monitor) {
+					if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
+						createStarterBackend(-1, launchConfigurationModel, monitor)
+
+						backendStarter.syncStart
+					} else {
+						createStarterSingleApp(-1, launchConfigurationModel, monitor)
+						starter.syncStart
+					}
+					return Status.OK_STATUS
+				}
+			}
+			job.schedule
+			Thread.sleep(2000)
+
+		}
+
+		private def createStarterSingleApp(int id, LaunchConfigurationModel launchConfigurationModel) {
+			createStarterSingleApp(id, launchConfigurationModel, new NullProgressMonitor)
+		}
+
+		private def createStarterSingleApp(int id, LaunchConfigurationModel launchConfigurationModel,
+			IProgressMonitor monitor) {
+			val path = launchConfigurationModel.appPath
+			val port = Integer.parseInt(launchConfigurationModel.appPort)
+			val controllerplatform = launchConfigurationModel.platform
+
+			var appFolderPath = ""
+			if (statusModel.sshRunning)
+				appFolderPath = statusModel.sshModelAtIndex.appFolder
+			starter = factory.createSingleControllerStarter(launchConfigurationModel.name, controllerplatform, path,
+				port, monitor, appFolderPath, launchConfigurationModel.flagApp, id)
+			starter.setBackend(backend)
+			reg.register(starter.safeName, starter)
+			configToStarter.put(launchConfigurationModel, starter)
+			launchConfigurationModel.running = true
+		}
+
 		def reattachStarter() {
-			val config = this.statusModel.getModelAtIndex();
+
+			reattachStarter(null)
+		}
+
+		private def createStarterBackend(int id, LaunchConfigurationModel launchConfigurationModel) {
+			createStarterBackend(id, launchConfigurationModel, new NullProgressMonitor)
+		}
+
+		private def createStarterBackend(int id, LaunchConfigurationModel launchConfigurationModel,
+			IProgressMonitor monitor) {
+
+			val path = launchConfigurationModel.appPath
+			val port = Integer.parseInt(launchConfigurationModel.appPort)
+
+			var engine = ""
+
+			if (statusModel.sshRunning) {
+				engine = statusModel.sshModelAtIndex.engine
+
+			}
+
+			backendStarter = factory.createBackendStarter(launchConfigurationModel.name,
+				launchConfigurationModel.clientController, path, port, monitor, engine,
+				launchConfigurationModel.flagBackend, id)
+			backendStarter.backend = backend
+			configToStarter.put(launchConfigurationModel, backendStarter)
+
+			reg.register(backendStarter.safeName, backendStarter)
+
+			launchConfigurationModel.running = true
+		}
+
+		private def selectStarter(LaunchConfigurationModel config) {
+			val controllerplatform = config.platform
+			if (controllerplatform == NetIDE.CONTROLLER_ENGINE)
+				recreateStarter(NetIDE.CONTROLLER_APP_BACKEND, config)
+			else {
+				switch (controllerplatform) {
+					case NetIDE.CONTROLLER_POX: recreateStarter(NetIDE.CONTROLLER_POX, config)
+					case NetIDE.CONTROLLER_RYU: recreateStarter(NetIDE.CONTROLLER_RYU, config)
+					case NetIDE.CONTROLLER_PYRETIC: recreateStarter(NetIDE.CONTROLLER_PYRETIC, config)
+				}
+			}
+		}
+
+		private def reattachStarter(LaunchConfigurationModel m) {
+
+			var config = m
+			if (config == null)
+				config = this.statusModel.getModelAtIndex();
+
 			var re = configToStarter.get(config)
-			re.reattach
+			if (re == null) {
+				selectStarter(m)
+
+			}
+			re = configToStarter.get(config)
+			if (re != null)
+				re.reattach
 		}
 
 		public def reprovision() {
@@ -260,6 +412,21 @@ class ControllerManager {
 			starter.stop
 		}
 
+		public def startServerController(
+			String serverController,
+			String port
+		) {
+
+			var job = new Job("Shim Server") {
+				override protected run(IProgressMonitor monitor) {
+					createShim(-1, monitor)
+					serverControllerStarter.asyncStart
+					return Status.OK_STATUS
+				}
+			}
+			job.schedule
+		}
+
 		public def stopServerController() {
 			if (serverControllerStarter != null) {
 				serverControllerStarter.stop
@@ -269,134 +436,41 @@ class ControllerManager {
 		}
 
 		public def reattachServerController() {
-
+			if (serverControllerStarter == null) {
+				recreateStarter(NetIDE.CONTROLLER_SHIM)
+			}
 			if (serverControllerStarter != null) {
 				serverControllerStarter.reattach
 			}
+
 		}
 
-		public def startMininet() {
-			if (!this.statusModel.mininetRunning) {
-
-//			if (mnstarter != null) {
-//				mnstarter.setBackend(backend)
-//				mnstarter.asyncStart
-//			} else {
-				// val configuration = configHelper.topoConfiguration
-				var jobMin = new Job("min Starter") {
-
-					override protected run(IProgressMonitor monitor) {
-
-						mnstarter = new MininetStarter(statusModel.topologyModel.topologyPath, backend, monitor)
-						mnstarter.setBackend(backend)
-						// Start Mininet. 
-						reg.register(mnstarter.safeName, mnstarter)
-						mnstarter.syncStart
-						statusModel.mininetRunning = true
-						return Status.OK_STATUS
-					}
-
-				};
-				jobMin.schedule();
-//			}
-			}
+		private def createShim(int id) {
+			createShim(id, new NullProgressMonitor)
 		}
 
-		private IStarter serverControllerStarter;
+		private def createShim(int id, IProgressMonitor monitor) {
+			var platform = statusModel.shimModel.shim
+			var engine = ""
+			var odl = ""
 
-		public def startServerController(String serverController, String port) {
-
-			var job = new Job("Shim Server") {
-				override protected run(IProgressMonitor monitor) {
-
-					var platform = statusModel.shimModel.shim
-					var engine = ""
-					var odl = ""
-
-					if (statusModel.sshRunning) {
-						engine = statusModel.sshModelAtIndex.engine
-						odl = statusModel.sshModelAtIndex.odl
-					}
-					var portInt = 6644;
-					if (port != "")
-						portInt = Integer.parseInt(port)
-
-					serverControllerStarter = factory.createShimStarter(platform, NetIDEUtil.toPlatformUri(wbFile),
-						portInt, monitor, engine, odl)
-
-					serverControllerStarter.backend = backend
-					serverControllerStarter.asyncStart
-					reg.register(serverControllerStarter.safeName, serverControllerStarter)
-
-					return Status.OK_STATUS
-				}
+			if (statusModel.sshRunning) {
+				engine = statusModel.sshModelAtIndex.engine
+				odl = statusModel.sshModelAtIndex.odl
 			}
-			job.schedule
-		}
+			var port = statusModel.getShimModel().getPort()
+			var portInt = 6644;
+			if (port != "")
+				portInt = Integer.parseInt(port)
 
-		private HashMap<LaunchConfigurationModel, IStarter> configToStarter;
+			serverControllerStarter = factory.createShimStarter(platform, NetIDEUtil.toPlatformUri(wbFile), portInt,
+				monitor, engine, odl, id)
 
-		private IStarter backendStarter;
+			serverControllerStarter.backend = backend
 
-		private IStarter starter;
+			reg.register(serverControllerStarter.safeName, serverControllerStarter)
 
-		private IStarter mnstarter;
-
-		public def startApp() {
-
-			val launchConfigurationModel = this.statusModel.modelAtIndex;
-			launchConfigurationModel.running = true
-
-			val controllerplatform = launchConfigurationModel.platform
-			val path = launchConfigurationModel.appPath
-			val port = Integer.parseInt(launchConfigurationModel.appPort)
-
-			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
-				var job = new Job("BackendStarter") {
-					override run(IProgressMonitor monitor) {
-
-						var engine = ""
-
-						if (statusModel.sshRunning) {
-							engine = statusModel.sshModelAtIndex.engine
-
-						}
-
-						backendStarter = factory.createBackendStarter(launchConfigurationModel.clientController, path,
-							port, monitor, engine, launchConfigurationModel.flagBackend)
-						backendStarter.backend = backend
-						configToStarter.put(launchConfigurationModel, backendStarter)
-						reg.register(backendStarter.safeName, backendStarter)
-						backendStarter.syncStart
-						return Status.OK_STATUS
-					}
-				}
-				job.schedule
-
-			} else {
-
-				var jobSingle = new Job("single Starter") {
-
-					override protected run(IProgressMonitor monitor) {
-
-						var appFolderPath = ""
-						if (statusModel.sshRunning)
-							appFolderPath = statusModel.sshModelAtIndex.appFolder
-						starter = factory.createSingleControllerStarter(controllerplatform, path, port, monitor,
-							appFolderPath, launchConfigurationModel.flagApp)
-						starter.setBackend(backend)
-						reg.register(starter.safeName, starter)
-						configToStarter.put(launchConfigurationModel, starter)
-						starter.syncStart
-						return Status.OK_STATUS
-					}
-
-				};
-				jobSingle.schedule();
-			}
-
-			Thread.sleep(2000)
-
+			statusModel.serverControllerRunning = true
 		}
 
 		private def generateConfiguration(String path) {
@@ -411,35 +485,17 @@ class ControllerManager {
 			ga.run(null)
 		}
 
-		private Job startDebuggerJob;
-
 		public def startDebugger() {
 			val debuggerJob = new Job("Debugger") {
 				override protected run(IProgressMonitor monitor) {
 					if (debuggerStarter == null) {
-						var tools = ""
-						if (statusModel.sshRunning)
-							tools = statusModel.sshModelAtIndex.tools
-
-						debuggerStarter = new DebuggerStarter(backend, NetIDEUtil.toPlatformUri(wbFile), monitor, tools)
-						reg.register(debuggerStarter.safeName, debuggerStarter)
+						createDebugger(-1, monitor)
+						debuggerStarter.syncStart
+						return Status.OK_STATUS
 					}
-					if (!statusModel.debuggerRunning) {
-						startDebuggerJob.schedule
-					}
-					return Status.OK_STATUS
 				}
-			}
 
-			startDebuggerJob = new Job("Start Debugger") {
-				override protected run(IProgressMonitor monitor) {
-					debuggerStarter.backend = backend
-					debuggerStarter.syncStart
-					statusModel.debuggerRunning = true
-					return Status.OK_STATUS
-				}
 			}
-
 			debuggerJob.schedule
 		}
 
@@ -451,30 +507,40 @@ class ControllerManager {
 			}
 		}
 
+		private def createDebugger(int id) {
+			createDebugger(id, new NullProgressMonitor)
+		}
+
+		private def createDebugger(int id, IProgressMonitor monitor) {
+			var tools = ""
+			if (statusModel.sshRunning)
+				tools = statusModel.sshModelAtIndex.tools
+
+			debuggerStarter = new DebuggerStarter(backend, NetIDEUtil.toPlatformUri(wbFile), monitor, tools, id);
+
+			reg.register(debuggerStarter.safeName, debuggerStarter)
+
+			debuggerStarter.backend = backend
+
+			statusModel.debuggerRunning = true
+
+		}
+
 		public def reattachDebugger() {
+			if (debuggerStarter == null)
+				recreateStarter(NetIDE.CONTROLLER_DEBUGGER)
 			if (debuggerStarter != null && statusModel.debuggerRunning) {
 				debuggerStarter.reattach
 			}
+
 		}
 
-		@Accessors(PUBLIC_GETTER)
-		private IStarter coreStarter;
-
-		// private Job startCoreJob;
 		public def startCore() {
 
 			val coreJob = new Job("CoreManager") {
 				override protected run(IProgressMonitor monitor) {
-					var core = ""
-					if (statusModel.sshRunning)
-						core = statusModel.sshModelAtIndex.core
-					coreStarter = new CoreStarter(backend,
-						URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString, monitor, core)
-
-					coreStarter.backend = backend
+					createCore(-1, monitor)
 					coreStarter.asyncStart
-					statusModel.coreRunning = true
-					reg.register(coreStarter.safeName, coreStarter)
 
 					return Status.OK_STATUS;
 				}
@@ -482,6 +548,25 @@ class ControllerManager {
 			};
 
 			coreJob.schedule
+
+		}
+
+		private def createCore(int id) {
+			createCore(id, new NullProgressMonitor)
+		}
+
+		private def createCore(int id, IProgressMonitor monitor) {
+
+			var core = ""
+			if (statusModel.sshRunning)
+				core = statusModel.sshModelAtIndex.core
+			coreStarter = new CoreStarter(backend,
+				URI.createPlatformResourceURI(wbFile.fullPath.toString, false).toString, monitor, core, id)
+
+			coreStarter.backend = backend
+
+			statusModel.coreRunning = true
+			reg.register(coreStarter.safeName, coreStarter)
 
 		}
 
@@ -495,13 +580,75 @@ class ControllerManager {
 			}
 		}
 
-		public def reattachCore() {
-			if (coreStarter != null && statusModel.coreRunning) {
-				coreStarter.reattach
+		public def recreateAll() {
+			// attach all
+			recreateStarter(NetIDE.CONTROLLER_CORE)
+			recreateStarter(NetIDE.CONTROLLER_SHIM)
+			recreateStarter(NetIDE.CONTROLLER_MININET)
+			recreateStarter(NetIDE.CONTROLLER_DEBUGGER)
+
+			for (LaunchConfigurationModel m : statusModel.getModelList()) {
+				selectStarter(m)
 			}
 		}
 
-		private CoreSpecificationStarter compositionStarter;
+		public def reattachCore() {
+			if (coreStarter == null) {
+				recreateStarter(NetIDE.CONTROLLER_CORE)
+			}
+			if (coreStarter != null && statusModel.coreRunning) {
+				coreStarter.reattach
+			} else {
+			}
+
+		}
+
+		private def recreateStarter(String ident) {
+			recreateStarter(ident, null)
+		}
+
+		private def recreateStarter(String ident, LaunchConfigurationModel m) {
+			var manager = if (sshManager != null)
+					sshManager
+				else if(vagrantManager != null) vagrantManager
+			if (manager != null) {
+				val runningSessions = manager.runningSessions;
+
+				for (String session : runningSessions) {
+					if (session.contains(ident)) {
+
+						val splitSession = session.split("\\.");
+
+						val id = Integer.parseInt(splitSession.get(splitSession.size - 1))
+
+						// order of switch cases matters !!
+						switch (ident) {
+							case NetIDE.CONTROLLER_CORE:
+								this.createCore(id)
+							case NetIDE.CONTROLLER_SHIM:
+								this.createShim(id)
+							case NetIDE.CONTROLLER_APP_BACKEND:
+								if (session.contains(m.name)) {
+									this.createStarterBackend(id, m)
+								}
+							case NetIDE.CONTROLLER_RYU,
+							case NetIDE.CONTROLLER_POX,
+							case NetIDE.CONTROLLER_PYRETIC:
+								if (session.contains(m.name)) {
+									createStarterSingleApp(id, m)
+								}
+							case NetIDE.CONTROLLER_MININET:
+								this.createMininet(id)
+							case NetIDE.CONTROLLER_DEBUGGER:
+								this.createDebugger(id)
+							default:
+								println("No known controller")
+						}
+
+					}
+				}
+			}
+		}
 
 		public def loadComposition() {
 			val compositionJob = new Job("CompositionJob") {
