@@ -586,7 +586,6 @@ class ControllerManager {
 
 			for (LaunchConfigurationModel m : statusModel.getModelList()) {
 				selectStarter(m)
-
 			}
 		}
 
