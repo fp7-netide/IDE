@@ -18,8 +18,12 @@ class RyuBackendStarter extends ControllerStarter {
 	}
 
 	new(int port, String appPath, IProgressMonitor monitor, String enginePath, String flag, int id) {
+		this("", port, appPath, monitor, enginePath, flag, id)
+	}
+
+	new(String appName, int port, String appPath, IProgressMonitor monitor, String enginePath, String flag, int id) {
 		super(NetIDE.CONTROLLER_RYU + " " + NetIDE.CONTROLLER_APP_BACKEND, port, appPath, monitor, id)
-		name = String.format("%s (%s)", name, this.appPath.lastSegment.replace("\\.", "_"))
+		name = String.format("%s %s (%s)", appName, name, this.appPath.lastSegment.replace("\\.", "_"))
 		if (enginePath != null && enginePath != "") {
 			this.enginePath = super.getValidPath(enginePath);
 		}
@@ -27,10 +31,10 @@ class RyuBackendStarter extends ControllerStarter {
 			this.flags = flag;
 		}
 	}
-	
-		new(int port, String appPath, IProgressMonitor monitor, String enginePath, String flag){
-			this(port, appPath, monitor, enginePath, flag, -1)
-		}
+
+	new(int port, String appPath, IProgressMonitor monitor, String enginePath, String flag) {
+		this(port, appPath, monitor, enginePath, flag, -1)
+	}
 
 	override getEnvironmentVariables() {
 

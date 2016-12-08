@@ -13,8 +13,12 @@ class FloodlightBackendStarter extends ControllerStarter {
 	}
 
 	new(int port, String appPath, IProgressMonitor monitor, int id) {
+		this("", port, appPath, monitor, id)
+	}
+
+	new(String appName, int port, String appPath, IProgressMonitor monitor, int id) {
 		super(NetIDE.CONTROLLER_FLOODLIGHT + " " + NetIDE.CONTROLLER_APP_BACKEND, port, appPath, monitor, id)
-		name = String.format("%s (%s)", name, appPath.IFile.location.lastSegment)
+		name = String.format("%s %s (%s)", appName, name, appPath.IFile.location.lastSegment)
 	}
 
 	new(int port, String appPath, IProgressMonitor monitor) {

@@ -12,7 +12,13 @@ class PyreticBackendStarter extends ControllerStarter {
 	}
 
 	new(int port, String appPath, IProgressMonitor monitor, int id) {
+		this("", port, appPath, monitor, id)
+	}
+
+	new(String appName, int port, String appPath, IProgressMonitor monitor, int id) {
 		super(NetIDE.CONTROLLER_PYRETIC + " " + NetIDE.CONTROLLER_APP_BACKEND, port, appPath, monitor, id)
+		if (appName != "")
+			name = appName + "_" + name
 	}
 
 	new(int port, String appPath, IProgressMonitor monitor) {

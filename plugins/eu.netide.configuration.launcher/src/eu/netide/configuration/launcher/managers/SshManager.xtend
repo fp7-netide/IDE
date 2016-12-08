@@ -323,7 +323,6 @@ class SshManager implements IManager {
 	}
 
 	def startProcess(ArrayList<String> cmdline) {
-		println(cmdline)
 
 		var workingDir = this.workingDirectory
 		var location = new Path(sshPath)

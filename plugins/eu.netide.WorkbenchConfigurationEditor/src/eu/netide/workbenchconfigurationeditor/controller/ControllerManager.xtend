@@ -291,7 +291,6 @@ class ControllerManager {
 		public def startApp() {
 
 			val launchConfigurationModel = this.statusModel.modelAtIndex;
-			launchConfigurationModel.running = true
 
 			val controllerplatform = launchConfigurationModel.platform
 
@@ -326,11 +325,12 @@ class ControllerManager {
 			var appFolderPath = ""
 			if (statusModel.sshRunning)
 				appFolderPath = statusModel.sshModelAtIndex.appFolder
-			starter = factory.createSingleControllerStarter(controllerplatform, path, port, monitor, appFolderPath,
-				launchConfigurationModel.flagApp, id)
+			starter = factory.createSingleControllerStarter(launchConfigurationModel.name, controllerplatform, path,
+				port, monitor, appFolderPath, launchConfigurationModel.flagApp, id)
 			starter.setBackend(backend)
 			reg.register(starter.safeName, starter)
 			configToStarter.put(launchConfigurationModel, starter)
+			launchConfigurationModel.running = true
 		}
 
 		def reattachStarter() {
@@ -355,8 +355,9 @@ class ControllerManager {
 
 			}
 
-			backendStarter = factory.createBackendStarter(launchConfigurationModel.clientController, path, port,
-				monitor, engine, launchConfigurationModel.flagBackend, id)
+			backendStarter = factory.createBackendStarter(launchConfigurationModel.name,
+				launchConfigurationModel.clientController, path, port, monitor, engine,
+				launchConfigurationModel.flagBackend, id)
 			backendStarter.backend = backend
 			configToStarter.put(launchConfigurationModel, backendStarter)
 
@@ -618,17 +619,22 @@ class ControllerManager {
 
 						val id = Integer.parseInt(splitSession.get(splitSession.size - 1))
 
+						// order of switch cases matters !!
 						switch (ident) {
 							case NetIDE.CONTROLLER_CORE:
 								this.createCore(id)
 							case NetIDE.CONTROLLER_SHIM:
 								this.createShim(id)
 							case NetIDE.CONTROLLER_APP_BACKEND:
-								this.createStarterBackend(id, m)
+								if (session.contains(m.name)) {
+									this.createStarterBackend(id, m)
+								}
 							case NetIDE.CONTROLLER_RYU,
 							case NetIDE.CONTROLLER_POX,
 							case NetIDE.CONTROLLER_PYRETIC:
-								createStarterSingleApp(id, m)
+								if (session.contains(m.name)) {
+									createStarterSingleApp(id, m)
+								}
 							case NetIDE.CONTROLLER_MININET:
 								this.createMininet(id)
 							case NetIDE.CONTROLLER_DEBUGGER:

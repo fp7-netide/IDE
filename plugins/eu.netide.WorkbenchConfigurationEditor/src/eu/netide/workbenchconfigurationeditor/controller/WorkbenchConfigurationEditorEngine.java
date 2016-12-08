@@ -328,7 +328,9 @@ public class WorkbenchConfigurationEditorEngine {
 
 							for (Object o : a) {
 								if (o instanceof LaunchConfigurationModel) {
-									am.add((LaunchConfigurationModel) o);
+									LaunchConfigurationModel m = (LaunchConfigurationModel) o;
+									m.setRunning(false);
+									am.add(m);
 								} else if (o instanceof SshProfileModel) {
 									pm.add((SshProfileModel) o);
 								}

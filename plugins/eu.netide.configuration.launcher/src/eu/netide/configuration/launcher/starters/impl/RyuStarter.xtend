@@ -19,11 +19,19 @@ class RyuStarter extends ControllerStarter {
 	}
 
 	new(int port, String appPath, IProgressMonitor monitor, String appFolderPath, String appFlag) {
-		this(port, appPath, monitor, appFolderPath, appFlag, -1)
+		this("", port, appPath, monitor, appFolderPath, appFlag, -1)
 	}
 
 	new(int port, String appPath, IProgressMonitor monitor, String appFolderPath, String appFlag, int id) {
+		this("", port, appPath, monitor, appFolderPath, appFlag, id)
+	}
+
+	new(String appName, int port, String appPath, IProgressMonitor monitor, String appFolderPath, String appFlag,
+		int id) {
 		super(NetIDE.CONTROLLER_RYU, port, appPath, monitor, id)
+
+		if (appName != "")
+			name = appName + "_" + name;
 		if (appFolderPath != null && appFolderPath != "")
 			// TODO: validate appFolderPath format
 			this.appFolderPath = super.getValidPath(appFolderPath)

@@ -11,15 +11,18 @@ class PoxStarter extends ControllerStarter {
 		super(NetIDE.CONTROLLER_POX, configuration, controller, monitor)
 		name = String.format("%s (%s)", name, appPath.lastSegment)
 	}
-	
-	
+
 	new(int port, String appPath, IProgressMonitor monitor) {
 		this(port, appPath, monitor, -1)
 	}
 
 	new(int port, String appPath, IProgressMonitor monitor, int id) {
+		this("", port, appPath, monitor, id)
+	}
+
+	new(String appName, int port, String appPath, IProgressMonitor monitor, int id) {
 		super(NetIDE.CONTROLLER_POX, port, appPath, monitor)
-		name = String.format("%s (%s)", name, this.appPath.lastSegment, id)
+		name = String.format("%s %s (%s)", appName, name, this.appPath.lastSegment, id)
 	}
 
 	override getEnvironmentVariables() {
