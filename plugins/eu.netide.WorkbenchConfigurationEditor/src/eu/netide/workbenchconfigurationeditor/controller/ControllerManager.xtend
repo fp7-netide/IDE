@@ -29,6 +29,7 @@ import org.eclipse.core.resources.IFile
 import org.eclipse.core.resources.IResource
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.IJobChangeListener
@@ -36,7 +37,6 @@ import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.xtend.lib.annotations.Accessors
-import org.eclipse.core.runtime.NullProgressMonitor
 
 class ControllerManager {
 
@@ -269,7 +269,7 @@ class ControllerManager {
 
 		public def reattachMininet() {
 			if (mnstarter == null)
-				recreateStarter(NetIDE.CONTROLLER_STARTER_NAME_MININET)
+				recreateStarter(NetIDE.CONTROLLER_MININET)
 			if (mnstarter != null)
 				mnstarter.reattach
 		}
@@ -294,56 +294,56 @@ class ControllerManager {
 			launchConfigurationModel.running = true
 
 			val controllerplatform = launchConfigurationModel.platform
-			val path = launchConfigurationModel.appPath
-			val port = Integer.parseInt(launchConfigurationModel.appPort)
 
-			if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
-				var job = new Job("BackendStarter") {
-					override run(IProgressMonitor monitor) {
-
-						createStarter(-1, launchConfigurationModel, monitor)
+			var job = new Job("BackendStarter") {
+				override run(IProgressMonitor monitor) {
+					if (controllerplatform == NetIDE.CONTROLLER_ENGINE) {
+						createStarterBackend(-1, launchConfigurationModel, monitor)
 
 						backendStarter.syncStart
-						return Status.OK_STATUS
-					}
-				}
-				job.schedule
-
-			} else {
-
-				var jobSingle = new Job("single Starter") {
-
-					override protected run(IProgressMonitor monitor) {
-
-						var appFolderPath = ""
-						if (statusModel.sshRunning)
-							appFolderPath = statusModel.sshModelAtIndex.appFolder
-						starter = factory.createSingleControllerStarter(controllerplatform, path, port, monitor,
-							appFolderPath, launchConfigurationModel.flagApp)
-						starter.setBackend(backend)
-						reg.register(starter.safeName, starter)
-						configToStarter.put(launchConfigurationModel, starter)
+					} else {
+						createStarterSingleApp(-1, launchConfigurationModel, monitor)
 						starter.syncStart
-						return Status.OK_STATUS
 					}
-
-				};
-				jobSingle.schedule();
+					return Status.OK_STATUS
+				}
 			}
-
+			job.schedule
 			Thread.sleep(2000)
 
 		}
 
+		private def createStarterSingleApp(int id, LaunchConfigurationModel launchConfigurationModel) {
+			createStarterSingleApp(id, launchConfigurationModel, new NullProgressMonitor)
+		}
+
+		private def createStarterSingleApp(int id, LaunchConfigurationModel launchConfigurationModel,
+			IProgressMonitor monitor) {
+			val path = launchConfigurationModel.appPath
+			val port = Integer.parseInt(launchConfigurationModel.appPort)
+			val controllerplatform = launchConfigurationModel.platform
+
+			var appFolderPath = ""
+			if (statusModel.sshRunning)
+				appFolderPath = statusModel.sshModelAtIndex.appFolder
+			starter = factory.createSingleControllerStarter(controllerplatform, path, port, monitor, appFolderPath,
+				launchConfigurationModel.flagApp, id)
+			starter.setBackend(backend)
+			reg.register(starter.safeName, starter)
+			configToStarter.put(launchConfigurationModel, starter)
+		}
+
 		def reattachStarter() {
+
 			reattachStarter(null)
 		}
 
-		private def createStarter(int id, LaunchConfigurationModel launchConfigurationModel) {
-			createStarter(id, launchConfigurationModel, new NullProgressMonitor)
+		private def createStarterBackend(int id, LaunchConfigurationModel launchConfigurationModel) {
+			createStarterBackend(id, launchConfigurationModel, new NullProgressMonitor)
 		}
 
-		private def createStarter(int id, LaunchConfigurationModel launchConfigurationModel, IProgressMonitor monitor) {
+		private def createStarterBackend(int id, LaunchConfigurationModel launchConfigurationModel,
+			IProgressMonitor monitor) {
 
 			val path = launchConfigurationModel.appPath
 			val port = Integer.parseInt(launchConfigurationModel.appPort)
@@ -365,6 +365,19 @@ class ControllerManager {
 			launchConfigurationModel.running = true
 		}
 
+		private def selectStarter(LaunchConfigurationModel config) {
+			val controllerplatform = config.platform
+			if (controllerplatform == NetIDE.CONTROLLER_ENGINE)
+				recreateStarter(NetIDE.CONTROLLER_APP_BACKEND, config)
+			else {
+				switch (controllerplatform) {
+					case NetIDE.CONTROLLER_POX: recreateStarter(NetIDE.CONTROLLER_POX, config)
+					case NetIDE.CONTROLLER_RYU: recreateStarter(NetIDE.CONTROLLER_RYU, config)
+					case NetIDE.CONTROLLER_PYRETIC: recreateStarter(NetIDE.CONTROLLER_PYRETIC, config)
+				}
+			}
+		}
+
 		private def reattachStarter(LaunchConfigurationModel m) {
 
 			var config = m
@@ -373,12 +386,12 @@ class ControllerManager {
 
 			var re = configToStarter.get(config)
 			if (re == null) {
-				recreateStarter(NetIDE.CONTROLLER_STARTER_NAME_APP_BACKEND, config)
+				selectStarter(m)
+
 			}
+			re = configToStarter.get(config)
 			if (re != null)
 				re.reattach
-			else {
-			}
 		}
 
 		public def reprovision() {
@@ -421,7 +434,7 @@ class ControllerManager {
 
 		public def reattachServerController() {
 			if (serverControllerStarter == null) {
-				recreateStarter(NetIDE.CONTROLLER_STARTER_NAME_SHIM)
+				recreateStarter(NetIDE.CONTROLLER_SHIM)
 			}
 			if (serverControllerStarter != null) {
 				serverControllerStarter.reattach
@@ -512,7 +525,7 @@ class ControllerManager {
 
 		public def reattachDebugger() {
 			if (debuggerStarter == null)
-				recreateStarter(NetIDE.CONTROLLER_STARTER_NAME_DEBUGGER)
+				recreateStarter(NetIDE.CONTROLLER_DEBUGGER)
 			if (debuggerStarter != null && statusModel.debuggerRunning) {
 				debuggerStarter.reattach
 			}
@@ -566,20 +579,20 @@ class ControllerManager {
 
 		public def recreateAll() {
 			// attach all
-			recreateStarter(NetIDE.CONTROLLER_STARTER_NAME_CORE)
-			recreateStarter(NetIDE.CONTROLLER_STARTER_NAME_SHIM)
-			recreateStarter(NetIDE.CONTROLLER_STARTER_NAME_MININET)
-			recreateStarter(NetIDE.CONTROLLER_STARTER_NAME_DEBUGGER)
+			recreateStarter(NetIDE.CONTROLLER_CORE)
+			recreateStarter(NetIDE.CONTROLLER_SHIM)
+			recreateStarter(NetIDE.CONTROLLER_MININET)
+			recreateStarter(NetIDE.CONTROLLER_DEBUGGER)
 
 			for (LaunchConfigurationModel m : statusModel.getModelList()) {
+				selectStarter(m)
 
-				recreateStarter(NetIDE.CONTROLLER_STARTER_NAME_APP_BACKEND, m)
 			}
 		}
 
 		public def reattachCore() {
 			if (coreStarter == null) {
-				recreateStarter(NetIDE.CONTROLLER_STARTER_NAME_CORE)
+				recreateStarter(NetIDE.CONTROLLER_CORE)
 			}
 			if (coreStarter != null && statusModel.coreRunning) {
 				coreStarter.reattach
@@ -607,16 +620,20 @@ class ControllerManager {
 						val id = Integer.parseInt(splitSession.get(splitSession.size - 1))
 
 						switch (ident) {
-							case NetIDE.CONTROLLER_STARTER_NAME_CORE:
+							case NetIDE.CONTROLLER_CORE:
 								this.createCore(id)
-							case NetIDE.CONTROLLER_STARTER_NAME_SHIM:
+							case NetIDE.CONTROLLER_SHIM:
 								this.createShim(id)
-							case NetIDE.CONTROLLER_STARTER_NAME_MININET:
+							case NetIDE.CONTROLLER_APP_BACKEND:
+								this.createStarterBackend(id, m)
+							case NetIDE.CONTROLLER_RYU,
+							case NetIDE.CONTROLLER_POX,
+							case NetIDE.CONTROLLER_PYRETIC:
+								createStarterSingleApp(id, m)
+							case NetIDE.CONTROLLER_MININET:
 								this.createMininet(id)
-							case NetIDE.CONTROLLER_STARTER_NAME_DEBUGGER:
+							case NetIDE.CONTROLLER_DEBUGGER:
 								this.createDebugger(id)
-							case NetIDE.CONTROLLER_STARTER_NAME_APP_BACKEND:
-								this.createStarter(id, m)
 							default:
 								println("No known controller")
 						}

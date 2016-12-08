@@ -59,9 +59,14 @@ class StarterFactory {
 		IProgressMonitor monitor) {
 		createSingleControllerStarter(platform, appPath, port, monitor, null, null)
 	}
+	
+		public def IStarter createSingleControllerStarter(String platform, String appPath, int port,
+		IProgressMonitor monitor, String appFolderPath, String appFlag) {
+			createSingleControllerStarter(platform, appPath, port, monitor, appFolderPath, appFlag, -1)
+		}
 
 	public def IStarter createSingleControllerStarter(String platform, String appPath, int port,
-		IProgressMonitor monitor, String appFolderPath, String appFlag) {
+		IProgressMonitor monitor, String appFolderPath, String appFlag, int id) {
 		var controllerplatform = platform
 
 		if (controllerplatform.equals(NetIDE.CONTROLLER_ENGINE)) {
@@ -69,38 +74,18 @@ class StarterFactory {
 			var IStarter starter
 			switch controllerplatform {
 				case NetIDE.CONTROLLER_POX:
-					starter = new PoxStarter(port, appPath, monitor)
+					starter = new PoxStarter(port, appPath, monitor, id)
 				case NetIDE.CONTROLLER_RYU:
-					starter = new RyuStarter(port, appPath, monitor, appFolderPath, appFlag)
+					starter = new RyuStarter(port, appPath, monitor, appFolderPath, appFlag, id)
 				case NetIDE.CONTROLLER_PYRETIC:
-					starter = new PyreticStarter(port, appPath, monitor)
+					starter = new PyreticStarter(port, appPath, monitor, id)
 			}
 			starter.setBackend(backend)
 			return starter
 		}
 	}
 
-//	public def IStarter createSingleControllerStarter(String platform, Controller controller,
-//		IProgressMonitor monitor) {
-//		var controllerplatform = platform
-//
-//		if (controllerplatform.equals(NetIDE.CONTROLLER_ENGINE)) {
-//		} else {
-//			var IStarter starter
-//			switch controllerplatform {
-//				case NetIDE.CONTROLLER_POX:
-//					starter = new PoxStarter(configuration, controller, monitor)
-//				case NetIDE.CONTROLLER_RYU:
-//					starter = new RyuStarter(configuration, controller, monitor)
-//				case NetIDE.CONTROLLER_PYRETIC:
-//					starter = new PyreticStarter(configuration, controller, monitor)
-//				case NetIDE.CONTROLLER_FLOODLIGHT:
-//					starter = new FloodlightBackendStarter(configuration, controller, monitor)
-//			}
-//			starter.setBackend(backend)
-//			return starter
-//		}
-//	}
+
 	@Deprecated
 	public def IStarter createShimStarter(ILaunchConfiguration configuration, Controller controller,
 		IProgressMonitor monitor) {

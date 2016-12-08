@@ -1,9 +1,9 @@
 package eu.netide.configuration.launcher.starters.impl
 
-import org.eclipse.core.runtime.IProgressMonitor
-import org.eclipse.debug.core.ILaunchConfiguration
 import eu.netide.configuration.launcher.starters.backends.Backend
 import eu.netide.configuration.utils.NetIDE
+import org.eclipse.core.runtime.IProgressMonitor
+import org.eclipse.debug.core.ILaunchConfiguration
 
 class DebuggerStarter extends Starter {
 	@Deprecated
@@ -23,7 +23,7 @@ class DebuggerStarter extends Starter {
 
 	@Deprecated
 	new(ILaunchConfiguration configuration, String engine, IProgressMonitor monitor, String tools) {
-		super("Debugger", configuration, monitor)
+		super(NetIDE.CONTROLLER_DEBUGGER, configuration, monitor)
 		if (engine != null && enginePath != "") {
 			this.enginePath = super.getValidPath(engine)
 		}
@@ -61,7 +61,7 @@ class DebuggerStarter extends Starter {
 	}
 
 	new(Backend backend, String path, String engine, IProgressMonitor monitor, String tools, int id) {
-		super("Debugger", path, backend, monitor, id)
+		super(NetIDE.CONTROLLER_DEBUGGER, path, backend, monitor, id)
 		if (engine != null && enginePath != "") {
 			this.enginePath = super.getValidPath(engine)
 		}

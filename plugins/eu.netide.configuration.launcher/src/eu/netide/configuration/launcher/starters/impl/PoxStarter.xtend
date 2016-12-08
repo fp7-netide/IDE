@@ -1,19 +1,25 @@
 package eu.netide.configuration.launcher.starters.impl
 
 import Topology.Controller
+import eu.netide.configuration.utils.NetIDE
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
 
 class PoxStarter extends ControllerStarter {
 	@Deprecated
 	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super("POX", configuration, controller, monitor)
+		super(NetIDE.CONTROLLER_POX, configuration, controller, monitor)
 		name = String.format("%s (%s)", name, appPath.lastSegment)
 	}
-
+	
+	
 	new(int port, String appPath, IProgressMonitor monitor) {
-		super("POX", port, appPath, monitor)
-		name = String.format("%s (%s)", name, this.appPath.lastSegment)
+		this(port, appPath, monitor, -1)
+	}
+
+	new(int port, String appPath, IProgressMonitor monitor, int id) {
+		super(NetIDE.CONTROLLER_POX, port, appPath, monitor)
+		name = String.format("%s (%s)", name, this.appPath.lastSegment, id)
 	}
 
 	override getEnvironmentVariables() {

@@ -9,7 +9,7 @@ class RyuBackendStarter extends ControllerStarter {
 
 	@Deprecated
 	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super("Ryu Backend", configuration, controller, monitor)
+		super(NetIDE.CONTROLLER_RYU + " " + NetIDE.CONTROLLER_APP_BACKEND, configuration, controller, monitor)
 		name = String.format("%s (%s)", name, appPath.lastSegment)
 	}
 
@@ -18,7 +18,7 @@ class RyuBackendStarter extends ControllerStarter {
 	}
 
 	new(int port, String appPath, IProgressMonitor monitor, String enginePath, String flag, int id) {
-		super("Ryu Backend", port, appPath, monitor, id)
+		super(NetIDE.CONTROLLER_RYU + " " + NetIDE.CONTROLLER_APP_BACKEND, port, appPath, monitor, id)
 		name = String.format("%s (%s)", name, this.appPath.lastSegment.replace("\\.", "_"))
 		if (enginePath != null && enginePath != "") {
 			this.enginePath = super.getValidPath(enginePath);

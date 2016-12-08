@@ -32,12 +32,11 @@ class NetIDE {
 	public static val CONTROLLER_ENGINE = "Network Engine"
 	public static val CONTROLLER_CORE = "Core"
 	public static val CONTROLLER_ONOS = "ONOS"
+	public static val CONTROLLER_SHIM = "Shim"
+	public static val CONTROLLER_DEBUGGER = "Debugger"
+	public static val CONTROLLER_APP_BACKEND = "Backend"
+	public static val CONTROLLER_MININET = "Mininet"
 
-	public static val CONTROLLER_STARTER_NAME_CORE = "Core"
-	public static val CONTROLLER_STARTER_NAME_MININET = "Mininet"
-	public static val CONTROLLER_STARTER_NAME_SHIM = "Shim"
-	public static val CONTROLLER_STARTER_NAME_DEBUGGER = "Debugger"
-		public static val CONTROLLER_STARTER_NAME_APP_BACKEND = "Backend"
 
 	public static val CONTROLLERS = newArrayList(CONTROLLER_POX, CONTROLLER_RYU, CONTROLLER_FLOODLIGHT, CONTROLLER_ODL,
 		CONTROLLER_PYRETIC, CONTROLLER_ONOS)

@@ -13,7 +13,7 @@ class CoreStarter extends Starter {
 
 	@Deprecated
 	new(ILaunchConfiguration configuration, IProgressMonitor monitor, String coreKarafPath) {
-		super("Core", configuration, monitor)
+		super(NetIDE.CONTROLLER_CORE, configuration, monitor)
 		if (coreKarafPath != null && coreKarafPath != "")
 			this.coreKarafPath = super.getValidPath(coreKarafPath)
 	}
@@ -23,7 +23,7 @@ class CoreStarter extends Starter {
 	}
 
 	new(Backend backend, String project, IProgressMonitor monitor, String coreKarafPath, int id) {
-		super("Core", project, backend, monitor, id)
+		super(NetIDE.CONTROLLER_CORE, project, backend, monitor, id)
 
 		if (coreKarafPath != null && coreKarafPath != "")
 			this.coreKarafPath = super.getValidPath(coreKarafPath)

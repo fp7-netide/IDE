@@ -1,14 +1,14 @@
 package eu.netide.configuration.launcher.starters.impl
 
 import Topology.Controller
+import eu.netide.configuration.utils.NetIDE
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
-import eu.netide.configuration.utils.NetIDE
 
 class OdlShimStarter extends ControllerStarter {
 	@Deprecated
 	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super("OpenDaylight Shim",  configuration, controller, monitor)
+		super(NetIDE.CONTROLLER_ODL + " " + NetIDE.CONTROLLER_SHIM, configuration, controller, monitor)
 	}
 
 	new(String appPath, int port, IProgressMonitor monitor) {
@@ -20,7 +20,7 @@ class OdlShimStarter extends ControllerStarter {
 	}
 
 	new(String appPath, int port, IProgressMonitor monitor, String odlKarafPath, int id) {
-		super("OpenDaylight Shim", port, appPath, monitor)
+		super(NetIDE.CONTROLLER_ODL + " " + NetIDE.CONTROLLER_SHIM, port, appPath, monitor)
 		if (odlKarafPath != null && odlKarafPath != "") {
 			this.odlKarafPath = super.getValidPath(odlKarafPath)
 		}
@@ -29,8 +29,8 @@ class OdlShimStarter extends ControllerStarter {
 	String odlKarafPath = NetIDE.ODL_PATH
 
 	override getCommandLine() {
-		//var str = String.format("~/netide/Engine/odl-shim/karaf/target/assembly/bin/karaf")
+		// var str = String.format("~/netide/Engine/odl-shim/karaf/target/assembly/bin/karaf")
 		var str = String.format("bash -c \'cd %s && ./karaf\'", odlKarafPath)
-		return str	
+		return str
 	}
 }
