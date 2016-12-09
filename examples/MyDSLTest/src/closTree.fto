@@ -1,0 +1,47 @@
+module ClosPod
+	parameters:
+		size: Integer
+	gates:
+		root
+		down
+	submodules:
+		agg1:Switch
+		agg2:Switch
+		edge1:Switch
+		edge2:Switch
+
+	connections:
+	{
+		con (this.root---agg1)
+		con (this.root---agg2)
+
+		con (agg1---edge1)
+		con (agg1---edge2)
+		con (agg2---edge1)
+		con (agg2---edge2)
+	}
+
+main module Clos
+	parameters:
+		podCount: Integer
+		podSize: Integer
+	gates:
+	submodules:
+		core1:Switch (nebsVersion>1)
+		core2:Switch
+		pods:ClosPod[podCount]{
+			size:{podSize}
+		}
+
+		connections:
+		{
+			// connect core1 to each pod
+			for (i : 0 ..< podCount) {
+				con(pods[i].root --- core1(datarate > 50))
+			}
+
+			// connect core2 to each pod
+			con(pods.root --- core2 (datarate > 150))
+			// alternative xbase oneliner:
+			// (0..podCount).forEach[ con(pods[it].root --- core2) ]
+		}

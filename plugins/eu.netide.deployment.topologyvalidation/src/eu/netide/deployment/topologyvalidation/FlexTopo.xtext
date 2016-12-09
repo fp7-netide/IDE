@@ -1,0 +1,137 @@
+grammar eu.netide.deployment.topologyvalidation.FlexTopo with org.eclipse.xtext.xbase.Xbase
+
+import "http://www.eclipse.org/xtext/xbase/Xbase"
+
+generate flexTopo "http://www.netide.eu/deployment/topologyvalidation/FlexTopo"
+
+ModuleContainer:
+	(modules+=TopoModule)+
+;
+
+TopoModule:
+	main?='main'?
+	'module' name=ValidID
+	'parameters:' (parameters+=ParameterDeclaration)*
+	'gates:' (gates+=Gate)*
+	'submodules:' (submodules+=ModuleDec)*
+	'connections:' connections=XBlockExpression
+;
+
+ParameterDeclaration returns ParameterDeclaration:
+	{ParameterDeclaration}
+	name=ValidID ':' type=JvmTypeReference
+;
+
+ParameterAsssignment:
+	name=[ParameterDeclaration] ':'
+	body=XBlockExpression
+;
+
+Gate returns Gate:
+	{Gate}
+	name=ValidID
+	| MultiGate
+;
+
+MultiGate returns Gate:
+	{MultiGate}
+	name=ValidID  '[' count=XExpression ']'
+;
+
+ModuleDec returns ModuleDec:
+	SwitchModuleDec |
+	(name=ValidID ':'
+		type=[TopoModule]
+		'{'
+			(parameters+=ParameterAsssignment)*
+		'}'
+	)
+;
+
+SwitchModuleDec returns ModuleDec:
+	MultiModuleDec |
+	{SwitchModuleDec}
+	name=ValidID ':'
+	'Switch'
+	('('constrain=XExpression')')?
+;
+
+MultiModuleDec returns MultiModuleDec:
+	// TODO: concept to allow different parameters on multigates?
+	SwitchMultiModuleDec |
+	name=ValidID ':'
+	type=[TopoModule] '['count=XExpression']'
+	'{'
+		(parameters+=ParameterAsssignment)*
+	'}'
+;
+
+SwitchMultiModuleDec returns MultiModuleDec:
+	{SwitchMultiModuleDec}
+	name=ValidID ':'
+	'Switch'
+	'['count=XExpression']'
+	('('constrain=XExpression')')?
+
+;
+
+XPrimaryExpression returns XExpression:
+	XConstructorCall |
+	XBlockExpression |
+	XSwitchExpression |
+	XSynchronizedExpression |
+	XFeatureCall |
+	XLiteral |
+	XIfExpression |
+	XForLoopExpression |
+	XBasicForLoopExpression |
+	XWhileExpression |
+	XDoWhileExpression |
+	XThrowExpression |
+	XReturnExpression |
+	XTryCatchFinallyExpression |
+	XParenthesizedExpression |
+	XConnectionDeclaration;
+
+XConnectionDeclaration returns XExpression:
+	{XConnectionDeclaration}
+	=>'con' '('
+	left=GateIdentifier '---' right=GateIdentifier
+		('('constrain=XExpression')')?
+	')'
+;
+
+GateIdentifier returns GateIdentifier:
+	ModuleGateIdentifier |
+	{ThisGateIdentifier} =>'this' gate=MultiGateIdent
+;
+
+ModuleGateIdentifier returns GateIdentifier:
+//	MultiModuleGateIdentifier |
+	{ModuleGateIdentifier}
+	=>module=[ModuleDec] (=>'[' moduleNumber=XExpression ']')? (gate=MultiGateIdent)?
+;
+
+//MultiModuleGateIdentifier returns GateIdentifier:
+//	{MultiModuleGateIdentifier}
+//	module=[MultiModule] (=>'[' moduleNumber=XExpression ']')? gate=MultiGateIdent
+//;
+
+MultiGateIdent returns MultiGateIdent:
+	  '.' value=[Gate] (=>'[' gateNumber=XExpression ']')?
+;
+
+ConnectionConstrain returns ConnectionConstrain:
+	exp=XExpression
+;
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,37 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: eu.netide.deployment.topologyvalidation
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: eu.netide.deployment.topologyvalidation; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext,
+ org.eclipse.xtext.xbase,
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.emf.ecore,
+ org.eclipse.xtext.common.types,
+ org.eclipse.xtext.xbase.lib,
+ org.antlr.runtime,
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
+ org.eclipse.xtext.util,
+ org.eclipse.xtend.lib,
+ org.eclipse.emf.common,
+ eu.netide.configuration.editor,
+ org.eclipse.viatra.query.patternlanguage.emf,
+ org.eclipse.viatra.query.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: eu.netide.deployment.topologyvalidation,
+ eu.netide.deployment.topologyvalidation.flexTopo,
+ eu.netide.deployment.topologyvalidation.flexTopo.impl,
+ eu.netide.deployment.topologyvalidation.flexTopo.util,
+ eu.netide.deployment.topologyvalidation.jvmmodel,
+ eu.netide.deployment.topologyvalidation.matcher,
+ eu.netide.deployment.topologyvalidation.parser.antlr,
+ eu.netide.deployment.topologyvalidation.parser.antlr.internal,
+ eu.netide.deployment.topologyvalidation.restrictiontopology,
+ eu.netide.deployment.topologyvalidation.scoping,
+ eu.netide.deployment.topologyvalidation.serializer,
+ eu.netide.deployment.topologyvalidation.services,
+ eu.netide.deployment.topologyvalidation.typesystem,
+ eu.netide.deployment.topologyvalidation.validation
+Import-Package: org.apache.log4j
