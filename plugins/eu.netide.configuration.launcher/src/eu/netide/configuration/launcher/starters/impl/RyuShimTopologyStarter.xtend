@@ -5,11 +5,11 @@ import eu.netide.configuration.utils.NetIDE
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
 
-class RyuShimStarter extends ControllerStarter {
+class RyuShimTopologyStarter extends ControllerStarter {
 
 	@Deprecated
 	new(ILaunchConfiguration configuration, Controller controller, IProgressMonitor monitor) {
-		super(NetIDE.CONTROLLER_RYU + " " + NetIDE.CONTROLLER_SHIM, configuration, controller, monitor)
+		super(NetIDE.CONTROLLER_RYU_REST + " " + NetIDE.CONTROLLER_SHIM, configuration, controller, monitor)
 	}
 
 	new(String appPath, int port, IProgressMonitor monitor) {
@@ -35,12 +35,8 @@ class RyuShimStarter extends ControllerStarter {
 
 	override getCommandLine() {
 		return String.format(
-			"sudo ryu-manager --observe-links --ofp-tcp-listen-port %s %sryu-shim/ryu-shim.py",
-			port, this.enginePath)
-
-//		return String.format(
-//			"sudo ryu-manager --observe-links --ofp-tcp-listen-port %s %s../ryu/ryu/app/rest_topology.py %sryu-shim/ryu-shim.py",
-//			port, this.enginePath, this.enginePath)
+			"sudo ryu-manager --observe-links --ofp-tcp-listen-port %s %s../ryu/ryu/app/rest_topology.py %sryu-shim/ryu-shim.py",
+			port, this.enginePath, this.enginePath)
 	}
 
 }

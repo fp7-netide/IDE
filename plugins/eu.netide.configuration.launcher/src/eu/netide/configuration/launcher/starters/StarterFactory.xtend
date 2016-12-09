@@ -19,6 +19,7 @@ import eu.netide.configuration.launcher.starters.impl.EmulatorStarter
 import eu.netide.configuration.utils.NetIDE
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
+import eu.netide.configuration.launcher.starters.impl.RyuShimTopologyStarter
 
 class StarterFactory {
 
@@ -128,6 +129,8 @@ class StarterFactory {
 				starter = new PoxShimStarter(appPath, port, monitor, id)
 			case NetIDE.CONTROLLER_RYU:
 				starter = new RyuShimStarter(appPath, port, monitor, engine, id)
+			case NetIDE.CONTROLLER_RYU_REST:
+				starter = new RyuShimTopologyStarter(appPath, port, monitor, engine, id)
 			case NetIDE.CONTROLLER_ODL:
 				starter = new OdlShimStarter(appPath, port, monitor, odlKaraf, id)
 		}

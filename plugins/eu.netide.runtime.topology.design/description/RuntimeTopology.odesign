@@ -34,7 +34,7 @@
           </style>
         </nodeMappings>
         <nodeMappings name="AggregatedStatistics" domainClass="RuntimeTopology.AggregatedStatistics">
-          <style xsi:type="style:NoteDescription" labelExpression="['packet_count: ' + packet_count.toString() + '\n' +'byte_count:  ' + byte_count.toString() + '\n' +'flow_count: ' + flow_count.toString() /]" labelPosition="node" resizeKind="NSEW">
+          <style xsi:type="style:NoteDescription" showIcon="false" labelExpression="['packet_count: ' + packet_count.toString() + '\n' +'byte_count:  ' + byte_count.toString() + '\n' +'flow_count: ' + flow_count.toString() /]" sizeComputationExpression="10" labelPosition="node" resizeKind="NSEW">
             <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_green']"/>

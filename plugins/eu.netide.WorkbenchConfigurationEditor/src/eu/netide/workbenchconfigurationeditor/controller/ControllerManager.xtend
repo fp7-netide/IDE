@@ -459,7 +459,7 @@ class ControllerManager {
 				odl = statusModel.sshModelAtIndex.odl
 			}
 			var port = statusModel.getShimModel().getPort()
-			var portInt = 6644;
+			var portInt = 6633;
 			if (port != "")
 				portInt = Integer.parseInt(port)
 
