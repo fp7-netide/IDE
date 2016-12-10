@@ -52,10 +52,15 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import java.util.List
 
 class MessagesPerAppChartViewer extends ChartViewer implements PaintListener {
-	private Map<Integer, Integer> data
 	Image imgChart
 	GC gcImage
 	Bounds bo
+	LineSeries series1
+	LineSeries series2
+	
+	List<Integer> index
+	List<Integer> first
+	List<Integer> second
 
 	/** 
 	 * Used in building the chart for the first time
@@ -69,7 +74,9 @@ class MessagesPerAppChartViewer extends ChartViewer implements PaintListener {
 	}
 
 	override final Chart createLiveChart() {
-		data = Collections.synchronizedMap(newHashMap())
+		index = newArrayList(0)
+		first = newArrayList(0)
+		second = newArrayList(0)
 		var ChartWithAxes cwaBar = ChartWithAxesImpl::create()
 		// Plot
 		cwaBar.getBlock().setBackground(ColorDefinitionImpl::WHITE())
@@ -119,49 +126,57 @@ class MessagesPerAppChartViewer extends ChartViewer implements PaintListener {
 		xAxisPrimary.getSeriesDefinitions().add(sdX)
 		sdX.getSeries().add(seCategory)
 		// Y-Series (1)
-		var LineSeries bs1 = (LineSeriesImpl::create() as LineSeries)
-//		bs1.setSeriesIdentifier("# Messages")
-		bs1.triggers.add(
-			TriggerImpl::create(TriggerCondition::ONMOUSEOVER_LITERAL,
-				ActionImpl::create(ActionType.SHOW_TOOLTIP_LITERAL,
-					TooltipValueImpl::create(0, bs1.dataPoint.components.get(0).toString))))
+		series1 = (LineSeriesImpl::create() as LineSeries)
+		series2 = (LineSeriesImpl::create() as LineSeries)
 
 		// $NON-NLS-1$
-		//bs1.set(null)
-		//bs1.setRiser(RiserType::RECTANGLE_LITERAL)
+		// bs1.set(null)
+		// bs1.setRiser(RiserType::RECTANGLE_LITERAL)
 		var SeriesDefinition sdY = SeriesDefinitionImpl::create()
 		yAxisPrimary.getSeriesDefinitions().add(sdY)
 		sdY.getSeriesPalette().shift(-1)
-		sdY.getSeries().add(bs1)
+		sdY.getSeries().add(series1)
+		sdY.getSeries().add(series2)
 		// Update data
 		updateDataSet(cwaBar)
 		return cwaBar
 	}
 
 	override update(ArrayNode log, List<String> keys, int port) {
-		synchronized (data) {
-			data.clear
-			var map = log.map[filter[get("port").asInt == port].map[get("tx_bytes").asInt]].flatten
+		synchronized (index) {
 			
-			map.forEach [ element, index |
-				data.put(index, element)
+			if (series1.seriesIdentifier != keys.get(0) || series2.seriesIdentifier != keys.get(0))
+				bFirstPaint = true
+			
+			series1.seriesIdentifier = keys.get(0)
+			series2.seriesIdentifier = keys.get(1)
+			
+			index.clear
+			first.clear
+			second.clear
+			
+			first = log.map[filter[get("port").asInt == port].map[get(keys.get(0)).asInt]].flatten.toList
+			second = log.map[filter[get("port").asInt == port].map[get(keys.get(1)).asInt]].flatten.toList
+
+			first.forEach [ element, i |
+				index.add(i)
 			]
 
 		}
 	}
 
 	override final void updateDataSet(ChartWithAxes cwaBar) {
-		var xarr = data.keySet.toList()
-		var yarr = data.values.toList()
 
-		if (data.empty) {
-			xarr.add(0)
-			yarr.add(0)
+		if (first.empty || second.empty || index.empty) {
+			first.add(0)
+			second.add(0)
+			index.add(0)
 		}
 
 		// Associate with Data Set
-		var TextDataSet categoryValues = TextDataSetImpl.create(xarr)
-		var NumberDataSet seriesOneValues = NumberDataSetImpl::create(yarr)
+		var TextDataSet categoryValues = TextDataSetImpl.create(index)
+		var NumberDataSet seriesOneValues = NumberDataSetImpl::create(first)
+		var NumberDataSet seriesTwoValues = NumberDataSetImpl::create(second)
 		// X-Axis
 		var Axis xAxisPrimary = cwaBar.getPrimaryBaseAxes().get(0)
 		var SeriesDefinition sdX = xAxisPrimary.getSeriesDefinitions().get(0)
@@ -170,27 +185,9 @@ class MessagesPerAppChartViewer extends ChartViewer implements PaintListener {
 		var Axis yAxisPrimary = cwaBar.getPrimaryOrthogonalAxis(xAxisPrimary)
 		var SeriesDefinition sdY = yAxisPrimary.getSeriesDefinitions().get(0)
 		sdY.getSeries().get(0).setDataSet(seriesOneValues)
+		sdY.getSeries().get(1).setDataSet(seriesTwoValues)
 	}
 
-	// Live Date Set
-//	static final String[] sa = #["SW1", "SW2"]
-//	// $NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$
-//	static final double[] da1 = #[56.99, 352.95, -201.95, 299.95, -95.95, 25.45, 129.33, -26.5, 43.5, 122]
-//	static final double[] da2 = #[20, 35, 59, 105, 150, -37, -65, -99, -145, -185]
-//	static final String[] sa = #["App1"]
-//	static final int[] da1 = #[1]
-//	override update(Message msg) {
-//		if (msg.header.messageType == MessageType.OPENFLOW) {
-//			synchronized (data) {
-//				if (!data.containsKey("" + msg.header.moduleId)) {
-//					data.put("" + msg.header.moduleId, 0)
-//				}
-//				var value = data.get("" + msg.header.moduleId)
-//				data.put("" + msg.header.moduleId, value + 1)
-//			}
-//
-//		}
-//	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -217,11 +214,12 @@ class MessagesPerAppChartViewer extends ChartViewer implements PaintListener {
 			gr.render(idr, gcs)
 			var GC gc = e.gc
 			gc.drawImage(imgChart, d.x, d.y)
+			bFirstPaint = false
+
 		} catch (ChartException ce) {
 			ce.printStackTrace()
 		}
 
-		bFirstPaint = false
 		Display::getDefault().timerExec(500, ([|chartRefresh()] as Runnable))
 	}
 
