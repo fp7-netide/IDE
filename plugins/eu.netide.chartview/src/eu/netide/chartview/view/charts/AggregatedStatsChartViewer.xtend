@@ -84,7 +84,6 @@ class AggregatedStatsChartViewer extends ChartViewer implements PaintListener {
 		xAxisPrimary.getTitle().getCaption().setValue("Category Text X-Axis")
 		// $NON-NLS-1$
 		xAxisPrimary.setTitlePosition(Position::BELOW_LITERAL)
-		xAxisPrimary.getLabel().getCaption().getFont().setRotation(75)
 		xAxisPrimary.setLabelPosition(Position::BELOW_LITERAL)
 		
 //		xAxisPrimary.getMajorGrid().setTickStyle(TickStyle::BELOW_LITERAL)
@@ -95,7 +94,6 @@ class AggregatedStatsChartViewer extends ChartViewer implements PaintListener {
 		var Axis yAxisPrimary = cwaBar.getPrimaryOrthogonalAxis(xAxisPrimary)
 		yAxisPrimary.getLabel().getCaption().setValue("tx_bytes")
 		// $NON-NLS-1$
-		yAxisPrimary.getLabel().getCaption().getFont().setRotation(37)
 		yAxisPrimary.setLabelPosition(Position::LEFT_LITERAL)
 		yAxisPrimary.setTitlePosition(Position::LEFT_LITERAL)
 		yAxisPrimary.getTitle().getCaption().setValue("Linear Value Y-Axis")
