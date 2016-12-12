@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import java.beans.PropertyChangeListener
 import java.beans.PropertyChangeSupport
 import org.eclipse.core.resources.IFile
+import eu.netide.toolpanel.providers.LogProvider
 
 class LogConnector {
 
@@ -26,6 +27,7 @@ class LogConnector {
 	def fromFile(IFile file) {
 		this.mapper = new ObjectMapper
 		this.root = mapper.readTree(file.location.toFile)
+		LogProvider.instance.setRecordLog(root as ObjectNode)
 
 		var s = root.get("AggregatedLog").findFirst[true].size
 
@@ -55,7 +57,7 @@ class LogConnector {
 			val dpidLog = this.mapper.createArrayNode;
 			for (var j = 0; j < i; j++)
 				dpidLog.add(node.get(j))
-				
+
 			this.handler.handlePortStats(node.get(i - 1) as ArrayNode, dpidLog as ArrayNode)
 
 		}

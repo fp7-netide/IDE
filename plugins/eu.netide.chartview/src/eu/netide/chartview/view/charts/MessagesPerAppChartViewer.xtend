@@ -118,7 +118,7 @@ class MessagesPerAppChartViewer extends ChartViewer implements PaintListener {
 		yAxisPrimary.setType(AxisType::LINEAR_LITERAL)
 		yAxisPrimary.getMajorGrid().setTickStyle(TickStyle::LEFT_LITERAL)
 		yAxisPrimary.getMajorGrid().getLineAttributes().setStyle(LineStyle::DOTTED_LITERAL)
-		yAxisPrimary.getMajorGrid().getLineAttributes().setColor(ColorDefinitionImpl::RED())
+		yAxisPrimary.getMajorGrid().getLineAttributes().setColor(ColorDefinitionImpl::GREY())
 		yAxisPrimary.getMajorGrid().getLineAttributes().setVisible(true)
 		// X-Series
 		var Series seCategory = SeriesImpl::create()
@@ -137,7 +137,7 @@ class MessagesPerAppChartViewer extends ChartViewer implements PaintListener {
 		// bs1.setRiser(RiserType::RECTANGLE_LITERAL)
 		var SeriesDefinition sdY = SeriesDefinitionImpl::create()
 		yAxisPrimary.getSeriesDefinitions().add(sdY)
-		sdY.getSeriesPalette().shift(-1)
+//		sdY.getSeriesPalette().shift(-1)
 		sdY.getSeries().add(series1)
 		sdY.getSeries().add(series2)
 		// Update data

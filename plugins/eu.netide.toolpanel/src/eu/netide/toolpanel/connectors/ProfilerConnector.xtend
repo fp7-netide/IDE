@@ -35,7 +35,7 @@ class ProfilerConnector implements IZmqNetIpListener {
 	private ObjectNode log
 	private FileSystemAccess fsa
 
-	private String address
+	//private String address
 
 	@Accessors(PUBLIC_GETTER, PUBLIC_SETTER)
 	private double pollInterval = -1
@@ -94,6 +94,8 @@ class ProfilerConnector implements IZmqNetIpListener {
 	}
 
 	override update(Message msg) {
+		LogProvider.instance.deactivateReplayLog
+		this.log = LogProvider.instance.log
 		var json = mapper.readTree(msg.payload)
 
 		if (json.has("PortStats"))

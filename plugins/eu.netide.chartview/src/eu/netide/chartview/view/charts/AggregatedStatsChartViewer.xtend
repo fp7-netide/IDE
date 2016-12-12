@@ -74,7 +74,7 @@ class AggregatedStatsChartViewer extends ChartViewer implements PaintListener {
 		lg.getInsets().setLeft(10)
 		lg.getInsets().setRight(10)
 		// Title
-		cwaBar.getTitle().getLabel().getCaption().setValue("Port Statistics")
+		cwaBar.getTitle().getLabel().getCaption().setValue("Aggregated Statistics")
 		// $NON-NLS-1$
 		// X-Axis
 		var Axis xAxisPrimary = cwaBar.getPrimaryBaseAxes().get(0)
@@ -103,7 +103,7 @@ class AggregatedStatsChartViewer extends ChartViewer implements PaintListener {
 		yAxisPrimary.setType(AxisType::LINEAR_LITERAL)
 		yAxisPrimary.getMajorGrid().setTickStyle(TickStyle::LEFT_LITERAL)
 		yAxisPrimary.getMajorGrid().getLineAttributes().setStyle(LineStyle::DOTTED_LITERAL)
-		yAxisPrimary.getMajorGrid().getLineAttributes().setColor(ColorDefinitionImpl::RED())
+		yAxisPrimary.getMajorGrid().getLineAttributes().setColor(ColorDefinitionImpl::GREY())
 		yAxisPrimary.getMajorGrid().getLineAttributes().setVisible(true)
 		// X-Series
 		var Series seCategory = SeriesImpl::create()
