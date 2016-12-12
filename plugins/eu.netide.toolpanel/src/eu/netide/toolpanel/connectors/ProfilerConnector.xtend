@@ -113,6 +113,7 @@ class ProfilerConnector implements IZmqNetIpListener {
 
 			override run() {
 				session = manager.session
+				if (!log.has("FlowLog")) log.putObject("FlowLog")
 
 				val flowLog = log.get("FlowLog") as ObjectNode
 				if(flowLog == null || flowStats.size == 0) return
@@ -147,8 +148,12 @@ class ProfilerConnector implements IZmqNetIpListener {
 		var job = new Thread("Updating Runtime Model") {
 
 			override run() {
+				if (!log.has("PortLog")) log.putObject("PortLog")
+				
 				val portLog = log.get("PortLog") as ObjectNode
 				val dpid = portStats.get(0).get("dpid").asText()
+				
+				
 
 				if (portLog == null) return;
 				
@@ -183,9 +188,10 @@ class ProfilerConnector implements IZmqNetIpListener {
 
 			override run() {
 				session = manager.session
+				if (!log.has("AggregatedLog")) log.putObject("AggregatedLog")
 
 				val flowLog = log.get("AggregatedLog") as ObjectNode
-				if(flowLog == null || aggregatedStats.size == 0) return
+				if(aggregatedStats.size == 0) return
 
 				val dpid = aggregatedStats.get("dpid").asText()
 
