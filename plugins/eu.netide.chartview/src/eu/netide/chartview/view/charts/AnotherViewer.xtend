@@ -225,7 +225,7 @@ class AnotherViewer extends ChartViewer implements IZmqNetIpListener, PaintListe
 		Display::getDefault().timerExec(500, ([|chartRefresh()] as Runnable))
 	}
 	
-	override update(ArrayNode log, List<String> keys, int port) {
+	def update(ArrayNode log, List<String> keys, int port) {
 		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 

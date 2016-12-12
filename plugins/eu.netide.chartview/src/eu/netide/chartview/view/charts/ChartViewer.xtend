@@ -40,16 +40,12 @@ abstract class ChartViewer extends Composite implements PaintListener {
 
 		cm = createLiveChart()
 	}
-	
+
 	abstract def String getName()
 
 	abstract def Chart createLiveChart()
 
-	def abstract void updateDataSet(ChartWithAxes cwaBar) 
-
-
-
-
+	def abstract void updateDataSet(ChartWithAxes cwaBar)
 
 	/*
 	 * (non-Javadoc)
@@ -59,9 +55,8 @@ abstract class ChartViewer extends Composite implements PaintListener {
 	 * .PaintEvent)
 	 */
 	abstract override void paintControl(PaintEvent e)
-	
-	abstract def void update(ArrayNode log, List<String> keys, int port)
 
+//	abstract def void update(ArrayNode log, List<String> keys, int port)
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -74,7 +69,8 @@ abstract class ChartViewer extends Composite implements PaintListener {
 			updateDataSet((cm as ChartWithAxes))
 			// Refresh
 			try {
-				gr.refresh(gcs)
+				if (gr != null && gcs != null)
+					gr.refresh(gcs)
 			} catch (ChartException ex) {
 				ex.printStackTrace()
 			}

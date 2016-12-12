@@ -13,6 +13,7 @@ import java.util.List
 import org.eclipse.swt.widgets.Button
 import org.eclipse.swt.events.SelectionAdapter
 import org.eclipse.swt.events.SelectionEvent
+import eu.netide.chartview.view.charts.AggregatedStatsChartViewer
 
 /** 
  * This sample class demonstrates how to plug-in a new workbench view. The view
@@ -28,22 +29,21 @@ import org.eclipse.swt.events.SelectionEvent
  * are presented in the same way everywhere.
  * <p>
  */
-class ChartView extends ViewPart {
+class ChartViewAggregatedStats extends ViewPart {
 	/** 
 	 * The ID of the view as specified by the extension.
 	 */
-	public static final String ID = "chartview.views.ChartView"
-	public MessagesPerAppChartViewer viewer
+	public static final String ID = "chartview.views.AggregatedStatsChartView"
+	public AggregatedStatsChartViewer viewer
 
 	ArrayNode log = null
 	List<String> datasets
-	int portId
 
 	/** 
 	 * The constructor.
 	 */
 	new() {
-		datasets = newArrayList("tx_bytes", "rx_bytes")
+		datasets = newArrayList("byte_count")
 	}
 
 	/** 
@@ -59,8 +59,6 @@ class ChartView extends ViewPart {
 	 */
 	override void setFocus() {
 	}
-	
-	
 
 	def void createLayout(Composite parent) {
 		var Composite container = new Composite(parent, SWT.NONE)
@@ -75,7 +73,7 @@ class ChartView extends ViewPart {
 		mainComposite.layoutData = new GridData(GridData.FILL_BOTH)
 		sc.setContent(mainComposite)
 
-		viewer = new MessagesPerAppChartViewer(mainComposite, SWT.NONE)
+		viewer = new AggregatedStatsChartViewer(mainComposite, SWT.NONE)
 		viewer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.addPaintListener(viewer);
 		mainComposite.layout()
@@ -87,8 +85,8 @@ class ChartView extends ViewPart {
 		radioBytes.text = "Bytes"
 		radioBytes.addSelectionListener(new SelectionAdapter() {
 			override widgetSelected(SelectionEvent e) {
-				datasets = newArrayList("tx_bytes", "rx_bytes")
-				update(log, portId)
+				datasets = newArrayList("byte_count")
+				update(log)
 			}
 		})
 		radioBytes.selection = true
@@ -97,34 +95,26 @@ class ChartView extends ViewPart {
 		radioPackets.text = "Packets"
 		radioPackets.addSelectionListener(new SelectionAdapter() {
 			override widgetSelected(SelectionEvent e) {
-				datasets = newArrayList("tx_packets", "rx_packets")
-				update(log, portId)
+				datasets = newArrayList("packet_count")
+				update(log)
 			}
 		})
 
-		val radioDropped = new Button(radioComposite, SWT.RADIO)
-		radioDropped.text = "Dropped"
-		radioDropped.addSelectionListener(new SelectionAdapter() {
+		val radioFlows = new Button(radioComposite, SWT.RADIO)
+		radioFlows.text = "Flows"
+		radioFlows.addSelectionListener(new SelectionAdapter() {
 			override widgetSelected(SelectionEvent e) {
-				datasets = newArrayList("tx_dropped", "rx_dropped")
-				update(log, portId)
+				datasets = newArrayList("flow_count")
+				update(log)
 			}
 		})
 
-		val radioErrors = new Button(radioComposite, SWT.RADIO)
-		radioErrors.text = "Errors"
-		radioErrors.addSelectionListener(new SelectionAdapter() {
-			override widgetSelected(SelectionEvent e) {
-				datasets = newArrayList("tx_errors", "rx_errors")
-				update(log, portId)
-			}
-		})
+
 
 	}
 
-	def void update(ArrayNode log, Integer portId) {
+	def void update(ArrayNode log) {
 		this.log = log
-		this.portId = portId
-		viewer.update(log, datasets, portId)
+		viewer.update(log, datasets)
 	}
 }
