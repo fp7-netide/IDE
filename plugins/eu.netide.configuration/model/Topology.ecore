@@ -24,6 +24,9 @@
   <eClassifiers xsi:type="ecore:EClass" name="Switch" eSuperTypes="#//NetworkElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="controller" eType="#//Controller"
         eOpposite="#//Controller/switches"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nebsVersion" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="mTimeToFailure" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="mTimeToRepair" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="NetworkEnvironment" eSuperTypes="#//NamedElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="networks" upperBound="-1"
@@ -40,12 +43,13 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="connectors" upperBound="-1"
         eType="#//Connector" containment="true" eOpposite="#//Connector/network"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Port">
+  <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//NamedElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="networkelement" lowerBound="1"
         eType="#//NetworkElement" eOpposite="#//NetworkElement/ports"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="connector" eType="#//Connector"
         eOpposite="#//Connector/connectedports"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hwAddr" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="NamedElement" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -63,6 +67,10 @@
         lowerBound="2" upperBound="2" eType="#//Port" eOpposite="#//Port/connector"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="network" lowerBound="1"
         eType="#//Network" eOpposite="#//Network/connectors"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="jitter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bitErrorRate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="datarate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="latency" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Controller" eSuperTypes="#//NamedElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="switches" upperBound="-1"

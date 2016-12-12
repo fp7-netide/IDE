@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Newproject
 Bundle-SymbolicName: eu.netide.newproject;singleton:=true
-Bundle-Version: 0.3.1.qualifier
+Bundle-Version: 0.4.0.qualifier
 Bundle-Activator: eu.netide.newproject.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.ui,
  eu.netide.configuration,
  org.eclipse.sirius.ui,
  org.eclipse.emf.transaction,
- eu.netide.configuration.utils;bundle-version="0.3.1"
+ eu.netide.configuration.utils;bundle-version="0.4.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: eu.netide.newproject

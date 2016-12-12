@@ -50,7 +50,8 @@ class TopologyImport {
 			for (jport : jswitch.get("ports") as ArrayNode) {
 				var port = TopologyFactory.eINSTANCE.createPort
 				port.id = jport.get("port_no").asInt
-//				port. = jport.get("hw_addr").asText
+				port.hwAddr = jport.get("hw_addr").asText
+				port.name = jport.get("name").asText
 				port.networkelement = s
 			}
 		}
@@ -64,6 +65,7 @@ class TopologyImport {
 
 			var p = TopologyFactory.eINSTANCE.createPort
 			p.id = jhost.get("port").get("port_no").asInt
+			p.name = jhost.get("port").get("name").asText
 			p.networkelement = h
 
 		}
@@ -87,7 +89,6 @@ class TopologyImport {
 			p2.connector = l
 		}
 
-//		for (jconne)
 		res.contents.add(ne)
 		res.save(null)
 

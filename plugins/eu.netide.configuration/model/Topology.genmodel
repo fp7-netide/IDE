@@ -23,6 +23,9 @@
     </genClasses>
     <genClasses ecoreClass="Topology.ecore#//Switch">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Topology.ecore#//Switch/controller"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Topology.ecore#//Switch/nebsVersion"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Topology.ecore#//Switch/mTimeToFailure"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Topology.ecore#//Switch/mTimeToRepair"/>
     </genClasses>
     <genClasses ecoreClass="Topology.ecore#//NetworkEnvironment">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Topology.ecore#//NetworkEnvironment/networks"/>
@@ -39,6 +42,7 @@
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Topology.ecore#//Port/networkelement"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Topology.ecore#//Port/id"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Topology.ecore#//Port/connector"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Topology.ecore#//Port/hwAddr"/>
     </genClasses>
     <genClasses image="false" ecoreClass="Topology.ecore#//NamedElement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Topology.ecore#//NamedElement/name"/>
@@ -47,6 +51,10 @@
     <genClasses ecoreClass="Topology.ecore#//Connector">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Topology.ecore#//Connector/connectedports"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Topology.ecore#//Connector/network"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Topology.ecore#//Connector/jitter"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Topology.ecore#//Connector/bitErrorRate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Topology.ecore#//Connector/datarate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Topology.ecore#//Connector/latency"/>
     </genClasses>
     <genClasses ecoreClass="Topology.ecore#//Controller">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Topology.ecore#//Controller/switches"/>
