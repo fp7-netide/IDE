@@ -67,7 +67,8 @@ class ProfilerHandler {
 
 						val sw = env.getNetworks().map[x|x.networkelements].flatten.filter [ x |
 							x instanceof Switch
-						].findFirst[x|x.dpid == dpid]
+						].findFirst[x|x.dpid == dpid  || x.name == "s" + dpid]
+						
 						if (sw == null)
 							return
 						val port = sw.ports.get(portno - 1)
