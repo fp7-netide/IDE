@@ -33,8 +33,9 @@ class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 			req.send(msg.bytes, 0)
 			req.recv()
 		} catch (ZMQException e) {
-//					req = ctx.socket(ZMQ.REQ)
+			e.printStackTrace
 		} catch (ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace
 		} finally {
 			req.close
 			ctx.close
@@ -58,6 +59,7 @@ class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 				} catch (ZMQException e) {
 //					req = ctx.socket(ZMQ.REQ)
 				} catch (ArrayIndexOutOfBoundsException e) {
+					e.printStackTrace
 				} finally {
 					req.close
 					ctx.close
