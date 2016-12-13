@@ -9,6 +9,7 @@ import Topology.Switch
 import RuntimeTopology.RuntimeTopologyFactory
 import RuntimeTopology.PortStatistics
 import RuntimeTopology.AggregatedStatistics
+import Topology.Port
 
 class ProfilerHandler {
 
@@ -58,7 +59,7 @@ class ProfilerHandler {
 			override doExecute() {
 				for (node : portStats) {
 
-					if (node.get("port").asInt != 65534 && node.get("Type").asText.equals("Port Stats")) {
+					if (node.get("Type").asText.equals("Port Stats")) {
 						val dpid = node.get("dpid").asText
 						val portno = node.get("port").asInt
 						val env = RuntimeModelManager.instance.runtimeData.networkenvironment
@@ -69,7 +70,8 @@ class ProfilerHandler {
 						
 						if (sw == null)
 							return
-						val port = sw.ports.get(portno - 1)
+							
+						val Port port = if (portno == 65534) sw.ports.findFirst[id == 65534] else sw.ports.get(portno -1 )
 
 						var PortStatistics ps = rt.portstatistics.findFirst[x|x.port.equals(port)]
 

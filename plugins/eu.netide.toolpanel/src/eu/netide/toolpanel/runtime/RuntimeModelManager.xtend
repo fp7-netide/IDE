@@ -20,6 +20,7 @@ import org.eclipse.sirius.diagram.DSemanticDiagram
 import org.eclipse.sirius.tools.api.command.semantic.AddSemanticResourceCommand
 import org.eclipse.sirius.ui.business.api.dialect.DialectUIManager
 import org.eclipse.sirius.ui.business.api.session.UserSession
+import Topology.Switch
 
 class RuntimeModelManager {
 
@@ -98,7 +99,7 @@ class RuntimeModelManager {
 	public def getResource() {
 		return this.resource
 	}
-	
+
 	public def getRuntimeData() {
 		return this.root
 	}
@@ -116,21 +117,41 @@ class RuntimeModelManager {
 	}
 
 	public def from(NetworkEnvironment res) {
+//		val resfile = ResourcesPlugin.workspace.root.findMember(res.eResource.URI.toPlatformString(true))
+//		val repr = resfile.project.findMember("representations.aird")
+//		val repset = new ResourceSetImpl
+//		val repres = repset.getResource(URI.createPlatformResourceURI(repr.toString.substring(2), true), true)
+//		val repuri = URI.createPlatformResourceURI(repr.toString.substring(2), true)
+//
+//		val osession = SessionManager.INSTANCE.getSession(repuri, new NullProgressMonitor)
+//		val r = DialectManager.INSTANCE.getRepresentations(res.networks.get(0), osession)
+//		
+//		
+		
+
 		if (this.session != null) {
 			this.session.close(new NullProgressMonitor)
 			this.session = null
 		}
 		this.init()
+//		for (representation : r)
+//			DialectManager.INSTANCE.copyRepresentation(representation, representation.name, this.session, new NullProgressMonitor)
 
 		var command = new RecordingCommand(this.session.transactionalEditingDomain) {
 			override protected doExecute() {
 				var ne = EcoreUtil.copy(res)
+				var switches = ne.networks.map[networkelements].flatten.filter(Switch)
+				switches.forEach[x | 
+					val p = TopologyFactory.eINSTANCE.createPort
+					p.id = 65534
+					p.networkelement = x
+				]
 				ne.name = "Runtime Topology"
 				root.networkenvironment = ne
 			}
 		};
 		this.session.transactionalEditingDomain.commandStack.execute(command)
-		
+
 	}
 
 }
