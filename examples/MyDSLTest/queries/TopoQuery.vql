@@ -1,14 +1,14 @@
 import "eu.netide.configuration.topology"
 
 @QueryExplorer(checked = false)
-pattern core1_2080598234Constrain(sw : Switch) {
+pattern core1_1729932713Constrain(sw : Switch) {
 
 	Switch.nebsVersion(sw, nebsVersion);
 
 	check(nebsVersion>1);
 }
 @QueryExplorer(checked = false)
-pattern connection_1879721881Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_238163329Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -19,7 +19,7 @@ pattern connection_1879721881Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_57615622Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_1251183814Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -30,7 +30,7 @@ pattern connection_57615622Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_893508156Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_466953258Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -41,7 +41,7 @@ pattern connection_893508156Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_162304008Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_361525760Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -52,7 +52,7 @@ pattern connection_162304008Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_725104683Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_185393965Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -63,7 +63,7 @@ pattern connection_725104683Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_1359310687Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_1571797814Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -74,7 +74,7 @@ pattern connection_1359310687Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_1781452665Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_1869160669Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -85,7 +85,7 @@ pattern connection_1781452665Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_133115620Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_428036930Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -96,7 +96,7 @@ pattern connection_133115620Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_1845278546Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_1970982612Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -107,7 +107,7 @@ pattern connection_1845278546Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_402211365Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_1437379910Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -118,7 +118,7 @@ pattern connection_402211365Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_187695780Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_1935999206Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -129,7 +129,7 @@ pattern connection_187695780Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_1976997160Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_1887388811Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -140,7 +140,7 @@ pattern connection_1976997160Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_2107177703Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_1397766206Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -151,7 +151,7 @@ pattern connection_2107177703Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_539850523Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_1671854479Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -162,7 +162,7 @@ pattern connection_539850523Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_730035352Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_941569837Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -173,7 +173,7 @@ pattern connection_730035352Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_1782434581Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_844003257Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -184,7 +184,7 @@ pattern connection_1782434581Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_1355303799Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_1619863558Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -195,7 +195,7 @@ pattern connection_1355303799Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_454454234Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_808931225Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -206,7 +206,7 @@ pattern connection_454454234Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_729934740Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_1901109485Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -217,7 +217,7 @@ pattern connection_729934740Constrain(S1 : Switch, S2 : Switch) {
 }
 
 @QueryExplorer(checked = false)
-pattern connection_794880146Constrain(S1 : Switch, S2 : Switch) {
+pattern connection_820175553Constrain(S1 : Switch, S2 : Switch) {
 	Connector(con);
 	Switch.ports.connector(S1,con);
 	Switch.ports.connector(S2,con);
@@ -234,328 +234,328 @@ pattern connected(S1 : Switch, S2 : Switch) {
 	Switch.ports.connector(S2,con);
 }
 
-pattern matchTopology (core2_1660123716: Switch,
+pattern matchTopology (core2_1358725119: Switch, 
 
-core1_2080598234: Switch,
+core1_1729932713: Switch, 
 
-edge1_2141765604: Switch,
+edge1_867834275: Switch, 
 
-edge2_1017982420: Switch,
+edge2_304710865: Switch, 
 
-agg2_1173700959: Switch,
+agg2_563679980: Switch, 
 
-agg1_584557699: Switch,
+agg1_602571411: Switch, 
 
-edge1_414873762: Switch,
+edge1_1090449484: Switch, 
 
-edge2_1303127532: Switch,
+edge2_506461070: Switch, 
 
-agg2_574384831: Switch,
+agg2_2009634005: Switch, 
 
-agg1_1037050311: Switch,
+agg1_4292261: Switch, 
 
-edge1_1994666423: Switch,
+edge1_931828337: Switch, 
 
-edge2_1514928578: Switch,
+edge2_1452866693: Switch, 
 
-agg2_467863974: Switch,
+agg2_1707451583: Switch, 
 
-agg1_662822148: Switch,
+agg1_1853508340: Switch, 
 
-edge1_1891580362: Switch,
+edge1_226509904: Switch, 
 
-edge2_1967086582: Switch,
+edge2_476970417: Switch, 
 
-agg2_1980941006: Switch,
+agg2_1422213855: Switch, 
 
-agg1_1599228149: Switch,
+agg1_1750372185: Switch, 
 
-edge1_1454001084: Switch,
+edge1_1736045767: Switch, 
 
-edge2_1506101876: Switch,
+edge2_344591852: Switch, 
 
-agg2_966911792: Switch,
+agg2_1780966936: Switch, 
 
-agg1_1962476817: Switch
+agg1_642056770: Switch
 
 ) {
 
 
 // define all Switches
-	core2_1660123716 != core1_2080598234;
-	core2_1660123716 != edge1_2141765604;
-	core2_1660123716 != edge2_1017982420;
-	core2_1660123716 != agg2_1173700959;
-	core2_1660123716 != agg1_584557699;
-	core2_1660123716 != edge1_414873762;
-	core2_1660123716 != edge2_1303127532;
-	core2_1660123716 != agg2_574384831;
-	core2_1660123716 != agg1_1037050311;
-	core2_1660123716 != edge1_1994666423;
-	core2_1660123716 != edge2_1514928578;
-	core2_1660123716 != agg2_467863974;
-	core2_1660123716 != agg1_662822148;
-	core2_1660123716 != edge1_1891580362;
-	core2_1660123716 != edge2_1967086582;
-	core2_1660123716 != agg2_1980941006;
-	core2_1660123716 != agg1_1599228149;
-	core2_1660123716 != edge1_1454001084;
-	core2_1660123716 != edge2_1506101876;
-	core2_1660123716 != agg2_966911792;
-	core2_1660123716 != agg1_1962476817;
-	core1_2080598234 != edge1_2141765604;
-	core1_2080598234 != edge2_1017982420;
-	core1_2080598234 != agg2_1173700959;
-	core1_2080598234 != agg1_584557699;
-	core1_2080598234 != edge1_414873762;
-	core1_2080598234 != edge2_1303127532;
-	core1_2080598234 != agg2_574384831;
-	core1_2080598234 != agg1_1037050311;
-	core1_2080598234 != edge1_1994666423;
-	core1_2080598234 != edge2_1514928578;
-	core1_2080598234 != agg2_467863974;
-	core1_2080598234 != agg1_662822148;
-	core1_2080598234 != edge1_1891580362;
-	core1_2080598234 != edge2_1967086582;
-	core1_2080598234 != agg2_1980941006;
-	core1_2080598234 != agg1_1599228149;
-	core1_2080598234 != edge1_1454001084;
-	core1_2080598234 != edge2_1506101876;
-	core1_2080598234 != agg2_966911792;
-	core1_2080598234 != agg1_1962476817;
-	edge1_2141765604 != edge2_1017982420;
-	edge1_2141765604 != agg2_1173700959;
-	edge1_2141765604 != agg1_584557699;
-	edge1_2141765604 != edge1_414873762;
-	edge1_2141765604 != edge2_1303127532;
-	edge1_2141765604 != agg2_574384831;
-	edge1_2141765604 != agg1_1037050311;
-	edge1_2141765604 != edge1_1994666423;
-	edge1_2141765604 != edge2_1514928578;
-	edge1_2141765604 != agg2_467863974;
-	edge1_2141765604 != agg1_662822148;
-	edge1_2141765604 != edge1_1891580362;
-	edge1_2141765604 != edge2_1967086582;
-	edge1_2141765604 != agg2_1980941006;
-	edge1_2141765604 != agg1_1599228149;
-	edge1_2141765604 != edge1_1454001084;
-	edge1_2141765604 != edge2_1506101876;
-	edge1_2141765604 != agg2_966911792;
-	edge1_2141765604 != agg1_1962476817;
-	edge2_1017982420 != agg2_1173700959;
-	edge2_1017982420 != agg1_584557699;
-	edge2_1017982420 != edge1_414873762;
-	edge2_1017982420 != edge2_1303127532;
-	edge2_1017982420 != agg2_574384831;
-	edge2_1017982420 != agg1_1037050311;
-	edge2_1017982420 != edge1_1994666423;
-	edge2_1017982420 != edge2_1514928578;
-	edge2_1017982420 != agg2_467863974;
-	edge2_1017982420 != agg1_662822148;
-	edge2_1017982420 != edge1_1891580362;
-	edge2_1017982420 != edge2_1967086582;
-	edge2_1017982420 != agg2_1980941006;
-	edge2_1017982420 != agg1_1599228149;
-	edge2_1017982420 != edge1_1454001084;
-	edge2_1017982420 != edge2_1506101876;
-	edge2_1017982420 != agg2_966911792;
-	edge2_1017982420 != agg1_1962476817;
-	agg2_1173700959 != agg1_584557699;
-	agg2_1173700959 != edge1_414873762;
-	agg2_1173700959 != edge2_1303127532;
-	agg2_1173700959 != agg2_574384831;
-	agg2_1173700959 != agg1_1037050311;
-	agg2_1173700959 != edge1_1994666423;
-	agg2_1173700959 != edge2_1514928578;
-	agg2_1173700959 != agg2_467863974;
-	agg2_1173700959 != agg1_662822148;
-	agg2_1173700959 != edge1_1891580362;
-	agg2_1173700959 != edge2_1967086582;
-	agg2_1173700959 != agg2_1980941006;
-	agg2_1173700959 != agg1_1599228149;
-	agg2_1173700959 != edge1_1454001084;
-	agg2_1173700959 != edge2_1506101876;
-	agg2_1173700959 != agg2_966911792;
-	agg2_1173700959 != agg1_1962476817;
-	agg1_584557699 != edge1_414873762;
-	agg1_584557699 != edge2_1303127532;
-	agg1_584557699 != agg2_574384831;
-	agg1_584557699 != agg1_1037050311;
-	agg1_584557699 != edge1_1994666423;
-	agg1_584557699 != edge2_1514928578;
-	agg1_584557699 != agg2_467863974;
-	agg1_584557699 != agg1_662822148;
-	agg1_584557699 != edge1_1891580362;
-	agg1_584557699 != edge2_1967086582;
-	agg1_584557699 != agg2_1980941006;
-	agg1_584557699 != agg1_1599228149;
-	agg1_584557699 != edge1_1454001084;
-	agg1_584557699 != edge2_1506101876;
-	agg1_584557699 != agg2_966911792;
-	agg1_584557699 != agg1_1962476817;
-	edge1_414873762 != edge2_1303127532;
-	edge1_414873762 != agg2_574384831;
-	edge1_414873762 != agg1_1037050311;
-	edge1_414873762 != edge1_1994666423;
-	edge1_414873762 != edge2_1514928578;
-	edge1_414873762 != agg2_467863974;
-	edge1_414873762 != agg1_662822148;
-	edge1_414873762 != edge1_1891580362;
-	edge1_414873762 != edge2_1967086582;
-	edge1_414873762 != agg2_1980941006;
-	edge1_414873762 != agg1_1599228149;
-	edge1_414873762 != edge1_1454001084;
-	edge1_414873762 != edge2_1506101876;
-	edge1_414873762 != agg2_966911792;
-	edge1_414873762 != agg1_1962476817;
-	edge2_1303127532 != agg2_574384831;
-	edge2_1303127532 != agg1_1037050311;
-	edge2_1303127532 != edge1_1994666423;
-	edge2_1303127532 != edge2_1514928578;
-	edge2_1303127532 != agg2_467863974;
-	edge2_1303127532 != agg1_662822148;
-	edge2_1303127532 != edge1_1891580362;
-	edge2_1303127532 != edge2_1967086582;
-	edge2_1303127532 != agg2_1980941006;
-	edge2_1303127532 != agg1_1599228149;
-	edge2_1303127532 != edge1_1454001084;
-	edge2_1303127532 != edge2_1506101876;
-	edge2_1303127532 != agg2_966911792;
-	edge2_1303127532 != agg1_1962476817;
-	agg2_574384831 != agg1_1037050311;
-	agg2_574384831 != edge1_1994666423;
-	agg2_574384831 != edge2_1514928578;
-	agg2_574384831 != agg2_467863974;
-	agg2_574384831 != agg1_662822148;
-	agg2_574384831 != edge1_1891580362;
-	agg2_574384831 != edge2_1967086582;
-	agg2_574384831 != agg2_1980941006;
-	agg2_574384831 != agg1_1599228149;
-	agg2_574384831 != edge1_1454001084;
-	agg2_574384831 != edge2_1506101876;
-	agg2_574384831 != agg2_966911792;
-	agg2_574384831 != agg1_1962476817;
-	agg1_1037050311 != edge1_1994666423;
-	agg1_1037050311 != edge2_1514928578;
-	agg1_1037050311 != agg2_467863974;
-	agg1_1037050311 != agg1_662822148;
-	agg1_1037050311 != edge1_1891580362;
-	agg1_1037050311 != edge2_1967086582;
-	agg1_1037050311 != agg2_1980941006;
-	agg1_1037050311 != agg1_1599228149;
-	agg1_1037050311 != edge1_1454001084;
-	agg1_1037050311 != edge2_1506101876;
-	agg1_1037050311 != agg2_966911792;
-	agg1_1037050311 != agg1_1962476817;
-	edge1_1994666423 != edge2_1514928578;
-	edge1_1994666423 != agg2_467863974;
-	edge1_1994666423 != agg1_662822148;
-	edge1_1994666423 != edge1_1891580362;
-	edge1_1994666423 != edge2_1967086582;
-	edge1_1994666423 != agg2_1980941006;
-	edge1_1994666423 != agg1_1599228149;
-	edge1_1994666423 != edge1_1454001084;
-	edge1_1994666423 != edge2_1506101876;
-	edge1_1994666423 != agg2_966911792;
-	edge1_1994666423 != agg1_1962476817;
-	edge2_1514928578 != agg2_467863974;
-	edge2_1514928578 != agg1_662822148;
-	edge2_1514928578 != edge1_1891580362;
-	edge2_1514928578 != edge2_1967086582;
-	edge2_1514928578 != agg2_1980941006;
-	edge2_1514928578 != agg1_1599228149;
-	edge2_1514928578 != edge1_1454001084;
-	edge2_1514928578 != edge2_1506101876;
-	edge2_1514928578 != agg2_966911792;
-	edge2_1514928578 != agg1_1962476817;
-	agg2_467863974 != agg1_662822148;
-	agg2_467863974 != edge1_1891580362;
-	agg2_467863974 != edge2_1967086582;
-	agg2_467863974 != agg2_1980941006;
-	agg2_467863974 != agg1_1599228149;
-	agg2_467863974 != edge1_1454001084;
-	agg2_467863974 != edge2_1506101876;
-	agg2_467863974 != agg2_966911792;
-	agg2_467863974 != agg1_1962476817;
-	agg1_662822148 != edge1_1891580362;
-	agg1_662822148 != edge2_1967086582;
-	agg1_662822148 != agg2_1980941006;
-	agg1_662822148 != agg1_1599228149;
-	agg1_662822148 != edge1_1454001084;
-	agg1_662822148 != edge2_1506101876;
-	agg1_662822148 != agg2_966911792;
-	agg1_662822148 != agg1_1962476817;
-	edge1_1891580362 != edge2_1967086582;
-	edge1_1891580362 != agg2_1980941006;
-	edge1_1891580362 != agg1_1599228149;
-	edge1_1891580362 != edge1_1454001084;
-	edge1_1891580362 != edge2_1506101876;
-	edge1_1891580362 != agg2_966911792;
-	edge1_1891580362 != agg1_1962476817;
-	edge2_1967086582 != agg2_1980941006;
-	edge2_1967086582 != agg1_1599228149;
-	edge2_1967086582 != edge1_1454001084;
-	edge2_1967086582 != edge2_1506101876;
-	edge2_1967086582 != agg2_966911792;
-	edge2_1967086582 != agg1_1962476817;
-	agg2_1980941006 != agg1_1599228149;
-	agg2_1980941006 != edge1_1454001084;
-	agg2_1980941006 != edge2_1506101876;
-	agg2_1980941006 != agg2_966911792;
-	agg2_1980941006 != agg1_1962476817;
-	agg1_1599228149 != edge1_1454001084;
-	agg1_1599228149 != edge2_1506101876;
-	agg1_1599228149 != agg2_966911792;
-	agg1_1599228149 != agg1_1962476817;
-	edge1_1454001084 != edge2_1506101876;
-	edge1_1454001084 != agg2_966911792;
-	edge1_1454001084 != agg1_1962476817;
-	edge2_1506101876 != agg2_966911792;
-	edge2_1506101876 != agg1_1962476817;
-	agg2_966911792 != agg1_1962476817;
+	core2_1358725119 != core1_1729932713;
+	core2_1358725119 != edge1_867834275;
+	core2_1358725119 != edge2_304710865;
+	core2_1358725119 != agg2_563679980;
+	core2_1358725119 != agg1_602571411;
+	core2_1358725119 != edge1_1090449484;
+	core2_1358725119 != edge2_506461070;
+	core2_1358725119 != agg2_2009634005;
+	core2_1358725119 != agg1_4292261;
+	core2_1358725119 != edge1_931828337;
+	core2_1358725119 != edge2_1452866693;
+	core2_1358725119 != agg2_1707451583;
+	core2_1358725119 != agg1_1853508340;
+	core2_1358725119 != edge1_226509904;
+	core2_1358725119 != edge2_476970417;
+	core2_1358725119 != agg2_1422213855;
+	core2_1358725119 != agg1_1750372185;
+	core2_1358725119 != edge1_1736045767;
+	core2_1358725119 != edge2_344591852;
+	core2_1358725119 != agg2_1780966936;
+	core2_1358725119 != agg1_642056770;
+	core1_1729932713 != edge1_867834275;
+	core1_1729932713 != edge2_304710865;
+	core1_1729932713 != agg2_563679980;
+	core1_1729932713 != agg1_602571411;
+	core1_1729932713 != edge1_1090449484;
+	core1_1729932713 != edge2_506461070;
+	core1_1729932713 != agg2_2009634005;
+	core1_1729932713 != agg1_4292261;
+	core1_1729932713 != edge1_931828337;
+	core1_1729932713 != edge2_1452866693;
+	core1_1729932713 != agg2_1707451583;
+	core1_1729932713 != agg1_1853508340;
+	core1_1729932713 != edge1_226509904;
+	core1_1729932713 != edge2_476970417;
+	core1_1729932713 != agg2_1422213855;
+	core1_1729932713 != agg1_1750372185;
+	core1_1729932713 != edge1_1736045767;
+	core1_1729932713 != edge2_344591852;
+	core1_1729932713 != agg2_1780966936;
+	core1_1729932713 != agg1_642056770;
+	edge1_867834275 != edge2_304710865;
+	edge1_867834275 != agg2_563679980;
+	edge1_867834275 != agg1_602571411;
+	edge1_867834275 != edge1_1090449484;
+	edge1_867834275 != edge2_506461070;
+	edge1_867834275 != agg2_2009634005;
+	edge1_867834275 != agg1_4292261;
+	edge1_867834275 != edge1_931828337;
+	edge1_867834275 != edge2_1452866693;
+	edge1_867834275 != agg2_1707451583;
+	edge1_867834275 != agg1_1853508340;
+	edge1_867834275 != edge1_226509904;
+	edge1_867834275 != edge2_476970417;
+	edge1_867834275 != agg2_1422213855;
+	edge1_867834275 != agg1_1750372185;
+	edge1_867834275 != edge1_1736045767;
+	edge1_867834275 != edge2_344591852;
+	edge1_867834275 != agg2_1780966936;
+	edge1_867834275 != agg1_642056770;
+	edge2_304710865 != agg2_563679980;
+	edge2_304710865 != agg1_602571411;
+	edge2_304710865 != edge1_1090449484;
+	edge2_304710865 != edge2_506461070;
+	edge2_304710865 != agg2_2009634005;
+	edge2_304710865 != agg1_4292261;
+	edge2_304710865 != edge1_931828337;
+	edge2_304710865 != edge2_1452866693;
+	edge2_304710865 != agg2_1707451583;
+	edge2_304710865 != agg1_1853508340;
+	edge2_304710865 != edge1_226509904;
+	edge2_304710865 != edge2_476970417;
+	edge2_304710865 != agg2_1422213855;
+	edge2_304710865 != agg1_1750372185;
+	edge2_304710865 != edge1_1736045767;
+	edge2_304710865 != edge2_344591852;
+	edge2_304710865 != agg2_1780966936;
+	edge2_304710865 != agg1_642056770;
+	agg2_563679980 != agg1_602571411;
+	agg2_563679980 != edge1_1090449484;
+	agg2_563679980 != edge2_506461070;
+	agg2_563679980 != agg2_2009634005;
+	agg2_563679980 != agg1_4292261;
+	agg2_563679980 != edge1_931828337;
+	agg2_563679980 != edge2_1452866693;
+	agg2_563679980 != agg2_1707451583;
+	agg2_563679980 != agg1_1853508340;
+	agg2_563679980 != edge1_226509904;
+	agg2_563679980 != edge2_476970417;
+	agg2_563679980 != agg2_1422213855;
+	agg2_563679980 != agg1_1750372185;
+	agg2_563679980 != edge1_1736045767;
+	agg2_563679980 != edge2_344591852;
+	agg2_563679980 != agg2_1780966936;
+	agg2_563679980 != agg1_642056770;
+	agg1_602571411 != edge1_1090449484;
+	agg1_602571411 != edge2_506461070;
+	agg1_602571411 != agg2_2009634005;
+	agg1_602571411 != agg1_4292261;
+	agg1_602571411 != edge1_931828337;
+	agg1_602571411 != edge2_1452866693;
+	agg1_602571411 != agg2_1707451583;
+	agg1_602571411 != agg1_1853508340;
+	agg1_602571411 != edge1_226509904;
+	agg1_602571411 != edge2_476970417;
+	agg1_602571411 != agg2_1422213855;
+	agg1_602571411 != agg1_1750372185;
+	agg1_602571411 != edge1_1736045767;
+	agg1_602571411 != edge2_344591852;
+	agg1_602571411 != agg2_1780966936;
+	agg1_602571411 != agg1_642056770;
+	edge1_1090449484 != edge2_506461070;
+	edge1_1090449484 != agg2_2009634005;
+	edge1_1090449484 != agg1_4292261;
+	edge1_1090449484 != edge1_931828337;
+	edge1_1090449484 != edge2_1452866693;
+	edge1_1090449484 != agg2_1707451583;
+	edge1_1090449484 != agg1_1853508340;
+	edge1_1090449484 != edge1_226509904;
+	edge1_1090449484 != edge2_476970417;
+	edge1_1090449484 != agg2_1422213855;
+	edge1_1090449484 != agg1_1750372185;
+	edge1_1090449484 != edge1_1736045767;
+	edge1_1090449484 != edge2_344591852;
+	edge1_1090449484 != agg2_1780966936;
+	edge1_1090449484 != agg1_642056770;
+	edge2_506461070 != agg2_2009634005;
+	edge2_506461070 != agg1_4292261;
+	edge2_506461070 != edge1_931828337;
+	edge2_506461070 != edge2_1452866693;
+	edge2_506461070 != agg2_1707451583;
+	edge2_506461070 != agg1_1853508340;
+	edge2_506461070 != edge1_226509904;
+	edge2_506461070 != edge2_476970417;
+	edge2_506461070 != agg2_1422213855;
+	edge2_506461070 != agg1_1750372185;
+	edge2_506461070 != edge1_1736045767;
+	edge2_506461070 != edge2_344591852;
+	edge2_506461070 != agg2_1780966936;
+	edge2_506461070 != agg1_642056770;
+	agg2_2009634005 != agg1_4292261;
+	agg2_2009634005 != edge1_931828337;
+	agg2_2009634005 != edge2_1452866693;
+	agg2_2009634005 != agg2_1707451583;
+	agg2_2009634005 != agg1_1853508340;
+	agg2_2009634005 != edge1_226509904;
+	agg2_2009634005 != edge2_476970417;
+	agg2_2009634005 != agg2_1422213855;
+	agg2_2009634005 != agg1_1750372185;
+	agg2_2009634005 != edge1_1736045767;
+	agg2_2009634005 != edge2_344591852;
+	agg2_2009634005 != agg2_1780966936;
+	agg2_2009634005 != agg1_642056770;
+	agg1_4292261 != edge1_931828337;
+	agg1_4292261 != edge2_1452866693;
+	agg1_4292261 != agg2_1707451583;
+	agg1_4292261 != agg1_1853508340;
+	agg1_4292261 != edge1_226509904;
+	agg1_4292261 != edge2_476970417;
+	agg1_4292261 != agg2_1422213855;
+	agg1_4292261 != agg1_1750372185;
+	agg1_4292261 != edge1_1736045767;
+	agg1_4292261 != edge2_344591852;
+	agg1_4292261 != agg2_1780966936;
+	agg1_4292261 != agg1_642056770;
+	edge1_931828337 != edge2_1452866693;
+	edge1_931828337 != agg2_1707451583;
+	edge1_931828337 != agg1_1853508340;
+	edge1_931828337 != edge1_226509904;
+	edge1_931828337 != edge2_476970417;
+	edge1_931828337 != agg2_1422213855;
+	edge1_931828337 != agg1_1750372185;
+	edge1_931828337 != edge1_1736045767;
+	edge1_931828337 != edge2_344591852;
+	edge1_931828337 != agg2_1780966936;
+	edge1_931828337 != agg1_642056770;
+	edge2_1452866693 != agg2_1707451583;
+	edge2_1452866693 != agg1_1853508340;
+	edge2_1452866693 != edge1_226509904;
+	edge2_1452866693 != edge2_476970417;
+	edge2_1452866693 != agg2_1422213855;
+	edge2_1452866693 != agg1_1750372185;
+	edge2_1452866693 != edge1_1736045767;
+	edge2_1452866693 != edge2_344591852;
+	edge2_1452866693 != agg2_1780966936;
+	edge2_1452866693 != agg1_642056770;
+	agg2_1707451583 != agg1_1853508340;
+	agg2_1707451583 != edge1_226509904;
+	agg2_1707451583 != edge2_476970417;
+	agg2_1707451583 != agg2_1422213855;
+	agg2_1707451583 != agg1_1750372185;
+	agg2_1707451583 != edge1_1736045767;
+	agg2_1707451583 != edge2_344591852;
+	agg2_1707451583 != agg2_1780966936;
+	agg2_1707451583 != agg1_642056770;
+	agg1_1853508340 != edge1_226509904;
+	agg1_1853508340 != edge2_476970417;
+	agg1_1853508340 != agg2_1422213855;
+	agg1_1853508340 != agg1_1750372185;
+	agg1_1853508340 != edge1_1736045767;
+	agg1_1853508340 != edge2_344591852;
+	agg1_1853508340 != agg2_1780966936;
+	agg1_1853508340 != agg1_642056770;
+	edge1_226509904 != edge2_476970417;
+	edge1_226509904 != agg2_1422213855;
+	edge1_226509904 != agg1_1750372185;
+	edge1_226509904 != edge1_1736045767;
+	edge1_226509904 != edge2_344591852;
+	edge1_226509904 != agg2_1780966936;
+	edge1_226509904 != agg1_642056770;
+	edge2_476970417 != agg2_1422213855;
+	edge2_476970417 != agg1_1750372185;
+	edge2_476970417 != edge1_1736045767;
+	edge2_476970417 != edge2_344591852;
+	edge2_476970417 != agg2_1780966936;
+	edge2_476970417 != agg1_642056770;
+	agg2_1422213855 != agg1_1750372185;
+	agg2_1422213855 != edge1_1736045767;
+	agg2_1422213855 != edge2_344591852;
+	agg2_1422213855 != agg2_1780966936;
+	agg2_1422213855 != agg1_642056770;
+	agg1_1750372185 != edge1_1736045767;
+	agg1_1750372185 != edge2_344591852;
+	agg1_1750372185 != agg2_1780966936;
+	agg1_1750372185 != agg1_642056770;
+	edge1_1736045767 != edge2_344591852;
+	edge1_1736045767 != agg2_1780966936;
+	edge1_1736045767 != agg1_642056770;
+	edge2_344591852 != agg2_1780966936;
+	edge2_344591852 != agg1_642056770;
+	agg2_1780966936 != agg1_642056770;
 
 // define all Switch Constrains
-	find core1_2080598234Constrain(core1_2080598234);
+	find core1_1729932713Constrain(core1_1729932713);
 
 // define all Connections
-	find connection_1879721881Constrain(agg1_584557699, core1_2080598234);
-	find connection_57615622Constrain(agg2_1173700959, core1_2080598234);
-	find connection_893508156Constrain(agg1_1037050311, core1_2080598234);
-	find connection_162304008Constrain(agg2_574384831, core1_2080598234);
-	find connection_725104683Constrain(agg1_662822148, core1_2080598234);
-	find connection_1359310687Constrain(agg2_467863974, core1_2080598234);
-	find connection_1781452665Constrain(agg1_1599228149, core1_2080598234);
-	find connection_133115620Constrain(agg2_1980941006, core1_2080598234);
-	find connection_1845278546Constrain(agg1_1962476817, core1_2080598234);
-	find connection_402211365Constrain(agg2_966911792, core1_2080598234);
-	find connection_187695780Constrain(agg1_584557699, core2_1660123716);
-	find connection_1976997160Constrain(agg2_1173700959, core2_1660123716);
-	find connection_2107177703Constrain(agg1_1037050311, core2_1660123716);
-	find connection_539850523Constrain(agg2_574384831, core2_1660123716);
-	find connection_730035352Constrain(agg1_662822148, core2_1660123716);
-	find connection_1782434581Constrain(agg2_467863974, core2_1660123716);
-	find connection_1355303799Constrain(agg1_1599228149, core2_1660123716);
-	find connection_454454234Constrain(agg2_1980941006, core2_1660123716);
-	find connection_729934740Constrain(agg1_1962476817, core2_1660123716);
-	find connection_794880146Constrain(agg2_966911792, core2_1660123716);
-	find connected(agg1_584557699, edge1_2141765604);
-	find connected(agg1_584557699, edge2_1017982420);
-	find connected(agg2_1173700959, edge1_2141765604);
-	find connected(agg2_1173700959, edge2_1017982420);
-	find connected(agg1_1037050311, edge1_414873762);
-	find connected(agg1_1037050311, edge2_1303127532);
-	find connected(agg2_574384831, edge1_414873762);
-	find connected(agg2_574384831, edge2_1303127532);
-	find connected(agg1_662822148, edge1_1994666423);
-	find connected(agg1_662822148, edge2_1514928578);
-	find connected(agg2_467863974, edge1_1994666423);
-	find connected(agg2_467863974, edge2_1514928578);
-	find connected(agg1_1599228149, edge1_1891580362);
-	find connected(agg1_1599228149, edge2_1967086582);
-	find connected(agg2_1980941006, edge1_1891580362);
-	find connected(agg2_1980941006, edge2_1967086582);
-	find connected(agg1_1962476817, edge1_1454001084);
-	find connected(agg1_1962476817, edge2_1506101876);
-	find connected(agg2_966911792, edge1_1454001084);
-	find connected(agg2_966911792, edge2_1506101876);
+	find connection_238163329Constrain(agg1_602571411, core1_1729932713);
+	find connection_1251183814Constrain(agg2_563679980, core1_1729932713);
+	find connection_466953258Constrain(agg1_4292261, core1_1729932713);
+	find connection_361525760Constrain(agg2_2009634005, core1_1729932713);
+	find connection_185393965Constrain(agg1_1853508340, core1_1729932713);
+	find connection_1571797814Constrain(agg2_1707451583, core1_1729932713);
+	find connection_1869160669Constrain(agg1_1750372185, core1_1729932713);
+	find connection_428036930Constrain(agg2_1422213855, core1_1729932713);
+	find connection_1970982612Constrain(agg1_642056770, core1_1729932713);
+	find connection_1437379910Constrain(agg2_1780966936, core1_1729932713);
+	find connection_1935999206Constrain(agg1_602571411, core2_1358725119);
+	find connection_1887388811Constrain(agg2_563679980, core2_1358725119);
+	find connection_1397766206Constrain(agg1_4292261, core2_1358725119);
+	find connection_1671854479Constrain(agg2_2009634005, core2_1358725119);
+	find connection_941569837Constrain(agg1_1853508340, core2_1358725119);
+	find connection_844003257Constrain(agg2_1707451583, core2_1358725119);
+	find connection_1619863558Constrain(agg1_1750372185, core2_1358725119);
+	find connection_808931225Constrain(agg2_1422213855, core2_1358725119);
+	find connection_1901109485Constrain(agg1_642056770, core2_1358725119);
+	find connection_820175553Constrain(agg2_1780966936, core2_1358725119);
+	find connected(agg1_602571411, edge1_867834275);
+	find connected(agg1_602571411, edge2_304710865);
+	find connected(agg2_563679980, edge1_867834275);
+	find connected(agg2_563679980, edge2_304710865);
+	find connected(agg1_4292261, edge1_1090449484);
+	find connected(agg1_4292261, edge2_506461070);
+	find connected(agg2_2009634005, edge1_1090449484);
+	find connected(agg2_2009634005, edge2_506461070);
+	find connected(agg1_1853508340, edge1_931828337);
+	find connected(agg1_1853508340, edge2_1452866693);
+	find connected(agg2_1707451583, edge1_931828337);
+	find connected(agg2_1707451583, edge2_1452866693);
+	find connected(agg1_1750372185, edge1_226509904);
+	find connected(agg1_1750372185, edge2_476970417);
+	find connected(agg2_1422213855, edge1_226509904);
+	find connected(agg2_1422213855, edge2_476970417);
+	find connected(agg1_642056770, edge1_1736045767);
+	find connected(agg1_642056770, edge2_344591852);
+	find connected(agg2_1780966936, edge1_1736045767);
+	find connected(agg2_1780966936, edge2_344591852);
 }

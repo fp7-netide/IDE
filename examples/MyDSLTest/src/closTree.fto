@@ -1,6 +1,5 @@
 module ClosPod
 	parameters:
-		size: Integer
 	gates:
 		root
 		down
@@ -24,13 +23,12 @@ module ClosPod
 main module Clos
 	parameters:
 		podCount: Integer
-		podSize: Integer
 	gates:
 	submodules:
 		core1:Switch (nebsVersion>1)
 		core2:Switch
 		pods:ClosPod[podCount]{
-			size:{podSize}
+
 		}
 
 		connections:

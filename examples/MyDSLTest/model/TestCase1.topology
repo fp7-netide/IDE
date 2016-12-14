@@ -5,49 +5,49 @@
       <ports id="1" connector="//@networks.0/@connectors.8"/>
       <ports id="2" connector="//@networks.0/@connectors.9"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="s1" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="s2" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.11"/>
       <ports id="2" connector="//@networks.0/@connectors.8"/>
       <ports id="3" connector="//@networks.0/@connectors.10"/>
       <ports id="4" connector="//@networks.0/@connectors.15"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="s1" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="s3" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.0"/>
       <ports id="2" connector="//@networks.0/@connectors.7"/>
       <ports id="3" connector="//@networks.0/@connectors.9"/>
       <ports id="4" connector="//@networks.0/@connectors.12"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="s1" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="s4" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.7"/>
       <ports id="2" connector="//@networks.0/@connectors.10"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="s1" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="s5" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.3"/>
       <ports id="2" connector="//@networks.0/@connectors.5"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="s1" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="s6" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.4"/>
       <ports id="2" connector="//@networks.0/@connectors.6"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="s1" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="s7" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.1"/>
       <ports id="2" connector="//@networks.0/@connectors.3"/>
       <ports id="3" connector="//@networks.0/@connectors.4"/>
       <ports id="4" connector="//@networks.0/@connectors.13"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="s1" controller="//@controllers.0">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="s8" controller="//@controllers.0">
       <ports id="1" connector="//@networks.0/@connectors.2"/>
       <ports id="2" connector="//@networks.0/@connectors.5"/>
       <ports id="3" connector="//@networks.0/@connectors.6"/>
       <ports id="4" connector="//@networks.0/@connectors.14"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="s1" controller="//@controllers.0" nebsVersion="2">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="s9" controller="//@controllers.0" nebsVersion="2">
       <ports id="1" connector="//@networks.0/@connectors.0"/>
       <ports id="3" connector="//@networks.0/@connectors.1"/>
       <ports id="4" connector="//@networks.0/@connectors.2"/>
       <ports id="4" connector="//@networks.0/@connectors.15"/>
     </networkelements>
-    <networkelements xsi:type="eu.netide.configuration:Switch" name="s1" controller="//@controllers.0" nebsVersion="2">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="s10" controller="//@controllers.0" nebsVersion="2">
       <ports id="1" connector="//@networks.0/@connectors.11"/>
       <ports id="2" connector="//@networks.0/@connectors.12"/>
       <ports id="3" connector="//@networks.0/@connectors.13"/>

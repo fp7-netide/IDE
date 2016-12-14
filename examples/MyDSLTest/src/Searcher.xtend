@@ -19,7 +19,7 @@ class Searcher {
 
 			// output matched switch count
 			println("Switches matched:")
-			println(result.matches.head.parameterNames.size)
+//			println(result.matches.head.parameterNames.size)
 
 			// output result count
 			println("Count of different matches:")
@@ -28,6 +28,8 @@ class Searcher {
 			// output valid parameters
 			println("FlexTopo Parameters used to find matches:")
 			println(result.parameterMap)
+			
+			result.matches.forEach[x | println(x)]	
 
 			println("")
 			println("##############")
