@@ -75,7 +75,7 @@ class ChartView extends ViewPart {
 		mainComposite.layoutData = new GridData(GridData.FILL_BOTH)
 		sc.setContent(mainComposite)
 
-		viewer = new MessagesPerAppChartViewer(mainComposite, SWT.NONE)
+		viewer = new MessagesPerAppChartViewer(mainComposite, SWT.DOUBLE_BUFFERED)
 		viewer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.addPaintListener(viewer);
 		mainComposite.layout()
