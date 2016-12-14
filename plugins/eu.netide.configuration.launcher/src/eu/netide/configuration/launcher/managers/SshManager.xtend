@@ -309,6 +309,10 @@ class SshManager implements IManager {
 		var tmpsrc = source
 		if (this.scpPath.contains("cygwin")) {
 			tmpsrc = source.replace("C:", "/cygdrive/c")
+			
+		}
+		if (this.scpPath.contains("Git\\bin")) {
+			tmpsrc = source.replace("C:", "/c")
 		}
 		startProcess(newArrayList(
 			scpPath,
