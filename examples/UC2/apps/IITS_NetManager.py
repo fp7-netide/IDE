@@ -1,7 +1,7 @@
 # Developed by Juan Manuel Sanchez, March 2016.
 
 """
-An OpenFlow 1.0 static switching implementation.
+An OpenFlow 1.0 L2 static switching implementation.
 """
 
 
@@ -16,41 +16,16 @@ from ryu.lib.packet import packet
 from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
 from ryu.lib.packet import ipv4
+from ryu.lib.packet import arp
 from ryu.topology import event, switches
 from ryu.topology.api import get_switch, get_link
 from ipaddr import IPv4Address
 
-################### IP Setup ##################
-# Hosts
-ipp1 = '10.0.1.11'
-ipp2 = '10.0.1.12'
-ipp3 = '10.0.1.13'
-ipp4 = '10.0.1.14'
-ipp5 = '10.0.1.15'
-
-###############################################
-
-# Switches IDs
-SW1_ID  = 1
-SW2_ID  = 2
-SW3_ID  = 3
-SW4_ID  = 4
-SW1b_ID  = 5
-SW2b_ID  = 6
-SW3b_ID  = 7
-SW4b_ID  = 8
-HH1_ID = 11
-HH2_ID = 12
-HH3_ID = 13
-HH4_ID = 14
-HH5_ID = 15
+from Configuration import *
 
 #Dictionaries of Host IPs/Switches IDs : columns/rows of the out_port_table
 HOST = {ipp1:0, ipp2:1, ipp3:2, ipp4:3, ipp5:4}
 SWITCH = {SW1_ID:0, SW2_ID:1, SW3_ID:2, SW4_ID:3, HH1_ID:4, HH2_ID:5, HH3_ID:6, HH4_ID:7, HH5_ID:8, SW1b_ID:9, SW2b_ID:10, SW3b_ID:11, SW4b_ID:12}
-
-#Boolean variable to determine proactive/reactive behavior
-PROACTIVE = False
 
 class IITS_NetManager(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_0.OFP_VERSION]
@@ -284,8 +259,11 @@ class IITS_NetManager(app_manager.RyuApp):
         # forward ARP
         if src not in self.mac_to_port[dpid]:
             self.mac_to_port[dpid][src] = in_port 
-        
-        out_port = self.mac_to_port[dpid][dst]
+        try:
+            out_port = self.mac_to_port[dpid][dst]
+        except:
+            self.arp_multicast(msg)
+            return
         actions = [datapath.ofproto_parser.OFPActionOutput(out_port)]
         data = None
         if msg.buffer_id == ofproto.OFP_NO_BUFFER:
@@ -336,9 +314,32 @@ class IITS_NetManager(app_manager.RyuApp):
         datapath = msg.datapath
         dpid = datapath.id
         in_port = msg.in_port
-
+      
         self.logger.info("ARP in %s %s", dpid, in_port)
 
+        pkt_arp = pkt.get_protocol(arp.arp)
+        src = pkt_arp.src_ip
+        if (dpid==HH1_ID) and (src == ipp1):
+            self.out_port_table[SWITCH[HH1_ID]][HOST[ipp1]] = in_port
+            if PROACTIVE and self.all_switches_up():
+                self.add_priority_flow(self.datapath_list[HH1_ID], ipp1, in_port)
+        if (dpid==HH2_ID) and (src == ipp2):
+            self.out_port_table[SWITCH[HH2_ID]][HOST[ipp2]] = in_port
+            if PROACTIVE and self.all_switches_up():
+                self.add_priority_flow(self.datapath_list[HH2_ID], ipp2, in_port)
+        if (dpid==HH3_ID) and (src == ipp3):
+            self.out_port_table[SWITCH[HH3_ID]][HOST[ipp3]] = in_port
+            if PROACTIVE and self.all_switches_up():
+                self.add_priority_flow(self.datapath_list[HH3_ID], ipp3, in_port)
+        if (dpid==HH4_ID) and (src == ipp4):
+            self.out_port_table[SWITCH[HH4_ID]][HOST[ipp4]] = in_port
+            if PROACTIVE and self.all_switches_up():
+                self.add_priority_flow(self.datapath_list[HH4_ID], ipp4, in_port)
+        if (dpid==HH5_ID) and (src == ipp5):
+            self.out_port_table[SWITCH[HH5_ID]][HOST[ipp5]] = in_port
+            if PROACTIVE and self.all_switches_up():
+                self.add_priority_flow(self.datapath_list[HH5_ID], ipp5, in_port)            
+        
         if dst == 'ff:ff:ff:ff:ff:ff':
             self.arp_multicast(msg)
         else:
@@ -462,7 +463,12 @@ class IITS_NetManager(app_manager.RyuApp):
             self.logger.info("port added %s", port_no)
         elif reason == ofproto.OFPPR_DELETE:
             self.logger.info("port deleted %s", port_no)
+            #reset mac2port
+            self.mac_to_port={}
         elif reason == ofproto.OFPPR_MODIFY:
+            #reset mac2port
+            self.mac_to_port={}
+            
             self.logger.info("port modified in %s port %s port_state %s", dpid, port_no, ofp_port.state)
             self.main_branch_state.setdefault(dpid, {})
             self.main_branch.setdefault(dpid, {})

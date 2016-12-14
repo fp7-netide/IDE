@@ -20,37 +20,11 @@ from ryu.topology import event, switches
 from ryu.topology.api import get_switch, get_link
 from ipaddr import IPv4Address
 
-################### IP Setup ##################
-# Hosts
-ipp1 = '10.0.1.11'
-ipp2 = '10.0.1.12'
-ipp3 = '10.0.1.13'
-ipp4 = '10.0.1.14'
-ipp5 = '10.0.1.15'
-
-###############################################
-
-# Switches IDs
-SW1_ID  = 1
-SW2_ID  = 2
-SW3_ID  = 3
-SW4_ID  = 4
-SW1b_ID  = 5
-SW2b_ID  = 6
-SW3b_ID  = 7
-SW4b_ID  = 8
-HH1_ID = 11
-HH2_ID = 12
-HH3_ID = 13
-HH4_ID = 14
-HH5_ID = 15
+from Configuration import *
 
 #Dictionaries of Host IPs/Switches IDs : columns/rows of the out_port_table
 HOST = {ipp1:0, ipp2:1, ipp3:2, ipp4:3, ipp5:4}
 SWITCH = {SW1_ID:0, SW2_ID:1, SW3_ID:2, SW4_ID:3, HH1_ID:4, HH2_ID:5, HH3_ID:6, HH4_ID:7, HH5_ID:8, SW1b_ID:9, SW2b_ID:10, SW3b_ID:11, SW4b_ID:12}
-
-#Boolean variable to determine proactive/reactive behavior
-PROACTIVE = False
 
 class IITS_NetManager_13(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
@@ -301,7 +275,11 @@ class IITS_NetManager_13(app_manager.RyuApp):
         if src not in self.mac_to_port[dpid]:
             self.mac_to_port[dpid][src] = in_port 
         
-        out_port = self.mac_to_port[dpid][dst]
+        try:
+            out_port = self.mac_to_port[dpid][dst]
+        except:
+            self.arp_multicast(msg)
+            return
         actions = [datapath.ofproto_parser.OFPActionOutput(out_port)]
         data = None
         if msg.buffer_id == ofproto.OFP_NO_BUFFER:
