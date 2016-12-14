@@ -6,7 +6,6 @@ import Topology.NetworkEnvironment
 import Topology.Port
 import Topology.Switch
 import Topology.TopologyFactory
-import eu.netide.deployment.topologyimport.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileNotFoundException
@@ -20,13 +19,16 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import eu.netide.deployment.topologyimport.json.JSONException
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
 
 class TopologyImport {
 
-	def createTopologyModelFromString(String input, String filename) {
-		System.out.println(input)
-		var jtopo = new JSONObject(input)
+	def createTopologyModelFromString(String switches, String hosts, String links, String filename) {
+		var mapper = new ObjectMapper
+		var jswitches = mapper.readTree(switches) as ArrayNode
+		var jhosts = mapper.readTree(hosts) as ArrayNode
+		var jlinks = mapper.readTree(links) as ArrayNode
 
 		var ResourceSet resset = new ResourceSetImpl()
 		var Resource res = resset.createResource(URI::createURI(filename))
@@ -36,52 +38,55 @@ class TopologyImport {
 		val network = TopologyFactory.eINSTANCE.createNetwork
 		network.name = "Imported"
 		network.networkenvironment = ne
-		
-		try {
-		var nodes = jtopo.getJSONObject("network-topology").getJSONArray("topology").getJSONObject(0).
-			getJSONArray("node")
 
-		nodes.forEach [ e |
-			var element = TopologyFactory.eINSTANCE.createSwitch
-			element.name = '''s«(e as JSONObject).getString("node-id").split(":").get(1)»'''
-			network.networkelements.add(element)
-		]
+		for (jswitch : jswitches) {
+			var s = TopologyFactory.eINSTANCE.createSwitch
+			s.topology = network
+			var dpid = Integer.parseInt(jswitch.get("dpid").asText, 16)
 
-		if (jtopo.getJSONObject("network-topology").getJSONArray("topology").getJSONObject(0).has("link")) {
-			var links = jtopo.getJSONObject("network-topology").getJSONArray("topology").getJSONObject(0).
-				getJSONArray("link")
+			s.name = "s" + dpid
+			s.dpid = "" + dpid
 
-			links.forEach [ e |
-				val sourceName = '''s«(e as JSONObject).getJSONObject("source").getString("source-node").split(":").get(1)»'''
-				val destName = '''s«(e as JSONObject).getJSONObject("destination").getString("dest-node").split(":").get(1)»'''
+			for (jport : jswitch.get("ports") as ArrayNode) {
+				var port = TopologyFactory.eINSTANCE.createPort
+				port.id = jport.get("port_no").asInt
+				port.hwAddr = jport.get("hw_addr").asText
+				port.name = jport.get("name").asText
+				port.networkelement = s
+			}
+		}
 
-				val source = network.networkelements.findFirst[name == sourceName]
-				val sourceport = TopologyFactory.eINSTANCE.createPort
-				val dest = network.networkelements.findFirst[name == destName]
-				val destport = TopologyFactory.eINSTANCE.createPort
+		for (jhost : jhosts) {
+			var h = TopologyFactory.eINSTANCE.createHost
+			h.topology = network
+			var mac = jhost.get("mac").asText
+			h.mac = mac
+			h.name = "h" + mac.substring(mac.length - 2)
 
-				if (!network.connectors.exists [ l |
-					l.connectedports.map[networkelement].containsAll(#[source, dest])
-				]) {
-
-					sourceport.id = source.ports.size
-					sourceport.networkelement = source
-
-					destport.id = dest.ports.size
-					destport.networkelement = dest
-
-					var link = TopologyFactory.eINSTANCE.createConnector
-					link.connectedports.add(sourceport)
-					link.connectedports.add(destport)
-
-					link.network = network
-				}
-			]
+			var p = TopologyFactory.eINSTANCE.createPort
+			p.id = jhost.get("port").get("port_no").asInt
+			p.name = jhost.get("port").get("name").asText
+			p.networkelement = h
 
 		}
-		
-		} catch (JSONException e) {
-			
+
+		for (jlink : jlinks) {
+			var l = TopologyFactory.eINSTANCE.createConnector
+			val dpidsrc = Integer.parseInt(jlink.get("src").get("dpid").asText, 16)
+			val dpiddst = Integer.parseInt(jlink.get("dst").get("dpid").asText, 16)
+			val portsrc = Integer.parseInt(jlink.get("src").get("port_no").asText)
+			val portdst = Integer.parseInt(jlink.get("dst").get("port_no").asText)
+			l.network = network
+
+			var p1 = network.networkelements.filter(Switch).findFirst[dpid == "" + dpidsrc].ports.findFirst [
+				id == portsrc
+			]
+			var p2 = network.networkelements.filter(Switch).findFirst[dpid == "" + dpiddst].ports.findFirst [
+				id == portdst
+			]
+
+			p1.connector = l
+			p2.connector = l
 		}
 
 		res.contents.add(ne)

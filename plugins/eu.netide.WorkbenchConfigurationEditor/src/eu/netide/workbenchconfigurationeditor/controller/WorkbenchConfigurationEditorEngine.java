@@ -100,6 +100,7 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addButtonEnabledDataBinding(this.editor.getStopCoreBtn(), Constants.CORE_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnReattachCore(), Constants.CORE_RUNNING_MODEL);
 
+
 		this.addButtonEnabledDataBinding(this.editor.getBtnCopyApps(), Constants.SSH_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getTopologySSHButton(), Constants.SSH_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnProvision_1(), Constants.SSH_RUNNING_MODEL);
@@ -112,11 +113,13 @@ public class WorkbenchConfigurationEditorEngine {
 		this.addButtonEnabledDataBinding(this.editor.getBtnStopServerController(),
 				Constants.SERVER_CONTROLLER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnReattachServer(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
+
 		this.addButtonEnabledDataBinding(this.editor.getBtnImportTopology(), Constants.SERVER_CONTROLLER_RUNNING_MODEL);
 
 		this.addButtonDisabledDataBinding(this.editor.getBtnDebuggerOn(), Constants.DEBUGGER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnDebuggerOff(), Constants.DEBUGGER_RUNNING_MODEL);
 		this.addButtonEnabledDataBinding(this.editor.getBtnDebuggerReattach(), Constants.DEBUGGER_RUNNING_MODEL);
+
 
 		this.addStatusLabelDataBinding(this.editor.getLblDebuggerStatus(), Constants.DEBUGGER_RUNNING_MODEL);
 
@@ -325,7 +328,9 @@ public class WorkbenchConfigurationEditorEngine {
 
 							for (Object o : a) {
 								if (o instanceof LaunchConfigurationModel) {
-									am.add((LaunchConfigurationModel) o);
+									LaunchConfigurationModel m = (LaunchConfigurationModel) o;
+									m.setRunning(false);
+									am.add(m);
 								} else if (o instanceof SshProfileModel) {
 									pm.add((SshProfileModel) o);
 								}

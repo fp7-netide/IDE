@@ -43,7 +43,11 @@ abstract class ControllerStarter extends Starter {
 	}
 
 	new(String name, int port, String appPath, IProgressMonitor monitor) {
-		super(name, appPath, new VagrantBackend, monitor)
+		this(name, port, appPath, monitor, -1)
+	}
+	
+	new(String name, int port, String appPath, IProgressMonitor monitor, int id) {
+		super(name, appPath, new VagrantBackend, monitor, id)
 
 		this.controller = controller
 

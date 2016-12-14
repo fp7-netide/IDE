@@ -33,8 +33,8 @@
             <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_orange']"/>
           </style>
         </nodeMappings>
-        <nodeMappings name="AggregatedStatistics" domainClass="RuntimeTopology.AggregatedStatistics">
-          <style xsi:type="style:NoteDescription" labelExpression="['packet_count: ' + packet_count.toString() + '\n' +'byte_count:  ' + byte_count.toString() + '\n' +'flow_count: ' + flow_count.toString() /]" labelPosition="node" resizeKind="NSEW">
+        <nodeMappings name="AggregatedStatistics" doubleClickDescription="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@toolSections.0/@ownedTools[name='OpenGraph']" domainClass="RuntimeTopology.AggregatedStatistics">
+          <style xsi:type="style:NoteDescription" showIcon="false" labelExpression="['packet_count: ' + packet_count.toString() + '\n' +'byte_count:  ' + byte_count.toString() + '\n' +'flow_count: ' + flow_count.toString() /]" sizeComputationExpression="10" labelPosition="node" resizeKind="NSEW">
             <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_green']"/>
@@ -154,6 +154,13 @@
                   </subModelOperations>
                 </subModelOperations>
               </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:DoubleClickDescription" name="OpenGraph" mappings="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='AggregatedStatistics']">
+            <element name="element"/>
+            <elementView name="elementView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ExternalJavaAction" name="OpenAggregatedGraphAction" id="eu.netide.runtime.topology.design.actions.OpenAggregatedGraphAction"/>
             </initialOperation>
           </ownedTools>
         </toolSections>

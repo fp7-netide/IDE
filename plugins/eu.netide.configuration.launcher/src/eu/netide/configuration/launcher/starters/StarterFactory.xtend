@@ -19,6 +19,7 @@ import eu.netide.configuration.launcher.starters.impl.EmulatorStarter
 import eu.netide.configuration.utils.NetIDE
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.debug.core.ILaunchConfiguration
+import eu.netide.configuration.launcher.starters.impl.RyuShimTopologyStarter
 
 class StarterFactory {
 
@@ -62,6 +63,16 @@ class StarterFactory {
 
 	public def IStarter createSingleControllerStarter(String platform, String appPath, int port,
 		IProgressMonitor monitor, String appFolderPath, String appFlag) {
+		createSingleControllerStarter(platform, appPath, port, monitor, appFolderPath, appFlag, -1)
+	}
+
+	public def IStarter createSingleControllerStarter(String platform, String appPath, int port,
+		IProgressMonitor monitor, String appFolderPath, String appFlag, int id) {
+		createSingleControllerStarter("", platform, appPath, port, monitor, appFolderPath, appFlag, id)
+	}
+
+	public def IStarter createSingleControllerStarter(String appName, String platform, String appPath, int port,
+		IProgressMonitor monitor, String appFolderPath, String appFlag, int id) {
 		var controllerplatform = platform
 
 		if (controllerplatform.equals(NetIDE.CONTROLLER_ENGINE)) {
@@ -69,38 +80,17 @@ class StarterFactory {
 			var IStarter starter
 			switch controllerplatform {
 				case NetIDE.CONTROLLER_POX:
-					starter = new PoxStarter(port, appPath, monitor)
+					starter = new PoxStarter(appName, port, appPath, monitor, id)
 				case NetIDE.CONTROLLER_RYU:
-					starter = new RyuStarter(port, appPath, monitor, appFolderPath, appFlag)
+					starter = new RyuStarter(appName, port, appPath, monitor, appFolderPath, appFlag, id)
 				case NetIDE.CONTROLLER_PYRETIC:
-					starter = new PyreticStarter(port, appPath, monitor)
+					starter = new PyreticStarter(appName, port, appPath, monitor, id)
 			}
 			starter.setBackend(backend)
 			return starter
 		}
 	}
 
-//	public def IStarter createSingleControllerStarter(String platform, Controller controller,
-//		IProgressMonitor monitor) {
-//		var controllerplatform = platform
-//
-//		if (controllerplatform.equals(NetIDE.CONTROLLER_ENGINE)) {
-//		} else {
-//			var IStarter starter
-//			switch controllerplatform {
-//				case NetIDE.CONTROLLER_POX:
-//					starter = new PoxStarter(configuration, controller, monitor)
-//				case NetIDE.CONTROLLER_RYU:
-//					starter = new RyuStarter(configuration, controller, monitor)
-//				case NetIDE.CONTROLLER_PYRETIC:
-//					starter = new PyreticStarter(configuration, controller, monitor)
-//				case NetIDE.CONTROLLER_FLOODLIGHT:
-//					starter = new FloodlightBackendStarter(configuration, controller, monitor)
-//			}
-//			starter.setBackend(backend)
-//			return starter
-//		}
-//	}
 	@Deprecated
 	public def IStarter createShimStarter(ILaunchConfiguration configuration, Controller controller,
 		IProgressMonitor monitor) {
@@ -126,16 +116,23 @@ class StarterFactory {
 
 	public def IStarter createShimStarter(String platform, String appPath, int port, IProgressMonitor monitor,
 		String engine, String odlKaraf) {
+		createShimStarter(platform, appPath, port, monitor, engine, odlKaraf, -1)
+	}
+
+	public def IStarter createShimStarter(String platform, String appPath, int port, IProgressMonitor monitor,
+		String engine, String odlKaraf, int id) {
 
 		var serverplatform = platform
 		var IStarter starter
 		switch serverplatform {
 			case NetIDE.CONTROLLER_POX:
-				starter = new PoxShimStarter(appPath, port, monitor)
+				starter = new PoxShimStarter(appPath, port, monitor, id)
 			case NetIDE.CONTROLLER_RYU:
-				starter = new RyuShimStarter(appPath, port, monitor, engine)
+				starter = new RyuShimStarter(appPath, port, monitor, engine, id)
+			case NetIDE.CONTROLLER_RYU_REST:
+				starter = new RyuShimTopologyStarter(appPath, port, monitor, engine, id)
 			case NetIDE.CONTROLLER_ODL:
-				starter = new OdlShimStarter(appPath, port, monitor, odlKaraf)
+				starter = new OdlShimStarter(appPath, port, monitor, odlKaraf, id)
 		}
 		starter.setBackend(backend)
 		return starter
@@ -166,16 +163,26 @@ class StarterFactory {
 
 	public def IStarter createBackendStarter(String platform, String appPath, int port, IProgressMonitor monitor,
 		String engine, String flag) {
+		createBackendStarter(platform, appPath, port, monitor, engine, flag, -1)
+	}
+
+	public def IStarter createBackendStarter(String platform, String appPath, int port, IProgressMonitor monitor,
+		String engine, String flag, int id) {
+		createBackendStarter("", platform, appPath, port, monitor, engine, flag, id)
+	}
+
+	public def IStarter createBackendStarter(String appName, String platform, String appPath, int port,
+		IProgressMonitor monitor, String engine, String flag, int id) {
 
 		var clientplatform = platform
 		var IStarter starter
 		switch clientplatform {
 			case NetIDE.CONTROLLER_FLOODLIGHT:
-				starter = new FloodlightBackendStarter(port, appPath, monitor)
+				starter = new FloodlightBackendStarter(appName, port, appPath, monitor, id)
 			case NetIDE.CONTROLLER_RYU:
-				starter = new RyuBackendStarter(port, appPath, monitor, engine, flag)
+				starter = new RyuBackendStarter(appName, port, appPath, monitor, engine, flag, id)
 			case NetIDE.CONTROLLER_PYRETIC:
-				starter = new PyreticBackendStarter(port, appPath, monitor)
+				starter = new PyreticBackendStarter(appName, port, appPath, monitor, id)
 		}
 		starter.backend = backend
 		return starter

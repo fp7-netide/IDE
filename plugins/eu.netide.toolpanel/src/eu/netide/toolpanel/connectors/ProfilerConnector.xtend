@@ -20,6 +20,9 @@ import org.eclipse.emf.transaction.RecordingCommand
 import org.eclipse.sirius.business.api.session.Session
 import org.eclipse.ui.PlatformUI
 import org.eclipse.xtend.lib.annotations.Accessors
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 class ProfilerConnector implements IZmqNetIpListener {
 
@@ -35,12 +38,12 @@ class ProfilerConnector implements IZmqNetIpListener {
 	private ObjectNode log
 	private FileSystemAccess fsa
 
-	private String address
+	//private String address
 
 	@Accessors(PUBLIC_GETTER, PUBLIC_SETTER)
 	private double pollInterval = -1
 
-	private Timer pollJob
+	private ScheduledExecutorService pollJob
 	private PollTask pollTask
 	
 	private ProfilerHandler profilerHandler
@@ -80,11 +83,10 @@ class ProfilerConnector implements IZmqNetIpListener {
 		this.profilerHandler = new ProfilerHandler
 	}
 
-	private static class PollTask extends TimerTask {
+	private static class PollTask implements Runnable {
 		private ProfilerConnector connector
 
 		new(ProfilerConnector connector) {
-			super()
 			this.connector = connector
 		}
 
@@ -94,6 +96,8 @@ class ProfilerConnector implements IZmqNetIpListener {
 	}
 
 	override update(Message msg) {
+		LogProvider.instance.deactivateReplayLog
+		this.log = LogProvider.instance.log
 		var json = mapper.readTree(msg.payload)
 
 		if (json.has("PortStats"))
@@ -109,9 +113,10 @@ class ProfilerConnector implements IZmqNetIpListener {
 
 			override run() {
 				session = manager.session
+				if (!log.has("FlowLog")) log.putObject("FlowLog")
 
 				val flowLog = log.get("FlowLog") as ObjectNode
-				if(flowStats.size == 0) return
+				if(flowLog == null || flowStats.size == 0) return
 				val dpid = flowStats.get(0).get("dpid").asText()
 
 				if (!flowLog.has(dpid))
@@ -133,51 +138,25 @@ class ProfilerConnector implements IZmqNetIpListener {
 				
 				profilerHandler.handleFlowStats(flowStats)
 
-//				for (node : flowStats) {
-//					if (node.get("Type").asText.equals("Flow Stats")) {
-//						var updateCommand = new RecordingCommand(session.getTransactionalEditingDomain()) {
-//							override doExecute() {
-//								val dpid = node.get("dpid").asText
-//								val env = RuntimeModelManager.instance.runtimeData.networkenvironment
-//								val sw = env.getNetworks().map[x|x.networkelements].flatten.filter(typeof(Switch)).
-//									findFirst[x|x.dpid == dpid]
-//								if (sw == null)
-//									return
-//								var FlowStatistics fs = rt.flowstatistics.findFirst[x|x.^switch.equals(sw)]
-//
-//								if (fs == null) {
-//									fs = RuntimeTopologyFactory.eINSTANCE.createFlowStatistics
-//									fs.^switch = sw
-//									fs.setRuntimedata(rt);
-//								}
-//								fs.duration_sec = node.get("duration_sec").asInt
-//								fs.duration_nsec = node.get("duration_nsec").asInt
-//								fs.priority = node.get("priority").asInt
-//								fs.idle_timeout = node.get("idle_timeout").asInt
-//								fs.hard_timeout = node.get("hard_timeout").asInt
-//								fs.cookie = node.get("cookie").asInt
-//								fs.packet_count = node.get("packet_count").asInt
-//								fs.byte_count = node.get("byte_count").asInt
-//							}
-//						};
-//						session.transactionalEditingDomain.commandStack.execute(updateCommand)
-//					}
-//				}
-//				return Status.OK_STATUS
 			}
 
 		}
 		PlatformUI.workbench.display.asyncExec(job)
-	// job.schedule
 	}
 
 	private def void handlePortStats(ArrayNode portStats) {
 		var job = new Thread("Updating Runtime Model") {
 
 			override run() {
+				if (!log.has("PortLog")) log.putObject("PortLog")
+				
 				val portLog = log.get("PortLog") as ObjectNode
 				val dpid = portStats.get(0).get("dpid").asText()
+				
+				
 
+				if (portLog == null) return;
+				
 				session = manager.session
 
 				if (!portLog.has(dpid))
@@ -209,6 +188,7 @@ class ProfilerConnector implements IZmqNetIpListener {
 
 			override run() {
 				session = manager.session
+				if (!log.has("AggregatedLog")) log.putObject("AggregatedLog")
 
 				val flowLog = log.get("AggregatedLog") as ObjectNode
 				if(aggregatedStats.size == 0) return
@@ -280,13 +260,12 @@ class ProfilerConnector implements IZmqNetIpListener {
 	public def startPolling(double interval) {
 		this.pollInterval = interval
 		this.pollTask = new PollTask(this)
-		this.pollJob = new Timer()
-		pollJob.schedule(pollTask, 0, (1000 * interval) as long)
+		this.pollJob = Executors.newScheduledThreadPool(5)
+		this.pollJob.scheduleAtFixedRate(pollTask, 0, (1000 * interval) as int, TimeUnit.MILLISECONDS)
 	}
 
 	public def stopPolling() {
-		pollJob.cancel
-		pollJob.purge
+		pollJob.shutdown()
 	}
 
 	public def poll() {

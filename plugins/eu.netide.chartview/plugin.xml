@@ -11,9 +11,15 @@
       <view
             category="ChartView"
             class="eu.netide.chartview.view.ChartView"
-            icon="icons/sample.gif"
             id="eu.netide.chartview.views.ChartView"
-            name="Chart View"
+            name="Port Statistics"
+            restorable="false">
+      </view>
+      <view
+            category="ChartView"
+            class="eu.netide.chartview.view.ChartViewAggregatedStats"
+            id="eu.netide.chartview.views.ChartViewAggregatedStats"
+            name="Aggregated Statistics"
             restorable="false">
       </view>
    </extension>

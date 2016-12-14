@@ -22,5 +22,9 @@
            actionClass="eu.netide.runtime.topology.design.actions.OpenGraphAction"
            id="eu.netide.runtime.topology.design.actions.OpenGraphAction">
      </javaActions>
+     <javaActions
+           actionClass="eu.netide.runtime.topology.design.actions.OpenAggregatedGraphAction"
+           id="eu.netide.runtime.topology.design.actions.OpenAggregatedGraphAction">
+     </javaActions>
   </extension>
 </plugin>

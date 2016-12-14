@@ -70,10 +70,14 @@ abstract class Starter implements IStarter {
 	}
 
 	new(String name, String path, Backend backend, IProgressMonitor monitor) {
-		this(name, path, backend, monitor, null)
+		this(name, path, backend, monitor, null, -1)
 	}
+	
+	new(String name, String path, Backend backend, IProgressMonitor monitor, int id){
+		this(name, path, backend, monitor, null, id)
+	} 
 
-	new(String name, String path, Backend backend, IProgressMonitor monitor, String vagrantFilePath) {
+	new(String name, String path, Backend backend, IProgressMonitor monitor, String vagrantFilePath, int id) {
 		this.name = name
 		// this.configuration = configuration
 		this.monitor = monitor
@@ -86,8 +90,11 @@ abstract class Starter implements IStarter {
 		} else {
 			this.workingDir = path.getIFile.project.location.toFile
 		}
-
-		this.id = "" + (Math.random * 10000) as int
+		
+		if(id == -1)
+			this.id = "" + (Math.random * 10000) as int
+		else
+			this.id = "" +id
 
 		this.backend = backend
 	}
