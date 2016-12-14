@@ -4,10 +4,11 @@ import org.eclipse.ui.PlatformUI
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.zeromq.ZMQ
 import org.zeromq.ZMQException
+import org.zeromq.ZMQ.Context
 
 class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 
-//	var Context ctx
+	var Context ctx
 	@Accessors(PUBLIC_GETTER, PUBLIC_SETTER)
 	private String address
 
@@ -25,7 +26,8 @@ class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 	}
 
 	override void send(String msg) {
-		var ctx = ZMQ.context(1)
+//		var ctx = ZMQ.context(1)
+		if (ctx == null) ctx = ZMQ.context(1)
 		var req = ctx.socket(ZMQ.REQ)
 		req.receiveTimeOut = 100
 		try {
@@ -36,9 +38,10 @@ class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 			e.printStackTrace
 		} catch (ArrayIndexOutOfBoundsException e) {
 			e.printStackTrace
+		} catch (Exception e) {
+			e.printStackTrace
 		} finally {
 			req.close
-			ctx.close
 		}
 	}
 
@@ -68,7 +71,6 @@ class ZmqSendReceiveHub implements IZmqSendReceiveHub {
 			}
 
 		}
-//		t.start
 		PlatformUI.workbench.activeWorkbenchWindow.shell.display.asyncExec(t)
 
 	}

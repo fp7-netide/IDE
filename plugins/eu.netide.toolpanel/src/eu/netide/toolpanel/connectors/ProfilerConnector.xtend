@@ -23,6 +23,7 @@ import org.eclipse.xtend.lib.annotations.Accessors
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.ScheduledFuture
 
 class ProfilerConnector implements IZmqNetIpListener {
 
@@ -47,6 +48,8 @@ class ProfilerConnector implements IZmqNetIpListener {
 	private PollTask pollTask
 	
 	private ProfilerHandler profilerHandler
+	
+	private ScheduledFuture future
 
 	new(IFile file, String address) {
 		this.hub = ZmqHubManager.instance.getPubSubHub("Profiler", String.format("tcp://%s:5561", address))
@@ -91,7 +94,12 @@ class ProfilerConnector implements IZmqNetIpListener {
 		}
 
 		override run() {
-			connector.poll()
+			try{
+				connector.poll()
+			}
+			catch(Exception e){
+				e.printStackTrace
+			}
 		}
 	}
 
@@ -260,8 +268,8 @@ class ProfilerConnector implements IZmqNetIpListener {
 	public def startPolling(double interval) {
 		this.pollInterval = interval
 		this.pollTask = new PollTask(this)
-		this.pollJob = Executors.newScheduledThreadPool(5)
-		this.pollJob.scheduleAtFixedRate(pollTask, 0, (1000 * interval) as int, TimeUnit.MILLISECONDS)
+		this.pollJob = Executors.newSingleThreadScheduledExecutor
+		this.future = this.pollJob.scheduleAtFixedRate(pollTask, 0, (1000 * interval) as int, TimeUnit.MILLISECONDS)
 	}
 
 	public def stopPolling() {

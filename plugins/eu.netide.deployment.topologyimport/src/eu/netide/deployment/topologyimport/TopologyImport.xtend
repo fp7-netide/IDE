@@ -27,7 +27,7 @@ class TopologyImport {
 	def createTopologyModelFromString(String switches, String hosts, String links, String filename) {
 		var mapper = new ObjectMapper
 		var jswitches = mapper.readTree(switches) as ArrayNode
-		var jhosts = mapper.readTree(hosts) as ArrayNode
+		var jhosts = if (hosts.startsWith("<")) mapper.createArrayNode else mapper.readTree(hosts) as ArrayNode
 		var jlinks = mapper.readTree(links) as ArrayNode
 
 		var ResourceSet resset = new ResourceSetImpl()
