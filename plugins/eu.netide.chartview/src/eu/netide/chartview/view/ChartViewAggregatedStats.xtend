@@ -73,7 +73,7 @@ class ChartViewAggregatedStats extends ViewPart {
 		mainComposite.layoutData = new GridData(GridData.FILL_BOTH)
 		sc.setContent(mainComposite)
 
-		viewer = new AggregatedStatsChartViewer(mainComposite, SWT.NONE)
+		viewer = new AggregatedStatsChartViewer(mainComposite, SWT.DOUBLE_BUFFERED)
 		viewer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.addPaintListener(viewer);
 		mainComposite.layout()
