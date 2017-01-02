@@ -28,14 +28,20 @@ Alternatively, you can drag the button below into your running Eclipse window.
 
 ### ...by building from source
 
-Navigate to the folder ```releng/eu.netide.parent``` and type ```mvn package```. The build process can take some time.
+Check out the master branch.
+
+Navigate to the folder ```releng/eu.netide.dependencies``` and type mvn p2:site. This will build an Eclipse repository for external dependencies at ```releng/eu.netide/dependencies/target/repository```.
+
+Navigate to the folder ```releng/eu.netide.parent``` and type ```MAVEN_OPTS="-Xmx1024M" mvn package```. The build process can take some time.
 
 Once it has finished, you'll find the contents of an eclipse update site as a zip file in ```releng/eu.netide.product/target```.
 
-Open your Eclipse installation, go to ```Help->Install New Software->Add->Archive``` and enter the location of the zip file.
+Open your Eclipse installation.
+
+Go to ```Help->Install New Software->Add->Local``` and specify the location of the dependency repository.
+Go to ```Help->Install New Software->Add->Archive``` and specify the location of the zip file.
 
 Select NetIDE from the list and follow the instructions. After restarting Eclipse, NetIDE is ready to run.
-
 
 
 ### Set up Eclipse
