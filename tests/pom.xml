@@ -66,7 +66,7 @@
 
             <!-- As well AUT can be downloaded from HTTP -->
 
-            <explicit>http://ftp.fau.de/eclipse/technology/epp/downloads/release/neon/2/eclipse-java-neon-2-linux-gtk-x86_64.tar.gz</explicit>
+            <explicit>http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/technology/epp/downloads/release/neon/2/eclipse-modeling-neon-2-linux-gtk-x86_64.tar.gz</explicit>
 
 
             <!-- AUT can be downloaded automatically from Maven repository -->
