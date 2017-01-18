@@ -18,7 +18,7 @@ with [get-window Install] {
     get-button "Add..." | click
     get-window "Add Repository" | get-editbox -after [get-label "Name:"] | set-text "NetIDE_Plugin"
 }
-set-dialog-result File [concat [get-workspace-location]"/../../../../releng/eu.netide.product/target/eu.netide.product-0.4.0-SNAPSHOT.zip"]
+set-dialog-result File [concat [get-workspace-location]"/../../../releng/eu.netide.product/target/eu.netide.product-0.4.0-SNAPSHOT.zip"]
 with [get-window Install] {
     with [get-window "Add Repository"] {
         get-button "Archive..." | click
