@@ -3,10 +3,10 @@ Format-Version: 1.0
 Element-Name: Install_NetIde_Plugin
 Element-Type: testcase
 Element-Version: 3.0
-External-Reference:
+External-Reference: 
 Id: _IaCQANf8Eea7t7MacoxUUg
 Runtime-Version: 2.1.0.201606221726
-Save-Time: 1/19/17 10:47 AM
+Save-Time: 1/19/17 3:19 PM
 Testcase-Type: ecl
 
 ------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
@@ -30,7 +30,7 @@ with [get-window Install] {
 }
 get-window "Security Warning" | get-button OK | click
 wait-until-eclipse-is-ready
-get-window "Software Updates" | get-button Yes | click
+restart-aut
 wait-until-eclipse-is-ready
 
 get-menu "Help/Install New Software..." | click
@@ -53,6 +53,6 @@ with [get-window Install] {
 
 get-window "Security Warning" | get-button OK | click
 wait-until-eclipse-is-ready
-get-window "Software Updates" | get-button Yes | click
+restart-aut
 wait-until-eclipse-is-ready
 ------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

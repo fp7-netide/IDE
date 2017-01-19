@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eu.netide.configuration:NetworkEnvironment xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:eu.netide.configuration="eu.netide.configuration.topology">
+  <networks name="I">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW1" ip="" dpid="1" controller="//@controllers.0">
+      <ports id="1" connector="//@networks.0/@connectors.5"/>
+      <ports id="2" connector="//@networks.0/@connectors.7"/>
+      <ports id="3" connector="//@networks.0/@connectors.15"/>
+      <ports id="4" connector="//@networks.0/@connectors.16"/>
+      <ports id="5" connector="//@networks.0/@connectors.13"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW1b" dpid="5" controller="//@controllers.0">
+      <ports id="1" connector="//@networks.0/@connectors.18"/>
+      <ports id="2" connector="//@networks.0/@connectors.6"/>
+      <ports id="3" connector="//@networks.0/@connectors.8"/>
+      <ports id="4" connector="//@networks.0/@connectors.17"/>
+      <ports id="5" connector="//@networks.0/@connectors.14"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW3" dpid="3" controller="//@controllers.0">
+      <ports id="1" connector="//@networks.0/@connectors.15"/>
+      <ports id="2" connector="//@networks.0/@connectors.23"/>
+      <ports id="3" connector="//@networks.0/@connectors.0"/>
+      <ports id="4" connector="//@networks.0/@connectors.17"/>
+      <ports id="5" connector="//@networks.0/@connectors.20"/>
+      <ports id="6" connector="//@networks.0/@connectors.19"/>
+      <ports id="7" connector="//@networks.0/@connectors.24"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW3b" ip="" dpid="7" controller="//@controllers.0">
+      <ports id="1" connector="//@networks.1/@connectors.1"/>
+      <ports id="2" connector="//@networks.0/@connectors.16"/>
+      <ports id="3" connector="//@networks.0/@connectors.0"/>
+      <ports id="4" connector="//@networks.0/@connectors.18"/>
+      <ports id="5" connector="//@networks.0/@connectors.21"/>
+      <ports id="6" connector="//@networks.0/@connectors.22"/>
+      <ports id="7" connector="//@networks.0/@connectors.25"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH1" dpid="11" controller="//@controllers.0">
+      <ports id="1" connector="//@networks.0/@connectors.5"/>
+      <ports id="2" connector="//@networks.0/@connectors.6"/>
+      <ports id="3" connector="//@networks.0/@connectors.1"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH4" dpid="14" controller="//@controllers.0">
+      <ports id="1" connector="//@networks.0/@connectors.11"/>
+      <ports id="2" connector="//@networks.0/@connectors.12"/>
+      <ports id="3" connector="//@networks.0/@connectors.4"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Host" name="H1" ip="10.0.1.11">
+      <ports id="1" connector="//@networks.0/@connectors.1"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Host" name="H2" ip="10.0.1.12">
+      <ports id="1" connector="//@networks.0/@connectors.3"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Host" name="H3" ip="10.0.1.13" prefix="24">
+      <ports id="1" connector="//@networks.0/@connectors.2"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Host" name="H4" ip="10.0.1.14" prefix="24">
+      <ports id="1" connector="//@networks.0/@connectors.4"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH3" dpid="13" controller="//@controllers.0">
+      <ports id="1" connector="//@networks.0/@connectors.2"/>
+      <ports id="2" connector="//@networks.0/@connectors.7"/>
+      <ports id="3" connector="//@networks.0/@connectors.8"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH2" dpid="12" controller="//@controllers.0">
+      <ports id="1" connector="//@networks.0/@connectors.3"/>
+      <ports id="2" connector="//@networks.0/@connectors.9"/>
+      <ports id="3" connector="//@networks.0/@connectors.10"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW2" ip="" dpid="2" controller="//@controllers.0">
+      <ports id="1" connector="//@networks.0/@connectors.11"/>
+      <ports id="2" connector="//@networks.0/@connectors.21"/>
+      <ports id="3" connector="//@networks.0/@connectors.9"/>
+      <ports id="4" connector="//@networks.0/@connectors.13"/>
+      <ports id="5" connector="//@networks.0/@connectors.19"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW2b" dpid="6" controller="//@controllers.0">
+      <ports id="1" connector="//@networks.0/@connectors.12"/>
+      <ports id="2" connector="//@networks.0/@connectors.20"/>
+      <ports id="3" connector="//@networks.0/@connectors.10"/>
+      <ports id="4" connector="//@networks.0/@connectors.14"/>
+      <ports id="5" connector="//@networks.0/@connectors.22"/>
+    </networkelements>
+    <connectors connectedports="//@networks.0/@networkelements.2/@ports.2 //@networks.0/@networkelements.3/@ports.2"/>
+    <connectors connectedports="//@networks.0/@networkelements.6/@ports.0 //@networks.0/@networkelements.4/@ports.2"/>
+    <connectors connectedports="//@networks.0/@networkelements.8/@ports.0 //@networks.0/@networkelements.10/@ports.0"/>
+    <connectors connectedports="//@networks.0/@networkelements.7/@ports.0 //@networks.0/@networkelements.11/@ports.0"/>
+    <connectors connectedports="//@networks.0/@networkelements.9/@ports.0 //@networks.0/@networkelements.5/@ports.2"/>
+    <connectors connectedports="//@networks.0/@networkelements.4/@ports.0 //@networks.0/@networkelements.0/@ports.0"/>
+    <connectors connectedports="//@networks.0/@networkelements.4/@ports.1 //@networks.0/@networkelements.1/@ports.1"/>
+    <connectors connectedports="//@networks.0/@networkelements.10/@ports.1 //@networks.0/@networkelements.0/@ports.1"/>
+    <connectors connectedports="//@networks.0/@networkelements.10/@ports.2 //@networks.0/@networkelements.1/@ports.2"/>
+    <connectors connectedports="//@networks.0/@networkelements.11/@ports.1 //@networks.0/@networkelements.12/@ports.2"/>
+    <connectors connectedports="//@networks.0/@networkelements.11/@ports.2 //@networks.0/@networkelements.13/@ports.2"/>
+    <connectors connectedports="//@networks.0/@networkelements.12/@ports.0 //@networks.0/@networkelements.5/@ports.0"/>
+    <connectors connectedports="//@networks.0/@networkelements.13/@ports.0 //@networks.0/@networkelements.5/@ports.1"/>
+    <connectors connectedports="//@networks.0/@networkelements.0/@ports.4 //@networks.0/@networkelements.12/@ports.3"/>
+    <connectors connectedports="//@networks.0/@networkelements.1/@ports.4 //@networks.0/@networkelements.13/@ports.3"/>
+    <connectors connectedports="//@networks.0/@networkelements.0/@ports.2 //@networks.0/@networkelements.2/@ports.0"/>
+    <connectors connectedports="//@networks.0/@networkelements.0/@ports.3 //@networks.0/@networkelements.3/@ports.1"/>
+    <connectors connectedports="//@networks.0/@networkelements.1/@ports.3 //@networks.0/@networkelements.2/@ports.3"/>
+    <connectors connectedports="//@networks.0/@networkelements.1/@ports.0 //@networks.0/@networkelements.3/@ports.3"/>
+    <connectors connectedports="//@networks.0/@networkelements.2/@ports.5 //@networks.0/@networkelements.12/@ports.4"/>
+    <connectors connectedports="//@networks.0/@networkelements.2/@ports.4 //@networks.0/@networkelements.13/@ports.1"/>
+    <connectors connectedports="//@networks.0/@networkelements.3/@ports.4 //@networks.0/@networkelements.12/@ports.1"/>
+    <connectors connectedports="//@networks.0/@networkelements.3/@ports.5 //@networks.0/@networkelements.13/@ports.4"/>
+    <connectors connectedports="//@networks.0/@networkelements.2/@ports.1 //@networks.1/@networkelements.0/@ports.2"/>
+    <connectors connectedports="//@networks.0/@networkelements.2/@ports.6 //@networks.1/@networkelements.1/@ports.1"/>
+    <connectors connectedports="//@networks.0/@networkelements.3/@ports.6 //@networks.1/@networkelements.1/@ports.2"/>
+  </networks>
+  <networks name="C">
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW4" dpid="4" controller="//@controllers.0">
+      <ports id="2" connector="//@networks.1/@connectors.0"/>
+      <ports id="3" connector="//@networks.1/@connectors.1"/>
+      <ports id="4" connector="//@networks.0/@connectors.23"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="SW4b" dpid="8" controller="//@controllers.0">
+      <ports id="2" connector="//@networks.2/@connectors.1"/>
+      <ports id="3" connector="//@networks.0/@connectors.24"/>
+      <ports id="4" connector="//@networks.0/@connectors.25"/>
+    </networkelements>
+    <connectors connectedports="//@networks.1/@networkelements.0/@ports.0 //@networks.2/@networkelements.1/@ports.0"/>
+    <connectors connectedports="//@networks.1/@networkelements.0/@ports.1 //@networks.0/@networkelements.3/@ports.0"/>
+  </networks>
+  <networks name="pingall">
+    <networkelements xsi:type="eu.netide.configuration:Host" name="H5" ip="10.0.1.15" prefix="24">
+      <ports id="1" connector="//@networks.2/@connectors.0"/>
+    </networkelements>
+    <networkelements xsi:type="eu.netide.configuration:Switch" name="HH5" dpid="15" controller="//@controllers.0">
+      <ports id="1" connector="//@networks.1/@connectors.0"/>
+      <ports id="2" connector="//@networks.2/@connectors.0"/>
+      <ports id="3" connector="//@networks.2/@connectors.1"/>
+    </networkelements>
+    <connectors connectedports="//@networks.2/@networkelements.1/@ports.1 //@networks.2/@networkelements.0/@ports.0"/>
+    <connectors connectedports="//@networks.2/@networkelements.1/@ports.2 //@networks.1/@networkelements.1/@ports.0"/>
+  </networks>
+  <controllers name="c1 " switches="//@networks.2/@networkelements.1 //@networks.1/@networkelements.1 //@networks.1/@networkelements.0 //@networks.0/@networkelements.2 //@networks.0/@networkelements.3 //@networks.0/@networkelements.0 //@networks.0/@networkelements.1 //@networks.0/@networkelements.12 //@networks.0/@networkelements.13 //@networks.0/@networkelements.4 //@networks.0/@networkelements.10 //@networks.0/@networkelements.11 //@networks.0/@networkelements.5" ip="127.0.0.1" portNo="6644"/>
+</eu.netide.configuration:NetworkEnvironment>
