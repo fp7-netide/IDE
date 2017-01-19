@@ -1,0 +1,37 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Element-Name: Create_App
+Element-Type: testcase
+Element-Version: 3.0
+External-Reference: 
+Id: _L3MBIN5DEeaoDpa_vDEfEQ
+Runtime-Version: 2.1.0.201606221726
+Save-Time: 1/19/17 1:32 PM
+Testcase-Type: ecl
+
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
+Content-Type: text/ecl
+Entry-Name: .content
+
+get-eclipse-window | key-type "M1+n"
+with [get-window New] {
+    get-editbox -after [get-label "Wizards:"] | set-text "type filter text"
+    get-tree | select "NetIDE/NetIDE App"
+    get-button "Next >" | click
+}
+with [get-window -class WizardDialog] {
+    get-editbox -after [get-label "Name:"] | set-text NewRyuApp
+    get-button Finish | click
+}
+with [get-view "Package Explorer" | get-tree] {
+    select "NetIDE_Test_Project/apps" | double-click
+    select "NetIDE_Test_Project/apps/NewRyuApp" | double-click
+}
+with [get-view "Package Explorer" | get-tree] {
+    get-item "NetIDE_Test_Project/apps/NewRyuApp" | get-property caption | equals NewRyuApp | verify-true
+    get-item "NetIDE_Test_Project/apps/NewRyuApp/NewRyuApp.params" | get-property caption | equals "NewRyuApp.params" 
+        | verify-true
+    get-item "NetIDE_Test_Project/apps/NewRyuApp/NewRyuApp.sysreq" | get-property caption | equals "NewRyuApp.sysreq" 
+        | verify-true
+}
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

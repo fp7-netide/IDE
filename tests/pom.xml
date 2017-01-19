@@ -181,11 +181,12 @@
                but it is possible to pass test suite names, so it
                will execute only test suites from given project. -->
 
-          <!--
+  
 		  <suites>
-			<suite>MyTestSuite</suite>
+			<suite>Setup_Suite</suite>
+			<suite>Create_Content_Suite</suite>
 		  </suites>
-          -->
+
 
           <!-- Sometimes it might be useful to skip a test case
                (for instance because of some unresolved bug). RCPTT
