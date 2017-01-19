@@ -183,9 +183,7 @@
 
   
 		  <suites>
-			<suite>Setup_Suite</suite>
-			<suite>Create_Content_Suite</suite>
-			<suite>Basic_Workbench_Suite</suite>
+			<suite>Test_Suite</suite>
 		  </suites>
 
 
