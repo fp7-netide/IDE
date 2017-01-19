@@ -25,7 +25,7 @@ with [get-window Install] {
     get-tree | get-item "Maven osgi-bundles" | check
     get-button "Next >" | click
     get-button "Next >" | click
-    get-button "I accept the terms of the license agreement" | click
+    get-button "I accept the terms of the license agreements" | click
     get-button Finish | click
 }
 get-window "Security Warning" | get-button OK | click
@@ -46,7 +46,7 @@ with [get-window Install] {
     get-tree | get-item NetIDE | check
     get-button "Next >" | click
     get-button "Next >" | click
-    get-button "I accept the terms of the license agreement" | click
+    get-button "I accept the terms of the license agreements" | click
 }
 
 get-window "Security Warning" | get-button OK | click
