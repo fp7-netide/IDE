@@ -4,6 +4,14 @@ Element-Name: Basic_Workbench_Suite
 Element-Type: testsuite
 Element-Version: 2.0
 Id: _BsIF4N5EEeaoDpa_vDEfEQ
+Manually-Ordered: true
 Runtime-Version: 2.1.0.201606221726
-Save-Time: 1/19/17 1:37 PM
+Save-Time: 1/19/17 2:15 PM
 
+------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8
+Content-Type: text/testcase
+Entry-Name: testcase-items
+
+_VFUvMN5EEeaoDpa_vDEfEQ	// kind: 'test' name: 'Open_With_Initial_Setup' path: 'Open_With_Initial_Setup.test'
+
+------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8--
