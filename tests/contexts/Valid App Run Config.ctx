@@ -1,0 +1,25 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Context-Type: org.eclipse.rcptt.ctx.parameters
+Element-Name: Valid App Run Config
+Element-Type: context
+Element-Version: 2.0
+Id: _k6tO8OLjEeaxW86mJ5AXtw
+Runtime-Version: 2.1.0.201606221726
+Save-Time: 1/25/17 11:13 AM
+
+------=_.parameters.context-2e023de5-3294-36a9-ac1d-6701f05a40ee
+Content-Type: text/properties
+Entry-Name: .parameters.context
+
+#Wed Jan 25 11:13:29 CET 2017
+App_NetManager=Test_Project/apps/iits_netmanager/src/IITS_NetManager.py
+Name=iits_netmanager
+App_NetManage_Display_Name=IITS_NetManager.py
+OpenFlowPort=7733
+Platform_Ryu=Ryu
+FlagApp=
+App_NetManager_Saved_Path=platform\:/resource/Test_Project/apps/iits_netmanager/src/IITS_NetManager.py
+FlagBackend=--observe-links
+
+------=_.parameters.context-2e023de5-3294-36a9-ac1d-6701f05a40ee--

@@ -1,0 +1,27 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Context-Type: org.eclipse.rcptt.ctx.parameters
+Element-Name: Valid SSH Profile
+Element-Type: context
+Element-Version: 2.0
+Id: _qt99IOLaEeaxW86mJ5AXtw
+Runtime-Version: 2.1.0.201606221726
+Save-Time: 1/25/17 10:12 AM
+
+------=_.parameters.context-2e023de5-3294-36a9-ac1d-6701f05a40ee
+Content-Type: text/properties
+Entry-Name: .parameters.context
+
+#Wed Jan 25 10:12:14 CET 2017
+SSHIDFile="path/to/id/file"
+Username=vagrant
+Host2=localhost2
+ProfileName=vagrant
+SSHIDFile2="path/to/id/file2"
+Host=localhost
+Port2=2223
+Username2=vagrant2
+Port=2222
+ProfileName2=vagrant2
+
+------=_.parameters.context-2e023de5-3294-36a9-ac1d-6701f05a40ee--

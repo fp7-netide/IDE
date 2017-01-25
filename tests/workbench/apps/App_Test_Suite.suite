@@ -1,18 +1,17 @@
 --- RCPTT testcase ---
 Format-Version: 1.0
-Element-Name: Basic_Workbench_Suite
+Element-Name: App_Test_Suite
 Element-Type: testsuite
 Element-Version: 2.0
-Id: _BsIF4N5EEeaoDpa_vDEfEQ
+Id: _56aN8OLhEeaxW86mJ5AXtw
 Manually-Ordered: true
 Runtime-Version: 2.1.0.201606221726
-Save-Time: 1/25/17 10:38 AM
+Save-Time: 1/25/17 10:37 AM
 
 ------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8
 Content-Type: text/testcase
 Entry-Name: testcase-items
 
-_0KkWQOLhEeaxW86mJ5AXtw	// kind: 'suite' name: 'SSH_Test_Suite' path: 'sshProfile/SSH_Test_Suite.suite'
-_56aN8OLhEeaxW86mJ5AXtw	// kind: 'suite' name: 'App_Test_Suite' path: 'apps/App_Test_Suite.suite'
+_xcVOYOLhEeaxW86mJ5AXtw	// kind: 'test' name: 'Create_Apps' path: 'Create_Apps.test'
 
 ------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8--
