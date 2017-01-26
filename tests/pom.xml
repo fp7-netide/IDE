@@ -102,6 +102,12 @@
 
 
             <injections>
+							<injection>
+								<site>file:///${project.basedir}/../releng/eu.netide.dependencies/target/repository</site>
+							</injection>
+							<injection>
+								<site>file:///${project.basedir}/../releng/eu.netide.product/target/repository</site>
+							</injection>
               <!-- features are optional - when omitted, all features from given site will be installed -->
               <!--
               <injection>
@@ -181,9 +187,9 @@
                but it is possible to pass test suite names, so it
                will execute only test suites from given project. -->
 
-  
+
 		  <suites>
-			<suite>Test_Suite</suite>
+			<suite>Create_Content_Suite</suite>
 		  </suites>
 
 
