@@ -1,0 +1,166 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Contexts: _mMGMcN5QEeaWdfT6K8jCGA,_C6oyUN5CEeaoDpa_vDEfEQ,_PWn14OL4EeaxW86mJ5AXtw
+Element-Name: Create_App
+Element-Type: testcase
+Element-Version: 3.0
+External-Reference: 
+Id: _ADRZ4OLzEeaxW86mJ5AXtw
+Runtime-Version: 2.1.0.201606221726
+Save-Time: 1/26/17 10:41 AM
+Testcase-Type: ecl
+
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
+Content-Type: text/ecl
+Entry-Name: .content
+
+get-view "Package Explorer" | get-tree | select "Test_Project/Test_Project.wb" | double-click
+get-editor "Test_Project.wb" | get-group Apps | get-button Add | click
+with [get-window "Choose App Run Configuration"] {
+    with [get-group ""] {
+        with [get-editbox -after [get-label Name]] {
+            set-text $Name
+            key-type "TRAVERSE_TAB_NEXT"
+        }
+        get-button Browse | click
+    }
+    get-window "Tree Selection" | get-tree | select $AppPath | double-click
+    with [get-group ""] {
+        with [get-editbox -after [get-label "Open Flow Port"]] {
+            set-text $OpenFlowPort
+            key-type "TRAVERSE_TAB_NEXT"
+        }
+        get-editbox -after [get-label "Flag Backend"] | set-text $FlagBackend
+    }
+    get-group "" -index 1 | get-combo -after [get-label Platform] | select $Platform
+    get-button "Use Network Engine" | check
+    get-group "" | get-editbox -after [get-label "Flag App"] | set-text $FlagApp
+    get-button "Save Config" | click
+}
+proc "check-table-values" [val name] [val appDisplayName] [val platform] [val appPath] [val appSavedPath] [val openFlowPort] [val flagApp] [val flagBackend]{
+	with [get-editor "Test_Project.wb" | get-group Apps | get-table] {
+	    get-item $name  | get-property caption | equals $name | verify-true
+	    get-item $name  | get-property "columns[0]" | equals $name | verify-true
+	    get-item $name  | get-property "columns[1]" | equals $appDisplayName | verify-true
+	    get-item $name  | get-property "columns[2]" | equals false | verify-true
+	    get-item $name  | get-property "columns[3]" | equals "Network Engine" | verify-true
+	    get-item $name  | get-property "columns[4]" | equals $platform | verify-true
+	    get-item $name  | get-property "columns[5]" | equals $openFlowPort | verify-true
+	    get-item $name  | get-property "columns[6]" | equals $flagBackend| verify-true
+	    get-item $name  | get-property "columns[7]" | equals $flagApp | verify-true
+	    get-item $name  | get-property "getData().getName()" | equals $name | verify-true
+	    get-item $name  | get-property "getData().getAppName()" | equals $appDisplayName | verify-true
+	    get-item $name  | get-property "getData().getPlatform()" | equals "Network Engine" | verify-true
+	    get-item $name  | get-property "getData().getFlagBackend()" | equals $flagBackend | verify-true
+	    get-item $name  | get-property "getData().getRunning()" | equals false | verify-true
+	    get-item $name  | get-property "getData().getAppPort()" | equals $openFlowPort | verify-true
+	    get-item $name  | get-property "getData().getAppPath()" | equals $appSavedPath | verify-true
+	    get-item $name  | get-property "getData().getClientController()" | equals $platform | verify-true
+	    get-item $name  | get-property "getData().getFlagApp()" | equals $flagApp | verify-true
+	}
+}
+
+check-table-values $Name $AppDisplayName $Platform $AppPath $AppSavedPath $OpenFlowPort $FlagApp $FlagBackend 
+
+get-editor "Test_Project.wb" | close
+get-window "Save Resource" | get-button Yes | click
+get-view "Package Explorer" | get-tree | select "Test_Project/Test_Project.wb" | double-click
+
+check-table-values $Name $AppDisplayName $Platform $AppPath $AppSavedPath $OpenFlowPort $FlagApp $FlagBackend 
+
+
+with [get-editor "Test_Project.wb" | get-group Apps] {
+    get-table | select $Name
+    get-button Edit | click
+}
+with [get-window "Choose App Run Configuration"] {
+    with [get-group ""] {
+        get-editbox -after [get-label Name] | get-property text | equals $Name | verify-true
+        get-editbox -after [get-label App] | get-property text 
+            | equals $AppSavedPath | verify-true
+    }
+    get-group "" -index 1 | get-combo -after [get-label Platform] | get-property selection | equals $Platform | verify-true
+    get-button "Save Config" | get-property enablement | equals true | verify-true
+}
+get-window "Choose App Run Configuration" | get-button Cancel | click
+with [get-editor "Test_Project.wb" | get-group Apps] {
+    get-table | select $Name
+    get-button Edit | click
+}
+get-window "Choose App Run Configuration" | get-group "" | get-editbox -after [get-label Name] | set-text ""
+get-window "Choose App Run Configuration" | get-button "Save Config" | get-property enablement | equals false 
+    | verify-true
+get-window "Choose App Run Configuration" | get-group "" | get-editbox -after [get-label Name] 
+    | set-text $Name
+get-window "Choose App Run Configuration" | get-button "Save Config" | get-property enablement | equals true 
+    | verify-true
+get-window "Choose App Run Configuration" | get-group "" | get-editbox -after [get-label App] | set-text ""
+get-window "Choose App Run Configuration" | get-button "Save Config" | get-property enablement | equals false 
+    | verify-true
+with [get-window "Choose App Run Configuration"] {
+    get-group "" | get-button Browse | click
+    with [get-window "Tree Selection"] {
+        get-tree | select $AppPath
+        get-button OK | click
+    }
+}
+get-window "Choose App Run Configuration" | get-button "Save Config" | get-property enablement | equals true 
+    | verify-true
+get-window "Choose App Run Configuration" | get-button "Save Config" | click
+with [get-editor "Test_Project.wb" | get-group Apps] {
+    get-table | select $Name
+    get-button Edit | click
+}
+with [get-window "Choose App Run Configuration"] {
+    get-group "" | get-editbox -after [get-label Name] | set-text ""
+    get-button Cancel | click
+}
+with [get-editor "Test_Project.wb" | get-group Apps | get-table] {
+    get-item $Name | get-property caption | equals $Name | verify-true
+    get-item $Name| get-property "getData().getName()" | equals $Name| verify-true
+}
+get-editor "Test_Project.wb" | get-group Apps | get-button Edit | click
+get-window "Choose App Run Configuration" | get-editbox -after [get-label App] | set-text ""
+
+get-window "Choose App Run Configuration" | get-button Cancel | click
+
+get-editor "Test_Project.wb" | get-group Apps | get-table | get-item $Name
+    | get-property "getData().getAppPath()" 
+    | equals $AppSavedPath | verify-true
+    
+    
+with [get-editor "Test_Project.wb" | get-group Apps] {
+    get-table | select $Name
+    get-button Edit | click
+}
+with [get-window "Choose App Run Configuration"] {
+    with [get-group ""] {
+        get-editbox -after [get-label Name] | set-text $NameChanged
+        get-editbox -after [get-label App] | set-text $AppSavedPathChanged
+        get-editbox -after [get-label "Open Flow Port"] | set-text $OpenFlowPortChanged
+        get-editbox -after [get-label "Flag Backend"] | set-text $FlagBackendChanged
+        get-editbox -after [get-label "Flag App"] | set-text $FlagAppChanged
+    }
+    get-group "" -index 1 | get-combo -after [get-label Platform] | select $PlatformChanged
+    get-button "Save Config" | click
+}
+
+
+get-editor "Test_Project.wb" | close
+get-window "Save Resource" | get-button Yes | click
+get-view "Package Explorer" | get-tree | select "Test_Project/Test_Project.wb" | double-click
+
+check-table-values $NameChanged $AppDisplayNameChanged $PlatformChanged $AppPathChanged $AppSavedPathChanged $OpenFlowPortChanged $FlagAppChanged $FlagBackendChanged
+
+    
+with [get-editor "Test_Project.wb" | get-group Apps] {
+    get-table | select $NameChanged
+    get-button Remove | click
+}
+get-editor "Test_Project.wb" | get-group Apps | get-table | get-property itemCount | equals 0 | verify-true
+
+get-editor "Test_Project.wb" | close
+get-window "Save Resource" | get-button Yes | click
+get-view "Package Explorer" | get-tree | select "Test_Project/Test_Project.wb" | double-click
+get-editor "Test_Project.wb" | get-group Apps | get-table | get-property itemCount | equals 0 | verify-true
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

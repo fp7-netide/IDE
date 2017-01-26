@@ -6,12 +6,12 @@ Element-Version: 2.0
 Id: _56aN8OLhEeaxW86mJ5AXtw
 Manually-Ordered: true
 Runtime-Version: 2.1.0.201606221726
-Save-Time: 1/25/17 10:37 AM
+Save-Time: 1/26/17 10:18 AM
 
 ------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8
 Content-Type: text/testcase
 Entry-Name: testcase-items
 
-_xcVOYOLhEeaxW86mJ5AXtw	// kind: 'test' name: 'Create_Apps' path: 'Create_Apps.test'
+_ADRZ4OLzEeaxW86mJ5AXtw	// kind: 'test' name: 'Create_App' path: 'Create_App.test'
 
 ------=_testcase-items-62c497da-4241-31f4-811a-6b453a3ecff8--

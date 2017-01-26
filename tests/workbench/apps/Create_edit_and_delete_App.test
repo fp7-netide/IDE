@@ -1,0 +1,120 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Contexts: _C6oyUN5CEeaoDpa_vDEfEQ,_mMGMcN5QEeaWdfT6K8jCGA,_k6tO8OLjEeaxW86mJ5AXtw
+Element-Name: Create_edit_and_delete_App
+Element-Type: testcase
+Element-Version: 3.0
+External-Reference: 
+Id: _xcVOYOLhEeaxW86mJ5AXtw
+Runtime-Version: 2.1.0.201606221726
+Save-Time: 1/25/17 12:48 PM
+Testcase-Type: ecl
+
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
+Content-Type: text/ecl
+Entry-Name: .content
+
+get-view "Package Explorer" | get-tree | select "Test_Project/Test_Project.wb" | double-click
+get-editor "Test_Project.wb" | get-group Apps | get-button Add | click
+with [get-window "Choose App Run Configuration"] {
+    with [get-group ""] {
+        get-editbox -after [get-label Name] | set-text $Name
+        get-button Browse | click
+    }
+    with [get-window "Tree Selection"] {
+        get-tree | select $App_NetManager
+        get-button OK | click
+    }
+    get-group "" -index 1 | get-combo -after [get-label Platform] | select $Platform_Ryu
+}
+get-window "Choose App Run Configuration" | get-button "Save Config" | get-property enablement | equals true 
+    | verify-true
+get-window "Choose App Run Configuration" | get-button "Save Config" | click
+with [get-editor "Test_Project.wb" | get-group Apps | get-table] {
+    get-item $Name | get-property "columns[0]" | equals $Name | verify-true
+    get-item $Name | get-property "columns[1]" | equals $App_NetManage_Display_Name  | verify-true
+    get-item $Name | get-property "columns[2]" | equals false | verify-true
+    get-item $Name | get-property "columns[3]" | equals $Platform_Ryu | verify-true
+    get-item $Name | get-property "columns[4]" | equals "" | verify-true
+    get-item $Name | get-property "columns[5]" | equals "" | verify-true
+    get-item $Name | get-property "columns[6]" | equals "" | verify-true
+    get-item $Name | get-property "columns[7]" | equals "" | verify-true
+    get-item $Name | get-property "getData().getName()" | equals $Name | verify-true
+    get-item $Name | get-property "getData().getAppName()" | equals $App_NetManage_Display_Name | verify-true
+    get-item $Name | get-property "getData().getPlatform()" | equals $Platform_Ryu | verify-true
+    get-item $Name | get-property "getData().getRunning()" | equals false | verify-true
+    get-item $Name | get-property "getData().getFlagBackend()" | equals "" | verify-true
+    get-item $Name | get-property "getData().getAppPort()" | equals "" | verify-true
+    get-item $Name | get-property "getData().getAppPath()" | equals $App_NetManager_Saved_Path | verify-true
+    get-item $Name | get-property "getData().getClientController()" | equals "" | verify-true
+    get-item $Name | get-property "getData().getFlagApp()" | equals "" | verify-true
+}
+with [get-editor "Test_Project.wb" | get-group Apps] {
+    get-table | select "iits_netmanager"
+    get-button Edit | click
+}
+with [get-window "Choose App Run Configuration"] {
+    with [get-group ""] {
+        get-editbox -after [get-label Name] | get-property text | equals $Name | verify-true
+        get-editbox -after [get-label App] | get-property text 
+            | equals $App_NetManager_Saved_Path | verify-true
+    }
+    get-group "" -index 1 | get-combo -after [get-label Platform] | get-property selection | equals $Platform_Ryu | verify-true
+    get-button "Save Config" | get-property enablement | equals true | verify-true
+}
+get-window "Choose App Run Configuration" | get-button Cancel | click
+with [get-editor "Test_Project.wb" | get-group Apps] {
+    get-table | select $Name
+    get-button Edit | click
+}
+get-window "Choose App Run Configuration" | get-group "" | get-editbox -after [get-label Name] | set-text ""
+get-window "Choose App Run Configuration" | get-button "Save Config" | get-property enablement | equals false 
+    | verify-true
+get-window "Choose App Run Configuration" | get-group "" | get-editbox -after [get-label Name] 
+    | set-text $Name
+get-window "Choose App Run Configuration" | get-button "Save Config" | get-property enablement | equals true 
+    | verify-true
+get-window "Choose App Run Configuration" | get-group "" | get-editbox -after [get-label App] | set-text ""
+get-window "Choose App Run Configuration" | get-button "Save Config" | get-property enablement | equals false 
+    | verify-true
+with [get-window "Choose App Run Configuration"] {
+    get-group "" | get-button Browse | click
+    with [get-window "Tree Selection"] {
+        get-tree | select $App_NetManager
+        get-button OK | click
+    }
+}
+get-window "Choose App Run Configuration" | get-button "Save Config" | get-property enablement | equals true 
+    | verify-true
+get-window "Choose App Run Configuration" | get-button "Save Config" | click
+with [get-editor "Test_Project.wb" | get-group Apps] {
+    get-table | select $Name
+    get-button Edit | click
+}
+with [get-window "Choose App Run Configuration"] {
+    get-group "" | get-editbox -after [get-label Name] | set-text ""
+    get-button Cancel | click
+}
+with [get-editor "Test_Project.wb" | get-group Apps | get-table] {
+    get-item $Name | get-property caption | equals $Name | verify-true
+    get-item $Name| get-property "getData().getName()" | equals $Name| verify-true
+}
+get-editor "Test_Project.wb" | get-group Apps | get-button Edit | click
+get-window "Choose App Run Configuration" | get-editbox -after [get-label App] | set-text ""
+
+get-window "Choose App Run Configuration" | get-button Cancel | click
+
+get-editor "Test_Project.wb" | get-group Apps | get-table | get-item $Name
+    | get-property "getData().getAppPath()" 
+    | equals $App_NetManager_Saved_Path | verify-true
+with [get-editor "Test_Project.wb" | get-group Apps] {
+    get-table | select $Name
+    get-button Remove | click
+}
+get-editor "Test_Project.wb" | get-group Apps | get-table | get-property itemCount | equals 0 | verify-true
+
+get-editor "Test_Project.wb" | close
+get-window "Save Resource" | get-button Yes | click
+get-view "Package Explorer" | get-tree | select "Test_Project/Test_Project.wb" | double-click
+get-editor "Test_Project.wb" | get-group Apps | get-table | get-property itemCount | equals 0 | verify-true
+------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

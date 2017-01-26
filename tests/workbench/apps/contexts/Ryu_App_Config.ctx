@@ -1,0 +1,33 @@
+--- RCPTT testcase ---
+Format-Version: 1.0
+Context-Type: org.eclipse.rcptt.ctx.parameters
+Element-Name: Ryu_App_Config
+Element-Type: context
+Element-Version: 2.0
+Id: _k6tO8OLjEeaxW86mJ5AXtw
+Runtime-Version: 2.1.0.201606221726
+Save-Time: 1/26/17 10:22 AM
+
+------=_.parameters.context-2e023de5-3294-36a9-ac1d-6701f05a40ee
+Content-Type: text/properties
+Entry-Name: .parameters.context
+
+#Thu Jan 26 10:22:15 CET 2017
+FlagBackendChanged=--observe-links changed
+OpenFlowPortChanged=3377
+OpenFlowPort=7733
+AppPathChanged=Test_Project/apps/iits_netmanager/src/pyretic/UC2_IITS_NetManager.py
+AppDisplayNameChanged=UC2_IITS_NetManager.py
+FlagApp=--test-flag
+AppPath=Test_Project/apps/iits_netmanager/src/IITS_NetManager.py
+AppSavedPath=platform\:/resource/Test_Project/apps/iits_netmanager/src/IITS_NetManager.py
+FlagAppChanged=--changed-flag
+Name=iits_netmanager
+AppSavedPathChanged=platform\:/resource/Test_Project/apps/iits_netmanager/src/pyretic/UC2_IITS_NetManager.py
+NameChanged=ryu changed
+PlatformChanged=Floodlight
+AppDisplayName=IITS_NetManager.py
+Platform=Ryu
+FlagBackend=--observe-links
+
+------=_.parameters.context-2e023de5-3294-36a9-ac1d-6701f05a40ee--
