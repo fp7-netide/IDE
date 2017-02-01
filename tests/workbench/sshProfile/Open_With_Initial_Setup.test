@@ -7,14 +7,15 @@ Element-Version: 3.0
 External-Reference: 
 Id: _VFUvMN5EEeaoDpa_vDEfEQ
 Runtime-Version: 2.1.0.201606221726
-Save-Time: 1/25/17 10:34 AM
+Save-Time: 2/1/17 1:50 PM
 Testcase-Type: ecl
 
 ------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac
 Content-Type: text/ecl
 Entry-Name: .content
 
-get-view "Package Explorer" | get-tree | select "Test_Project/Test_Project.wb" | double-click
+get-view "Package Explorer" | get-tree | select "Test_Project/Test_Project.wb" | get-menu "Open With/Other..." | click
+get-window "Editor Selection" | get-tree | select "Workbench Configuration Editor" | double-click
 get-editor "Test_Project.wb" | get-button "Create Profile" | click
 with [get-window "SSH Profile"] {
     with [get-group "ssh Connection Settings"] {
