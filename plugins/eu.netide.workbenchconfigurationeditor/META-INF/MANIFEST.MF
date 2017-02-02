@@ -37,6 +37,10 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: NetIDE Project
 Import-Package: eu.netide.toolpanel.views
-Export-Package: eu.netide.workbenchconfigurationeditor.model,
- eu.netide.workbenchconfigurationeditor.view
+Export-Package: eu.netide.workbenchconfigurationeditor.controller,
+ eu.netide.workbenchconfigurationeditor.dialogs,
+ eu.netide.workbenchconfigurationeditor.model,
+ eu.netide.workbenchconfigurationeditor.util,
+ eu.netide.workbenchconfigurationeditor.view,
+ eu.netide.workbenchconfigurationeditor.wizards
 

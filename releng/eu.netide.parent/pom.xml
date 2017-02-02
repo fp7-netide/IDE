@@ -65,7 +65,7 @@
 		<module>../../plugins/eu.netide.runtime.topology.design</module>
 		<module>../../plugins/eu.netide.chartview</module>
 		<module>../../plugins/eu.netide.toolpanel</module>
-		<module>../../plugins/eu.netide.WorkbenchConfigurationEditor</module>
+		<module>../../plugins/eu.netide.workbenchconfigurationeditor</module>
 
 
 
