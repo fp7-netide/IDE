@@ -9,7 +9,7 @@
             default="true"
             extensions="wb"
             icon="icons/netide.png"
-            id="workbenchconfigurationeditor.editors.WbConfigurationEditor"
+            id="eu.netide.workbenchconfigurationeditor"
             name="Workbench Configuration Editor">
       </editor>
    </extension>

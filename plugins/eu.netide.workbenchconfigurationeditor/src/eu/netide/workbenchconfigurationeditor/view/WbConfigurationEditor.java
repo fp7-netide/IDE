@@ -69,7 +69,7 @@ import eu.netide.workbenchconfigurationeditor.util.Constants;
  */
 public class WbConfigurationEditor extends EditorPart implements IJobChangeListener {
 
-	public static final String ID = "workbenchconfigurationeditor.editors.WbConfigurationEditor"; //$NON-NLS-1$
+	public static final String ID = "eu.netide.workbenchconfigurationeditor"; //$NON-NLS-1$
 	private WbConfigurationEditor instanceWb = this;
 	private WorkbenchConfigurationEditorEngine engine;
 
