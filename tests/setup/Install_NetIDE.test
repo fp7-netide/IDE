@@ -13,8 +13,11 @@ Testcase-Type: ecl
 Content-Type: text/ecl
 Entry-Name: .content
 
-set-q7-option "jobHangTimeout" "480000"
-set-q7-option "jobSleepingStepTimeout" "960000"
+set-q7-option "jobHangTimeout" "960000"
+set-q7-option "jobDebugjobTimeout" "960000"
+set-q7-option "jobSleepingStepTimeout" "1600000"
+set-q7-option "jobSleepingStepTime" "1600"
+
 
 get-menu "Help/Install New Software..." | click
 with [get-window Install] {
@@ -25,7 +28,7 @@ with [get-window Install] {
             key-type "TRAVERSE_TAB_NEXT"
         }
         get-editbox -after [get-label "Location:"]
-            | set-text [concat [get-workspace-location] "/../../../releng/eu.netide.product/target/repository"] 
+            | set-text [concat [get-workspace-location] "/../../../releng/eu.netide.product/target/repository"]
         get-button OK | click
     }
     get-tree | get-item "NetIDE" | check
@@ -38,4 +41,5 @@ with [get-window Install] {
 get-window "Security Warning" | get-button OK | click
 get-window "Software Updates" | get-button Yes | click
 wait-until-eclipse-is-ready
+
 ------=_.content-0a7243a0-75d3-3d5f-9791-539de0e5b7ac--

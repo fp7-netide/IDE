@@ -49,54 +49,12 @@
 
           <!-- This element describes where to get an AUT to run tests -->
           <aut>
-            <!-- There are several ways to specify AUT location,
-                 Uncomment an element corresponding to a most suitable way
-            -->
 
-            <!-- Use AUT from current build results. [classifier] will be
-            automatically replaced according to the current platform -->
-            <!--
-            <explicit>${project.basedir}/../product/target/products/org.eclipse.ui.examples.rcp.browser.product-[classifier].zip</explicit>
-            -->
+						<explicit>http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/technology/epp/downloads/release/neon/2/eclipse-java-neon-2-macosx-cocoa-x86_64.tar.gz</explicit>
 
-            <!-- Or specify a path to AUT folder -->
-            <!--
-            <explicit>/Users/RCPTTuser/path/to/aut</explicit>
-            -->
-
-            <!-- As well AUT can be downloaded from HTTP -->
-						<explicit>http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/technology/epp/downloads/release/neon/2/eclipse-java-neon-2-linux-gtk-x86_64.tar.gz</explicit>
-<!--
-            <explicit>/Users/struewer/Downloads/stuff/eclipse-java-neon-2-macosx-cocoa-x86_64.tar.gz</explicit>
--->
 
             <injections>
 
-							<!--
-							<injection>
-								<site>http://updatesite.netide.eu/dependencies/</site>
-							</injection>
-							<injection>
-								<site>http://updatesite.netide.eu/nightly/</site>
-							</injection>
-						-->
-            <!--
-							<injection>
-								<site>file:///${project.basedir}/../releng/eu.netide.dependencies/target/repository</site>
-							</injection>
-							<injection>
-								<site>file:///${project.basedir}/../releng/eu.netide.product/target/repository</site>
-							</injection>
-							-->
-              <!-- features are optional - when omitted, all features from given site will be installed -->
-              <!--
-              <injection>
-                <site></site>
-                <features>
-                  <feature>com.comanyname.featureid</feature>
-                </features>
-              </injection>
-              -->
             </injections>
 
            <!-- additional AUT args (besides taken in its ini-file) can be set
@@ -104,14 +62,12 @@
 
             <args>
               <arg>-clean</arg>
-
             </args>
 
            <!-- optional VM args can be set too -->
 
 					 <vmArgs>
 						 <vmArg>-Xmx4096m</vmArg>
-
 					 </vmArgs>
 
           </aut>
@@ -120,18 +76,9 @@
             <!-- RCPTT Runner location can be set using the same methods
                  as AUT location:
             -->
-<!--
-            <explicit>/Users/struewer/Downloads/eclipse</explicit>
-					-->
 
 				<version>${rcptt-maven-version}</version>
 
-
-            <!-- but the most convenient way is to just set its version,
-                 RCPTT maven plugin will automatically set right groupId and
-                 artifact ID and will download RCPTT Runner from Xored Maven Repo
-            <version>${rcptt-maven-version}</version>
--->
             <vmArgs>
               <vmArg>-Xmx4096m</vmArg>
             </vmArgs>
@@ -143,17 +90,10 @@
           -->
           <testOptions>
             <!-- Timeout for all tests, in seconds -->
-            <execTimeout>7200</execTimeout>
+            <execTimeout>18000</execTimeout>
             <!-- Timeout for a single test case, in seconds -->
-            <testExecTimeout>1200</testExecTimeout>
+            <testExecTimeout>7200</testExecTimeout>
 
-            <!-- When set to true, in case of test failure
-                 AUT will be restarted. This significantly
-                 slows down execution, but may be useful
-                 for some test suites -->
-            <!--
-            <restartAUTOnFailure>true</restartAUTOnFailure>
-            -->
           </testOptions>
 
           <!-- By default RCPTT Runner runs tests from a project directory,
