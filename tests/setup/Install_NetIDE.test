@@ -25,7 +25,7 @@ with [get-window Install] {
             key-type "TRAVERSE_TAB_NEXT"
         }
         get-editbox -after [get-label "Location:"]
-            | set-text "/Users/struewer/git/IDE/releng/eu.netide.product/target/repository"
+            | set-text [concat [get-workspace-location] "/../../../releng/eu.netide.product/target/repository"] 
         get-button OK | click
     }
     get-tree | get-item "NetIDE" | check

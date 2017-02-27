@@ -22,7 +22,7 @@ with [get-window Install] {
             key-type "TRAVERSE_TAB_NEXT"
         }
         get-editbox -after [get-label "Location:"]
-            | set-text "/Users/struewer/git/IDE/releng/eu.netide.dependencies/target/repository"
+            | set-text [concat [get-workspace-location] "/../../../releng/eu.netide.dependencies/target/repository"] 
         get-button OK | click
     }
     get-tree | get-item "Maven osgi-bundles" | check
