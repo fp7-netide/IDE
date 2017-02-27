@@ -4,7 +4,7 @@
   <!-- Set artifact id according to a RCPTT project name  -->
   <artifactId>productTests</artifactId>
   <!-- Set group id based on application under test name -->
-  <groupId>org.eclipse.epp.package.modeling.product</groupId>
+  <groupId>org.eclipse.epp.package.java.product</groupId>
   <version>2.2.0-SNAPSHOT</version>
   <!-- RCPTT Maven Plugin provides this packaging type -->
   <packaging>rcpttTest</packaging>
@@ -16,14 +16,14 @@
       <name>RCPTT Maven repository</name>
       <url>https://repo.eclipse.org/content/repositories/rcptt-releases/</url>
     </pluginRepository>
-    <pluginRepository>
-      <id>rcptt-snapshots</id>
-      <name>RCPTT Maven Snapshots repository</name>
-      <snapshots>
-        <updatePolicy>always</updatePolicy>
-      </snapshots>
-      <url>https://repo.eclipse.org/content/repositories/rcptt-snapshots/</url>
-    </pluginRepository>
+		<pluginRepository>
+	 <id>rcptt-snapshots</id>
+	 <name>RCPTT Maven Snapshots repository</name>
+	 <snapshots>
+		 <updatePolicy>always</updatePolicy>
+	 </snapshots>
+	 <url>https://repo.eclipse.org/content/repositories/rcptt-snapshots/</url>
+ </pluginRepository>
   </pluginRepositories>
 
   <!--
@@ -65,49 +65,29 @@
             -->
 
             <!-- As well AUT can be downloaded from HTTP -->
-
-            <explicit>http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/technology/epp/downloads/release/neon/2/eclipse-java-neon-2-linux-gtk-x86_64.tar.gz</explicit>
-
-
-            <!-- AUT can be downloaded automatically from Maven repository -->
-            <!--
-            <groupId>com.company.product</groupId>
-            <artifactId>com.company.product.rcp</artifactId>
-            <version>3.7.2</version>
-            -->
-
-            <!-- AUT Artifact classifier is based on a current platform:
-                 Windows 32bit: win32.win32.x86
-                 Windows 64bit: win32.win32.x86_64
-                 Linux 32bit: linux.gtk.x86
-                 Linux 64bit: linux.gtk.x86_64
-                 Mac OS X 64bit: macosx.coca.x86_64
-            -->
-
-            <!-- Optionally it is possible to specify extra features to
-                 be installed into AUT, this is useful when RCPTT tests
-                 need to be executed using a repository assembled as
-                 part of current Maven build.
-
-                 Inside an 'injection element it is possible to specify a list of
-                 features/plugins to install, if nothing is set, all available
-                 features will be installed.
-                 feature.group suffix is required by p2,
-                 otherwise it searches for a plugin with given id
-
-                 Currently RCPTT Runner does not install requirements automatically,
-                 so the full list of features to install must be explicitly set
-            -->
-
-
+						<explicit>http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/technology/epp/downloads/release/neon/2/eclipse-java-neon-2-linux-gtk-x86_64.tar.gz</explicit>
+<!--
+            <explicit>/Users/struewer/Downloads/stuff/eclipse-java-neon-2-macosx-cocoa-x86_64.tar.gz</explicit>
+-->
 
             <injections>
+
+							<!--
+							<injection>
+								<site>http://updatesite.netide.eu/dependencies/</site>
+							</injection>
+							<injection>
+								<site>http://updatesite.netide.eu/nightly/</site>
+							</injection>
+						-->
+            <!--
 							<injection>
 								<site>file:///${project.basedir}/../releng/eu.netide.dependencies/target/repository</site>
 							</injection>
 							<injection>
 								<site>file:///${project.basedir}/../releng/eu.netide.product/target/repository</site>
 							</injection>
+							-->
               <!-- features are optional - when omitted, all features from given site will be installed -->
               <!--
               <injection>
@@ -121,37 +101,39 @@
 
            <!-- additional AUT args (besides taken in its ini-file) can be set
                 Use one argument per <arg> element -->
-           <!--
+
             <args>
-              <arg>-ws</arg>
-              <arg>$${target.ws}</arg>
+              <arg>-clean</arg>
+
             </args>
-            -->
+
            <!-- optional VM args can be set too -->
-<!--
-		   <vmArgs>
-			 <vmArg>-Xmx2048m</vmArg>
-			 <vmArg>-XX:MaxPermSize=256m</vmArg>
-		   </vmArgs>
--->
+
+					 <vmArgs>
+						 <vmArg>-Xmx4096m</vmArg>
+
+					 </vmArgs>
+
           </aut>
 
           <runner>
             <!-- RCPTT Runner location can be set using the same methods
                  as AUT location:
             -->
-            <!--
-            <explicit>/path/to/rcptt/runner</explicit>
-            -->
+<!--
+            <explicit>/Users/struewer/Downloads/eclipse</explicit>
+					-->
+
+				<version>${rcptt-maven-version}</version>
+
 
             <!-- but the most convenient way is to just set its version,
                  RCPTT maven plugin will automatically set right groupId and
-                 artifact ID and will download RCPTT Runner from Xored Maven Repo -->
+                 artifact ID and will download RCPTT Runner from Xored Maven Repo
             <version>${rcptt-maven-version}</version>
-
+-->
             <vmArgs>
-              <vmArg>-Xmx2048m</vmArg>
-              <vmArg>-XX:MaxPermSize=256m</vmArg>
+              <vmArg>-Xmx4096m</vmArg>
             </vmArgs>
           </runner>
 
@@ -161,9 +143,9 @@
           -->
           <testOptions>
             <!-- Timeout for all tests, in seconds -->
-            <execTimeout>3600</execTimeout>
+            <execTimeout>7200</execTimeout>
             <!-- Timeout for a single test case, in seconds -->
-            <testExecTimeout>300</testExecTimeout>
+            <testExecTimeout>1200</testExecTimeout>
 
             <!-- When set to true, in case of test failure
                  AUT will be restarted. This significantly
