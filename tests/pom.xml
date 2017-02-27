@@ -50,7 +50,8 @@
           <!-- This element describes where to get an AUT to run tests -->
           <aut>
 
-						<explicit>http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/technology/epp/downloads/release/neon/2/eclipse-java-neon-2-macosx-cocoa-x86_64.tar.gz</explicit>
+						<explicit>http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/technology/epp/downloads/release/neon/2/eclipse-java-neon-2-linux-gtk-x86_64.tar.gz</explicit>
+
 
 
             <injections>
