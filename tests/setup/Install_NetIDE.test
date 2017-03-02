@@ -13,8 +13,8 @@ Testcase-Type: ecl
 Content-Type: text/ecl
 Entry-Name: .content
 
-set-q7-option "jobHangTimeout" "960000"
-set-q7-option "jobSleepingStepTimeout" "1600000"
+set-q7-option jobHangTimeout 960000
+set-q7-option jobSleepingStepTimeout 1600000
 
 get-menu "Help/Install New Software..." | click
 with [get-window Install] {
