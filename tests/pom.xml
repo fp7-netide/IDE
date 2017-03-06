@@ -91,9 +91,9 @@
           -->
           <testOptions>
             <!-- Timeout for all tests, in seconds -->
-            <execTimeout>12200</execTimeout>
+            <execTimeout>7200</execTimeout>
             <!-- Timeout for a single test case, in seconds -->
-            <testExecTimeout>7200</testExecTimeout>
+            <testExecTimeout>1200</testExecTimeout>
 
           </testOptions>
 
