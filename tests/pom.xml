@@ -77,7 +77,8 @@
             <!-- RCPTT Runner location can be set using the same methods
                  as AUT location:
             -->
-				<version>2.1.0</version>
+
+				<version>${rcptt-maven-version}</version>
 
             <vmArgs>
               <vmArg>-Xmx4096m</vmArg>
@@ -90,9 +91,9 @@
           -->
           <testOptions>
             <!-- Timeout for all tests, in seconds -->
-            <execTimeout>180000</execTimeout>
+            <execTimeout>12200</execTimeout>
             <!-- Timeout for a single test case, in seconds -->
-            <testExecTimeout>72000</testExecTimeout>
+            <testExecTimeout>7200</testExecTimeout>
 
           </testOptions>
 
