@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.netide.parent</groupId>
 	<artifactId>eu.netide.parent</artifactId>
-	<version>0.3.1-SNAPSHOT</version>
+	<version>0.4.0-SNAPSHOT</version>
 	<name>eu.netide.parent</name>
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>0.23.0</tycho-version>
-		<xtend-version>2.7.3</xtend-version>
+		<tycho-version>0.25.0</tycho-version>
+		<xtend-version>2.9.0</xtend-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -26,9 +26,14 @@
 			<url>http://download.eclipse.org/releases/mars</url>
 		</repository>
 		<repository>
+			<id>eclipse-neon</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/neon</url>
+		</repository>
+		<repository>
 			<id>netide-dependencies</id>
 			<layout>p2</layout>
-			<url>http://updatesite.netide.eu/dependencies/</url>
+			<url>file://${project.basedir}/../../releng/eu.netide.dependencies/target/repository</url>
 		</repository>
 	</repositories>
 
@@ -54,10 +59,19 @@
 		<module>../../plugins/eu.netide.parameters.templates</module>
 		<module>../../plugins/eu.netide.zmq.hub</module>
 		<module>../../plugins/eu.netide.zmq.hub.ui</module>
+		<module>../../plugins/eu.netide.runtime.topology</module>
+		<module>../../plugins/eu.netide.runtime.topology.edit</module>
+		<module>../../plugins/eu.netide.runtime.topology.editor</module>
+		<module>../../plugins/eu.netide.runtime.topology.design</module>
+		<module>../../plugins/eu.netide.chartview</module>
+		<module>../../plugins/eu.netide.toolpanel</module>
 		<module>../../plugins/eu.netide.WorkbenchConfigurationEditor</module>
+
+
+
 		<module>../eu.netide.feature</module>
 		<module>../eu.netide.product</module>
-		
+
 	</modules>
 
 	<build>
@@ -150,7 +164,7 @@
 					</configuration>
 				</plugin>
 				<!-- enable source bundle generation -->
-				<!-- <plugin> <groupId>org.eclipse.tycho</groupId> <artifactId>tycho-surefire-plugin</artifactId> 
+				<!-- <plugin> <groupId>org.eclipse.tycho</groupId> <artifactId>tycho-surefire-plugin</artifactId>
 					<version>${tycho-version}</version> </plugin> -->
 
 				<plugin>
@@ -158,7 +172,7 @@
 					<artifactId>tycho-p2-repository</artifactId>
 					<version>${tycho-version}</version>
 				</plugin>
-				<!-- <plugin> <groupId>org.eclipse.tycho</groupId> <artifactId>maven-osgi-test-plugin</artifactId> 
+				<!-- <plugin> <groupId>org.eclipse.tycho</groupId> <artifactId>maven-osgi-test-plugin</artifactId>
 					<version>${tycho-version}</version> </plugin> -->
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
@@ -174,9 +188,9 @@
 						<encoding>${project.build.sourceEncoding}</encoding>
 					</configuration>
 				</plugin>
-				<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-antrun-plugin</artifactId> 
+				<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-antrun-plugin</artifactId>
 					<version>1.7</version> </plugin> -->
-				<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-surefire-plugin</artifactId> 
+				<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-surefire-plugin</artifactId>
 					<version>2.9</version> </plugin> -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -269,7 +283,7 @@
 						</execution>
 					</executions>
 				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
+				<!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>

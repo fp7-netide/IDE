@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:filter="http://www.eclipse.org/sirius/diagram/description/filter/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:tool="http://www.eclipse.org/sirius/diagram/description/tool/1.1.0" xmlns:tool_1="http://www.eclipse.org/sirius/description/tool/1.1.0" name="Configuration" version="11.0.0.201601261200">
+  <ownedViewpoints name="RuntimeTopology" modelFileExtension="runtimetopology">
+    <ownedRepresentations xsi:type="description_1:DiagramDescription" name="RuntimeTopology" domainClass="RuntimeTopology.RuntimeData">
+      <metamodel href="http://eu.netide.runtime.topology#/"/>
+      <metamodel href="eu.netide.configuration.topology#/"/>
+      <filters xsi:type="filter:CompositeFilterDescription" name="StatisticsFilter">
+        <filters xsi:type="filter:MappingFilter" mappings="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='PortStatistics'] //@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='FlowStatistics'] //@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='AggregatedStatistics']" semanticConditionExpression="[not self.hidden/]"/>
+      </filters>
+      <filters xsi:type="filter:CompositeFilterDescription" name="ControllerFilter">
+        <filters xsi:type="filter:MappingFilter" mappings="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='Controller']"/>
+      </filters>
+      <defaultLayer name="Default">
+        <nodeMappings name="Controller" semanticCandidatesExpression="feature:eAllContents" domainClass="Topology.Controller">
+          <style xsi:type="style:SquareDescription" showIcon="false" labelExpression="[self.name+' ('+self.ip+':'+self.portNo+')' /]" labelPosition="node" resizeKind="NSEW" width="15" height="3">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelFormat>bold</labelFormat>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='dark_blue']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="PortStatistics" doubleClickDescription="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@toolSections.0/@ownedTools[name='OpenGraph']" domainClass="RuntimeTopology.PortStatistics">
+          <style xsi:type="style:NoteDescription" showIcon="false" labelExpression="['tx_bytes ' + tx_bytes.toString() + '\n' +'rx_bytes ' + rx_bytes.toString() + '\n' +'tx_packets ' + tx_packets.toString() + '\n' +'rx_packets ' + rx_packets.toString() + '\n' +'tx_errors ' + tx_errors.toString() + '\n' +'rx_errors ' + rx_errors.toString() + '\n' +'tx_dropped ' + tx_dropped.toString() + '\n' +'rx_dropped ' + rx_dropped.toString() + '\n' +'rx_over_err ' + rx_over_err.toString() + '\n' +'rx_crc_err ' + rx_crc_err.toString() + '\n' +'rx_frame_err ' + rx_frame_err.toString() + '\n' +'collisions ' + collisions.toString()/]" labelAlignment="LEFT" sizeComputationExpression="20" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='yellow']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="FlowStatistics" domainClass="RuntimeTopology.FlowStatistics">
+          <style xsi:type="style:NoteDescription" showIcon="false" labelExpression="['duration_sec: ' + duration_sec.toString() + '\n' +'duration_nsec: ' + duration_nsec.toString() + '\n' +'priority: ' + priority.toString() + '\n' +'idle_timeout: ' + idle_timeout.toString() + '\n' +'hard_timeout: ' + hard_timeout.toString() + '\n' +'cookie: ' + cookie.toString() + '\n' +'packet_count: ' + packet_count.toString() + '\n' +'byte_count: ' + byte_count.toString()/]" labelAlignment="LEFT" sizeComputationExpression="20" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_orange']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="AggregatedStatistics" doubleClickDescription="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@toolSections.0/@ownedTools[name='OpenGraph']" domainClass="RuntimeTopology.AggregatedStatistics">
+          <style xsi:type="style:NoteDescription" showIcon="false" labelExpression="['packet_count: ' + packet_count.toString() + '\n' +'byte_count:  ' + byte_count.toString() + '\n' +'flow_count: ' + flow_count.toString() /]" sizeComputationExpression="10" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_green']"/>
+          </style>
+        </nodeMappings>
+        <edgeMappings name="Connector" sourceMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort'] //@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']/@borderedNodeMappings[name='HostPort']" targetMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort'] //@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Host']/@borderedNodeMappings[name='HostPort']" targetFinderExpression="[connectedports->asSequence()->last() /]" sourceFinderExpression="[connectedports->asSequence()->first()/]" domainClass="Topology.Connector" useDomainElement="true">
+          <style targetArrow="NoDecoration" sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+          <conditionnalStyles predicateExpression="[self.ancestors(RuntimeData)->any(true).portstatistics->exists(x | x.changed and self.connectedports->exists(y | x.port = y)) /]">
+            <style targetArrow="NoDecoration" sizeComputationExpression="2">
+              <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='red']"/>
+              <centerLabelStyleDescription>
+                <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              </centerLabelStyleDescription>
+            </style>
+          </conditionnalStyles>
+        </edgeMappings>
+        <edgeMappings name="ControllerConnector" sourceMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='Controller']" targetMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']" targetFinderExpression="feature:switches">
+          <style lineStyle="dash" sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_gray']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <edgeMappings name="PortStatisticsConnector" sourceMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='PortStatistics']" targetMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort']" targetFinderExpression="[port /]">
+          <style lineStyle="dot" sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <edgeMappings name="FlowStatisticsConnector" sourceMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='FlowStatistics']" targetMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']" targetFinderExpression="feature:switch">
+          <style lineStyle="dot" sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <edgeMappings name="AggregatedStatisticsConnector" sourceMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='AggregatedStatistics']" targetMapping="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']" targetFinderExpression="feature:switch">
+          <style lineStyle="dot" sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <containerMappings name="Network" domainClass="Topology.Network">
+          <subNodeMappings name="Host" semanticCandidatesExpression="feature:networkelements" domainClass="Topology.Host">
+            <borderedNodeMappings name="HostPort" semanticCandidatesExpression="feature:eAllContents" domainClass="Topology.Port">
+              <style xsi:type="style:SquareDescription" labelSize="6" showIcon="false" labelExpression="feature:id" labelPosition="node" width="1" height="1">
+                <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+                <labelFormat>bold</labelFormat>
+                <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+                <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+              </style>
+            </borderedNodeMappings>
+            <style xsi:type="style:WorkspaceImageDescription" showIcon="false" sizeComputationExpression="5" arcWidth="1" arcHeight="1" workspacePath="/eu.netide.configuration.design/icons/host.png">
+              <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </style>
+          </subNodeMappings>
+          <subNodeMappings name="Switch" semanticCandidatesExpression="feature:networkelements" doubleClickDescription="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@toolSections.0/@ownedTools[name='ShowFlowStatistics']" domainClass="Topology.Switch">
+            <borderedNodeMappings name="SwitchPort" semanticCandidatesExpression="feature:eAllContents" doubleClickDescription="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@toolSections.0/@ownedTools[name='ShowPortStatistics']" domainClass="Topology.Port">
+              <style xsi:type="style:SquareDescription" labelSize="6" showIcon="false" labelExpression="feature:id" tooltipExpression="['tx_bytes ' + view.target.ancestors(RuntimeData)->any(true).portstatistics->any(x | x.port = view.target).oclAsType(PortStatistics).tx_bytes.toString() + '\n' +'rx_bytes ' + view.target.ancestors(RuntimeData)->any(true).portstatistics->any(x | x.port = view.target).oclAsType(PortStatistics).rx_bytes.toString() + '\n' +'tx_packets ' + view.target.ancestors(RuntimeData)->any(true).portstatistics->any(x | x.port = view.target).oclAsType(PortStatistics).tx_packets.toString() + '\n' +'rx_packets ' + view.target.ancestors(RuntimeData)->any(true).portstatistics->any(x | x.port = view.target).oclAsType(PortStatistics).rx_packets.toString() + '\n' +'tx_errors ' + view.target.ancestors(RuntimeData)->any(true).portstatistics->any(x | x.port = view.target).oclAsType(PortStatistics).tx_errors.toString() + '\n' +'rx_errors ' + view.target.ancestors(RuntimeData)->any(true).portstatistics->any(x | x.port = view.target).oclAsType(PortStatistics).rx_errors.toString() + '\n' +'tx_dropped ' + view.target.ancestors(RuntimeData)->any(true).portstatistics->any(x | x.port = view.target).oclAsType(PortStatistics).tx_dropped.toString() + '\n' +'rx_dropped ' + view.target.ancestors(RuntimeData)->any(true).portstatistics->any(x | x.port = view.target).oclAsType(PortStatistics).rx_dropped.toString() + '\n' +'rx_over_err ' + view.target.ancestors(RuntimeData)->any(true).portstatistics->any(x | x.port = view.target).oclAsType(PortStatistics).rx_over_err.toString() + '\n' +'rx_crc_err ' + view.target.ancestors(RuntimeData)->any(true).portstatistics->any(x | x.port = view.target).oclAsType(PortStatistics).rx_crc_err.toString() + '\n' +'rx_frame_err ' + view.target.ancestors(RuntimeData)->any(true).portstatistics->any(x | x.port = view.target).oclAsType(PortStatistics).rx_frame_err.toString() + '\n' +'collisions ' + view.target.ancestors(RuntimeData)->any(true).portstatistics->any(x | x.port = view.target).oclAsType(PortStatistics).collisions.toString()/]" labelPosition="node" width="1" height="1">
+                <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+                <labelFormat>bold</labelFormat>
+                <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+                <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+              </style>
+            </borderedNodeMappings>
+            <style xsi:type="style:SquareDescription" borderSizeComputationExpression="1" showIcon="false" labelPosition="node" width="8" height="3">
+              <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <labelFormat>bold</labelFormat>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
+            </style>
+          </subNodeMappings>
+          <style xsi:type="style:FlatContainerStyleDescription" arcWidth="1" arcHeight="1" borderSizeComputationExpression="1" showIcon="false">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+            <foregroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+          </style>
+        </containerMappings>
+        <toolSections name="PortStatistics">
+          <ownedTools xsi:type="tool:DoubleClickDescription" name="ShowPortStatistics" mappings="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']/@borderedNodeMappings[name='SwitchPort']">
+            <element name="element"/>
+            <elementView name="elementView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[element.ancestors(RuntimeData)->any(true).portstatistics->any(x | x.port = element).oclAsType(PortStatistics) /]">
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="hidden" valueExpression="[not self.oclAsType(PortStatistics).hidden /]"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:DoubleClickDescription" name="OpenGraph" mappings="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='PortStatistics']">
+            <element name="element"/>
+            <elementView name="elementView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ExternalJavaAction" name="OpenGraphAction" id="eu.netide.runtime.topology.design.actions.OpenGraphAction"/>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:DoubleClickDescription" name="ShowFlowStatistics" mappings="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@containerMappings[name='Network']/@subNodeMappings[name='Switch']">
+            <element name="element"/>
+            <elementView name="elementView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[element.ancestors(RuntimeData)->any(true).flowstatistics->any(x | x.switch = element).oclAsType(FlowStatistics) /]">
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="hidden" valueExpression="[not self.oclAsType(FlowStatistics).hidden /]">
+                  <subModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[element.ancestors(RuntimeData)->any(true).aggregatedstatistics->any(x | x.switch = element).oclAsType(AggregatedStatistics) /]">
+                    <subModelOperations xsi:type="tool_1:SetValue" featureName="hidden" valueExpression="[not self.oclAsType(AggregatedStatistics).hidden /]"/>
+                  </subModelOperations>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:DoubleClickDescription" name="OpenGraph" mappings="//@ownedViewpoints[name='RuntimeTopology']/@ownedRepresentations[name='RuntimeTopology']/@defaultLayer/@nodeMappings[name='AggregatedStatistics']">
+            <element name="element"/>
+            <elementView name="elementView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ExternalJavaAction" name="OpenAggregatedGraphAction" id="eu.netide.runtime.topology.design.actions.OpenAggregatedGraphAction"/>
+            </initialOperation>
+          </ownedTools>
+        </toolSections>
+      </defaultLayer>
+    </ownedRepresentations>
+  </ownedViewpoints>
+</description:Group>

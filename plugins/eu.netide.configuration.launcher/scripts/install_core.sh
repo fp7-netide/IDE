@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ ! -d ~/core_engine ]; then
+if [ ! -d ~/.m2/repository/eu/netide/core/ ]; then
 
   sudo apt-get --yes update
   sudo apt-get --yes install maven
@@ -9,46 +9,35 @@ if [ ! -d ~/core_engine ]; then
   sudo apt-get --yes install oracle-java8-installer
   sudo apt-get --yes install oracle-java8-set-default
 
-  cd netide
-  git clone -b demo-brussels https://github.com/fp7-netide/Engine
-
-  cd Engine/libraries/netip/java
-  mvn clean install -Dgpg.skip=true
+  cd
+  mkdir -p netide
+  cd ~/netide
+  git clone https://github.com/fp7-netide/Engine
 
   cd
-  cd netide/Engine/core
-  mvn clean install
-  cd tools/emulator
+  cd ~/netide/Engine/core
   mvn clean install -Dgpg.skip=true
-  cd target
-  cp emulator-1.0-jar-with-dependencies.jar ~/netide/composition/
-
 
   cd
   echo "Downloading Karaf..."
-  wget -q http://ftp.fau.de/apache/karaf/3.0.6/apache-karaf-3.0.6.tar.gz
-  tar xzf apache-karaf-3.0.6.tar.gz
-  cd apache-karaf-3.0.6/bin
+  wget -q http://archive.apache.org/dist/karaf/3.0.8/apache-karaf-3.0.8.tar.gz
+  tar xzf apache-karaf-3.0.8.tar.gz
+  mv apache-karaf-3.0.8 netide/core-karaf
+  cd netide/core-karaf/bin
   chmod +x ./client ./start ./stop
   echo "Installing karaf dependencies for core"
   ./start
 
   while [ $(./client test 2>&1 | grep "Failed to get the session." | wc -l) -eq 1 ]; do
     echo "No Connection to Karaf server. Trying again..."
-	sleep 1
+        sleep 1
   done
 
-  ./client "feature:repo-add mvn:eu.netide.core/core/1.0.0.0-SNAPSHOT/xml/features"
-  ./client "feature:install netide-core"
+  ./client "feature:repo-add mvn:eu.netide.core/core.features/1.1.0-SNAPSHOT/xml/features"
+  ./client "feature:install core"
   sleep 15
   ./stop
 
-  cd
-
-#  mv apache-karaf-3.0.6-SNAPSHOT apache-karaf
-# cd apache-karaf-3.0.6-SNAPSHOT/bin
-
-
 else
-   echo "Engine seems to be already installed. Skipping..."
+  echo "Engine seems to be already installed. Skipping..."
 fi

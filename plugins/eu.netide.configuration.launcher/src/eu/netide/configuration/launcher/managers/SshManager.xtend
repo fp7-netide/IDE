@@ -28,13 +28,13 @@ import org.eclipse.debug.core.ILaunchConfigurationType
 import org.eclipse.debug.core.Launch
 import org.eclipse.debug.core.RefreshUtil
 import org.eclipse.debug.core.model.IProcess
+import org.eclipse.emf.common.util.URI
 import org.eclipse.tm.terminal.view.core.TerminalServiceFactory
 import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants
 import org.eclipse.xtend.lib.annotations.Accessors
 
 import static extension eu.netide.configuration.utils.NetIDEUtil.absolutePath
-import org.eclipse.emf.common.util.URI
 
 class SshManager implements IManager {
 
@@ -87,7 +87,7 @@ class SshManager implements IManager {
 
 		var path = launch.launchConfiguration.attributes.get("topologymodel") as String
 
-		this.workingDirectory = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
+		this.workingDirectory = path.getIFile.project.location.toFile
 	}
 
 	new(IProject project, IProgressMonitor monitor, String username, String hostname, String port, String idfile) {
@@ -116,7 +116,8 @@ class SshManager implements IManager {
 			Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
 				NetIDEPreferenceConstants.SCP_PATH, "", null)).toOSString
 
-		this.workingDirectory = project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
+		this.workingDirectory = project.location.toFile
+
 	}
 
 	private def getLaunchConfigType() {
@@ -243,20 +244,60 @@ class SshManager implements IManager {
 	}
 
 	def copyApps() {
+		copyApps("", "")
+	}
+
+	def copyComposition(String source) {
+		copyComposition(source, "")
+	}
+
+	def copyComposition(String source, String target) {
+//		exec("rm -rf netide/composition")
+//		exec("mkdir netide/composition")
+		var targetP = target
+		if (targetP == null || targetP == ""){
+			targetP = NetIDE.COMPOSITION_PATH
+		}
+		scp(source, targetP)
+
+	}
+
+	def copyApps(String source, String target) {
 		exec("rm -rf netide/apps")
+		var sourceLocation = this.project.location + "/apps"
+		if (source != null && source != "")
+			sourceLocation = source
+		var targetLocation = NetIDE.APP_TARGET_LOCATION
+
+		if (target != null && target != "")
+			targetLocation = target
 
 		scp(
-			this.project.location + "/apps",
-			"netide/apps"
+			sourceLocation,
+			targetLocation
 		)
 	}
 
 	def copyTopo() {
-		exec("rm -rf mn-configs")
+		copyTopo("", "")
+	}
+
+	def copyTopo(String topoPathSource, String topoPathTarget) {
+		exec("rm -rf netide/mn-configs")
+
+		var topoPathLocationSource = this.project.location + "/gen/mininet"
+
+		if (topoPathSource != null && topoPathSource != "")
+			topoPathLocationSource = topoPathSource
+
+		var topoPathLocationTarget = NetIDE.MN_CONFIG_TARGET_LOCATION
+
+		if (topoPathTarget != null && topoPathTarget != "")
+			topoPathLocationTarget = topoPathTarget
 
 		scp(
-			this.project.location + "/gen/mininet",
-			"mn-configs"
+			topoPathLocationSource,
+			topoPathLocationTarget
 		)
 	}
 
@@ -265,6 +306,10 @@ class SshManager implements IManager {
 	}
 
 	private def scp(String source, String target) {
+		var tmpsrc = source
+		if (this.scpPath.contains("cygwin")) {
+			tmpsrc = source.replace("C:", "/cygdrive/c")
+		}
 		startProcess(newArrayList(
 			scpPath,
 			"-i",
@@ -272,7 +317,7 @@ class SshManager implements IManager {
 			"-P",
 			sshPort,
 			"-r",
-			source,
+			tmpsrc,
 			String.format("%s@%s:%s", sshUsername, sshHostname, target)
 		))
 	}

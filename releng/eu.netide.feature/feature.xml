@@ -2,7 +2,7 @@
 <feature
       id="eu.netide.feature"
       label="NetIDE"
-      version="0.3.1.qualifier"
+      version="0.4.0.qualifier"
       provider-name="NetIDE Project">
 
    <description>
@@ -436,6 +436,48 @@ any resulting litigation.
 
    <plugin
          id="eu.netide.zmq.hub.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.chartview"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.runtime.topology"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.runtime.topology.design"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.runtime.topology.edit"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.runtime.topology.editor"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="eu.netide.toolpanel"
          download-size="0"
          install-size="0"
          version="0.0.0"

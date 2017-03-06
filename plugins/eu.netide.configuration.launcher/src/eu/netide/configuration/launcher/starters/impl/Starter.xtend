@@ -5,6 +5,8 @@ import eu.netide.configuration.launcher.starters.backends.Backend
 import eu.netide.configuration.launcher.starters.backends.VagrantBackend
 import eu.netide.configuration.utils.NetIDE
 import java.io.File
+import org.eclipse.core.resources.IProject
+import org.eclipse.core.resources.IResource
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
@@ -12,12 +14,12 @@ import org.eclipse.core.runtime.Status
 import org.eclipse.core.runtime.jobs.Job
 import org.eclipse.debug.core.ILaunchConfiguration
 import org.eclipse.debug.core.model.IProcess
+import org.eclipse.emf.common.util.URI
 import org.eclipse.jface.dialogs.MessageDialog
 import org.eclipse.swt.widgets.Display
 import org.eclipse.tm.terminal.view.core.TerminalServiceFactory
 import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants
 import org.eclipse.xtend.lib.annotations.Accessors
-import org.eclipse.emf.common.util.URI
 
 abstract class Starter implements IStarter {
 
@@ -68,16 +70,31 @@ abstract class Starter implements IStarter {
 	}
 
 	new(String name, String path, Backend backend, IProgressMonitor monitor) {
+		this(name, path, backend, monitor, null, -1)
+	}
+	
+	new(String name, String path, Backend backend, IProgressMonitor monitor, int id){
+		this(name, path, backend, monitor, null, id)
+	} 
+
+	new(String name, String path, Backend backend, IProgressMonitor monitor, String vagrantFilePath, int id) {
 		this.name = name
 		// this.configuration = configuration
 		this.monitor = monitor
 
-//		this.vagrantpath = Platform.getPreferencesService.getString(NetIDEPreferenceConstants.ID,
-//			NetIDEPreferenceConstants.VAGRANT_PATH, "", null)
-		// configuration.attributes.get("topologymodel") as String
-		this.workingDir = path.getIFile.project.location.append("/gen" + NetIDE.VAGRANTFILE_PATH).toFile
-
-		this.id = "" + (Math.random * 10000) as int
+		if (vagrantFilePath != null && vagrantFilePath != "") {
+			var uri = URI.createURI(vagrantFilePath)
+			var pathVagrant = new Path(uri.path)
+			
+			this.workingDir = pathVagrant.toFile
+		} else {
+			this.workingDir = path.getIFile.project.location.toFile
+		}
+		
+		if(id == -1)
+			this.id = "" + (Math.random * 10000) as int
+		else
+			this.id = "" +id
 
 		this.backend = backend
 	}
@@ -143,9 +160,26 @@ abstract class Starter implements IStarter {
 		}
 
 		def getIFile(String s) {
+
 			var uri = URI.createURI(s)
 			var path = new Path(uri.path)
-			var file = ResourcesPlugin.getWorkspace().getRoot().findMember(path.removeFirstSegments(1));
+			
+			var fileName = path.removeFirstSegments(2)
+			
+			var projectLocation = path.removeFirstSegments(1).removeLastSegments(1)
+
+			var root = ResourcesPlugin.getWorkspace().getRoot()
+			
+			var projectLocationBase = projectLocation.segment(0)
+
+			var myProject = root.getProject(projectLocationBase);
+
+			if (myProject.exists() && !myProject.isOpen())
+				myProject.open(null);
+			
+			var file = myProject.getFile(fileName)
+			
+			
 			return file
 		}
 
@@ -186,6 +220,22 @@ abstract class Starter implements IStarter {
 			MessageDialog.openError(Display.getDefault().activeShell, "Workbench Error",
 				"Please set an SSH or Vagrant connection.")
 
+		}
+
+		/**
+		 * used by starter impl classes to check if the custom strings are in the format /path/.../to/
+		 * also checks if path is a valid directory and returns null if not
+		 */
+		protected def String getValidPath(String path) {
+			var newPath = path
+			if (!path.endsWith("/")) {
+				newPath = path + "/"
+			}
+			// TODO: Path cannot be checked that simple because it is no part of the local file system but is inside the virtual box
+			// if(!new File(newPath).isDirectory()){
+			// throw new IllegalArgumentException("Given Path is no valid directory. Used Path: " + newPath);
+			// }
+			return newPath
 		}
 
 //	def startProcess(ArrayList<String> cmdline) {

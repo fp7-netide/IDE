@@ -92,7 +92,7 @@ class ConfigurationGenerator  {
 			    
 			        # Adding Switches
 			        «FOR Switch s : switches»
-			        	self.«s.fullname» = self.addSwitch('«s.fullname»', dpid='«nodemap.get(s.fullname)»'«IF !(s.mac == null || s.mac.empty)», mac='«s.mac»'«ENDIF»)
+			        	self.«s.fullname» = self.addSwitch('«s.fullname»', dpid=int2dpid(«nodemap.get(s.fullname)»)«IF !(s.mac == null || s.mac.empty)», mac='«s.mac»'«ENDIF»)
 			        «ENDFOR»
 			        
 			        # Adding Hosts

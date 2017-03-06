@@ -13,7 +13,7 @@ You'll also need at least Java 8.
 ## Installation
 
 ### ...using the Eclipse Marketplace
-1. Open your Eclipse installation and navigate to ```Help->Eclipse Marketplace...``` in the Menubar. 
+1. Open your Eclipse installation and navigate to ```Help->Eclipse Marketplace...``` in the Menubar.
 2. Search for ```NetIDE```, click ```Install``` and follow the instructions. After restarting Eclipse, NetIDE is ready to run.
 
 Alternatively, you can drag the button below into your running Eclipse window.
@@ -21,38 +21,46 @@ Alternatively, you can drag the button below into your running Eclipse window.
 <a href="http://marketplace.eclipse.org/marketplace-client-intro?mpc_install=2428949" class="drag" title="Drag to your running Eclipse workspace to install NetIDE"><img src="http://marketplace.eclipse.org/sites/all/themes/solstice/_themes/solstice_marketplace/public/images/btn-install.png" alt="Drag to your running Eclipse workspace to install NetIDE" /></a>
 
 ### ...using the Update Site
-1. Open your Eclipse installation and navigate to ```Help->Install New Software...```. 
+1. Open your Eclipse installation and navigate to ```Help->Install New Software...```.
 2. Enter ```http://updatesite.netide.eu/stable``` for a stable installation or ```http://updatesite.netide.eu/nightly``` for nightly builds.
 3. Select ```NetIDE``` click ```Next``` and follow the instructions. After restarting Eclipse, NetIDE is ready to run.
 
 
 ### ...by building from source
 
-Navigate to the folder ```releng/eu.netide.parent``` and type ```mvn package```. The build process can take some time.
+Check out the master branch.
+
+Navigate to the folder ```releng/eu.netide.dependencies``` and type mvn p2:site. This will build an Eclipse repository for external dependencies at ```releng/eu.netide/dependencies/target/repository```.
+
+Navigate to the folder ```releng/eu.netide.parent``` and type ```MAVEN_OPTS="-Xmx1024M" mvn package```. The build process can take some time.
 
 Once it has finished, you'll find the contents of an eclipse update site as a zip file in ```releng/eu.netide.product/target```.
 
-Open your Eclipse installation, go to ```Help->Install New Software->Add->Archive``` and enter the location of the zip file.
+Open your Eclipse installation.
+
+Go to ```Help->Install New Software->Add->Local``` and specify the location of the dependency repository.
+Go to ```Help->Install New Software->Add->Archive``` and specify the location of the zip file.
 
 Select NetIDE from the list and follow the instructions. After restarting Eclipse, NetIDE is ready to run.
 
 
-
 ### Set up Eclipse
 
-1. Download Eclipse Mars or Luna Modeling Tools at www.eclipse.org.
+1. Download Eclipse Neon Modeling Tools [here](http://www.eclipse.org/downloads/packages/eclipse-modeling-tools/neon1a).
 2. From the window menu, select `Help -> Install Modeling Components`. Select and install Sirius and Xtext.
 3. Go to `Help -> Eclipse Marketplace...`, search for and install TM Terminal.
 4. Go to `Help -> Install New Software`, enter [http://updatesite.netide.eu/dependencies](http://updatesite.netide.eu/dependencies), and install the packages provided by this repository.
+4. Use the same UI to install the BIRT SDK.
 5. Start Eclipse and open the Git Perspective.
 6. Clone or add this git repository and import all projects from the "plugins"-folder into your workspace. To do so, enter to the folder "Working Directory", right-click on the folder "plugins" and select "Import Projects". Follow the steps in the wizard.
 7. Open the Plug-In Development perspective and open eu.netide.configuration/model/Topology.genmodel. Right-click the root element in the tree view and select `Generate All`
-8. For both projects "eu.netide.parameters.language" and "eu.netide.sysreq", do the following:
+8. Open the Plug-In Development perspective and open eu.netide.runtime.topology/model/RuntimeTopology.genmodel. Right-click the root element in the tree view and select `Generate All`
+9. For both projects "eu.netide.parameters.language" and "eu.netide.sysreq", do the following:
     1. Find the \*.mwe2 file in the source folder.
     2. Right-click on the mwe2 file and select "Run As -> MWE2 Workflow". A dialog box should pop up informing you about errors in the project. Click "Proceed".
     3. A console view in the bottom region will appear and ask you to install the Antlr parser. Type "y" into the console and hit Return.
-9. Right-click the project eu.netide.configuration and select `Run As -> Eclipse Application`
-10. If you want to develop your Python-based controllers in Eclipse as well, you can install the [PyDev](http://www.pydev.org/) plug-in for Eclipse from the Eclipse Marketplace.
+10. Right-click the project eu.netide.configuration and select `Run As -> Eclipse Application`
+11. If you want to develop your Python-based controllers in Eclipse as well, you can install the [PyDev](http://www.pydev.org/) plug-in for Eclipse from the Eclipse Marketplace.
 
 ## Usage
 
@@ -76,7 +84,7 @@ This error occurs if the projects in the `plugins`-folder have not been imported
 
 ### Compiler errors after pulling
 
-The code you just pulled may use a more recent version of the Topology meta-model. If you run into compiler errors, just repeat step 5 and 6 from the Installation guide. This generates new model code from the newest version of the meta-model.
+The code you just pulled may use a more recent version of the Topology meta-model. If you run into compiler errors, just repeat step 7 and 8 from the Installation guide. This generates new model code from the newest version of the meta-model.
 
 ### Large amounts of disk space used
 

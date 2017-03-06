@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Topologyimport
 Bundle-SymbolicName: eu.netide.deployment.topologyimport
-Bundle-Version: 0.3.1.qualifier
+Bundle-Version: 0.4.0.qualifier
 Bundle-Activator: eu.netide.deployment.topologyimport.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
@@ -13,9 +13,10 @@ Require-Bundle: org.eclipse.core.runtime,
  com.google.guava,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.xtend.lib,
- org.eclipse.xtend.lib.macro
+ org.eclipse.xtend.lib.macro,
+ com.fasterxml.jackson.core.jackson-core;bundle-version="2.7.2",
+ com.fasterxml.jackson.core.jackson-databind;bundle-version="2.7.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: eu.netide.deployment.topologyimport,
- eu.netide.deployment.topologyimport.json
+Export-Package: eu.netide.deployment.topologyimport
 Import-Package: org.eclipse.core.resources

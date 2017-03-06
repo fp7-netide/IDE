@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eu.netide.runtime.topology</groupId>
+	<artifactId>eu.netide.runtime.topology</artifactId>
+	<name>eu.netide.runtime.topology</name>
+	<packaging>eclipse-plugin</packaging>
+
+	<parent>
+		<groupId>eu.netide.parent</groupId>
+		<artifactId>eu.netide.parent</artifactId>
+		<version>0.4.0-SNAPSHOT</version>
+		<relativePath>../../releng/eu.netide.parent/pom.xml</relativePath>
+	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-eclipserun-plugin</artifactId>
+				<!-- tested with 0.18 -->
+				<version>${tycho-version}</version>
+				<configuration>
+					<!-- linebreaks not permitted in this arg line -->
+					<appArgLine>-data .. -application org.eclipse.emf.codegen.ecore.Generator -projects ${basedir} -edit -editor -model ${basedir}/model/RuntimeTopology.genmodel</appArgLine>
+					<dependencies>
+						<dependency>
+							<artifactId>org.eclipse.emf.codegen.ecore</artifactId>
+							<type>eclipse-plugin</type>
+						</dependency>
+					</dependencies>
+
+					<repositories>
+						<repository>
+							<id>eclipse-neon</id>
+							<layout>p2</layout>
+							<url>http://download.eclipse.org/releases/neon</url>
+						</repository>
+					</repositories>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>eclipse-run</goal>
+						</goals>
+						<phase>generate-sources</phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

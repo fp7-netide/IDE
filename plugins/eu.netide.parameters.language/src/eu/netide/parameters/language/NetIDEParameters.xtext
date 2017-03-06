@@ -23,7 +23,9 @@ NewType:
 	BasicType | CompositeType;
 
 Keyval:
-	name=ID ':' type=(TypeReference | Type) ('=' defaultValue=DefaultValue)?;
+	name=ID ':' QUOTE type=(TypeReference | Type) ('=' defaultValue=DefaultValue)? QUOTE;
+	
+
 
 DefaultValue:
 	STRING | "true" | "false" | INT;
@@ -57,4 +59,8 @@ Constraint:
 
 AtomicType:
 	name=("String" | "Integer" | "Boolean" | "Float");
+	
+terminal QUOTE:
+	("'" | '"')
+;
 

@@ -13,14 +13,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
-import eu.netide.zmq.hub.server.ZmqHub;
+import eu.netide.zmq.hub.server.ZmqPubSubHub;
 
 public class ZmqLogDialog extends TitleAreaDialog {
 
-	ZmqHub hub;
+	ZmqPubSubHub hub;
 	private Table table;
 
-	public ZmqLogDialog(Shell parentShell, ZmqHub hub) {
+	public ZmqLogDialog(Shell parentShell, ZmqPubSubHub hub) {
 		super(parentShell);
 		setShellStyle(SWT.RESIZE);
 		this.hub = hub;
@@ -45,8 +45,6 @@ public class ZmqLogDialog extends TitleAreaDialog {
 		tblColumnMsg.setText("Message");
 		
 		ViewerSupport.bind(tableViewer, hub.getLog(), BeanProperties.values(new String[] {"date", "msg"}));
-		
-
 				
 		setHelpAvailable(false);
 		setTitle(hub.getName());
